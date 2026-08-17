@@ -210,13 +210,16 @@ def generate_market_page(df, market_title, filename):
     filepath = os.path.join(DOCS_DIR, filename)
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
+    # 1. 超・割安（5.625未満）
     ultra_df = (
         df[df["ミックス係数"] < 5.625]
         if "ミックス係数" in df.columns
         else pd.DataFrame()
     )
+
+    # 2. 厳選割安（11.25未満すべてを含むように修正！）
     strict_df = (
-        df[(df["ミックス係数"] >= 5.625) & (df["ミックス係数"] < 11.25)]
+        df[df["ミックス係数"] < 11.25]
         if "ミックス係数" in df.columns
         else pd.DataFrame()
     )
@@ -246,17 +249,17 @@ def generate_market_page(df, market_title, filename):
         </div>
 
         <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-danger mb-2">🔥 超・割安株（係数 5.625未満）</h5>
+            <h5 class="fw-bold text-danger mb-2">🔥 超・割安株（ミックス係数 5.625未満 / {len(ultra_df)}件）</h5>
             <div class="table-container">{ultra_table}</div>
         </div>
 
         <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-success mb-2">🎯 厳選割安株（係数 11.25未満）</h5>
+            <h5 class="fw-bold text-success mb-2">🎯 厳選割安株（ミックス係数 11.25未満 / {len(strict_df)}件）</h5>
             <div class="table-container">{strict_table}</div>
         </div>
 
         <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-secondary mb-2">📋 全体ランキング（係数 22.5未満）</h5>
+            <h5 class="fw-bold text-secondary mb-2">📋 全体ランキング（ミックス係数 22.5未満 / {len(df)}件）</h5>
             <div class="table-container">{all_table}</div>
         </div>
     </div>
