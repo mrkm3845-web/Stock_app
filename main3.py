@@ -11,10 +11,14 @@ import yfinance as yf
 # 設定エリア
 # ==========================================
 # 環境変数から取得（GitHub Actions対応）
-DISCORD_WEBHOOK_URL = os.environ.get(
-    "DISCORD_WEBHOOK_URL",
-    "https://discord.com/api/webhooks/1538221097592553562/NF2KemUR1ezI2PcK9R1qSpElwbybasUqh1b8zu6aJZ8rd_B3Fyli013d38RUuCaC5Mr2",
-)
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
+# URLがセットされていない場合は安全のために終了する
+if not DISCORD_WEBHOOK_URL:
+    print(
+        "❌ エラー: 環境変数 'DISCORD_WEBHOOK_URL' が設定されていません。",
+        file=sys.stderr,
+    )
+    # ローカル検証時などで通知を飛ばさない場合は終了させずにスルーでもOK
 TARGET_MARKET = "プライム（内国株式）"
 MAX_STOCKS_TO_CHECK = 100
 
