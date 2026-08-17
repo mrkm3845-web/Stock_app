@@ -13,31 +13,25 @@ import yfinance as yf
 # 設定エリア
 # ==========================================
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
-
-TARGET_MARKET = "プライム（内国株式）"
-MAX_STOCKS_TO_CHECK = 100
 DOCS_DIR = "docs"
 
 
 # ==========================================
-# 1. JPXから最新銘柄一覧を取得
+# 1. JPXから銘柄一覧を取得
 # ==========================================
-def fetch_jpx_stock_list(market_filter=TARGET_MARKET):
-    print(">> 東証（JPX）から上場銘柄リストを自動ダウンロード中...")
+def fetch_jpx_stock_list(market_name):
+    print(f">> 東証（JPX）から上場銘柄リスト（{market_name}）を取得中...")
     url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
     headers = {"User-Agent": "Mozilla/5.0"}
 
     res = requests.get(url, headers=headers)
     df = pd.read_excel(io.BytesIO(res.content))
-
     df = df[["コード", "銘柄名", "市場・商品区分", "33業種区分"]]
     df["コード"] = df["コード"].astype(str)
 
-    if market_filter:
-        df = df[df["市場・商品区分"] == market_filter]
-
-    stocks = df.to_dict("records")
-    print(f">> 対象銘柄数: {len(stocks)} 件 ({market_filter})")
+    df_filtered = df[df["市場・商品区分"] == market_name]
+    stocks = df_filtered.to_dict("records")
+    print(f">> 【{market_name}】対象銘柄数: {len(stocks)} 件")
     return stocks
 
 
@@ -72,7 +66,7 @@ def analyze_single_stock(stock_info):
         if not (eps and bps and pe and pb and eps > 0 and bps > 0):
             return None
 
-        # 異常値ガード1：EPS/BPSのデータ狂いを除外
+        # 異常値ガード1：データ狂いを除外
         if bps > current_price * 10 or eps > current_price * 2:
             return None
 
@@ -91,7 +85,7 @@ def analyze_single_stock(stock_info):
         if discount_rate > 75.0:
             return None
 
-        # ROE・利益率の正規化
+        # ROE・営業利益率の正規化
         roe_pct = (
             (roe * 100)
             if (roe is not None and roe < 1.0)
@@ -110,20 +104,20 @@ def analyze_single_stock(stock_info):
         elif div_rate and current_price:
             div_yield_pct = (div_rate / current_price) * 100
 
-        # 条件：係数22.5未満、ROE 7%以上、営業利益率 6%以上
+        # 抽出条件：係数22.5未満、ROE 7%以上、営業利益率 6%以上
         if mix_index < 22.5 and roe_pct >= 7.0 and op_margin_pct >= 6.0:
             return {
                 "コード": code,
                 "社名": name,
-                "業種": stock_info.get("33業種区分", "N/A"),
-                "現在値": round(current_price, 1),
-                "理論株価": round(graham_price, 1),
+                "現在値": int(round(current_price)),
+                "割安度": f"+{round(discount_rate, 1)}%",
                 "ミックス係数": round(mix_index, 2),
-                "割安度(%)": round(discount_rate, 1),
+                "利回り": f"{round(div_yield_pct, 2)}%",
                 "PER": round(pe, 1),
                 "PBR": round(pb, 2),
-                "ROE(%)": round(roe_pct, 1),
-                "配当利回り(%)": round(div_yield_pct, 2),
+                "ROE": f"{round(roe_pct, 1)}%",
+                "理論株価": int(round(graham_price)),
+                "業種": stock_info.get("33業種区分", "N/A"),
             }
     except Exception:
         return None
@@ -133,10 +127,10 @@ def analyze_single_stock(stock_info):
 # ==========================================
 # 3. 並列処理でランキング生成
 # ==========================================
-def generate_ranking(stocks_list, max_workers=10):
+def generate_ranking(stocks_list, market_label, max_workers=10):
     results = []
     print(
-        f">> 並列スクリーニング開始（最大 {len(stocks_list)} 銘柄をスキャン）..."
+        f">> 【{market_label}】全 {len(stocks_list)} 銘柄のスキャン開始..."
     )
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -153,90 +147,169 @@ def generate_ranking(stocks_list, max_workers=10):
         df = df.sort_values(by="ミックス係数", ascending=True).reset_index(
             drop=True
         )
-        df.index = df.index + 1
-        df.index.name = "順位"
+        # 順位列を先頭に追加（インデックスずれを解消）
+        df.insert(0, "順位", df.index + 1)
     return df
 
 
 # ==========================================
-# 4. HTMLダッシュボードの生成（★追加）
+# 4. HTML生成関数
 # ==========================================
-def generate_html_dashboard(df):
+COMMON_CSS = """
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.9rem; padding-bottom: 60px; }
+    .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: none; margin-bottom: 20px; }
+    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table { font-size: 0.85rem; margin-bottom: 0; }
+    .table th { background-color: #212529 !important; color: white !important; white-space: nowrap; font-weight: 600; padding: 10px 8px; text-align: center; }
+    .table td { vertical-align: middle; white-space: nowrap; padding: 8px; }
+    .table-striped tbody tr:nth-of-type(odd) { background-color: #ffffff; }
+    .table-striped tbody tr:nth-of-type(even) { background-color: #f8f9fa; }
+    .badge-scroll { font-size: 0.75rem; background-color: #e9ecef; color: #495057; padding: 3px 8px; border-radius: 20px; }
+</style>
+"""
+
+
+def build_table_html(target_df):
+    if target_df.empty:
+        return "<p class='p-3 text-muted text-center mb-0'>該当する銘柄はありません。</p>"
+    return target_df.to_html(
+        classes="table table-hover table-striped text-center",
+        border=0,
+        index=False,
+    )
+
+
+def generate_market_page(df, market_title, filename):
     os.makedirs(DOCS_DIR, exist_ok=True)
-    html_file = os.path.join(DOCS_DIR, "index.html")
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    filepath = os.path.join(DOCS_DIR, filename)
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # セクションごとのテーブルHTML
-    def build_table(target_df):
-        if target_df.empty:
-            return "<p class='p-3 text-muted text-center'>該当する銘柄はありません。</p>"
-        return target_df.to_html(
-            classes="table table-hover table-striped mb-0", border=0
-        )
-
-    ultra_table = build_table(df[df["ミックス係数"] < 5.625])
-    strict_table = build_table(
+    ultra_table = build_table_html(df[df["ミックス係数"] < 5.625])
+    strict_table = build_table_html(
         df[(df["ミックス係数"] >= 5.625) & (df["ミックス係数"] < 11.25)]
     )
-    all_table = build_table(df)
+    all_table = build_table_html(df)
 
-    html_content = f"""<!DOCTYPE html>
+    html = f"""<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>割安優良株スクリーニング</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {{ background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding-bottom: 50px; }}
-        .card {{ border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: none; margin-bottom: 20px; }}
-        .table-responsive {{ border-radius: 8px; overflow: hidden; }}
-        th {{ background-color: #212529 !important; color: white !important; white-space: nowrap; }}
-        td {{ vertical-align: middle; white-space: nowrap; }}
-        .badge-mix {{ font-size: 0.9em; }}
-    </style>
+    <title>{market_title} スクリーニング</title>
+    {COMMON_CSS}
 </head>
 <body>
-    <div class="container py-4 max-w-6xl">
-        <div class="card p-4 bg-white mb-4">
-            <h2 class="h4 mb-1 text-primary fw-bold">📊 割安優良株スクリーニング ダッシュボード</h2>
-            <p class="text-muted small mb-0">最終更新: {now_str} (JST) / 抽出数: {len(df)} 件</p>
+    <div class="container py-3 max-w-6xl">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="index.html" class="btn btn-outline-secondary btn-sm">← トップ目次に戻る</a>
+            <span class="badge-scroll">👉 左右にスクロールできます</span>
         </div>
 
-        <!-- 🔥 超・割安株 (係数 < 5.625) -->
-        <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-danger mb-3">🔥 超・割安株（ミックス係数 5.625未満）</h5>
-            <div class="table-responsive">
-                {ultra_table}
-            </div>
+        <div class="card p-3 bg-white mb-3">
+            <h2 class="h5 mb-1 text-primary fw-bold">📊 {market_title} スクリーニング</h2>
+            <p class="text-muted small mb-0">最終更新: {now_str} (JST) / 抽出件数: {len(df)} 件</p>
         </div>
 
-        <!-- 🎯 厳選割安株 (5.625 <= 係数 < 11.25) -->
         <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-success mb-3">🎯 厳選割安株（ミックス係数 11.25未満）</h5>
-            <div class="table-responsive">
-                {strict_table}
-            </div>
+            <h5 class="fw-bold text-danger mb-2">🔥 超・割安株（係数 5.625未満）</h5>
+            <div class="table-container">{ultra_table}</div>
         </div>
 
-        <!-- 📋 全体ランキング (係数 < 22.5) -->
         <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-secondary mb-3">📋 全体ランキング（ミックス係数 22.5未満）</h5>
-            <div class="table-responsive">
-                {all_table}
-            </div>
+            <h5 class="fw-bold text-success mb-2">🎯 厳選割安株（係数 11.25未満）</h5>
+            <div class="table-container">{strict_table}</div>
+        </div>
+
+        <div class="card p-3 bg-white">
+            <h5 class="fw-bold text-secondary mb-2">📋 全体ランキング（係数 22.5未満）</h5>
+            <div class="table-container">{all_table}</div>
         </div>
     </div>
 </body>
 </html>
 """
-    with open(html_file, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(f">> HTMLダッシュボードを {html_file} に出力しました。")
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(html)
+
+
+def generate_index_page(prime_df, standard_df):
+    os.makedirs(DOCS_DIR, exist_ok=True)
+    filepath = os.path.join(DOCS_DIR, "index.html")
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    prime_ultra = build_table_html(prime_df[prime_df["ミックス係数"] < 5.625])
+    standard_ultra = build_table_html(
+        standard_df[standard_df["ミックス係数"] < 5.625]
+    )
+
+    html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>割安優良株ポータル</title>
+    {COMMON_CSS}
+    <style>
+        .nav-btn {{ border-radius: 12px; text-decoration: none; display: block; padding: 20px; transition: transform 0.2s; }}
+        .nav-btn:hover {{ transform: translateY(-3px); }}
+    </style>
+</head>
+<body>
+    <div class="container py-3 max-w-6xl">
+        <div class="card p-4 bg-white mb-3 text-center">
+            <h1 class="h4 mb-1 text-primary fw-bold">📈 割安優良株スクリーニング ポータル</h1>
+            <p class="text-muted small mb-0">最終更新: {now_str} (JST)</p>
+        </div>
+
+        <!-- リンクボタン -->
+        <div class="row g-3 mb-4">
+            <div class="col-6">
+                <a href="prime.html" class="nav-btn bg-primary text-white text-center shadow-sm">
+                    <h3 class="h5 fw-bold mb-1">🏛️ プライム市場</h3>
+                    <p class="small mb-0 opacity-75">{len(prime_df)} 件の詳細 →</p>
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="standard.html" class="nav-btn bg-dark text-white text-center shadow-sm">
+                    <h3 class="h5 fw-bold mb-1">🏢 スタンダード市場</h3>
+                    <p class="small mb-0 opacity-75">{len(standard_df)} 件の詳細 →</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mb-2">
+            <span class="badge-scroll">👉 左右にスクロールできます</span>
+        </div>
+
+        <!-- プライム超割安 速報 -->
+        <div class="card p-3 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold text-danger mb-0">🔥 プライム：超・割安株（係数 < 5.625）</h5>
+                <a href="prime.html" class="btn btn-outline-primary btn-sm py-0">全て見る →</a>
+            </div>
+            <div class="table-container">{prime_ultra}</div>
+        </div>
+
+        <!-- スタンダード超割安 速報 -->
+        <div class="card p-3 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold text-danger mb-0">🔥 スタンダード：超・割安株（係数 < 5.625）</h5>
+                <a href="standard.html" class="btn btn-outline-dark btn-sm py-0">全て見る →</a>
+            </div>
+            <div class="table-container">{standard_ultra}</div>
+        </div>
+    </div>
+</body>
+</html>
+"""
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(html)
 
 
 # ==========================================
-# 5. Discordへの通知機能
+# 5. Discord通知
 # ==========================================
 def send_to_discord(df, title_label, webhook_url):
     if not webhook_url or "discord.com" not in webhook_url or df.empty:
@@ -244,62 +317,54 @@ def send_to_discord(df, title_label, webhook_url):
 
     message = f"📊 **【{title_label}】** ({time.strftime('%Y-%m-%d %H:%M')})\n"
     message += "```\n"
-    message += f"{'順位':<3} {'コード':<5} {'社名':<10} {'係数':<6} {'PER':<5} {'PBR':<5} {'利回り'}\n"
+    message += f"{'順位':<3} {'コード':<5} {'社名':<10} {'割安度':<6} {'係数':<6} {'利回り'}\n"
     message += "-" * 48 + "\n"
 
     for rank, row in df.iterrows():
         short_name = (
             (row["社名"][:8] + "..") if len(row["社名"]) > 8 else row["社名"]
         )
-        message += f"{rank:<4} {row['コード']:<6} {short_name:<10} {row['ミックス係数']:<6.2f} {row['PER']:<5.1f} {row['PBR']:<5.2f} {row['配当利回り(%)']}%\n"
+        message += f"{row['順位']:<4} {row['コード']:<6} {short_name:<10} {row['割安度']:<7} {row['ミックス係数']:<6.2f} {row['利回り']}\n"
     message += "```"
 
-    payload = {"content": message}
-    res = requests.post(webhook_url, json=payload)
-    if res.status_code == 204:
-        print(f">> Discordへ通知送信成功: {title_label}")
-    else:
-        print(f">> Discord通知失敗（ステータス: {res.status_code}）")
+    try:
+        requests.post(webhook_url, json={"content": message})
+    except Exception:
+        pass
 
 
 # ==========================================
 # 実行部
 # ==========================================
 if __name__ == "__main__":
-    all_stocks = fetch_jpx_stock_list()
-    target_list = all_stocks[:MAX_STOCKS_TO_CHECK]
-    ranking_df = generate_ranking(target_list)
+    # 1. プライム全件
+    prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
+    prime_df = generate_ranking(prime_stocks, "プライム")
 
-    # 1. HTMLダッシュボードを生成（docs/index.html）
-    generate_html_dashboard(ranking_df)
+    # 2. スタンダード全件
+    standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
+    standard_df = generate_ranking(standard_stocks, "スタンダード")
 
-    if not ranking_df.empty:
-        # 2. Discord通知
-        ultra_cheap_df = ranking_df[ranking_df["ミックス係数"] < 5.625]
-        if not ultra_cheap_df.empty:
-            send_to_discord(
-                ultra_cheap_df.head(5),
-                "🔥 係数5.625未満 超・割安株",
-                DISCORD_WEBHOOK_URL,
-            )
+    # 3. HTMLファイル出力
+    generate_market_page(prime_df, "プライム市場", "prime.html")
+    generate_market_page(standard_df, "スタンダード市場", "standard.html")
+    generate_index_page(prime_df, standard_df)
 
-        strict_cheap_df = ranking_df[
-            (ranking_df["ミックス係数"] >= 5.625)
-            & (ranking_df["ミックス係数"] < 11.25)
-        ]
-        if not strict_cheap_df.empty:
-            send_to_discord(
-                strict_cheap_df.head(5),
-                "🎯 係数11.25未満 厳選割安株",
-                DISCORD_WEBHOOK_URL,
-            )
-
+    # 4. Discord通知
+    p_ultra = prime_df[prime_df["ミックス係数"] < 5.625]
+    if not p_ultra.empty:
         send_to_discord(
-            ranking_df.head(10),
-            "📊 割安優良株ランキング TOP10",
+            p_ultra.head(5),
+            "🔥【プライム】係数5.625未満 超・割安株",
             DISCORD_WEBHOOK_URL,
         )
 
-        print(">> 処理がすべて完了しました。")
-    else:
-        print(">> 該当する銘柄がありませんでした。")
+    s_ultra = standard_df[standard_df["ミックス係数"] < 5.625]
+    if not s_ultra.empty:
+        send_to_discord(
+            s_ultra.head(5),
+            "🔥【スタンダード】係数5.625未満 超・割安株",
+            DISCORD_WEBHOOK_URL,
+        )
+
+    print(">> 全ての処理が完了しました！")
