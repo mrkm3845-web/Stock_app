@@ -327,64 +327,74 @@ def generate_index_page(prime_df, standard_df):
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(html)
 
-
-def send_to_discord(df, title_label, webhook_url):
-    if (
-        not webhook_url
-        or "discord.com" not in webhook_url
-        or df.empty
-        or "ミックス係数" not in df.columns
-    ):
+def send_to_discord(prime_df, standard_df, webhook_url):
+    if not webhook_url or "discord.com" not in webhook_url:
         return
 
-    message = f"📊 **【{title_label}】** ({time.strftime('%Y-%m-%d %H:%M')})\n"
-    message += "```\n"
-    message += f"{'順位':<3} {'コード':<5} {'社名':<10} {'割安度':<6} {'係数':<6} {'利回り'}\n"
-    message += "-" * 48 + "\n"
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    message = f"📊 **【本日の割安優良株スクリーニング】** ({now_str})\n"
 
-    for rank, row in df.iterrows():
-        short_name = (
-            (row["社名"][:8] + "..") if len(row["社名"]) > 8 else row["社名"]
-        )
-        message += f"{row['順位']:<4} {row['コード']:<6} {short_name:<10} {row['割安度']:<7} {row['ミックス係数']:<6.2f} {row['利回り']}\n"
-    message += "```"
+    # 表を作成する内部関数
+    def make_section(df, market_name):
+        text = f"\n**【{market_name}】**\n```\n"
+        if df.empty:
+            text += "該当する銘柄はありませんでした。\n```\n"
+            return text
+
+        # 5.625未満があれば優先、なければ11.25未満からTOP5
+        ultra = df[df["ミックス係数"] < 5.625]
+        target = ultra if not ultra.empty else df[df["ミックス係数"] < 11.25]
+        label = "🔥 超・割安 (係数 < 5.625)" if not ultra.empty else "🎯 厳選割安 (係数 < 11.25)"
+
+        text += f"▼ {label}\n"
+        text += f"{'順':<2} {'コード':<5} {'社名':<9} {'割安度':<6} {'係数':<5} {'利回り'}\n"
+        text += "-" * 42 + "\n"
+
+        for _, row in target.head(5).iterrows():
+            short_name = (
+                (row["社名"][:7] + "..")
+                if len(row["社名"]) > 7
+                else row["社名"]
+            )
+            text += f"{row['順位']:<3} {row['コード']:<6} {short_name:<9} {row['割安度']:<7} {row['ミックス係数']:<5.2f} {row['利回り']}\n"
+        text += "```\n"
+        return text
+
+    # プライムとスタンダードを合体
+    message += make_section(prime_df, "🏛️ プライム市場")
+    message += make_section(standard_df, "🏢 スタンダード市場")
+    message += "👉 詳細Webサイト: https://mrkm3845-web.github.io/Stock_app/"
 
     try:
-        requests.post(webhook_url, json={"content": message}, timeout=10)
-    except Exception:
-        pass
+        res = requests.post(
+            webhook_url, json={"content": message}, timeout=10
+        )
+        if res.status_code in [200, 204]:
+            print(">> Discord通知を正常に送信しました！")
+        else:
+            print(f">> Discord送信エラー（ステータス: {res.status_code}）")
+    except Exception as e:
+        print(f">> Discord送信例外: {e}")
 
 
 # ==========================================
 # 実行部
 # ==========================================
 if __name__ == "__main__":
+    # 1. プライム全件
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_df = generate_ranking(prime_stocks, "プライム")
 
+    # 2. スタンダード全件
     standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
     standard_df = generate_ranking(standard_stocks, "スタンダード")
 
+    # 3. HTMLファイル出力
     generate_market_page(prime_df, "プライム市場", "prime.html")
     generate_market_page(standard_df, "スタンダード市場", "standard.html")
     generate_index_page(prime_df, standard_df)
 
-    if not prime_df.empty and "ミックス係数" in prime_df.columns:
-        p_ultra = prime_df[prime_df["ミックス係数"] < 5.625]
-        if not p_ultra.empty:
-            send_to_discord(
-                p_ultra.head(5),
-                "🔥【プライム】係数5.625未満 超・割安株",
-                DISCORD_WEBHOOK_URL,
-            )
-
-    if not standard_df.empty and "ミックス係数" in standard_df.columns:
-        s_ultra = standard_df[standard_df["ミックス係数"] < 5.625]
-        if not s_ultra.empty:
-            send_to_discord(
-                s_ultra.head(5),
-                "🔥【スタンダード】係数5.625未満 超・割安株",
-                DISCORD_WEBHOOK_URL,
-            )
+    # 4. まとめて1通でDiscord通知！
+    send_to_discord(prime_df, standard_df, DISCORD_WEBHOOK_URL)
 
     print(">> 全ての処理が完了しました！")
