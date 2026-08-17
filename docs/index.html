@@ -3,672 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>割安優良株スクリーニング</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>割安優良株ポータル</title>
+    
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.9rem; padding-bottom: 60px; }
+    .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: none; margin-bottom: 20px; }
+    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table { font-size: 0.85rem; margin-bottom: 0; }
+    .table th { background-color: #212529 !important; color: white !important; white-space: nowrap; font-weight: 600; padding: 10px 8px; text-align: center; }
+    .table td { vertical-align: middle; white-space: nowrap; padding: 8px; }
+    .badge-scroll { font-size: 0.75rem; background-color: #e9ecef; color: #495057; padding: 3px 8px; border-radius: 20px; }
+</style>
+
     <style>
-        body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding-bottom: 50px; }
-        .card { border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: none; margin-bottom: 20px; }
-        .table-responsive { border-radius: 8px; overflow: hidden; }
-        th { background-color: #212529 !important; color: white !important; white-space: nowrap; }
-        td { vertical-align: middle; white-space: nowrap; }
-        .badge-mix { font-size: 0.9em; }
+        .nav-btn { border-radius: 12px; text-decoration: none; display: block; padding: 20px; transition: transform 0.2s; }
+        .nav-btn:hover { transform: translateY(-3px); }
     </style>
 </head>
 <body>
-    <div class="container py-4 max-w-6xl">
-        <div class="card p-4 bg-white mb-4">
-            <h2 class="h4 mb-1 text-primary fw-bold">📊 割安優良株スクリーニング ダッシュボード</h2>
-            <p class="text-muted small mb-0">最終更新: 2026-08-17 22:30:42 (JST) / 抽出数: 30 件</p>
+    <div class="container py-3 max-w-6xl">
+        <div class="card p-4 bg-white mb-3 text-center">
+            <h1 class="h4 mb-1 text-primary fw-bold">📈 割安優良株スクリーニング ポータル</h1>
+            <p class="text-muted small mb-0">最終更新: 2026-08-18 06:34 (JST)</p>
         </div>
 
-        <!-- 🔥 超・割安株 (係数 < 5.625) -->
-        <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-danger mb-3">🔥 超・割安株（ミックス係数 5.625未満）</h5>
-            <div class="table-responsive">
-                <p class='p-3 text-muted text-center'>該当する銘柄はありません。</p>
+        <div class="row g-3 mb-4">
+            <div class="col-6">
+                <a href="prime.html" class="nav-btn bg-primary text-white text-center shadow-sm">
+                    <h3 class="h5 fw-bold mb-1">🏛️ プライム市場</h3>
+                    <p class="small mb-0 opacity-75">161 件の詳細 →</p>
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="standard.html" class="nav-btn bg-dark text-white text-center shadow-sm">
+                    <h3 class="h5 fw-bold mb-1">🏢 スタンダード市場</h3>
+                    <p class="small mb-0 opacity-75">0 件の詳細 →</p>
+                </a>
             </div>
         </div>
 
-        <!-- 🎯 厳選割安株 (5.625 <= 係数 < 11.25) -->
+        <div class="d-flex justify-content-end mb-2">
+            <span class="badge-scroll">👉 左右にスクロールできます</span>
+        </div>
+
         <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-success mb-3">🎯 厳選割安株（ミックス係数 11.25未満）</h5>
-            <div class="table-responsive">
-                <table class="dataframe table table-hover table-striped mb-0">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold text-danger mb-0">🔥 プライム：超・割安株（係数 < 5.625）</h5>
+                <a href="prime.html" class="btn btn-outline-primary btn-sm py-0">全て見る →</a>
+            </div>
+            <div class="table-container"><table class="dataframe table table-hover table-striped text-center">
   <thead>
     <tr style="text-align: right;">
-      <th></th>
+      <th>順位</th>
       <th>コード</th>
       <th>社名</th>
-      <th>業種</th>
       <th>現在値</th>
-      <th>理論株価</th>
+      <th>割安度</th>
       <th>ミックス係数</th>
-      <th>割安度(%)</th>
+      <th>利回り</th>
       <th>PER</th>
       <th>PBR</th>
-      <th>ROE(%)</th>
-      <th>配当利回り(%)</th>
-    </tr>
-    <tr>
-      <th>順位</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>ROE</th>
+      <th>理論株価</th>
+      <th>業種</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>1</th>
-      <td>1911</td>
-      <td>住友林業</td>
-      <td>建設業</td>
-      <td>1329.0</td>
-      <td>2503.5</td>
-      <td>6.34</td>
-      <td>46.9</td>
-      <td>9.7</td>
-      <td>0.66</td>
-      <td>13.0</td>
-      <td>3.71</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1662</td>
-      <td>石油資源開発</td>
-      <td>鉱業</td>
-      <td>1820.0</td>
-      <td>3294.1</td>
-      <td>6.87</td>
-      <td>44.7</td>
-      <td>8.7</td>
-      <td>0.79</td>
-      <td>7.5</td>
-      <td>2.47</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>2153</td>
-      <td>Ｅ・Ｊホールディングス</td>
-      <td>サービス業</td>
-      <td>1777.0</td>
-      <td>3206.6</td>
-      <td>6.91</td>
-      <td>44.6</td>
-      <td>8.7</td>
-      <td>0.79</td>
-      <td>9.1</td>
-      <td>4.06</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>1925</td>
-      <td>大和ハウス工業</td>
-      <td>建設業</td>
-      <td>4571.0</td>
-      <td>7737.9</td>
-      <td>7.85</td>
-      <td>40.9</td>
-      <td>8.1</td>
-      <td>0.97</td>
-      <td>12.9</td>
-      <td>2.00</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>1605</td>
-      <td>ＩＮＰＥＸ</td>
-      <td>鉱業</td>
-      <td>3775.0</td>
-      <td>6047.8</td>
-      <td>8.77</td>
-      <td>37.6</td>
-      <td>10.2</td>
-      <td>0.86</td>
-      <td>9.3</td>
-      <td>2.96</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>1928</td>
-      <td>積水ハウス</td>
-      <td>建設業</td>
-      <td>3406.0</td>
-      <td>5453.5</td>
-      <td>8.78</td>
-      <td>37.5</td>
-      <td>8.6</td>
-      <td>1.02</td>
-      <td>12.6</td>
-      <td>4.24</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>1879</td>
-      <td>新日本建設</td>
-      <td>建設業</td>
-      <td>2314.0</td>
-      <td>3682.3</td>
-      <td>8.89</td>
-      <td>37.2</td>
-      <td>8.9</td>
-      <td>1.00</td>
-      <td>11.9</td>
-      <td>3.40</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>1899</td>
-      <td>福田組</td>
-      <td>建設業</td>
-      <td>4875.0</td>
-      <td>7523.4</td>
-      <td>9.45</td>
-      <td>35.2</td>
-      <td>10.9</td>
-      <td>0.86</td>
-      <td>8.3</td>
-      <td>2.66</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>1820</td>
-      <td>西松建設</td>
-      <td>建設業</td>
-      <td>5527.0</td>
-      <td>8171.5</td>
-      <td>10.29</td>
-      <td>32.4</td>
-      <td>9.1</td>
-      <td>1.14</td>
-      <td>14.2</td>
-      <td>4.54</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>1888</td>
-      <td>若築建設</td>
-      <td>建設業</td>
-      <td>3870.0</td>
-      <td>5670.0</td>
-      <td>10.48</td>
-      <td>31.7</td>
-      <td>11.3</td>
-      <td>0.93</td>
-      <td>10.9</td>
-      <td>3.73</td>
-    </tr>
-  </tbody>
-</table>
-            </div>
-        </div>
-
-        <!-- 📋 全体ランキング (係数 < 22.5) -->
-        <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-secondary mb-3">📋 全体ランキング（ミックス係数 22.5未満）</h5>
-            <div class="table-responsive">
-                <table class="dataframe table table-hover table-striped mb-0">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>コード</th>
-      <th>社名</th>
-      <th>業種</th>
-      <th>現在値</th>
-      <th>理論株価</th>
-      <th>ミックス係数</th>
-      <th>割安度(%)</th>
-      <th>PER</th>
-      <th>PBR</th>
-      <th>ROE(%)</th>
-      <th>配当利回り(%)</th>
-    </tr>
-    <tr>
-      <th>順位</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1</th>
-      <td>1911</td>
-      <td>住友林業</td>
-      <td>建設業</td>
-      <td>1329.0</td>
-      <td>2503.5</td>
-      <td>6.34</td>
-      <td>46.9</td>
-      <td>9.7</td>
-      <td>0.66</td>
-      <td>13.0</td>
-      <td>3.71</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1662</td>
-      <td>石油資源開発</td>
-      <td>鉱業</td>
-      <td>1820.0</td>
-      <td>3294.1</td>
-      <td>6.87</td>
-      <td>44.7</td>
-      <td>8.7</td>
-      <td>0.79</td>
-      <td>7.5</td>
-      <td>2.47</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>2153</td>
-      <td>Ｅ・Ｊホールディングス</td>
-      <td>サービス業</td>
-      <td>1777.0</td>
-      <td>3206.6</td>
-      <td>6.91</td>
-      <td>44.6</td>
-      <td>8.7</td>
-      <td>0.79</td>
-      <td>9.1</td>
-      <td>4.06</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>1925</td>
-      <td>大和ハウス工業</td>
-      <td>建設業</td>
-      <td>4571.0</td>
-      <td>7737.9</td>
-      <td>7.85</td>
-      <td>40.9</td>
-      <td>8.1</td>
-      <td>0.97</td>
-      <td>12.9</td>
-      <td>2.00</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>1605</td>
-      <td>ＩＮＰＥＸ</td>
-      <td>鉱業</td>
-      <td>3775.0</td>
-      <td>6047.8</td>
-      <td>8.77</td>
-      <td>37.6</td>
-      <td>10.2</td>
-      <td>0.86</td>
-      <td>9.3</td>
-      <td>2.96</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>1928</td>
-      <td>積水ハウス</td>
-      <td>建設業</td>
-      <td>3406.0</td>
-      <td>5453.5</td>
-      <td>8.78</td>
-      <td>37.5</td>
-      <td>8.6</td>
-      <td>1.02</td>
-      <td>12.6</td>
-      <td>4.24</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>1879</td>
-      <td>新日本建設</td>
-      <td>建設業</td>
-      <td>2314.0</td>
-      <td>3682.3</td>
-      <td>8.89</td>
-      <td>37.2</td>
-      <td>8.9</td>
-      <td>1.00</td>
-      <td>11.9</td>
-      <td>3.40</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>1899</td>
-      <td>福田組</td>
-      <td>建設業</td>
-      <td>4875.0</td>
-      <td>7523.4</td>
-      <td>9.45</td>
-      <td>35.2</td>
-      <td>10.9</td>
-      <td>0.86</td>
-      <td>8.3</td>
-      <td>2.66</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>1820</td>
-      <td>西松建設</td>
-      <td>建設業</td>
-      <td>5527.0</td>
-      <td>8171.5</td>
-      <td>10.29</td>
-      <td>32.4</td>
-      <td>9.1</td>
-      <td>1.14</td>
-      <td>14.2</td>
-      <td>4.54</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>1888</td>
-      <td>若築建設</td>
-      <td>建設業</td>
-      <td>3870.0</td>
-      <td>5670.0</td>
-      <td>10.48</td>
-      <td>31.7</td>
-      <td>11.3</td>
-      <td>0.93</td>
-      <td>10.9</td>
-      <td>3.73</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>1762</td>
-      <td>高松コンストラクショングループ</td>
-      <td>建設業</td>
-      <td>3960.0</td>
-      <td>5586.9</td>
-      <td>11.30</td>
-      <td>29.1</td>
-      <td>12.1</td>
-      <td>0.94</td>
-      <td>9.8</td>
-      <td>3.60</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>1835</td>
-      <td>東鉄工業</td>
-      <td>建設業</td>
-      <td>4015.0</td>
-      <td>5649.2</td>
-      <td>11.37</td>
-      <td>28.9</td>
-      <td>10.8</td>
-      <td>1.06</td>
-      <td>10.2</td>
-      <td>3.78</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>1813</td>
-      <td>不動テトラ</td>
-      <td>建設業</td>
-      <td>2877.0</td>
-      <td>4032.6</td>
-      <td>11.45</td>
-      <td>28.7</td>
-      <td>9.8</td>
-      <td>1.17</td>
-      <td>12.5</td>
-      <td>3.02</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>1885</td>
-      <td>東亜建設工業</td>
-      <td>建設業</td>
-      <td>2110.0</td>
-      <td>2896.3</td>
-      <td>11.94</td>
-      <td>27.1</td>
-      <td>8.5</td>
-      <td>1.41</td>
-      <td>17.7</td>
-      <td>3.70</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>1719</td>
-      <td>安藤・間</td>
-      <td>建設業</td>
-      <td>1903.0</td>
-      <td>2423.1</td>
-      <td>13.88</td>
-      <td>21.5</td>
-      <td>10.0</td>
-      <td>1.38</td>
-      <td>15.9</td>
+      <td>1</td>
+      <td>6430</td>
+      <td>ダイコク電機</td>
+      <td>2456</td>
+      <td>+55.6%</td>
       <td>4.44</td>
+      <td>4.04%</td>
+      <td>6.2</td>
+      <td>0.71</td>
+      <td>9.9%</td>
+      <td>5532</td>
+      <td>機械</td>
     </tr>
     <tr>
-      <th>16</th>
-      <td>2120</td>
-      <td>ＬＩＦＵＬＬ</td>
-      <td>サービス業</td>
-      <td>236.0</td>
-      <td>299.6</td>
-      <td>13.96</td>
-      <td>21.2</td>
-      <td>9.1</td>
-      <td>1.53</td>
-      <td>11.5</td>
-      <td>5.53</td>
+      <td>2</td>
+      <td>5445</td>
+      <td>東京鐵鋼</td>
+      <td>2022</td>
+      <td>+52.2%</td>
+      <td>5.15</td>
+      <td>4.94%</td>
+      <td>6.4</td>
+      <td>0.80</td>
+      <td>12.0%</td>
+      <td>4228</td>
+      <td>鉄鋼</td>
     </tr>
     <tr>
-      <th>17</th>
-      <td>2121</td>
-      <td>ＭＩＸＩ</td>
-      <td>情報・通信業</td>
-      <td>3305.0</td>
-      <td>4101.8</td>
-      <td>14.61</td>
-      <td>19.4</td>
-      <td>12.8</td>
-      <td>1.14</td>
-      <td>10.9</td>
-      <td>5.71</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>1946</td>
-      <td>トーエネック</td>
-      <td>建設業</td>
-      <td>2167.0</td>
-      <td>2686.2</td>
-      <td>14.64</td>
-      <td>19.3</td>
-      <td>11.3</td>
-      <td>1.30</td>
-      <td>13.9</td>
-      <td>3.62</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>1814</td>
-      <td>大末建設</td>
-      <td>建設業</td>
-      <td>3720.0</td>
-      <td>4520.8</td>
-      <td>15.23</td>
-      <td>17.7</td>
-      <td>10.2</td>
-      <td>1.50</td>
-      <td>19.5</td>
-      <td>5.07</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>1968</td>
-      <td>太平電業</td>
-      <td>建設業</td>
-      <td>2433.0</td>
-      <td>2901.5</td>
-      <td>15.82</td>
-      <td>16.1</td>
-      <td>12.9</td>
-      <td>1.23</td>
-      <td>11.1</td>
-      <td>3.14</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>1377</td>
-      <td>サカタのタネ</td>
-      <td>水産・農林業</td>
-      <td>4380.0</td>
-      <td>5200.2</td>
-      <td>15.96</td>
-      <td>15.8</td>
-      <td>15.4</td>
-      <td>1.04</td>
-      <td>7.2</td>
-      <td>2.29</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>1941</td>
-      <td>中電工</td>
-      <td>建設業</td>
-      <td>5160.0</td>
-      <td>6062.7</td>
-      <td>16.30</td>
-      <td>14.9</td>
-      <td>15.1</td>
-      <td>1.08</td>
-      <td>7.8</td>
-      <td>2.77</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>2117</td>
-      <td>ウェルネオシュガー</td>
-      <td>食料品</td>
-      <td>2796.0</td>
-      <td>3246.4</td>
-      <td>16.69</td>
-      <td>13.9</td>
-      <td>14.1</td>
-      <td>1.18</td>
-      <td>9.1</td>
-      <td>4.17</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>1780</td>
-      <td>ヤマウラ</td>
-      <td>建設業</td>
-      <td>1470.0</td>
-      <td>1655.6</td>
-      <td>17.74</td>
-      <td>11.2</td>
-      <td>8.8</td>
-      <td>2.02</td>
-      <td>10.4</td>
-      <td>2.57</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>1808</td>
-      <td>長谷工コーポレーション</td>
-      <td>建設業</td>
-      <td>2806.0</td>
-      <td>3147.3</td>
-      <td>17.88</td>
-      <td>10.8</td>
-      <td>13.7</td>
-      <td>1.30</td>
-      <td>11.6</td>
-      <td>3.57</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>1963</td>
-      <td>日揮ホールディングス</td>
-      <td>建設業</td>
-      <td>2355.5</td>
-      <td>2614.9</td>
-      <td>18.26</td>
-      <td>9.9</td>
-      <td>13.6</td>
-      <td>1.34</td>
-      <td>11.9</td>
-      <td>2.22</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>1939</td>
-      <td>四電工</td>
-      <td>建設業</td>
-      <td>2130.0</td>
-      <td>2306.4</td>
-      <td>19.19</td>
-      <td>7.6</td>
-      <td>13.4</td>
-      <td>1.43</td>
-      <td>12.5</td>
-      <td>3.95</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>1976</td>
-      <td>明星工業</td>
-      <td>建設業</td>
-      <td>1829.0</td>
-      <td>1976.8</td>
-      <td>19.26</td>
-      <td>7.5</td>
-      <td>15.6</td>
-      <td>1.23</td>
-      <td>8.1</td>
-      <td>4.35</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>1871</td>
-      <td>ピーエス・コンストラクション</td>
-      <td>建設業</td>
-      <td>2321.0</td>
-      <td>2481.2</td>
-      <td>19.69</td>
-      <td>6.5</td>
-      <td>11.6</td>
-      <td>1.69</td>
-      <td>15.9</td>
-      <td>4.37</td>
-    </tr>
-    <tr>
-      <th>30</th>
-      <td>1975</td>
-      <td>朝日工業社</td>
-      <td>建設業</td>
-      <td>3940.0</td>
-      <td>3988.7</td>
-      <td>21.95</td>
-      <td>1.2</td>
-      <td>11.0</td>
-      <td>2.00</td>
-      <td>20.4</td>
-      <td>3.75</td>
+      <td>3</td>
+      <td>5975</td>
+      <td>東プレ</td>
+      <td>3190</td>
+      <td>+51.4%</td>
+      <td>5.31</td>
+      <td>3.09%</td>
+      <td>8.5</td>
+      <td>0.62</td>
+      <td>9.9%</td>
+      <td>6567</td>
+      <td>金属製品</td>
     </tr>
   </tbody>
-</table>
+</table></div>
+        </div>
+
+        <div class="card p-3 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold text-danger mb-0">🔥 スタンダード：超・割安株（係数 < 5.625）</h5>
+                <a href="standard.html" class="btn btn-outline-dark btn-sm py-0">全て見る →</a>
             </div>
+            <div class="table-container"><p class='p-3 text-muted text-center mb-0'>該当する銘柄はありません。</p></div>
         </div>
     </div>
 </body>
