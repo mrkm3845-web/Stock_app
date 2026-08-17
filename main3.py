@@ -5,6 +5,7 @@ import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
+from curl_cffi import requests as cffi_requests
 import pandas as pd
 import requests
 import yfinance as yf
@@ -52,27 +53,21 @@ def fetch_jpx_stock_list(market_name):
 
 
 # ==========================================
-# 2. 個別銘柄の分析ロジック（安全待機付き）
+# 2. 個別銘柄の分析ロジック（Chrome偽装セッション）
 # ==========================================
 def analyze_single_stock(stock_info):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
     ticker_symbol = f"{code}.T"
 
-    # API制限対策：わずかに待機
-    time.sleep(0.05)
-
     info = None
-    for attempt in range(2):
-        try:
-            ticker = yf.Ticker(ticker_symbol)
-            info = ticker.info
-            if info and (
-                info.get("currentPrice") or info.get("regularMarketPrice")
-            ):
-                break
-        except Exception:
-            time.sleep(0.8)
+    try:
+        # Chromeブラウザとして振る舞い、Yahooのアクセス遮断を回避
+        session = cffi_requests.Session(impersonate="chrome")
+        ticker = yf.Ticker(ticker_symbol, session=session)
+        info = ticker.info
+    except Exception:
+        return None
 
     if not info:
         return None
@@ -120,32 +115,21 @@ def analyze_single_stock(stock_info):
             else (op_margin if op_margin else 0.0)
         )
 
-        # ----------------------------------------------------
-        # 配当利回りの安全な計算（株式分割バグ対策 ＆ 上限ガード）
-        # ----------------------------------------------------
+        # ★ 配当利回りの安全な計算（JR東海などの株式分割バグ対策）
         div_yield_pct = 0.0
-
-        # 1. dividendYield からの取得（通常は 0.021 のような小数形式）
         if div_yield is not None:
-            if div_yield < 0.20:  # 0.20未満なら小数表記（例: 0.025 -> 2.5%）
+            if div_yield < 0.20:
                 div_yield_pct = div_yield * 100
-            elif (
-                div_yield <= 15.0
-            ):  # すでに%表記で15%以下ならそのまま採用（例: 3.5 -> 3.5%）
+            elif div_yield <= 15.0:
                 div_yield_pct = div_yield
-
-        # 2. dividendYield が取れず dividendRate（1株配当）がある場合
         elif div_rate and current_price and current_price > 0:
             calc_yield = (div_rate / current_price) * 100
-            # 株式分割のデータ不整合（15%超え）を防ぐ
             if calc_yield <= 15.0:
                 div_yield_pct = calc_yield
 
-        # 3. 最終ガード：それでも15%を超える場合はデータ異常として0%にする
         if div_yield_pct > 15.0 or div_yield_pct < 0.0:
             div_yield_pct = 0.0
-        # ----------------------------------------------------
-        
+
         if mix_index < 22.5 and roe_pct >= 7.0 and op_margin_pct >= 6.0:
             return {
                 "コード": code,
@@ -166,9 +150,9 @@ def analyze_single_stock(stock_info):
 
 
 # ==========================================
-# 3. 並列処理でランキング生成（5並列で安全化）
+# 3. 並列処理でランキング生成
 # ==========================================
-def generate_ranking(stocks_list, market_label, max_workers=5):
+def generate_ranking(stocks_list, market_label, max_workers=10):
     results = []
     print(
         f">> 【{market_label}】全 {len(stocks_list)} 銘柄のスキャン開始..."
@@ -230,14 +214,11 @@ def generate_market_page(df, market_title, filename):
     filepath = os.path.join(DOCS_DIR, filename)
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # 1. 超・割安（5.625未満）
     ultra_df = (
         df[df["ミックス係数"] < 5.625]
         if "ミックス係数" in df.columns
         else pd.DataFrame()
     )
-
-    # 2. 厳選割安（11.25未満すべてを含むように修正！）
     strict_df = (
         df[df["ミックス係数"] < 11.25]
         if "ミックス係数" in df.columns
@@ -269,17 +250,17 @@ def generate_market_page(df, market_title, filename):
         </div>
 
         <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-danger mb-2">🔥 超・割安株（ミックス係数 5.625未満 / {len(ultra_df)}件）</h5>
+            <h5 class="fw-bold text-danger mb-2">🔥 超・割安株（係数 5.625未満 / {len(ultra_df)}件）</h5>
             <div class="table-container">{ultra_table}</div>
         </div>
 
         <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-success mb-2">🎯 厳選割安株（ミックス係数 11.25未満 / {len(strict_df)}件）</h5>
+            <h5 class="fw-bold text-success mb-2">🎯 厳選割安株（係数 11.25未満 / {len(strict_df)}件）</h5>
             <div class="table-container">{strict_table}</div>
         </div>
 
         <div class="card p-3 bg-white">
-            <h5 class="fw-bold text-secondary mb-2">📋 全体ランキング（ミックス係数 22.5未満 / {len(df)}件）</h5>
+            <h5 class="fw-bold text-secondary mb-2">📋 全体ランキング（係数 22.5未満 / {len(df)}件）</h5>
             <div class="table-container">{all_table}</div>
         </div>
     </div>
@@ -425,10 +406,6 @@ if __name__ == "__main__":
     # 1. プライム全件スキャン
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_df = generate_ranking(prime_stocks, "プライム")
-
-    # 休憩を入れてアクセス制限をリセット
-    print(">> 待機中（5秒間）...")
-    time.sleep(5)
 
     # 2. スタンダード全件スキャン
     standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
