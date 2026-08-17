@@ -3,11 +3,14 @@ name: 毎日株価自動スクリーニング
 on:
   schedule:
     # 協定世界時(UTC)で設定（日本時間の月〜金 17:37 に実行）
-    # UTC 8:30 = JST 17:30
     - cron: '37 8 * * 1-5'
   
   # GitHubの画面から手動でポチッと実行できるようにする設定
   workflow_dispatch:
+
+# ★ 追加1: GitHub Actionsがリポジトリにファイルを保存(commit/push)するための書き込み権限
+permissions:
+  contents: write
 
 jobs:
   run-screener:
@@ -29,10 +32,29 @@ jobs:
         run: |
           pip install yfinance pandas requests xlrd openpyxl numpy
 
-# 4. スクリプトの実行
+      # 4. スクリプトの実行
       - name: 株価スクリーニングを実行
         env:
-          # ★ ここを追加：GitHub Secretsの値を環境変数として渡す
+          # 日本時間のタイムゾーン
+          TZ: 'Asia/Tokyo'
+          # GitHub SecretsからDiscord Webhook URLを渡す
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           python main3.py
+
+      # ★ 追加2: 生成された docs/index.html を自動でコミット＆プッシュするステップ
+      - name: 生成したHTMLをコミット＆プッシュ
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # docs フォルダ（HTML）をコミット対象に追加
+          git add docs/
+          
+          # 変更がある場合のみコミットしてGitHubにプッシュ
+          if git diff --staged --quiet; then
+            echo ">> HTMLに変更はありませんでした。"
+          else
+            git commit -m "Update stock dashboard [skip ci]"
+            git push
+          fi
