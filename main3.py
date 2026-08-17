@@ -52,14 +52,16 @@ def fetch_jpx_stock_list(market_name):
 
 
 # ==========================================
-# 2. 個別銘柄の分析ロジック（リトライ機能付き）
+# 2. 個別銘柄の分析ロジック（安全待機付き）
 # ==========================================
 def analyze_single_stock(stock_info):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
     ticker_symbol = f"{code}.T"
 
-    # 通信エラー対策：最大2回リトライ
+    # API制限対策：わずかに待機
+    time.sleep(0.05)
+
     info = None
     for attempt in range(2):
         try:
@@ -70,7 +72,7 @@ def analyze_single_stock(stock_info):
             ):
                 break
         except Exception:
-            time.sleep(0.5)
+            time.sleep(0.8)
 
     if not info:
         return None
@@ -144,9 +146,9 @@ def analyze_single_stock(stock_info):
 
 
 # ==========================================
-# 3. 並列処理でランキング生成
+# 3. 並列処理でランキング生成（5並列で安全化）
 # ==========================================
-def generate_ranking(stocks_list, market_label, max_workers=8):
+def generate_ranking(stocks_list, market_label, max_workers=5):
     results = []
     print(
         f">> 【{market_label}】全 {len(stocks_list)} 銘柄のスキャン開始..."
@@ -170,6 +172,7 @@ def generate_ranking(stocks_list, market_label, max_workers=8):
             drop=True
         )
         df.insert(0, "順位", df.index + 1)
+        print(f">> 【{market_label}】抽出成功: {len(df)} 件")
         return df
     else:
         return pd.DataFrame(columns=COLUMNS)
@@ -345,7 +348,7 @@ def generate_index_page(prime_df, standard_df):
 
 
 # ==========================================
-# 5. Discord通知（段階別フル表示）
+# 5. Discord通知
 # ==========================================
 def send_to_discord(prime_df, standard_df, webhook_url):
     if not webhook_url or "discord.com" not in webhook_url:
@@ -361,7 +364,6 @@ def send_to_discord(prime_df, standard_df, webhook_url):
         text += f"{'順':<2} {'コード':<5} {'社名':<8} {'割安度':<6} {'係数':<5} {'利回り'}\n"
         text += "-" * 40 + "\n"
 
-        # 5.625未満、11.25未満、その他上位をピックアップ
         ultra = df[df["ミックス係数"] < 5.625]
         strict = df[
             (df["ミックス係数"] >= 5.625) & (df["ミックス係数"] < 11.25)
@@ -400,6 +402,10 @@ if __name__ == "__main__":
     # 1. プライム全件スキャン
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_df = generate_ranking(prime_stocks, "プライム")
+
+    # 休憩を入れてアクセス制限をリセット
+    print(">> 待機中（5秒間）...")
+    time.sleep(5)
 
     # 2. スタンダード全件スキャン
     standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
