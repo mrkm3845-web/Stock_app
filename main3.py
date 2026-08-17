@@ -120,12 +120,32 @@ def analyze_single_stock(stock_info):
             else (op_margin if op_margin else 0.0)
         )
 
+        # ----------------------------------------------------
+        # 配当利回りの安全な計算（株式分割バグ対策 ＆ 上限ガード）
+        # ----------------------------------------------------
         div_yield_pct = 0.0
-        if div_yield is not None:
-            div_yield_pct = (div_yield * 100) if div_yield < 1.0 else div_yield
-        elif div_rate and current_price:
-            div_yield_pct = (div_rate / current_price) * 100
 
+        # 1. dividendYield からの取得（通常は 0.021 のような小数形式）
+        if div_yield is not None:
+            if div_yield < 0.20:  # 0.20未満なら小数表記（例: 0.025 -> 2.5%）
+                div_yield_pct = div_yield * 100
+            elif (
+                div_yield <= 15.0
+            ):  # すでに%表記で15%以下ならそのまま採用（例: 3.5 -> 3.5%）
+                div_yield_pct = div_yield
+
+        # 2. dividendYield が取れず dividendRate（1株配当）がある場合
+        elif div_rate and current_price and current_price > 0:
+            calc_yield = (div_rate / current_price) * 100
+            # 株式分割のデータ不整合（15%超え）を防ぐ
+            if calc_yield <= 15.0:
+                div_yield_pct = calc_yield
+
+        # 3. 最終ガード：それでも15%を超える場合はデータ異常として0%にする
+        if div_yield_pct > 15.0 or div_yield_pct < 0.0:
+            div_yield_pct = 0.0
+        # ----------------------------------------------------
+        
         if mix_index < 22.5 and roe_pct >= 7.0 and op_margin_pct >= 6.0:
             return {
                 "コード": code,
