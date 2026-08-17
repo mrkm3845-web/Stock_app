@@ -29,7 +29,10 @@ jobs:
         run: |
           pip install yfinance pandas requests xlrd openpyxl numpy
 
-      # 4. スクリプトの実行（ファイル名が main.py 以外の場合は書き換えてください）
+# 4. スクリプトの実行
       - name: 株価スクリーニングを実行
+        env:
+          # ★ ここを追加：GitHub Secretsの値を環境変数として渡す
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           python main3.py
