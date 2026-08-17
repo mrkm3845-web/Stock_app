@@ -9,11 +9,23 @@ import pandas as pd
 import requests
 import yfinance as yf
 
-# ==========================================
-# 設定エリア
-# ==========================================
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 DOCS_DIR = "docs"
+
+COLUMNS = [
+    "順位",
+    "コード",
+    "社名",
+    "現在値",
+    "割安度",
+    "ミックス係数",
+    "利回り",
+    "PER",
+    "PBR",
+    "ROE",
+    "理論株価",
+    "業種",
+]
 
 
 # ==========================================
@@ -24,15 +36,19 @@ def fetch_jpx_stock_list(market_name):
     url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    res = requests.get(url, headers=headers)
-    df = pd.read_excel(io.BytesIO(res.content))
-    df = df[["コード", "銘柄名", "市場・商品区分", "33業種区分"]]
-    df["コード"] = df["コード"].astype(str)
+    try:
+        res = requests.get(url, headers=headers, timeout=30)
+        df = pd.read_excel(io.BytesIO(res.content))
+        df = df[["コード", "銘柄名", "市場・商品区分", "33業種区分"]]
+        df["コード"] = df["コード"].astype(str)
 
-    df_filtered = df[df["市場・商品区分"] == market_name]
-    stocks = df_filtered.to_dict("records")
-    print(f">> 【{market_name}】対象銘柄数: {len(stocks)} 件")
-    return stocks
+        df_filtered = df[df["市場・商品区分"] == market_name]
+        stocks = df_filtered.to_dict("records")
+        print(f">> 【{market_name}】対象銘柄数: {len(stocks)} 件")
+        return stocks
+    except Exception as e:
+        print(f">> JPXデータ取得エラー: {e}")
+        return []
 
 
 # ==========================================
@@ -62,30 +78,21 @@ def analyze_single_stock(stock_info):
         div_yield = info.get("dividendYield")
         div_rate = info.get("dividendRate")
 
-        # 基本チェック
         if not (eps and bps and pe and pb and eps > 0 and bps > 0):
             return None
 
-        # 異常値ガード1：データ狂いを除外
         if bps > current_price * 10 or eps > current_price * 2:
             return None
-
-        # 異常値ガード2：PER/PBRの異常値を除外
         if pe <= 1.0 or pe > 100.0 or pb <= 0.1 or pb > 20.0:
             return None
 
-        # ミックス係数 = PER * PBR
         mix_index = pe * pb
-
-        # グレアム理論株価 (22.5基準)
         graham_price = math.sqrt(22.5 * eps * bps)
         discount_rate = ((graham_price - current_price) / graham_price) * 100
 
-        # 異常値ガード3：極端な乖離の除外
         if discount_rate > 75.0:
             return None
 
-        # ROE・営業利益率の正規化
         roe_pct = (
             (roe * 100)
             if (roe is not None and roe < 1.0)
@@ -97,14 +104,12 @@ def analyze_single_stock(stock_info):
             else (op_margin if op_margin else 0.0)
         )
 
-        # 配当利回りの安全な計算
         div_yield_pct = 0.0
         if div_yield is not None:
             div_yield_pct = (div_yield * 100) if div_yield < 1.0 else div_yield
         elif div_rate and current_price:
             div_yield_pct = (div_rate / current_price) * 100
 
-        # 抽出条件：係数22.5未満、ROE 7%以上、営業利益率 6%以上
         if mix_index < 22.5 and roe_pct >= 7.0 and op_margin_pct >= 6.0:
             return {
                 "コード": code,
@@ -133,6 +138,9 @@ def generate_ranking(stocks_list, market_label, max_workers=10):
         f">> 【{market_label}】全 {len(stocks_list)} 銘柄のスキャン開始..."
     )
 
+    if not stocks_list:
+        return pd.DataFrame(columns=COLUMNS)
+
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
             executor.submit(analyze_single_stock, s): s for s in stocks_list
@@ -142,19 +150,17 @@ def generate_ranking(stocks_list, market_label, max_workers=10):
             if res:
                 results.append(res)
 
-    df = pd.DataFrame(results)
-    if not df.empty:
+    if results:
+        df = pd.DataFrame(results)
         df = df.sort_values(by="ミックス係数", ascending=True).reset_index(
             drop=True
         )
-        # 順位列を先頭に追加（インデックスずれを解消）
         df.insert(0, "順位", df.index + 1)
-    return df
+        return df
+    else:
+        return pd.DataFrame(columns=COLUMNS)
 
 
-# ==========================================
-# 4. HTML生成関数
-# ==========================================
 COMMON_CSS = """
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
@@ -164,8 +170,6 @@ COMMON_CSS = """
     .table { font-size: 0.85rem; margin-bottom: 0; }
     .table th { background-color: #212529 !important; color: white !important; white-space: nowrap; font-weight: 600; padding: 10px 8px; text-align: center; }
     .table td { vertical-align: middle; white-space: nowrap; padding: 8px; }
-    .table-striped tbody tr:nth-of-type(odd) { background-color: #ffffff; }
-    .table-striped tbody tr:nth-of-type(even) { background-color: #f8f9fa; }
     .badge-scroll { font-size: 0.75rem; background-color: #e9ecef; color: #495057; padding: 3px 8px; border-radius: 20px; }
 </style>
 """
@@ -186,10 +190,20 @@ def generate_market_page(df, market_title, filename):
     filepath = os.path.join(DOCS_DIR, filename)
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    ultra_table = build_table_html(df[df["ミックス係数"] < 5.625])
-    strict_table = build_table_html(
-        df[(df["ミックス係数"] >= 5.625) & (df["ミックス係数"] < 11.25)]
+    # 該当0件でも落ちない安全処理
+    ultra_df = (
+        df[df["ミックス係数"] < 5.625]
+        if "ミックス係数" in df.columns
+        else pd.DataFrame()
     )
+    strict_df = (
+        df[(df["ミックス係数"] >= 5.625) & (df["ミックス係数"] < 11.25)]
+        if "ミックス係数" in df.columns
+        else pd.DataFrame()
+    )
+
+    ultra_table = build_table_html(ultra_df)
+    strict_table = build_table_html(strict_df)
     all_table = build_table_html(df)
 
     html = f"""<!DOCTYPE html>
@@ -239,10 +253,19 @@ def generate_index_page(prime_df, standard_df):
     filepath = os.path.join(DOCS_DIR, "index.html")
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    prime_ultra = build_table_html(prime_df[prime_df["ミックス係数"] < 5.625])
-    standard_ultra = build_table_html(
-        standard_df[standard_df["ミックス係数"] < 5.625]
+    prime_ultra = (
+        prime_df[prime_df["ミックス係数"] < 5.625]
+        if "ミックス係数" in prime_df.columns
+        else pd.DataFrame()
     )
+    standard_ultra = (
+        standard_df[standard_df["ミックス係数"] < 5.625]
+        if "ミックス係数" in standard_df.columns
+        else pd.DataFrame()
+    )
+
+    prime_table = build_table_html(prime_ultra)
+    standard_table = build_table_html(standard_ultra)
 
     html = f"""<!DOCTYPE html>
 <html lang="ja">
@@ -263,7 +286,6 @@ def generate_index_page(prime_df, standard_df):
             <p class="text-muted small mb-0">最終更新: {now_str} (JST)</p>
         </div>
 
-        <!-- リンクボタン -->
         <div class="row g-3 mb-4">
             <div class="col-6">
                 <a href="prime.html" class="nav-btn bg-primary text-white text-center shadow-sm">
@@ -283,22 +305,20 @@ def generate_index_page(prime_df, standard_df):
             <span class="badge-scroll">👉 左右にスクロールできます</span>
         </div>
 
-        <!-- プライム超割安 速報 -->
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold text-danger mb-0">🔥 プライム：超・割安株（係数 < 5.625）</h5>
                 <a href="prime.html" class="btn btn-outline-primary btn-sm py-0">全て見る →</a>
             </div>
-            <div class="table-container">{prime_ultra}</div>
+            <div class="table-container">{prime_table}</div>
         </div>
 
-        <!-- スタンダード超割安 速報 -->
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold text-danger mb-0">🔥 スタンダード：超・割安株（係数 < 5.625）</h5>
                 <a href="standard.html" class="btn btn-outline-dark btn-sm py-0">全て見る →</a>
             </div>
-            <div class="table-container">{standard_ultra}</div>
+            <div class="table-container">{standard_table}</div>
         </div>
     </div>
 </body>
@@ -308,11 +328,13 @@ def generate_index_page(prime_df, standard_df):
         f.write(html)
 
 
-# ==========================================
-# 5. Discord通知
-# ==========================================
 def send_to_discord(df, title_label, webhook_url):
-    if not webhook_url or "discord.com" not in webhook_url or df.empty:
+    if (
+        not webhook_url
+        or "discord.com" not in webhook_url
+        or df.empty
+        or "ミックス係数" not in df.columns
+    ):
         return
 
     message = f"📊 **【{title_label}】** ({time.strftime('%Y-%m-%d %H:%M')})\n"
@@ -328,7 +350,7 @@ def send_to_discord(df, title_label, webhook_url):
     message += "```"
 
     try:
-        requests.post(webhook_url, json={"content": message})
+        requests.post(webhook_url, json={"content": message}, timeout=10)
     except Exception:
         pass
 
@@ -337,34 +359,32 @@ def send_to_discord(df, title_label, webhook_url):
 # 実行部
 # ==========================================
 if __name__ == "__main__":
-    # 1. プライム全件
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_df = generate_ranking(prime_stocks, "プライム")
 
-    # 2. スタンダード全件
     standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
     standard_df = generate_ranking(standard_stocks, "スタンダード")
 
-    # 3. HTMLファイル出力
     generate_market_page(prime_df, "プライム市場", "prime.html")
     generate_market_page(standard_df, "スタンダード市場", "standard.html")
     generate_index_page(prime_df, standard_df)
 
-    # 4. Discord通知
-    p_ultra = prime_df[prime_df["ミックス係数"] < 5.625]
-    if not p_ultra.empty:
-        send_to_discord(
-            p_ultra.head(5),
-            "🔥【プライム】係数5.625未満 超・割安株",
-            DISCORD_WEBHOOK_URL,
-        )
+    if not prime_df.empty and "ミックス係数" in prime_df.columns:
+        p_ultra = prime_df[prime_df["ミックス係数"] < 5.625]
+        if not p_ultra.empty:
+            send_to_discord(
+                p_ultra.head(5),
+                "🔥【プライム】係数5.625未満 超・割安株",
+                DISCORD_WEBHOOK_URL,
+            )
 
-    s_ultra = standard_df[standard_df["ミックス係数"] < 5.625]
-    if not s_ultra.empty:
-        send_to_discord(
-            s_ultra.head(5),
-            "🔥【スタンダード】係数5.625未満 超・割安株",
-            DISCORD_WEBHOOK_URL,
-        )
+    if not standard_df.empty and "ミックス係数" in standard_df.columns:
+        s_ultra = standard_df[standard_df["ミックス係数"] < 5.625]
+        if not s_ultra.empty:
+            send_to_discord(
+                s_ultra.head(5),
+                "🔥【スタンダード】係数5.625未満 超・割安株",
+                DISCORD_WEBHOOK_URL,
+            )
 
     print(">> 全ての処理が完了しました！")
