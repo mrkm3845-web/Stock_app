@@ -52,17 +52,30 @@ def fetch_jpx_stock_list(market_name):
 
 
 # ==========================================
-# 2. 個別銘柄の分析ロジック
+# 2. 個別銘柄の分析ロジック（リトライ機能付き）
 # ==========================================
 def analyze_single_stock(stock_info):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
     ticker_symbol = f"{code}.T"
 
-    try:
-        ticker = yf.Ticker(ticker_symbol)
-        info = ticker.info
+    # 通信エラー対策：最大2回リトライ
+    info = None
+    for attempt in range(2):
+        try:
+            ticker = yf.Ticker(ticker_symbol)
+            info = ticker.info
+            if info and (
+                info.get("currentPrice") or info.get("regularMarketPrice")
+            ):
+                break
+        except Exception:
+            time.sleep(0.5)
 
+    if not info:
+        return None
+
+    try:
         current_price = info.get("currentPrice") or info.get(
             "regularMarketPrice"
         )
@@ -81,6 +94,7 @@ def analyze_single_stock(stock_info):
         if not (eps and bps and pe and pb and eps > 0 and bps > 0):
             return None
 
+        # 異常値ガード
         if bps > current_price * 10 or eps > current_price * 2:
             return None
         if pe <= 1.0 or pe > 100.0 or pb <= 0.1 or pb > 20.0:
@@ -132,7 +146,7 @@ def analyze_single_stock(stock_info):
 # ==========================================
 # 3. 並列処理でランキング生成
 # ==========================================
-def generate_ranking(stocks_list, market_label, max_workers=10):
+def generate_ranking(stocks_list, market_label, max_workers=8):
     results = []
     print(
         f">> 【{market_label}】全 {len(stocks_list)} 銘柄のスキャン開始..."
@@ -161,6 +175,9 @@ def generate_ranking(stocks_list, market_label, max_workers=10):
         return pd.DataFrame(columns=COLUMNS)
 
 
+# ==========================================
+# 4. HTML生成
+# ==========================================
 COMMON_CSS = """
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
@@ -190,7 +207,6 @@ def generate_market_page(df, market_title, filename):
     filepath = os.path.join(DOCS_DIR, filename)
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # 該当0件でも落ちない安全処理
     ultra_df = (
         df[df["ミックス係数"] < 5.625]
         if "ミックス係数" in df.columns
@@ -327,65 +343,65 @@ def generate_index_page(prime_df, standard_df):
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(html)
 
+
+# ==========================================
+# 5. Discord通知（段階別フル表示）
+# ==========================================
 def send_to_discord(prime_df, standard_df, webhook_url):
     if not webhook_url or "discord.com" not in webhook_url:
         return
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-    message = f"📊 **【本日の割安優良株スクリーニング】** ({now_str})\n"
 
-    # 表を作成する内部関数
-    def make_section(df, market_name):
-        text = f"\n**【{market_name}】**\n```\n"
-        if df.empty:
-            text += "該当する銘柄はありませんでした。\n```\n"
-            return text
+    def format_market_message(df, market_name):
+        if df.empty or "ミックス係数" not in df.columns:
+            return f"\n**【{market_name}】** 該当なし\n"
 
-        # 5.625未満があれば優先、なければ11.25未満からTOP5
+        text = f"\n**【{market_name}】** (計 {len(df)} 銘柄抽出)\n```\n"
+        text += f"{'順':<2} {'コード':<5} {'社名':<8} {'割安度':<6} {'係数':<5} {'利回り'}\n"
+        text += "-" * 40 + "\n"
+
+        # 5.625未満、11.25未満、その他上位をピックアップ
         ultra = df[df["ミックス係数"] < 5.625]
-        target = ultra if not ultra.empty else df[df["ミックス係数"] < 11.25]
-        label = "🔥 超・割安 (係数 < 5.625)" if not ultra.empty else "🎯 厳選割安 (係数 < 11.25)"
+        strict = df[
+            (df["ミックス係数"] >= 5.625) & (df["ミックス係数"] < 11.25)
+        ]
 
-        text += f"▼ {label}\n"
-        text += f"{'順':<2} {'コード':<5} {'社名':<9} {'割安度':<6} {'係数':<5} {'利回り'}\n"
-        text += "-" * 42 + "\n"
+        if not ultra.empty:
+            text += "▼ 🔥 超・割安 (係数 < 5.625)\n"
+            for _, r in ultra.head(3).iterrows():
+                sname = (r["社名"][:6] + "..") if len(r["社名"]) > 6 else r["社名"]
+                text += f"{r['順位']:<3} {r['コード']:<6} {sname:<8} {r['割安度']:<7} {r['ミックス係数']:<5.2f} {r['利回り']}\n"
 
-        for _, row in target.head(5).iterrows():
-            short_name = (
-                (row["社名"][:7] + "..")
-                if len(row["社名"]) > 7
-                else row["社名"]
-            )
-            text += f"{row['順位']:<3} {row['コード']:<6} {short_name:<9} {row['割安度']:<7} {row['ミックス係数']:<5.2f} {row['利回り']}\n"
-        text += "```\n"
+        if not strict.empty:
+            text += "▼ 🎯 厳選割安 (係数 < 11.25)\n"
+            for _, r in strict.head(3).iterrows():
+                sname = (r["社名"][:6] + "..") if len(r["社名"]) > 6 else r["社名"]
+                text += f"{r['順位']:<3} {r['コード']:<6} {sname:<8} {r['割安度']:<7} {r['ミックス係数']:<5.2f} {r['利回り']}\n"
+
+        text += "```"
         return text
 
-    # プライムとスタンダードを合体
-    message += make_section(prime_df, "🏛️ プライム市場")
-    message += make_section(standard_df, "🏢 スタンダード市場")
-    message += "👉 詳細Webサイト: https://mrkm3845-web.github.io/Stock_app/"
+    msg = f"📊 **【割安優良株スクリーニング速報】** ({now_str})\n"
+    msg += format_market_message(prime_df, "🏛️ プライム市場")
+    msg += format_market_message(standard_df, "🏢 スタンダード市場")
+    msg += "\n👉 全ランキング: https://mrkm3845-web.github.io/Stock_app/"
 
     try:
-        res = requests.post(
-            webhook_url, json={"content": message}, timeout=10
-        )
-        if res.status_code in [200, 204]:
-            print(">> Discord通知を正常に送信しました！")
-        else:
-            print(f">> Discord送信エラー（ステータス: {res.status_code}）")
-    except Exception as e:
-        print(f">> Discord送信例外: {e}")
+        requests.post(webhook_url, json={"content": msg}, timeout=10)
+    except Exception:
+        pass
 
 
 # ==========================================
 # 実行部
 # ==========================================
 if __name__ == "__main__":
-    # 1. プライム全件
+    # 1. プライム全件スキャン
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_df = generate_ranking(prime_stocks, "プライム")
 
-    # 2. スタンダード全件
+    # 2. スタンダード全件スキャン
     standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
     standard_df = generate_ranking(standard_stocks, "スタンダード")
 
@@ -394,7 +410,7 @@ if __name__ == "__main__":
     generate_market_page(standard_df, "スタンダード市場", "standard.html")
     generate_index_page(prime_df, standard_df)
 
-    # 4. まとめて1通でDiscord通知！
+    # 4. まとめてDiscord通知
     send_to_discord(prime_df, standard_df, DISCORD_WEBHOOK_URL)
 
     print(">> 全ての処理が完了しました！")
