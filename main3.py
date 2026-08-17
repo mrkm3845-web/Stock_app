@@ -1,8 +1,10 @@
 import io
 import math
 import os
+import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime
 import pandas as pd
 import requests
 import yfinance as yf
@@ -10,17 +12,11 @@ import yfinance as yf
 # ==========================================
 # 設定エリア
 # ==========================================
-# 環境変数から取得（GitHub Actions対応）
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
-# URLがセットされていない場合は安全のために終了する
-if not DISCORD_WEBHOOK_URL:
-    print(
-        "❌ エラー: 環境変数 'DISCORD_WEBHOOK_URL' が設定されていません。",
-        file=sys.stderr,
-    )
-    # ローカル検証時などで通知を飛ばさない場合は終了させずにスルーでもOK
+
 TARGET_MARKET = "プライム（内国株式）"
 MAX_STOCKS_TO_CHECK = 100
+DOCS_DIR = "docs"
 
 
 # ==========================================
@@ -72,7 +68,7 @@ def analyze_single_stock(stock_info):
         div_yield = info.get("dividendYield")
         div_rate = info.get("dividendRate")
 
-        # EPS・BPS・PER・PBRの基本チェック
+        # 基本チェック
         if not (eps and bps and pe and pb and eps > 0 and bps > 0):
             return None
 
@@ -84,14 +80,14 @@ def analyze_single_stock(stock_info):
         if pe <= 1.0 or pe > 100.0 or pb <= 0.1 or pb > 20.0:
             return None
 
-        # ★ ミックス係数 = PER * PBR
+        # ミックス係数 = PER * PBR
         mix_index = pe * pb
 
         # グレアム理論株価 (22.5基準)
         graham_price = math.sqrt(22.5 * eps * bps)
         discount_rate = ((graham_price - current_price) / graham_price) * 100
 
-        # 異常値ガード3：理論株価が現在値から乖離しすぎているものを除外
+        # 異常値ガード3：極端な乖離の除外
         if discount_rate > 75.0:
             return None
 
@@ -114,7 +110,7 @@ def analyze_single_stock(stock_info):
         elif div_rate and current_price:
             div_yield_pct = (div_rate / current_price) * 100
 
-        # 基本フィルター：ミックス係数 22.5未満 かつ ROE 7%以上 かつ 営業利益率 6%以上
+        # 条件：係数22.5未満、ROE 7%以上、営業利益率 6%以上
         if mix_index < 22.5 and roe_pct >= 7.0 and op_margin_pct >= 6.0:
             return {
                 "コード": code,
@@ -154,7 +150,6 @@ def generate_ranking(stocks_list, max_workers=10):
 
     df = pd.DataFrame(results)
     if not df.empty:
-        # ミックス係数が小さい順（＝割安度が高い順）にソート
         df = df.sort_values(by="ミックス係数", ascending=True).reset_index(
             drop=True
         )
@@ -164,7 +159,84 @@ def generate_ranking(stocks_list, max_workers=10):
 
 
 # ==========================================
-# 4. Discordへの通知機能
+# 4. HTMLダッシュボードの生成（★追加）
+# ==========================================
+def generate_html_dashboard(df):
+    os.makedirs(DOCS_DIR, exist_ok=True)
+    html_file = os.path.join(DOCS_DIR, "index.html")
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # セクションごとのテーブルHTML
+    def build_table(target_df):
+        if target_df.empty:
+            return "<p class='p-3 text-muted text-center'>該当する銘柄はありません。</p>"
+        return target_df.to_html(
+            classes="table table-hover table-striped mb-0", border=0
+        )
+
+    ultra_table = build_table(df[df["ミックス係数"] < 5.625])
+    strict_table = build_table(
+        df[(df["ミックス係数"] >= 5.625) & (df["ミックス係数"] < 11.25)]
+    )
+    all_table = build_table(df)
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>割安優良株スクリーニング</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {{ background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding-bottom: 50px; }}
+        .card {{ border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: none; margin-bottom: 20px; }}
+        .table-responsive {{ border-radius: 8px; overflow: hidden; }}
+        th {{ background-color: #212529 !important; color: white !important; white-space: nowrap; }}
+        td {{ vertical-align: middle; white-space: nowrap; }}
+        .badge-mix {{ font-size: 0.9em; }}
+    </style>
+</head>
+<body>
+    <div class="container py-4 max-w-6xl">
+        <div class="card p-4 bg-white mb-4">
+            <h2 class="h4 mb-1 text-primary fw-bold">📊 割安優良株スクリーニング ダッシュボード</h2>
+            <p class="text-muted small mb-0">最終更新: {now_str} (JST) / 抽出数: {len(df)} 件</p>
+        </div>
+
+        <!-- 🔥 超・割安株 (係数 < 5.625) -->
+        <div class="card p-3 bg-white">
+            <h5 class="fw-bold text-danger mb-3">🔥 超・割安株（ミックス係数 5.625未満）</h5>
+            <div class="table-responsive">
+                {ultra_table}
+            </div>
+        </div>
+
+        <!-- 🎯 厳選割安株 (5.625 <= 係数 < 11.25) -->
+        <div class="card p-3 bg-white">
+            <h5 class="fw-bold text-success mb-3">🎯 厳選割安株（ミックス係数 11.25未満）</h5>
+            <div class="table-responsive">
+                {strict_table}
+            </div>
+        </div>
+
+        <!-- 📋 全体ランキング (係数 < 22.5) -->
+        <div class="card p-3 bg-white">
+            <h5 class="fw-bold text-secondary mb-3">📋 全体ランキング（ミックス係数 22.5未満）</h5>
+            <div class="table-responsive">
+                {all_table}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+"""
+    with open(html_file, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f">> HTMLダッシュボードを {html_file} に出力しました。")
+
+
+# ==========================================
+# 5. Discordへの通知機能
 # ==========================================
 def send_to_discord(df, title_label, webhook_url):
     if not webhook_url or "discord.com" not in webhook_url or df.empty:
@@ -198,8 +270,11 @@ if __name__ == "__main__":
     target_list = all_stocks[:MAX_STOCKS_TO_CHECK]
     ranking_df = generate_ranking(target_list)
 
+    # 1. HTMLダッシュボードを生成（docs/index.html）
+    generate_html_dashboard(ranking_df)
+
     if not ranking_df.empty:
-        # ① 【超割安】ミックス係数 5.625 未満
+        # 2. Discord通知
         ultra_cheap_df = ranking_df[ranking_df["ミックス係数"] < 5.625]
         if not ultra_cheap_df.empty:
             send_to_discord(
@@ -208,8 +283,10 @@ if __name__ == "__main__":
                 DISCORD_WEBHOOK_URL,
             )
 
-        # ② 【みきまる基準】ミックス係数 11.25 未満
-        strict_cheap_df = ranking_df[ranking_df["ミックス係数"] < 11.25]
+        strict_cheap_df = ranking_df[
+            (ranking_df["ミックス係数"] >= 5.625)
+            & (ranking_df["ミックス係数"] < 11.25)
+        ]
         if not strict_cheap_df.empty:
             send_to_discord(
                 strict_cheap_df.head(5),
@@ -217,10 +294,9 @@ if __name__ == "__main__":
                 DISCORD_WEBHOOK_URL,
             )
 
-        # ③ 【標準】グレアム基準 22.5 未満（TOP 10）
         send_to_discord(
             ranking_df.head(10),
-            "📊 割安優良株ランキング TOP10 (係数22.5未満)",
+            "📊 割安優良株ランキング TOP10",
             DISCORD_WEBHOOK_URL,
         )
 
