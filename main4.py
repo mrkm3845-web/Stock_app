@@ -6,7 +6,6 @@ import sqlite3
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
-from curl_cffi import requests as cffi_requests
 import pandas as pd
 import requests
 import yfinance as yf
@@ -34,21 +33,29 @@ def fetch_jpx_stock_list(market_name):
         return []
 
 
-# 2. 個別銘柄のデータ取得（微小スリープ付きで安全化）
-def analyze_single_stock(stock_info, market_name, session):
+# 2. 個別銘柄のデータ取得（スレッドセーフ安全通信）
+def analyze_single_stock(stock_info, market_name):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
     sector = stock_info.get("33業種区分", "その他")
 
-    # IP制限回避のための微小待機
-    time.sleep(0.05)
+    info = None
+    # リトライ付きで確実に取得
+    for attempt in range(2):
+        try:
+            ticker = yf.Ticker(f"{code}.T")
+            info = ticker.info
+            if info and (
+                info.get("currentPrice") or info.get("regularMarketPrice")
+            ):
+                break
+        except Exception:
+            time.sleep(0.5)
+
+    if not info:
+        return None
 
     try:
-        ticker = yf.Ticker(f"{code}.T", session=session)
-        info = ticker.info
-        if not info:
-            return None
-
         current_price = info.get("currentPrice") or info.get(
             "regularMarketPrice"
         )
@@ -102,7 +109,9 @@ def analyze_single_stock(stock_info, market_name, session):
         return {
             "code": code,
             "name": name,
-            "market": "プライム" if "プライム" in market_name else "スタンダード",
+            "market": (
+                "プライム" if "プライム" in market_name else "スタンダード"
+            ),
             "sector": sector,
             "price": int(round(current_price)),
             "graham_price": int(round(graham_price)),
@@ -119,17 +128,15 @@ def analyze_single_stock(stock_info, market_name, session):
 
 
 # 3. 並列スキャン
-def scan_market(stocks_list, market_name, max_workers=5):
+def scan_market(stocks_list, market_name, max_workers=8):
     results = []
     print(
         f">> 【{market_name}】全 {len(stocks_list)} 銘柄のスキャン開始..."
     )
 
-    session = cffi_requests.Session(impersonate="chrome")
-
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(analyze_single_stock, s, market_name, session): s
+            executor.submit(analyze_single_stock, s, market_name): s
             for s in stocks_list
         }
         for future in as_completed(futures):
@@ -289,11 +296,9 @@ if __name__ == "__main__":
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_results = scan_market(prime_stocks, "プライム")
 
-    # ★ IP制限を完全にリセットするため20秒休憩
-    print(">> IPレート制限リセット待機中（20秒間）...")
-    time.sleep(20)
+    time.sleep(3)
 
-    # 2. スタンダード市場のスキャン（新品セッションで実行）
+    # 2. スタンダード市場のスキャン
     standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
     standard_results = scan_market(standard_stocks, "スタンダード")
 
