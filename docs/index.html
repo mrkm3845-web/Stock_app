@@ -18,10 +18,14 @@
         .badge-mix { font-weight: 700; padding: 4px 7px; border-radius: 6px; }
         .mix-ultra { background-color: #ffe3e3; color: #d63301; }
         .mix-strict { background-color: #e6fcf5; color: #0ca678; }
+        .rakuten-link { color: #bf0000; font-weight: 700; text-decoration: none; }
+        .rakuten-link:hover { text-decoration: underline; color: #900000; }
+        .badge-kabumini { font-size: 0.72rem; background-color: #fff0f0; color: #bf0000; border: 1px solid #ffc9c9; border-radius: 4px; padding: 2px 5px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container-fluid py-3 px-md-4 max-w-7xl">
+        <!-- ヘッダー -->
         <div class="card p-3 bg-white">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
@@ -41,6 +45,7 @@
             </div>
         </div>
 
+        <!-- プリセットボタン -->
         <div class="card p-3 bg-white">
             <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
@@ -55,6 +60,7 @@
             </div>
         </div>
 
+        <!-- 詳細フィルタ -->
         <div class="card p-3 bg-white">
             <div class="row g-2 align-items-end">
                 <div class="col-6 col-md-2">
@@ -112,18 +118,32 @@
             </div>
         </div>
 
+        <!-- 結果一覧テーブル -->
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-dark">該当件数: <span id="filtered-count" class="text-primary fs-5">0</span> 件</span>
-                <span class="text-muted small">👉 左右にスクロール可能</span>
+                <span class="text-muted small">💡 コードタップで楽天証券へ直行</span>
             </div>
             <div class="table-container">
                 <table class="table table-hover table-striped table-sm mb-0">
                     <thead>
                         <tr>
-                            <th>順位</th><th>コード</th><th>社名</th><th>市場</th><th>業種</th>
-                            <th>現在値</th><th>割安度</th><th>ミックス係数</th><th>利回り</th>
-                            <th>PER</th><th>PBR</th><th>ROE</th><th>営業利益率</th><th>理論株価</th><th>詳細</th>
+                            <th>順位</th>
+                            <th>コード<br><small class="text-muted fw-normal">(楽天直結)</small></th>
+                            <th>社名</th>
+                            <th>かぶミニ</th>
+                            <th>市場</th>
+                            <th>業種</th>
+                            <th>現在値</th>
+                            <th>割安度</th>
+                            <th>ミックス係数</th>
+                            <th>利回り</th>
+                            <th>PER</th>
+                            <th>PBR</th>
+                            <th>ROE</th>
+                            <th>営業利益率</th>
+                            <th>理論株価</th>
+                            <th>詳細</th>
                         </tr>
                     </thead>
                     <tbody id="stock-table-body"></tbody>
@@ -132,6 +152,7 @@
         </div>
     </div>
 
+    <!-- 銘柄詳細モーダル -->
     <div class="modal fade" id="stockModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -140,6 +161,12 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer justify-content-between">
+                    <span id="modalMiniInfo" class="badge-kabumini"></span>
+                    <a id="modalRakutenBtn" href="#" target="_blank" class="btn btn-danger btn-sm fw-bold">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> 楽天証券で見る・注文
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -162,7 +189,6 @@
                 selector.innerHTML = dates.map(d => `<option value="${d}">${d}</option>`).join('');
                 if (dates.length > 0) loadDateData(dates[0]);
             } catch (e) {
-                // dates.jsonがまだない場合はlatest.jsonを読む
                 loadDateData('latest');
             }
         }
@@ -223,21 +249,31 @@
             renderTable(filtered);
         }
 
+        // かぶミニ対象判定（プライムはほぼ全銘柄、スタンダードは主要銘柄が対象）
+        function isKabuMiniTarget(s) {
+            return s.market === 'プライム' || (s.price >= 500 && s.price <= 30000);
+        }
+
         function renderTable(data) {
             document.getElementById("filtered-count").textContent = data.length;
             const tbody = document.getElementById("stock-table-body");
             tbody.innerHTML = "";
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="15" class="p-4 text-muted text-center">条件に一致する銘柄はありません。</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="16" class="p-4 text-muted text-center">条件に一致する銘柄はありません。</td></tr>';
                 return;
             }
             let html = "";
             data.forEach((s, idx) => {
                 let mixBadgeClass = s.mix_index < 5.625 ? "badge-mix mix-ultra" : (s.mix_index < 11.25 ? "badge-mix mix-strict" : "");
+                const isMini = isKabuMiniTarget(s);
+                const miniBadge = isMini ? `<span class="badge-kabumini" title="1株から取引可能">1株OK</span>` : `<span class="text-muted small">-</span>`;
+                const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
+
                 html += `<tr>
                     <td><strong>${idx + 1}</strong></td>
-                    <td><strong>${s.code}</strong></td>
+                    <td><a href="${rakutenUrl}" target="_blank" class="rakuten-link" title="楽天証券の銘柄ページを開く">${s.code} <i class="bi bi-box-arrow-up-right small"></i></a></td>
                     <td class="text-start">${s.name}</td>
+                    <td>${miniBadge}</td>
                     <td><span class="badge ${s.market === 'プライム' ? 'bg-primary' : 'bg-secondary'}">${s.market}</span></td>
                     <td class="text-muted small">${s.sector}</td>
                     <td>¥${s.price.toLocaleString()}</td>
@@ -351,10 +387,13 @@
         function showStockDetail(code) {
             const s = STOCKS.find(item => item.code === code);
             if (!s) return;
+            const isMini = isKabuMiniTarget(s);
+            const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
+
             document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${s.name}`;
             document.getElementById("modalBody").innerHTML = `
                 <div class="row g-2 mb-3">
-                    <div class="col-6"><small class="text-muted">市場</small><div><strong>${s.market}</strong> (${s.sector})</div></div>
+                    <div class="col-6"><small class="text-muted">市場 / 業種</small><div><strong>${s.market}</strong> (${s.sector})</div></div>
                     <div class="col-6"><small class="text-muted">現在株価</small><div class="fs-5 fw-bold text-primary">¥${s.price.toLocaleString()}</div></div>
                     <div class="col-6"><small class="text-muted">グレアム理論株価</small><div class="fs-5 fw-bold text-success">¥${s.graham_price.toLocaleString()}</div></div>
                     <div class="col-6"><small class="text-muted">理論株価との割安度</small><div class="fs-5 fw-bold text-danger">+${s.discount_rate}%</div></div>
@@ -369,6 +408,8 @@
                     <div class="col-4 text-center p-2 border rounded"><small class="text-muted">配当利回り</small><div class="fw-bold fs-6 text-danger">${s.div_yield} %</div></div>
                 </div>
             `;
+            document.getElementById("modalMiniInfo").innerHTML = isMini ? `<i class="bi bi-check-circle-fill me-1"></i> かぶミニ®(単元未満株 1株) 対応銘柄` : `<i class="bi bi-info-circle me-1"></i> 単元株(100株) 取引`;
+            document.getElementById("modalRakutenBtn").href = rakutenUrl;
             modalInstance.show();
         }
     </script>
