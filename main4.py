@@ -17,6 +17,9 @@ DOCS_DIR = "docs"
 DATA_DIR = "data"
 DB_PATH = os.path.join(DATA_DIR, "stocks.db")
 
+# ★ ブラウザセッションを1つ作成して使い回す（アクセス遮断を防止）
+SHARED_SESSION = cffi_requests.Session(impersonate="chrome")
+
 
 # ==========================================
 # 1. JPXから銘柄一覧を取得
@@ -52,8 +55,8 @@ def analyze_single_stock(stock_info, market_name):
 
     info = None
     try:
-        session = cffi_requests.Session(impersonate="chrome")
-        ticker = yf.Ticker(ticker_symbol, session=session)
+        # 共有セッションを使用してYahooのアクセス制限を回避
+        ticker = yf.Ticker(ticker_symbol, session=SHARED_SESSION)
         info = ticker.info
     except Exception:
         return None
@@ -91,7 +94,6 @@ def analyze_single_stock(stock_info, market_name):
         graham_price = math.sqrt(22.5 * eps * bps)
         discount_rate = ((graham_price - current_price) / graham_price) * 100
 
-        # 極端な外れ値の除外
         if discount_rate > 85.0 or discount_rate < -300.0:
             return None
 
@@ -119,6 +121,9 @@ def analyze_single_stock(stock_info, market_name):
             if calc_yield <= 15.0:
                 div_yield_pct = calc_yield
 
+        if div_yield_pct > 15.0 or div_yield_pct < 0.0:
+            div_yield_pct = 0.0
+
         market_short = "プライム" if "プライム" in market_name else "スタンダード"
 
         return {
@@ -143,7 +148,7 @@ def analyze_single_stock(stock_info, market_name):
 # ==========================================
 # 3. 並列スキャン処理
 # ==========================================
-def scan_market(stocks_list, market_name, max_workers=10):
+def scan_market(stocks_list, market_name, max_workers=6):
     results = []
     print(
         f">> 【{market_name}】全 {len(stocks_list)} 銘柄のスキャン開始..."
@@ -236,7 +241,6 @@ def generate_interactive_html(all_stocks):
     html_file = os.path.join(DOCS_DIR, "index.html")
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # 全業種リストの抽出
     sectors = sorted(
         list(set(s["sector"] for s in all_stocks if s.get("sector")))
     )
@@ -265,14 +269,12 @@ def generate_interactive_html(all_stocks):
 </head>
 <body>
     <div class="container-fluid py-3 px-md-4 max-w-7xl">
-        <!-- ヘッダー -->
         <div class="card p-3 bg-white">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <div>
                     <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-sliders"></i> 割安優良株 インタラクティブ・スクリーナー</h1>
                     <small class="text-muted">最終更新: {now_str} (JST) / 登録総数: <span id="total-count">{len(all_stocks)}</span> 件</small>
                 </div>
-                <!-- 銘柄コード・社名クイック検索 -->
                 <div class="d-flex gap-2">
                     <input type="text" id="quick-search" class="form-control form-control-sm" placeholder="コード or 社名で検索..." style="width: 200px;">
                     <button class="btn btn-primary btn-sm px-3" onclick="searchStock()"><i class="bi bi-search"></i></button>
@@ -280,7 +282,6 @@ def generate_interactive_html(all_stocks):
             </div>
         </div>
 
-        <!-- プリセットボタン群 -->
         <div class="card p-3 bg-white">
             <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> ワンタップ・プリセット条件:</div>
             <div class="d-flex flex-wrap gap-2">
@@ -295,7 +296,6 @@ def generate_interactive_html(all_stocks):
             </div>
         </div>
 
-        <!-- 詳細フィルタ・並び替えコントロール -->
         <div class="card p-3 bg-white">
             <div class="row g-2 align-items-end">
                 <div class="col-6 col-md-2">
@@ -336,7 +336,6 @@ def generate_interactive_html(all_stocks):
                     </select>
                 </div>
 
-                <!-- 2段目フィルタ -->
                 <div class="col-6 col-md-3">
                     <div class="filter-label">割安度 (最小 %)</div>
                     <input type="number" id="filter-discount" class="form-control form-control-sm" step="5" placeholder="下限なし" oninput="applyFilters()">
@@ -356,7 +355,6 @@ def generate_interactive_html(all_stocks):
             </div>
         </div>
 
-        <!-- 結果一覧テーブル -->
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-dark">該当件数: <span id="filtered-count" class="text-primary fs-5">0</span> 件</span>
@@ -383,15 +381,12 @@ def generate_interactive_html(all_stocks):
                             <th>詳細</th>
                         </tr>
                     </thead>
-                    <tbody id="stock-table-body">
-                        <!-- JSで動的描画 -->
-                    </tbody>
+                    <tbody id="stock-table-body"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- 銘柄詳細モーダル -->
     <div class="modal fade" id="stockModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -411,7 +406,7 @@ def generate_interactive_html(all_stocks):
 
         document.addEventListener("DOMContentLoaded", () => {{
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
-            applyPreset('graham'); // 初期状態はグレアム標準
+            applyPreset('graham');
         }});
 
         function applyFilters() {{
@@ -439,7 +434,6 @@ def generate_interactive_html(all_stocks):
                 return true;
             }});
 
-            // ソート
             filtered.sort((a, b) => {{
                 if (sortBy === "mix_asc") return a.mix_index - b.mix_index;
                 if (sortBy === "discount_desc") return b.discount_rate - a.discount_rate;
@@ -589,7 +583,6 @@ def send_to_discord(all_stocks, webhook_url):
     df = pd.DataFrame(all_stocks)
     df = df.sort_values(by="mix_index", ascending=True)
 
-    # 有効な割安株（ROE 7%以上、マージン6%以上）
     valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)]
 
     def make_section(market_name):
@@ -635,6 +628,7 @@ if __name__ == "__main__":
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_results = scan_market(prime_stocks, "プライム")
 
+    print(">> 待機中（3秒間）...")
     time.sleep(3)
 
     standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
@@ -643,13 +637,13 @@ if __name__ == "__main__":
     all_results = prime_results + standard_results
 
     if all_results:
-        # 2. SQLiteデータベースに日次スナップショット保存
+        # 2. SQLiteデータベース保存
         save_to_sqlite(all_results)
 
         # 3. インタラクティブHTMLの生成 (docs/index.html)
         generate_interactive_html(all_results)
 
-        # 4. Discordへの速報通知
+        # 4. Discord速報通知
         send_to_discord(all_results, DISCORD_WEBHOOK_URL)
 
         print(">> 全ての処理が完了しました！")
