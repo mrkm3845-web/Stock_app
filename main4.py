@@ -1,8 +1,10 @@
+import argparse
 import io
 import json
 import math
 import os
 import sqlite3
+import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
@@ -17,7 +19,6 @@ HISTORY_DIR = os.path.join(DOCS_DIR, "history")
 DB_PATH = os.path.join(DATA_DIR, "stocks.db")
 
 
-# 1. JPX銘柄取得（あいまい一致でカッコ表記揺れを100%回避）
 def fetch_jpx_stock_list(keyword):
     url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
     try:
@@ -26,24 +27,15 @@ def fetch_jpx_stock_list(keyword):
         )
         df = pd.read_excel(io.BytesIO(res.content))
         df = df[["コード", "銘柄名", "市場・商品区分", "33業種区分"]]
-
-        # コードのゴミ（.0や空白）を綺麗に除去
         df["コード"] = (
             df["コード"].astype(str).str.strip().str.replace(r"\.0$", "", regex=True)
         )
-        df["市場・商品区分"] = df["市場・商品区分"].astype(str)
-
-        # ★ 部分一致で確実に抽出
         df_filtered = df[df["市場・商品区分"].str.contains(keyword, na=False)]
-        stocks = df_filtered.to_dict("records")
-        print(f">> 【{keyword}】JPX対象銘柄数: {len(stocks)} 件")
-        return stocks
-    except Exception as e:
-        print(f">> JPXデータ取得エラー: {e}")
+        return df_filtered.to_dict("records")
+    except Exception:
         return []
 
 
-# 2. 個別銘柄のデータ取得
 def analyze_single_stock(stock_info, market_label):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
@@ -59,7 +51,7 @@ def analyze_single_stock(stock_info, market_label):
             ):
                 break
         except Exception:
-            time.sleep(0.5)
+            time.sleep(0.3)
 
     if not info:
         return None
@@ -134,27 +126,22 @@ def analyze_single_stock(stock_info, market_label):
         return None
 
 
-# 3. 並列スキャン
-def scan_market(stocks_list, market_label, max_workers=8):
+def scan_market(keyword, label):
+    stocks = fetch_jpx_stock_list(keyword)
+    print(f">> 【{label}】{len(stocks)} 件スキャン開始...")
     results = []
-    print(
-        f">> 【{market_label}】全 {len(stocks_list)} 銘柄のスキャン開始..."
-    )
-
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+    with ThreadPoolExecutor(max_workers=8) as executor:
         futures = {
-            executor.submit(analyze_single_stock, s, market_label): s
-            for s in stocks_list
+            executor.submit(analyze_single_stock, s, label): s for s in stocks
         }
         for future in as_completed(futures):
             res = future.result()
             if res:
                 results.append(res)
-    print(f">> 【{market_label}】抽出完了: {len(results)} 件")
+    print(f">> 【{label}】抽出完了: {len(results)} 件")
     return results
 
 
-# 4. SQLite保存
 def save_to_sqlite(all_stocks):
     os.makedirs(DATA_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
@@ -194,11 +181,9 @@ def save_to_sqlite(all_stocks):
     conn.close()
 
 
-# 5. 日別JSON保存
 def save_history_json(all_stocks):
     os.makedirs(HISTORY_DIR, exist_ok=True)
     today_str = datetime.now().strftime("%Y-%m-%d")
-
     for filename in [f"{today_str}.json", "latest.json"]:
         with open(
             os.path.join(HISTORY_DIR, filename), "w", encoding="utf-8"
@@ -216,26 +201,20 @@ def save_history_json(all_stocks):
     if today_str not in existing_dates:
         existing_dates.append(today_str)
     existing_dates.sort(reverse=True)
-
     with open(dates_file, "w", encoding="utf-8") as f:
         json.dump(existing_dates, f, ensure_ascii=False)
 
 
-# 6. 同日内での変更チェック関数
 def check_is_data_changed(new_stocks):
     today_str = datetime.now().strftime("%Y-%m-%d")
     today_file = os.path.join(HISTORY_DIR, f"{today_str}.json")
-
     if not os.path.exists(today_file):
         return True
-
     try:
         with open(today_file, "r", encoding="utf-8") as f:
             old_stocks = json.load(f)
-
         if len(new_stocks) != len(old_stocks):
             return True
-
         new_summary = {s["code"]: s["price"] for s in new_stocks}
         old_summary = {s["code"]: s["price"] for s in old_stocks}
         return new_summary != old_summary
@@ -243,11 +222,9 @@ def check_is_data_changed(new_stocks):
         return True
 
 
-# 7. Discord通知
 def send_to_discord(all_stocks, is_changed, webhook_url):
     if not webhook_url or not all_stocks:
         return
-
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     if not is_changed:
@@ -290,8 +267,7 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
         return text + "```"
 
     msg = f"📊 **【割安優良株スクリーニング速報】** ({now_str})\n"
-    msg += make_section("プライム")
-    msg += make_section("スタンダード")
+    msg += make_section("プライム") + make_section("スタンダード")
     msg += "\n👉 Web簡易スクリーナー: https://mrkm3845-web.github.io/Stock_app/"
     try:
         requests.post(webhook_url, json={"content": msg}, timeout=10)
@@ -300,20 +276,37 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
 
 
 if __name__ == "__main__":
-    # 1. プライム市場
-    prime_stocks = fetch_jpx_stock_list("プライム")
-    prime_results = scan_market(prime_stocks, "プライム")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--market", choices=["prime", "standard"])
+    parser.add_argument("--aggregate", action="store_true")
+    args = parser.parse_args()
 
-    time.sleep(3)
+    os.makedirs(DATA_DIR, exist_ok=True)
 
-    # 2. スタンダード市場（キーワード「スタンダード」で確実に取得）
-    standard_stocks = fetch_jpx_stock_list("スタンダード")
-    standard_results = scan_market(standard_stocks, "スタンダード")
+    if args.market == "prime":
+        res = scan_market("プライム", "プライム")
+        with open("data/prime.json", "w", encoding="utf-8") as f:
+            json.dump(res, f, ensure_ascii=False)
 
-    all_results = prime_results + standard_results
-    if all_results:
-        is_changed = check_is_data_changed(all_results)
-        save_to_sqlite(all_results)
-        save_history_json(all_results)
-        send_to_discord(all_results, is_changed, DISCORD_WEBHOOK_URL)
-        print(">> 全ての処理が完了しました！")
+    elif args.market == "standard":
+        res = scan_market("スタンダード", "スタンダード")
+        with open("data/standard.json", "w", encoding="utf-8") as f:
+            json.dump(res, f, ensure_ascii=False)
+
+    elif args.aggregate:
+        prime_data = []
+        standard_data = []
+        if os.path.exists("data/prime.json"):
+            with open("data/prime.json", "r", encoding="utf-8") as f:
+                prime_data = json.load(f)
+        if os.path.exists("data/standard.json"):
+            with open("data/standard.json", "r", encoding="utf-8") as f:
+                standard_data = json.load(f)
+
+        all_results = prime_data + standard_data
+        if all_results:
+            is_changed = check_is_data_changed(all_results)
+            save_to_sqlite(all_results)
+            save_history_json(all_results)
+            send_to_discord(all_results, is_changed, DISCORD_WEBHOOK_URL)
+            print(">> 全体の合体＆更新が完了しました！")
