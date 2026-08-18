@@ -17,8 +17,6 @@ DATA_DIR = "data"
 HISTORY_DIR = os.path.join(DOCS_DIR, "history")
 DB_PATH = os.path.join(DATA_DIR, "stocks.db")
 
-SHARED_SESSION = cffi_requests.Session(impersonate="chrome")
-
 
 # 1. JPX銘柄取得
 def fetch_jpx_stock_list(market_name):
@@ -36,13 +34,13 @@ def fetch_jpx_stock_list(market_name):
         return []
 
 
-# 2. 個別銘柄のデータ取得（異常値・分割バグ完全ガード）
-def analyze_single_stock(stock_info, market_name):
+# 2. 個別銘柄のデータ取得（セッションを受け取って実行）
+def analyze_single_stock(stock_info, market_name, session):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
     sector = stock_info.get("33業種区分", "その他")
     try:
-        ticker = yf.Ticker(f"{code}.T", session=SHARED_SESSION)
+        ticker = yf.Ticker(f"{code}.T", session=session)
         info = ticker.info
         if not info:
             return None
@@ -116,15 +114,19 @@ def analyze_single_stock(stock_info, market_name):
         return None
 
 
-# 3. 並列スキャン
+# 3. 並列スキャン（市場ごとに新品セッションを作成）
 def scan_market(stocks_list, market_name, max_workers=6):
     results = []
     print(
         f">> 【{market_name}】全 {len(stocks_list)} 銘柄のスキャン開始..."
     )
+
+    # ★ 市場ごとに新品のブラウザセッションを用意
+    session = cffi_requests.Session(impersonate="chrome")
+
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(analyze_single_stock, s, market_name): s
+            executor.submit(analyze_single_stock, s, market_name, session): s
             for s in stocks_list
         }
         for future in as_completed(futures):
@@ -202,16 +204,14 @@ def save_history_json(all_stocks):
         json.dump(existing_dates, f, ensure_ascii=False)
 
 
-# 6. 同日内での変更チェック関数（同日の2回目以降のみ差分チェック）
+# 6. 同日内での変更チェック関数
 def check_is_data_changed(new_stocks):
     today_str = datetime.now().strftime("%Y-%m-%d")
     today_file = os.path.join(HISTORY_DIR, f"{today_str}.json")
 
-    # 今日のファイルがまだ無い ＝ 「今日初めての実行（夕方）」なので必ずフル通知！
     if not os.path.exists(today_file):
         return True
 
-    # 今日のファイルが既にある ＝ 「今日2回目の実行（夜など）」なので内容を比較
     try:
         with open(today_file, "r", encoding="utf-8") as f:
             old_stocks = json.load(f)
@@ -233,7 +233,6 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # 同日内でデータに変更がなかった場合
     if not is_changed:
         msg = f"✅ **【データ確認】** ({now_str})\n前回取得時からデータに変更はありませんでした（夕方の確定値と一致・正常稼働中）。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
         try:
@@ -242,7 +241,6 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
             pass
         return
 
-    # 日付が変わった初回、またはデータに差分（補完）があった場合はフル通知
     df = pd.DataFrame(all_stocks).sort_values(by="mix_index", ascending=True)
     valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)]
 
@@ -284,21 +282,21 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
 
 
 if __name__ == "__main__":
+    # 1. プライム市場のスキャン（プライム専用セッション）
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_results = scan_market(prime_stocks, "プライム")
+
+    print(">> 待機中（3秒間）...")
     time.sleep(3)
+
+    # 2. スタンダード市場のスキャン（★新品のリフレッシュセッションで開始！）
     standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
     standard_results = scan_market(standard_stocks, "スタンダード")
 
     all_results = prime_results + standard_results
     if all_results:
-        # 1. 保存前に同日の変更有無を判定
         is_changed = check_is_data_changed(all_results)
-
-        # 2. SQLite & 日別JSON保存
         save_to_sqlite(all_results)
         save_history_json(all_results)
-
-        # 3. Discord通知（同日2回目で一致ならスッキリ確認通知）
         send_to_discord(all_results, is_changed, DISCORD_WEBHOOK_URL)
         print(">> 全ての処理が完了しました！")
