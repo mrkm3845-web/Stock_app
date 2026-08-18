@@ -296,18 +296,27 @@ if __name__ == "__main__":
 elif args.aggregate:
         prime_data = []
         standard_data = []
-        if os.path.exists("data/prime.json"):
-            with open("data/prime.json", "r", encoding="utf-8") as f:
-                prime_data = json.load(f)
-        if os.path.exists("data/standard.json"):
-            with open("data/standard.json", "r", encoding="utf-8") as f:
-                standard_data = json.load(f)
+
+        # 直下またはサブフォルダのどちらからでも読み込める安全設計
+        p_paths = ["data/prime.json", "data/prime-data/prime.json"]
+        s_paths = ["data/standard.json", "data/standard-data/standard.json"]
+
+        for p in p_paths:
+            if os.path.exists(p):
+                with open(p, "r", encoding="utf-8") as f:
+                    prime_data = json.load(f)
+                break
+
+        for s in s_paths:
+            if os.path.exists(s):
+                with open(s, "r", encoding="utf-8") as f:
+                    standard_data = json.load(f)
+                break
 
         new_results = prime_data + standard_data
         today_str = datetime.now().strftime("%Y-%m-%d")
         today_file = os.path.join(HISTORY_DIR, f"{today_str}.json")
 
-        # 既存のデータがあれば読み込む
         existing_stocks = []
         if os.path.exists(today_file):
             try:
@@ -316,15 +325,12 @@ elif args.aggregate:
             except Exception:
                 pass
 
-        # ★ 完全データ死守ガード：前回の件数より今回が少ない（欠損している）場合は上書きしない！
         if existing_stocks and len(new_results) < len(existing_stocks):
             print(
-                f">> ⚠️ 今回の取得件数({len(new_results)}件)が前回の件数({len(existing_stocks)}件)より少ないため、前回の完全データをキープします。"
+                f">> ⚠️ 前回の件数({len(existing_stocks)}件)より今回の件数({len(new_results)}件)が少ないため、前回の完全データをキープします。"
             )
-            # Discordには「変更なし（完全データ維持）」と通知
             send_to_discord(existing_stocks, False, DISCORD_WEBHOOK_URL)
         else:
-            # 今回の方が件数が多い、または初回の場合は通常通り保存＆フル通知
             is_changed = check_is_data_changed(new_results)
             save_to_sqlite(new_results)
             save_history_json(new_results)
