@@ -17,7 +17,6 @@ DOCS_DIR = "docs"
 DATA_DIR = "data"
 DB_PATH = os.path.join(DATA_DIR, "stocks.db")
 
-# ★ ブラウザセッションを1つ作成して使い回す（アクセス遮断を防止）
 SHARED_SESSION = cffi_requests.Session(impersonate="chrome")
 
 
@@ -55,7 +54,6 @@ def analyze_single_stock(stock_info, market_name):
 
     info = None
     try:
-        # 共有セッションを使用してYahooのアクセス制限を回避
         ticker = yf.Ticker(ticker_symbol, session=SHARED_SESSION)
         info = ticker.info
     except Exception:
@@ -80,11 +78,9 @@ def analyze_single_stock(stock_info, market_name):
         div_yield = info.get("dividendYield")
         div_rate = info.get("dividendRate")
 
-        # 基本的な財務数値のチェック
         if not (eps and bps and pe and pb and eps > 0 and bps > 0):
             return None
 
-        # 異常値ガード
         if bps > current_price * 10 or eps > current_price * 2:
             return None
         if pe <= 0.5 or pe > 200.0 or pb <= 0.05 or pb > 30.0:
@@ -97,7 +93,6 @@ def analyze_single_stock(stock_info, market_name):
         if discount_rate > 85.0 or discount_rate < -300.0:
             return None
 
-        # ROE・営業利益率の正規化
         roe_pct = (
             (roe * 100)
             if (roe is not None and roe < 1.0)
@@ -109,7 +104,6 @@ def analyze_single_stock(stock_info, market_name):
             else (op_margin if op_margin else 0.0)
         )
 
-        # 配当利回りの安全な計算
         div_yield_pct = 0.0
         if div_yield is not None:
             if div_yield < 0.20:
@@ -234,7 +228,7 @@ def save_to_sqlite(all_stocks):
 
 
 # ==========================================
-# 5. インタラクティブHTMLの生成
+# 5. インタラクティブHTMLの生成（重ねがけ対応版）
 # ==========================================
 def generate_interactive_html(all_stocks):
     os.makedirs(DOCS_DIR, exist_ok=True)
@@ -258,7 +252,8 @@ def generate_interactive_html(all_stocks):
         body {{ background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.88rem; padding-bottom: 60px; }}
         .card {{ border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }}
         .filter-label {{ font-size: 0.78rem; font-weight: 700; color: #495057; margin-bottom: 3px; }}
-        .btn-preset {{ font-size: 0.78rem; padding: 4px 10px; border-radius: 20px; }}
+        .btn-preset {{ font-size: 0.78rem; padding: 5px 12px; border-radius: 20px; transition: all 0.15s ease-in-out; }}
+        .btn-preset.active {{ box-shadow: 0 0 0 2px rgba(0,0,0,0.2) inset; font-weight: 700; }}
         .table-container {{ overflow-x: auto; -webkit-overflow-scrolling: touch; max-height: 70vh; }}
         table th {{ background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; font-size: 0.82rem; }}
         table td {{ vertical-align: middle; white-space: nowrap; text-align: center; }}
@@ -269,6 +264,7 @@ def generate_interactive_html(all_stocks):
 </head>
 <body>
     <div class="container-fluid py-3 px-md-4 max-w-7xl">
+        <!-- ヘッダー -->
         <div class="card p-3 bg-white">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <div>
@@ -282,20 +278,22 @@ def generate_interactive_html(all_stocks):
             </div>
         </div>
 
+        <!-- プリセットボタン群（重ねがけ・トグル式） -->
         <div class="card p-3 bg-white">
-            <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> ワンタップ・プリセット条件:</div>
+            <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（複数選択・重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
-                <button class="btn btn-outline-danger btn-preset fw-bold" onclick="applyPreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
-                <button class="btn btn-outline-success btn-preset fw-bold" onclick="applyPreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
-                <button class="btn btn-outline-primary btn-preset fw-bold" onclick="applyPreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
-                <button class="btn btn-outline-secondary btn-preset" onclick="applyPreset('per15')">PER 15以下</button>
-                <button class="btn btn-outline-secondary btn-preset" onclick="applyPreset('pbr15')">PBR 1.5以下</button>
-                <button class="btn btn-outline-info btn-preset" onclick="applyPreset('highRoe')">💎 高ROE割安 (ROE 10%↑)</button>
-                <button class="btn btn-outline-warning btn-preset" onclick="applyPreset('highDiv')">💰 高配当重視 (利回り 3%↑)</button>
-                <button class="btn btn-light btn-preset border text-muted ms-auto" onclick="resetFilters()"><i class="bi bi-arrow-counterclockwise"></i> リセット</button>
+                <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
+                <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
+                <button id="btn-graham" class="btn btn-outline-primary btn-preset" onclick="togglePreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
+                <button id="btn-per15" class="btn btn-outline-secondary btn-preset" onclick="togglePreset('per15')">PER 15以下</button>
+                <button id="btn-pbr15" class="btn btn-outline-secondary btn-preset" onclick="togglePreset('pbr15')">PBR 1.5以下</button>
+                <button id="btn-highRoe" class="btn btn-outline-info btn-preset" onclick="togglePreset('highRoe')">💎 高ROE (10%↑)</button>
+                <button id="btn-highDiv" class="btn btn-outline-warning btn-preset" onclick="togglePreset('highDiv')">💰 高配当重視 (利回り 3%↑)</button>
+                <button class="btn btn-light btn-preset border text-muted ms-auto" onclick="resetAll()"><i class="bi bi-arrow-counterclockwise"></i> 全リセット</button>
             </div>
         </div>
 
+        <!-- 詳細フィルタ入力欄 -->
         <div class="card p-3 bg-white">
             <div class="row g-2 align-items-end">
                 <div class="col-6 col-md-2">
@@ -355,6 +353,7 @@ def generate_interactive_html(all_stocks):
             </div>
         </div>
 
+        <!-- 結果一覧テーブル -->
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-dark">該当件数: <span id="filtered-count" class="text-primary fs-5">0</span> 件</span>
@@ -387,6 +386,7 @@ def generate_interactive_html(all_stocks):
         </div>
     </div>
 
+    <!-- 銘柄詳細モーダル -->
     <div class="modal fade" id="stockModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -406,7 +406,8 @@ def generate_interactive_html(all_stocks):
 
         document.addEventListener("DOMContentLoaded", () => {{
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
-            applyPreset('graham');
+            // 初期状態：グレアム標準をON
+            togglePreset('graham');
         }});
 
         function applyFilters() {{
@@ -483,35 +484,112 @@ def generate_interactive_html(all_stocks):
             tbody.innerHTML = html;
         }}
 
-        function applyPreset(type) {{
-            resetInputs();
-            if (type === 'ultra') {{
-                document.getElementById("filter-mix").value = 5.625;
-                document.getElementById("filter-roe").value = 7;
-                document.getElementById("filter-margin").value = 6;
-            }} else if (type === 'strict') {{
-                document.getElementById("filter-mix").value = 11.25;
-                document.getElementById("filter-roe").value = 7;
-                document.getElementById("filter-margin").value = 6;
-            }} else if (type === 'graham') {{
-                document.getElementById("filter-mix").value = 22.5;
-                document.getElementById("filter-roe").value = 7;
-                document.getElementById("filter-margin").value = 6;
-            }} else if (type === 'per15') {{
-                document.getElementById("filter-per").value = 15;
-            }} else if (type === 'pbr15') {{
-                document.getElementById("filter-pbr").value = 1.5;
-            }} else if (type === 'highRoe') {{
-                document.getElementById("filter-mix").value = 22.5;
-                document.getElementById("filter-roe").value = 10;
-            }} else if (type === 'highDiv') {{
-                document.getElementById("filter-mix").value = 22.5;
-                document.getElementById("filter-div").value = 3.0;
+        // ★ 重ねがけ可能なトグル関数
+        function togglePreset(type) {{
+            const btnMap = {{
+                ultra: document.getElementById("btn-ultra"),
+                strict: document.getElementById("btn-strict"),
+                graham: document.getElementById("btn-graham"),
+                per15: document.getElementById("btn-per15"),
+                pbr15: document.getElementById("btn-pbr15"),
+                highRoe: document.getElementById("btn-highRoe"),
+                highDiv: document.getElementById("btn-highDiv")
+            }};
+
+            const currentBtn = btnMap[type];
+            const isActive = currentBtn.classList.contains("active");
+
+            // 1. ミックス係数系（ultra / strict / graham）は単一選択
+            if (type === 'ultra' || type === 'strict' || type === 'graham') {{
+                ['ultra', 'strict', 'graham'].forEach(k => {{
+                    btnMap[k].classList.remove("active", "btn-danger", "btn-success", "btn-primary");
+                    if (k === 'ultra') btnMap[k].classList.add("btn-outline-danger");
+                    if (k === 'strict') btnMap[k].classList.add("btn-outline-success");
+                    if (k === 'graham') btnMap[k].classList.add("btn-outline-primary");
+                }});
+
+                if (!isActive) {{
+                    currentBtn.classList.add("active");
+                    currentBtn.classList.remove("btn-outline-danger", "btn-outline-success", "btn-outline-primary");
+                    if (type === 'ultra') {{ currentBtn.classList.add("btn-danger"); document.getElementById("filter-mix").value = 5.625; }}
+                    if (type === 'strict') {{ currentBtn.classList.add("btn-success"); document.getElementById("filter-mix").value = 11.25; }}
+                    if (type === 'graham') {{ currentBtn.classList.add("btn-primary"); document.getElementById("filter-mix").value = 22.5; }}
+                    
+                    // グレアム基準の基本フィルタ（未入力の場合のみセット）
+                    if (!document.getElementById("filter-roe").value) document.getElementById("filter-roe").value = 7;
+                    if (!document.getElementById("filter-margin").value) document.getElementById("filter-margin").value = 6;
+                }} else {{
+                    document.getElementById("filter-mix").value = "";
+                }}
             }}
+
+            // 2. PER 15以下
+            if (type === 'per15') {{
+                if (isActive) {{
+                    currentBtn.classList.remove("active", "btn-secondary");
+                    currentBtn.classList.add("btn-outline-secondary");
+                    document.getElementById("filter-per").value = "";
+                }} else {{
+                    currentBtn.classList.add("active", "btn-secondary");
+                    currentBtn.classList.remove("btn-outline-secondary");
+                    document.getElementById("filter-per").value = 15;
+                }}
+            }}
+
+            // 3. PBR 1.5以下
+            if (type === 'pbr15') {{
+                if (isActive) {{
+                    currentBtn.classList.remove("active", "btn-secondary");
+                    currentBtn.classList.add("btn-outline-secondary");
+                    document.getElementById("filter-pbr").value = "";
+                }} else {{
+                    currentBtn.classList.add("active", "btn-secondary");
+                    currentBtn.classList.remove("btn-outline-secondary");
+                    document.getElementById("filter-pbr").value = 1.5;
+                }}
+            }}
+
+            // 4. 高ROE (10%↑)
+            if (type === 'highRoe') {{
+                if (isActive) {{
+                    currentBtn.classList.remove("active", "btn-info", "text-white");
+                    currentBtn.classList.add("btn-outline-info");
+                    document.getElementById("filter-roe").value = "";
+                }} else {{
+                    currentBtn.classList.add("active", "btn-info", "text-white");
+                    currentBtn.classList.remove("btn-outline-info");
+                    document.getElementById("filter-roe").value = 10;
+                }}
+            }}
+
+            // 5. 高配当重視 (3%↑)
+            if (type === 'highDiv') {{
+                if (isActive) {{
+                    currentBtn.classList.remove("active", "btn-warning");
+                    currentBtn.classList.add("btn-outline-warning");
+                    document.getElementById("filter-div").value = "";
+                }} else {{
+                    currentBtn.classList.add("active", "btn-warning");
+                    currentBtn.classList.remove("btn-outline-warning");
+                    document.getElementById("filter-div").value = 3.0;
+                }}
+            }}
+
             applyFilters();
         }}
 
-        function resetInputs() {{
+        function resetAll() {{
+            document.querySelectorAll(".btn-preset").forEach(btn => {{
+                btn.classList.remove("active", "btn-danger", "btn-success", "btn-primary", "btn-secondary", "btn-info", "btn-warning", "text-white");
+            }});
+            document.getElementById("btn-ultra").classList.add("btn-outline-danger");
+            document.getElementById("btn-strict").classList.add("btn-outline-success");
+            document.getElementById("btn-graham").classList.add("btn-outline-primary");
+            document.getElementById("btn-per15").classList.add("btn-outline-secondary");
+            document.getElementById("btn-pbr15").classList.add("btn-outline-secondary");
+            document.getElementById("btn-highRoe").classList.add("btn-outline-info");
+            document.getElementById("btn-highDiv").classList.add("btn-outline-warning");
+
             document.getElementById("filter-market").value = "ALL";
             document.getElementById("filter-sector").value = "ALL";
             document.getElementById("filter-mix").value = "";
@@ -521,10 +599,8 @@ def generate_interactive_html(all_stocks):
             document.getElementById("filter-roe").value = "";
             document.getElementById("filter-margin").value = "";
             document.getElementById("filter-div").value = "";
-        }}
+            document.getElementById("quick-search").value = "";
 
-        function resetFilters() {{
-            resetInputs();
             applyFilters();
         }}
 
@@ -569,7 +645,7 @@ def generate_interactive_html(all_stocks):
 """
     with open(html_file, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f">> インタラクティブHTMLを {html_file} に出力しました。")
+    print(f">> 重ねがけ対応HTMLを {html_file} に出力しました。")
 
 
 # ==========================================
@@ -624,7 +700,6 @@ def send_to_discord(all_stocks, webhook_url):
 # 実行部
 # ==========================================
 if __name__ == "__main__":
-    # 1. プライム ＆ スタンダードのスキャン
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_results = scan_market(prime_stocks, "プライム")
 
@@ -637,15 +712,9 @@ if __name__ == "__main__":
     all_results = prime_results + standard_results
 
     if all_results:
-        # 2. SQLiteデータベース保存
         save_to_sqlite(all_results)
-
-        # 3. インタラクティブHTMLの生成 (docs/index.html)
         generate_interactive_html(all_results)
-
-        # 4. Discord速報通知
         send_to_discord(all_results, DISCORD_WEBHOOK_URL)
-
         print(">> 全ての処理が完了しました！")
     else:
         print(">> 有効な銘柄データが取得できませんでした。")
