@@ -25,7 +25,7 @@ jobs:
           name: prime-data
           path: data/prime.json
 
-  # 2. スタンダード市場スキャン（マシンB・別IPで同時実行！）
+  # 2. スタンダード市場スキャン（マシンB）
   scan-standard:
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +40,7 @@ jobs:
           name: standard-data
           path: data/standard.json
 
-  # 3. 合体してHTML・SQLite保存＆Discord通知
+  # 3. 合体してHTML・SQLite保存＆Discord通知（マシンC）
   aggregate-and-publish:
     needs: [scan-prime, scan-standard]
     runs-on: ubuntu-latest
@@ -51,7 +51,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install --upgrade pandas requests
+      # ★ ここに yfinance を追加
+      - run: pip install --upgrade yfinance pandas requests
       - uses: actions/download-artifact@v4
         with:
           name: prime-data
