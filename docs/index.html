@@ -3,126 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>割安優良株ポータル</title>
-    
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.9rem; padding-bottom: 60px; }
-    .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: none; margin-bottom: 20px; }
-    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .table { font-size: 0.85rem; margin-bottom: 0; }
-    .table th { background-color: #212529 !important; color: white !important; white-space: nowrap; font-weight: 600; padding: 10px 8px; text-align: center; }
-    .table td { vertical-align: middle; white-space: nowrap; padding: 8px; }
-    .badge-scroll { font-size: 0.75rem; background-color: #e9ecef; color: #495057; padding: 3px 8px; border-radius: 20px; }
-</style>
-
+    <title>割安優良株 インタラクティブ・スクリーナー</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        .nav-btn { border-radius: 12px; text-decoration: none; display: block; padding: 20px; transition: transform 0.2s; }
-        .nav-btn:hover { transform: translateY(-3px); }
+        body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.88rem; padding-bottom: 60px; }
+        .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
+        .filter-label { font-size: 0.78rem; font-weight: 700; color: #495057; margin-bottom: 3px; }
+        .btn-preset { font-size: 0.78rem; padding: 4px 10px; border-radius: 20px; }
+        .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; max-height: 70vh; }
+        table th { background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; font-size: 0.82rem; }
+        table td { vertical-align: middle; white-space: nowrap; text-align: center; }
+        .badge-mix { font-weight: 700; padding: 4px 7px; border-radius: 6px; }
+        .mix-ultra { background-color: #ffe3e3; color: #d63301; }
+        .mix-strict { background-color: #e6fcf5; color: #0ca678; }
     </style>
 </head>
 <body>
-    <div class="container py-3 max-w-6xl">
-        <div class="card p-4 bg-white mb-3 text-center">
-            <h1 class="h4 mb-1 text-primary fw-bold">📈 割安優良株スクリーニング ポータル</h1>
-            <p class="text-muted small mb-0">最終更新: 2026-08-18 08:12 (JST)</p>
-        </div>
-
-        <div class="row g-3 mb-4">
-            <div class="col-6">
-                <a href="prime.html" class="nav-btn bg-primary text-white text-center shadow-sm">
-                    <h3 class="h5 fw-bold mb-1">🏛️ プライム市場</h3>
-                    <p class="small mb-0 opacity-75">79 件の詳細 →</p>
-                </a>
-            </div>
-            <div class="col-6">
-                <a href="standard.html" class="nav-btn bg-dark text-white text-center shadow-sm">
-                    <h3 class="h5 fw-bold mb-1">🏢 スタンダード市場</h3>
-                    <p class="small mb-0 opacity-75">0 件の詳細 →</p>
-                </a>
+    <div class="container-fluid py-3 px-md-4 max-w-7xl">
+        <!-- ヘッダー -->
+        <div class="card p-3 bg-white">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-sliders"></i> 割安優良株 インタラクティブ・スクリーナー</h1>
+                    <small class="text-muted">最終更新: 2026-08-18 13:19:22 (JST) / 登録総数: <span id="total-count">197</span> 件</small>
+                </div>
+                <!-- 銘柄コード・社名クイック検索 -->
+                <div class="d-flex gap-2">
+                    <input type="text" id="quick-search" class="form-control form-control-sm" placeholder="コード or 社名で検索..." style="width: 200px;">
+                    <button class="btn btn-primary btn-sm px-3" onclick="searchStock()"><i class="bi bi-search"></i></button>
+                </div>
             </div>
         </div>
 
-        <div class="d-flex justify-content-end mb-2">
-            <span class="badge-scroll">👉 左右にスクロールできます</span>
+        <!-- プリセットボタン群 -->
+        <div class="card p-3 bg-white">
+            <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> ワンタップ・プリセット条件:</div>
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-outline-danger btn-preset fw-bold" onclick="applyPreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
+                <button class="btn btn-outline-success btn-preset fw-bold" onclick="applyPreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
+                <button class="btn btn-outline-primary btn-preset fw-bold" onclick="applyPreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
+                <button class="btn btn-outline-secondary btn-preset" onclick="applyPreset('per15')">PER 15以下</button>
+                <button class="btn btn-outline-secondary btn-preset" onclick="applyPreset('pbr15')">PBR 1.5以下</button>
+                <button class="btn btn-outline-info btn-preset" onclick="applyPreset('highRoe')">💎 高ROE割安 (ROE 10%↑)</button>
+                <button class="btn btn-outline-warning btn-preset" onclick="applyPreset('highDiv')">💰 高配当重視 (利回り 3%↑)</button>
+                <button class="btn btn-light btn-preset border text-muted ms-auto" onclick="resetFilters()"><i class="bi bi-arrow-counterclockwise"></i> リセット</button>
+            </div>
         </div>
 
+        <!-- 詳細フィルタ・並び替えコントロール -->
+        <div class="card p-3 bg-white">
+            <div class="row g-2 align-items-end">
+                <div class="col-6 col-md-2">
+                    <div class="filter-label">市場区分</div>
+                    <select id="filter-market" class="form-select form-select-sm" onchange="applyFilters()">
+                        <option value="ALL">全市場 (プライム+スタンダード)</option>
+                        <option value="プライム">プライム市場のみ</option>
+                        <option value="スタンダード">スタンダード市場のみ</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="filter-label">業種</div>
+                    <select id="filter-sector" class="form-select form-select-sm" onchange="applyFilters()">
+                        <option value="ALL">全業種</option>
+                        <option value="ガラス・土石製品">ガラス・土石製品</option><option value="ゴム製品">ゴム製品</option><option value="サービス業">サービス業</option><option value="パルプ・紙">パルプ・紙</option><option value="不動産業">不動産業</option><option value="化学">化学</option><option value="医薬品">医薬品</option><option value="卸売業">卸売業</option><option value="小売業">小売業</option><option value="建設業">建設業</option><option value="情報・通信業">情報・通信業</option><option value="機械">機械</option><option value="水産・農林業">水産・農林業</option><option value="石油・石炭製品">石油・石炭製品</option><option value="繊維製品">繊維製品</option><option value="金属製品">金属製品</option><option value="電気機器">電気機器</option><option value="食料品">食料品</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="filter-label">ミックス係数 (最大)</div>
+                    <input type="number" id="filter-mix" class="form-control form-control-sm" step="0.5" placeholder="上限なし" oninput="applyFilters()">
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="filter-label">PER (最大)</div>
+                    <input type="number" id="filter-per" class="form-control form-control-sm" step="1" placeholder="上限なし" oninput="applyFilters()">
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="filter-label">PBR (最大)</div>
+                    <input type="number" id="filter-pbr" class="form-control form-control-sm" step="0.1" placeholder="上限なし" oninput="applyFilters()">
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="filter-label">並び替え順 (ソート)</div>
+                    <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="applyFilters()">
+                        <option value="mix_asc">ミックス係数 (昇順/割安順)</option>
+                        <option value="discount_desc">割安度(%) (降順)</option>
+                        <option value="roe_desc">ROE(%) (降順)</option>
+                        <option value="margin_desc">営業利益率(%) (降順)</option>
+                        <option value="div_desc">配当利回り(%) (降順)</option>
+                    </select>
+                </div>
+
+                <!-- 2段目フィルタ -->
+                <div class="col-6 col-md-3">
+                    <div class="filter-label">割安度 (最小 %)</div>
+                    <input type="number" id="filter-discount" class="form-control form-control-sm" step="5" placeholder="下限なし" oninput="applyFilters()">
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="filter-label">ROE (最小 %)</div>
+                    <input type="number" id="filter-roe" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="filter-label">営業利益率 (最小 %)</div>
+                    <input type="number" id="filter-margin" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="filter-label">配当利回り (最小 %)</div>
+                    <input type="number" id="filter-div" class="form-control form-control-sm" step="0.5" placeholder="下限なし" oninput="applyFilters()">
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果一覧テーブル -->
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="fw-bold text-danger mb-0">🔥 プライム：超・割安株（係数 < 5.625）</h5>
-                <a href="prime.html" class="btn btn-outline-primary btn-sm py-0">全て見る →</a>
+                <span class="fw-bold text-dark">該当件数: <span id="filtered-count" class="text-primary fs-5">0</span> 件</span>
+                <span class="text-muted small">👉 左右にスクロール可能</span>
             </div>
-            <div class="table-container"><table class="dataframe table table-hover table-striped text-center">
-  <thead>
-    <tr style="text-align: right;">
-      <th>順位</th>
-      <th>コード</th>
-      <th>社名</th>
-      <th>現在値</th>
-      <th>割安度</th>
-      <th>ミックス係数</th>
-      <th>利回り</th>
-      <th>PER</th>
-      <th>PBR</th>
-      <th>ROE</th>
-      <th>理論株価</th>
-      <th>業種</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>5445</td>
-      <td>東京鐵鋼</td>
-      <td>2022</td>
-      <td>+52.1%</td>
-      <td>5.15</td>
-      <td>4.94%</td>
-      <td>6.4</td>
-      <td>0.80</td>
-      <td>12.0%</td>
-      <td>4225</td>
-      <td>鉄鋼</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>8935</td>
-      <td>ＦＪネクストホールディングス</td>
-      <td>2048</td>
-      <td>+51.2%</td>
-      <td>5.36</td>
-      <td>3.91%</td>
-      <td>6.7</td>
-      <td>0.80</td>
-      <td>15.0%</td>
-      <td>4195</td>
-      <td>不動産業</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>9507</td>
-      <td>四国電力</td>
-      <td>1808</td>
-      <td>+50.5%</td>
-      <td>5.52</td>
-      <td>3.04%</td>
-      <td>7.3</td>
-      <td>0.76</td>
-      <td>11.8%</td>
-      <td>3648</td>
-      <td>電気・ガス業</td>
-    </tr>
-  </tbody>
-</table></div>
-        </div>
-
-        <div class="card p-3 bg-white">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="fw-bold text-danger mb-0">🔥 スタンダード：超・割安株（係数 < 5.625）</h5>
-                <a href="standard.html" class="btn btn-outline-dark btn-sm py-0">全て見る →</a>
+            <div class="table-container">
+                <table class="table table-hover table-striped table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>順位</th>
+                            <th>コード</th>
+                            <th>社名</th>
+                            <th>市場</th>
+                            <th>業種</th>
+                            <th>現在値</th>
+                            <th>割安度</th>
+                            <th>ミックス係数</th>
+                            <th>利回り</th>
+                            <th>PER</th>
+                            <th>PBR</th>
+                            <th>ROE</th>
+                            <th>営業利益率</th>
+                            <th>理論株価</th>
+                            <th>詳細</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-table-body">
+                        <!-- JSで動的描画 -->
+                    </tbody>
+                </table>
             </div>
-            <div class="table-container"><p class='p-3 text-muted text-center mb-0'>該当する銘柄はありません。</p></div>
         </div>
     </div>
+
+    <!-- 銘柄詳細モーダル -->
+    <div class="modal fade" id="stockModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modalTitle">銘柄詳細</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const STOCKS = [{"code": "1301", "name": "極洋", "market": "プライム", "sector": "水産・農林業", "price": 4745, "graham_price": 9292, "discount_rate": 48.9, "mix_index": 5.87, "per": 8.2, "pbr": 0.71, "roe": 9.2, "op_margin": 3.5, "div_yield": 3.39}, {"code": "1429", "name": "日本アクア", "market": "プライム", "sector": "建設業", "price": 796, "graham_price": 685, "discount_rate": -16.2, "mix_index": 30.39, "per": 13.4, "pbr": 2.27, "roe": 17.7, "op_margin": 6.9, "div_yield": 4.38}, {"code": "167A", "name": "リョーサン菱洋ホールディングス", "market": "プライム", "sector": "卸売業", "price": 3200, "graham_price": 3794, "discount_rate": 15.7, "mix_index": 16.0, "per": 17.3, "pbr": 0.93, "roe": 5.9, "op_margin": 3.9, "div_yield": 4.33}, {"code": "1766", "name": "東建コーポレーション", "market": "プライム", "sector": "建設業", "price": 13370, "graham_price": 17090, "discount_rate": 21.8, "mix_index": 13.77, "per": 10.8, "pbr": 1.28, "roe": 12.9, "op_margin": 6.0, "div_yield": 3.02}, {"code": "1801", "name": "大成建設", "market": "プライム", "sector": "建設業", "price": 12785, "graham_price": 11490, "discount_rate": -11.3, "mix_index": 27.86, "per": 12.5, "pbr": 2.23, "roe": 0.0, "op_margin": 8.7, "div_yield": 2.94}, {"code": "1803", "name": "清水建設", "market": "プライム", "sector": "建設業", "price": 2410, "graham_price": 2505, "discount_rate": 3.8, "mix_index": 20.84, "per": 12.9, "pbr": 1.61, "roe": 17.6, "op_margin": 4.0, "div_yield": 3.18}, {"code": "1813", "name": "不動テトラ", "market": "プライム", "sector": "建設業", "price": 2867, "graham_price": 4032, "discount_rate": 28.9, "mix_index": 11.38, "per": 9.7, "pbr": 1.17, "roe": 12.5, "op_margin": 6.9, "div_yield": 2.95}, {"code": "1833", "name": "奥村組", "market": "プライム", "sector": "建設業", "price": 5750, "graham_price": 7845, "discount_rate": 26.7, "mix_index": 12.09, "per": 11.2, "pbr": 1.08, "roe": 0.0, "op_margin": 4.0, "div_yield": 5.24}, {"code": "1860", "name": "戸田建設", "market": "プライム", "sector": "建設業", "price": 1508, "graham_price": 2124, "discount_rate": 29.0, "mix_index": 11.35, "per": 12.2, "pbr": 0.93, "roe": 10.8, "op_margin": 4.8, "div_yield": 4.0}, {"code": "1873", "name": "日本ハウスホールディングス", "market": "プライム", "sector": "建設業", "price": 321, "graham_price": 655, "discount_rate": 51.0, "mix_index": 5.4, "per": 9.6, "pbr": 0.56, "roe": 6.0, "op_margin": 21.0, "div_yield": 3.73}, {"code": "1885", "name": "東亜建設工業", "market": "プライム", "sector": "建設業", "price": 2123, "graham_price": 2895, "discount_rate": 26.7, "mix_index": 12.1, "per": 8.5, "pbr": 1.42, "roe": 17.7, "op_margin": 6.7, "div_yield": 3.65}, {"code": "1911", "name": "住友林業", "market": "プライム", "sector": "建設業", "price": 1314, "graham_price": 2504, "discount_rate": 47.5, "mix_index": 6.2, "per": 9.6, "pbr": 0.65, "roe": 13.0, "op_margin": 6.6, "div_yield": 3.76}, {"code": "1938", "name": "日本リーテック", "market": "プライム", "sector": "建設業", "price": 2505, "graham_price": 3712, "discount_rate": 32.5, "mix_index": 10.25, "per": 11.2, "pbr": 0.92, "roe": 9.2, "op_margin": 3.0, "div_yield": 3.86}, {"code": "1950", "name": "日本電設工業", "market": "プライム", "sector": "建設業", "price": 3930, "graham_price": 4989, "discount_rate": 21.2, "mix_index": 13.96, "per": 12.7, "pbr": 1.1, "roe": 9.2, "op_margin": 3.1, "div_yield": 3.22}, {"code": "1928", "name": "積水ハウス", "market": "プライム", "sector": "建設業", "price": 3395, "graham_price": 5454, "discount_rate": 37.8, "mix_index": 8.72, "per": 8.6, "pbr": 1.02, "roe": 12.6, "op_margin": 8.4, "div_yield": 4.29}, {"code": "1951", "name": "エクシオグループ", "market": "プライム", "sector": "建設業", "price": 2641, "graham_price": 2395, "discount_rate": -10.3, "mix_index": 27.35, "per": 17.5, "pbr": 1.56, "roe": 10.3, "op_margin": 6.9, "div_yield": 3.01}, {"code": "1968", "name": "太平電業", "market": "プライム", "sector": "建設業", "price": 2418, "graham_price": 2902, "discount_rate": 16.7, "mix_index": 15.62, "per": 12.8, "pbr": 1.22, "roe": 11.1, "op_margin": 9.1, "div_yield": 3.08}, {"code": "1976", "name": "明星工業", "market": "プライム", "sector": "建設業", "price": 1848, "graham_price": 1976, "discount_rate": 6.5, "mix_index": 19.69, "per": 15.8, "pbr": 1.24, "roe": 8.1, "op_margin": 8.3, "div_yield": 4.37}, {"code": "1969", "name": "高砂熱学工業", "market": "プライム", "sector": "建設業", "price": 4368, "graham_price": 3187, "discount_rate": -37.0, "mix_index": 42.25, "per": 15.3, "pbr": 2.76, "roe": 18.1, "op_margin": 10.0, "div_yield": 2.81}, {"code": "2004", "name": "昭和産業", "market": "プライム", "sector": "食料品", "price": 3660, "graham_price": 5863, "discount_rate": 37.6, "mix_index": 8.77, "per": 11.2, "pbr": 0.78, "roe": 7.3, "op_margin": 3.8, "div_yield": 3.89}, {"code": "2121", "name": "ＭＩＸＩ", "market": "プライム", "sector": "情報・通信業", "price": 3415, "graham_price": 4103, "discount_rate": 16.8, "mix_index": 15.59, "per": 13.2, "pbr": 1.18, "roe": 10.9, "op_margin": 11.5, "div_yield": 5.75}, {"code": "2109", "name": "ＤＭ三井製糖", "market": "プライム", "sector": "食料品", "price": 3580, "graham_price": 3219, "discount_rate": -11.2, "mix_index": 27.84, "per": 28.3, "pbr": 0.99, "roe": 2.3, "op_margin": 8.6, "div_yield": 3.99}, {"code": "2124", "name": "ジェイエイシーリクルートメント", "market": "プライム", "sector": "サービス業", "price": 1033, "graham_price": 419, "discount_rate": -146.6, "mix_index": 136.78, "per": 18.2, "pbr": 7.52, "roe": 44.8, "op_margin": 22.1, "div_yield": 3.66}, {"code": "212A", "name": "フィットイージー", "market": "プライム", "sector": "サービス業", "price": 3020, "graham_price": 1006, "discount_rate": -200.1, "mix_index": 202.65, "per": 26.4, "pbr": 7.67, "roe": 38.4, "op_margin": 24.7, "div_yield": 1.5}, {"code": "2154", "name": "オープンアップグループ", "market": "プライム", "sector": "サービス業", "price": 2045, "graham_price": 1717, "discount_rate": -19.1, "mix_index": 31.91, "per": 14.7, "pbr": 2.17, "roe": 14.9, "op_margin": 7.1, "div_yield": 4.94}, {"code": "2198", "name": "アイ・ケイ・ケイホールディングス", "market": "プライム", "sector": "サービス業", "price": 775, "graham_price": 851, "discount_rate": 8.9, "mix_index": 18.67, "per": 9.9, "pbr": 1.88, "roe": 20.2, "op_margin": 2.5, "div_yield": 3.1}, {"code": "2209", "name": "井村屋グループ", "market": "プライム", "sector": "食料品", "price": 2362, "graham_price": 2874, "discount_rate": 17.8, "mix_index": 15.2, "per": 12.7, "pbr": 1.2, "roe": 10.3, "op_margin": 2.2, "div_yield": 1.61}, {"code": "2220", "name": "亀田製菓", "market": "プライム", "sector": "食料品", "price": 1337, "graham_price": 3803, "discount_rate": 64.8, "mix_index": 2.78, "per": 3.4, "pbr": 0.81, "roe": 4.4, "op_margin": 5.8, "div_yield": 1.78}, {"code": "2229", "name": "カルビー", "market": "プライム", "sector": "食料品", "price": 3003, "graham_price": 2319, "discount_rate": -29.5, "mix_index": 37.72, "per": 21.4, "pbr": 1.76, "roe": 8.5, "op_margin": 7.6, "div_yield": 2.3}, {"code": "2266", "name": "六甲バター", "market": "プライム", "sector": "食料品", "price": 1079, "graham_price": 1718, "discount_rate": 37.2, "mix_index": 8.88, "per": 14.2, "pbr": 0.63, "roe": 5.4, "op_margin": 2.7, "div_yield": 1.84}, {"code": "2281", "name": "プリマハム", "market": "プライム", "sector": "食料品", "price": 2403, "graham_price": 2228, "discount_rate": -7.8, "mix_index": 26.16, "per": 26.3, "pbr": 0.99, "roe": 1.9, "op_margin": 2.0, "div_yield": 3.35}, {"code": "2288", "name": "丸大食品", "market": "プライム", "sector": "食料品", "price": 2225, "graham_price": 5277, "discount_rate": 57.8, "mix_index": 4.0, "per": 5.6, "pbr": 0.72, "roe": 13.2, "op_margin": 2.2, "div_yield": 3.6}, {"code": "2294", "name": "柿安本店", "market": "プライム", "sector": "食料品", "price": 2612, "graham_price": 1755, "discount_rate": -48.8, "mix_index": 49.81, "per": 30.9, "pbr": 1.61, "roe": 5.3, "op_margin": 1.0, "div_yield": 3.26}, {"code": "2307", "name": "クロスキャット", "market": "プライム", "sector": "情報・通信業", "price": 1092, "graham_price": 1059, "discount_rate": -3.1, "mix_index": 23.94, "per": 10.1, "pbr": 2.37, "roe": 25.5, "op_margin": 10.4, "div_yield": 3.63}, {"code": "2327", "name": "日鉄ソリューションズ", "market": "プライム", "sector": "情報・通信業", "price": 3792, "graham_price": 2393, "discount_rate": -58.5, "mix_index": 56.49, "per": 22.5, "pbr": 2.51, "roe": 11.7, "op_margin": 9.9, "div_yield": 2.3}, {"code": "2335", "name": "キューブシステム", "market": "プライム", "sector": "情報・通信業", "price": 1086, "graham_price": 1307, "discount_rate": 16.9, "mix_index": 15.53, "per": 10.5, "pbr": 1.48, "roe": 14.4, "op_margin": 7.8, "div_yield": 4.42}, {"code": "2395", "name": "新日本科学", "market": "プライム", "sector": "サービス業", "price": 1477, "graham_price": 1573, "discount_rate": 6.1, "mix_index": 19.83, "per": 13.5, "pbr": 1.47, "roe": 13.7, "op_margin": 6.6, "div_yield": 3.41}, {"code": "2432", "name": "ディー・エヌ・エー", "market": "プライム", "sector": "情報・通信業", "price": 2467, "graham_price": 2994, "discount_rate": 17.6, "mix_index": 15.28, "per": 14.4, "pbr": 1.06, "roe": 16.2, "op_margin": 19.9, "div_yield": 2.63}, {"code": "2379", "name": "ディップ", "market": "プライム", "sector": "サービス業", "price": 1815, "graham_price": 1312, "discount_rate": -38.3, "mix_index": 43.04, "per": 16.0, "pbr": 2.7, "roe": 12.1, "op_margin": 5.9, "div_yield": 5.32}, {"code": "2533", "name": "オエノンホールディングス", "market": "プライム", "sector": "食料品", "price": 472, "graham_price": 796, "discount_rate": 40.7, "mix_index": 7.91, "per": 8.3, "pbr": 0.96, "roe": 11.9, "op_margin": 5.8, "div_yield": 2.53}, {"code": "2475", "name": "ＷＤＢホールディングス", "market": "プライム", "sector": "サービス業", "price": 1832, "graham_price": 2332, "discount_rate": 21.4, "mix_index": 13.89, "per": 12.9, "pbr": 1.07, "roe": 8.3, "op_margin": 9.2, "div_yield": 6.14}, {"code": "2462", "name": "ライク", "market": "プライム", "sector": "サービス業", "price": 1541, "graham_price": 1644, "discount_rate": 6.3, "mix_index": 19.77, "per": 12.7, "pbr": 1.56, "roe": 12.7, "op_margin": 10.5, "div_yield": 3.89}, {"code": "2587", "name": "サントリービバレッジ＆フード", "market": "プライム", "sector": "食料品", "price": 4501, "graham_price": 5349, "discount_rate": 15.8, "mix_index": 15.93, "per": 15.5, "pbr": 1.03, "roe": 8.0, "op_margin": 9.5, "div_yield": 2.64}, {"code": "25935", "name": "伊藤園第１種優先株式", "market": "プライム", "sector": "食料品", "price": 1796, "graham_price": 1017, "discount_rate": -76.6, "mix_index": 70.14, "per": 59.7, "pbr": 1.17, "roe": 2.1, "op_margin": 4.8, "div_yield": 3.69}, {"code": "2670", "name": "エービーシー・マート", "market": "プライム", "sector": "小売業", "price": 2778, "graham_price": 2613, "discount_rate": -6.3, "mix_index": 25.44, "per": 14.8, "pbr": 1.71, "roe": 12.4, "op_margin": 19.3, "div_yield": 2.87}, {"code": "2602", "name": "日清オイリオグループ", "market": "プライム", "sector": "食料品", "price": 1989, "graham_price": 3643, "discount_rate": 45.4, "mix_index": 6.71, "per": 7.8, "pbr": 0.86, "roe": 5.1, "op_margin": 4.2, "div_yield": 3.01}, {"code": "2674", "name": "ハードオフコーポレーション", "market": "プライム", "sector": "小売業", "price": 2721, "graham_price": 2413, "discount_rate": -12.8, "mix_index": 28.68, "per": 15.0, "pbr": 1.91, "roe": 18.2, "op_margin": 9.4, "div_yield": 3.4}, {"code": "2695", "name": "くら寿司", "market": "プライム", "sector": "小売業", "price": 1692, "graham_price": 915, "discount_rate": -84.8, "mix_index": 76.86, "per": 38.6, "pbr": 1.99, "roe": 4.2, "op_margin": 1.6, "div_yield": 0.89}, {"code": "2734", "name": "サーラコーポレーション", "market": "プライム", "sector": "小売業", "price": 1229, "graham_price": 1981, "discount_rate": 38.0, "mix_index": 8.66, "per": 10.6, "pbr": 0.82, "roe": 8.2, "op_margin": 4.6, "div_yield": 2.98}, {"code": "2749", "name": "ＪＰホールディングス", "market": "プライム", "sector": "サービス業", "price": 655, "graham_price": 549, "discount_rate": -19.2, "mix_index": 31.99, "per": 13.1, "pbr": 2.45, "roe": 0.0, "op_margin": 15.9, "div_yield": 2.1}, {"code": "2760", "name": "東京エレクトロン　デバイス", "market": "プライム", "sector": "卸売業", "price": 4325, "graham_price": 3293, "discount_rate": -31.4, "mix_index": 38.82, "per": 16.3, "pbr": 2.39, "roe": 18.2, "op_margin": 6.7, "div_yield": 3.18}, {"code": "2784", "name": "アルフレッサ　ホールディングス", "market": "プライム", "sector": "卸売業", "price": 2276, "graham_price": 3783, "discount_rate": 39.8, "mix_index": 8.15, "per": 9.9, "pbr": 0.82, "roe": 8.2, "op_margin": 0.7, "div_yield": 3.2}, {"code": "2791", "name": "大黒天物産", "market": "プライム", "sector": "小売業", "price": 4610, "graham_price": 5214, "discount_rate": 11.6, "mix_index": 17.59, "per": 17.4, "pbr": 1.01, "roe": 5.9, "op_margin": 1.3, "div_yield": 0.86}, {"code": "2809", "name": "キユーピー", "market": "プライム", "sector": "食料品", "price": 4645, "graham_price": 3121, "discount_rate": -48.8, "mix_index": 49.84, "per": 25.6, "pbr": 1.95, "roe": 8.2, "op_margin": 8.9, "div_yield": 1.42}, {"code": "2871", "name": "ニチレイ", "market": "プライム", "sector": "食料品", "price": 2148, "graham_price": 1679, "discount_rate": -27.9, "mix_index": 36.8, "per": 19.7, "pbr": 1.87, "roe": 10.3, "op_margin": 3.6, "div_yield": 2.32}, {"code": "2811", "name": "カゴメ", "market": "プライム", "sector": "食料品", "price": 2656, "graham_price": 2648, "discount_rate": -0.3, "mix_index": 22.64, "per": 18.2, "pbr": 1.25, "roe": 7.2, "op_margin": 6.5, "div_yield": 2.21}, {"code": "2875", "name": "東洋水産", "market": "プライム", "sector": "食料品", "price": 10595, "graham_price": 9422, "discount_rate": -12.4, "mix_index": 28.45, "per": 14.8, "pbr": 1.92, "roe": 14.1, "op_margin": 16.6, "div_yield": 2.08}, {"code": "2882", "name": "イートアンドホールディングス", "market": "プライム", "sector": "食料品", "price": 2078, "graham_price": 863, "discount_rate": -140.7, "mix_index": 130.35, "per": 63.0, "pbr": 2.07, "roe": 4.5, "op_margin": 5.5, "div_yield": 0.72}, {"code": "2915", "name": "ケンコーマヨネーズ", "market": "プライム", "sector": "食料品", "price": 2027, "graham_price": 3592, "discount_rate": 43.6, "mix_index": 7.17, "per": 10.2, "pbr": 0.7, "roe": 7.2, "op_margin": 3.1, "div_yield": 3.44}, {"code": "2930", "name": "北の達人コーポレーション", "market": "プライム", "sector": "化学", "price": 127, "graham_price": 79, "discount_rate": -61.0, "mix_index": 58.36, "per": 25.5, "pbr": 2.29, "roe": 5.8, "op_margin": -3.2, "div_yield": 2.78}, {"code": "3003", "name": "ヒューリック", "market": "プライム", "sector": "不動産業", "price": 1742, "graham_price": 2101, "discount_rate": 17.1, "mix_index": 15.45, "per": 11.1, "pbr": 1.4, "roe": 13.1, "op_margin": 25.9, "div_yield": 3.85}, {"code": "3036", "name": "アルコニックス", "market": "プライム", "sector": "卸売業", "price": 3660, "graham_price": 3968, "discount_rate": 7.8, "mix_index": 19.14, "per": 19.7, "pbr": 0.97, "roe": 11.1, "op_margin": 9.6, "div_yield": 2.6}, {"code": "3034", "name": "クオールホールディングス", "market": "プライム", "sector": "小売業", "price": 2619, "graham_price": 2650, "discount_rate": 1.2, "mix_index": 21.98, "per": 13.3, "pbr": 1.66, "roe": 17.2, "op_margin": 8.3, "div_yield": 2.1}, {"code": "3050", "name": "ＤＣＭホールディングス", "market": "プライム", "sector": "小売業", "price": 1580, "graham_price": 2444, "discount_rate": 35.4, "mix_index": 9.4, "per": 12.4, "pbr": 0.76, "roe": 6.5, "op_margin": 7.5, "div_yield": 3.07}, {"code": "3038", "name": "神戸物産", "market": "プライム", "sector": "卸売業", "price": 2750, "graham_price": 1635, "discount_rate": -68.1, "mix_index": 63.6, "per": 18.0, "pbr": 3.54, "roe": 21.7, "op_margin": 7.0, "div_yield": 1.15}, {"code": "3064", "name": "ＭｏｎｏｔａＲＯ", "market": "プライム", "sector": "小売業", "price": 1804, "graham_price": 630, "discount_rate": -186.2, "mix_index": 184.33, "per": 25.1, "pbr": 7.34, "roe": 0.0, "op_margin": 14.5, "div_yield": 2.05}, {"code": "3087", "name": "ドトール・日レスホールディングス", "market": "プライム", "sector": "小売業", "price": 3185, "graham_price": 3123, "discount_rate": -2.0, "mix_index": 23.4, "per": 18.7, "pbr": 1.25, "roe": 7.6, "op_margin": 8.9, "div_yield": 1.9}, {"code": "3097", "name": "物語コーポレーション", "market": "プライム", "sector": "小売業", "price": 5660, "graham_price": 2505, "discount_rate": -125.9, "mix_index": 114.83, "per": 24.9, "pbr": 4.61, "roe": 19.9, "op_margin": 7.6, "div_yield": 0.82}, {"code": "3101", "name": "東洋紡", "market": "プライム", "sector": "化学", "price": 1648, "graham_price": 2623, "discount_rate": 37.2, "mix_index": 8.88, "per": 13.0, "pbr": 0.68, "roe": 6.8, "op_margin": 6.5, "div_yield": 2.41}, {"code": "3139", "name": "ラクト・ジャパン", "market": "プライム", "sector": "卸売業", "price": 3400, "graham_price": 4952, "discount_rate": 31.3, "mix_index": 10.61, "per": 10.4, "pbr": 1.02, "roe": 10.4, "op_margin": 3.0, "div_yield": 3.91}, {"code": "3154", "name": "メディアスホールディングス", "market": "プライム", "sector": "卸売業", "price": 825, "graham_price": 1131, "discount_rate": 27.0, "mix_index": 11.98, "per": 13.5, "pbr": 0.88, "roe": 4.6, "op_margin": -0.2, "div_yield": 2.48}, {"code": "3156", "name": "レスター", "market": "プライム", "sector": "卸売業", "price": 4975, "graham_price": 4632, "discount_rate": -7.4, "mix_index": 25.96, "per": 18.2, "pbr": 1.43, "roe": 13.5, "op_margin": 5.0, "div_yield": 2.96}, {"code": "3167", "name": "ＴＯＫＡＩホールディングス", "market": "プライム", "sector": "卸売業", "price": 1255, "graham_price": 1219, "discount_rate": -2.9, "mix_index": 23.84, "per": 15.2, "pbr": 1.57, "roe": 11.3, "op_margin": 7.5, "div_yield": 3.08}, {"code": "3183", "name": "ウイン・パートナーズ", "market": "プライム", "sector": "卸売業", "price": 1284, "graham_price": 1183, "discount_rate": -8.5, "mix_index": 26.5, "per": 16.7, "pbr": 1.59, "roe": 9.2, "op_margin": 2.5, "div_yield": 4.3}, {"code": "3191", "name": "ジョイフル本田", "market": "プライム", "sector": "小売業", "price": 2275, "graham_price": 2656, "discount_rate": 14.4, "mix_index": 16.51, "per": 15.2, "pbr": 1.08, "roe": 7.3, "op_margin": 3.4, "div_yield": 3.72}, {"code": "3196", "name": "ホットランドホールディングス", "market": "プライム", "sector": "小売業", "price": 1638, "graham_price": 568, "discount_rate": -188.5, "mix_index": 187.31, "per": 86.2, "pbr": 2.17, "roe": 5.3, "op_margin": 1.0, "div_yield": 0.8}, {"code": "3245", "name": "ディア・ライフ", "market": "プライム", "sector": "不動産業", "price": 1159, "graham_price": 1184, "discount_rate": 2.1, "mix_index": 21.57, "per": 12.0, "pbr": 1.8, "roe": 17.2, "op_margin": 15.6, "div_yield": 5.53}, {"code": "3252", "name": "地主", "market": "プライム", "sector": "不動産業", "price": 2948, "graham_price": 3144, "discount_rate": 6.2, "mix_index": 19.79, "per": 9.1, "pbr": 2.17, "roe": 13.9, "op_margin": 6.9, "div_yield": 4.38}, {"code": "3232", "name": "三重交通グループホールディングス", "market": "プライム", "sector": "不動産業", "price": 556, "graham_price": 1009, "discount_rate": 44.9, "mix_index": 6.83, "per": 8.9, "pbr": 0.76, "roe": 9.4, "op_margin": 11.1, "div_yield": 3.25}, {"code": "3288", "name": "オープンハウスグループ", "market": "プライム", "sector": "不動産業", "price": 8019, "graham_price": 10841, "discount_rate": 26.0, "mix_index": 12.31, "per": 8.2, "pbr": 1.51, "roe": 20.2, "op_margin": 10.9, "div_yield": 2.5}, {"code": "3302", "name": "帝国繊維", "market": "プライム", "sector": "繊維製品", "price": 3285, "graham_price": 3459, "discount_rate": 5.0, "mix_index": 20.3, "per": 17.9, "pbr": 1.14, "roe": 6.7, "op_margin": 0.1, "div_yield": 1.99}, {"code": "3371", "name": "ソフトクリエイトホールディングス", "market": "プライム", "sector": "情報・通信業", "price": 2111, "graham_price": 1942, "discount_rate": -8.7, "mix_index": 26.59, "per": 13.0, "pbr": 2.05, "roe": 17.1, "op_margin": 13.9, "div_yield": 3.0}, {"code": "3388", "name": "明治電機工業", "market": "プライム", "sector": "卸売業", "price": 2118, "graham_price": 3905, "discount_rate": 45.8, "mix_index": 6.62, "per": 9.5, "pbr": 0.7, "roe": 6.9, "op_margin": 0.2, "div_yield": 4.57}, {"code": "3349", "name": "コスモス薬品", "market": "プライム", "sector": "小売業", "price": 6386, "graham_price": 5706, "discount_rate": -11.9, "mix_index": 28.18, "per": 15.8, "pbr": 1.78, "roe": 11.8, "op_margin": 3.5, "div_yield": 1.32}, {"code": "3402", "name": "東レ", "market": "プライム", "sector": "繊維製品", "price": 1342, "graham_price": 1219, "discount_rate": -10.2, "mix_index": 27.3, "per": 25.4, "pbr": 1.08, "roe": 5.6, "op_margin": 7.0, "div_yield": 1.73}, {"code": "3431", "name": "宮地エンジニアリンググループ", "market": "プライム", "sector": "金属製品", "price": 1648, "graham_price": 2088, "discount_rate": 21.1, "mix_index": 14.01, "per": 13.4, "pbr": 1.05, "roe": 6.0, "op_margin": 3.0, "div_yield": 4.63}, {"code": "3457", "name": "Ａｎｄ　Ｄｏホールディングス", "market": "プライム", "sector": "不動産業", "price": 923, "graham_price": 1190, "discount_rate": 22.4, "mix_index": 13.54, "per": 14.1, "pbr": 0.96, "roe": 12.4, "op_margin": 6.0, "div_yield": 4.99}, {"code": "3475", "name": "グッドコムアセット", "market": "プライム", "sector": "不動産業", "price": 1543, "graham_price": 861, "discount_rate": -79.2, "mix_index": 72.28, "per": 22.9, "pbr": 3.16, "roe": 13.7, "op_margin": 11.4, "div_yield": 2.94}, {"code": "3393", "name": "スターティアホールディングス", "market": "プライム", "sector": "卸売業", "price": 3005, "graham_price": 2187, "discount_rate": -37.4, "mix_index": 42.49, "per": 12.1, "pbr": 3.5, "roe": 32.3, "op_margin": 11.7, "div_yield": 10.4}, {"code": "3498", "name": "霞ヶ関キャピタル", "market": "プライム", "sector": "不動産業", "price": 7600, "graham_price": 6460, "discount_rate": -17.6, "mix_index": 31.14, "per": 12.5, "pbr": 2.49, "roe": 20.1, "op_margin": 0.5, "div_yield": 2.07}, {"code": "3480", "name": "ジェイ・エス・ビー", "market": "プライム", "sector": "不動産業", "price": 8960, "graham_price": 3934, "discount_rate": -127.7, "mix_index": 116.7, "per": 28.5, "pbr": 4.1, "roe": 15.2, "op_margin": 30.7, "div_yield": 2.34}, {"code": "3561", "name": "力の源ホールディングス", "market": "プライム", "sector": "小売業", "price": 1608, "graham_price": 739, "discount_rate": -117.6, "mix_index": 106.55, "per": 26.5, "pbr": 4.02, "roe": 12.0, "op_margin": 2.4, "div_yield": 1.51}, {"code": "3580", "name": "小松マテーレ", "market": "プライム", "sector": "繊維製品", "price": 759, "graham_price": 959, "discount_rate": 20.8, "mix_index": 14.1, "per": 19.7, "pbr": 0.72, "roe": 4.1, "op_margin": 8.9, "div_yield": 3.72}, {"code": "3632", "name": "グリーホールディングス", "market": "プライム", "sector": "情報・通信業", "price": 429, "graham_price": 545, "discount_rate": 21.3, "mix_index": 13.95, "per": 18.1, "pbr": 0.77, "roe": 4.1, "op_margin": 12.5, "div_yield": 5.13}, {"code": "3635", "name": "コーエーテクモホールディングス", "market": "プライム", "sector": "情報・通信業", "price": 1658, "graham_price": 1575, "discount_rate": -5.2, "mix_index": 24.9, "per": 12.6, "pbr": 1.98, "roe": 20.6, "op_margin": 31.1, "div_yield": 2.89}, {"code": "3663", "name": "セルシス", "market": "プライム", "sector": "情報・通信業", "price": 1864, "graham_price": 565, "discount_rate": -230.0, "mix_index": 244.96, "per": 24.1, "pbr": 10.17, "roe": 28.0, "op_margin": 36.6, "div_yield": 2.22}, {"code": "3665", "name": "エニグモ", "market": "プライム", "sector": "情報・通信業", "price": 415, "graham_price": 221, "discount_rate": -87.5, "mix_index": 79.11, "per": 50.4, "pbr": 1.57, "roe": 0.0, "op_margin": -10.3, "div_yield": 2.4}, {"code": "3656", "name": "ＫＬａｂ", "market": "プライム", "sector": "情報・通信業", "price": 198, "graham_price": 224, "discount_rate": 11.6, "mix_index": 17.57, "per": 12.5, "pbr": 1.41, "roe": 4.8, "op_margin": 15.1, "div_yield": 0.0}, {"code": "3661", "name": "エムアップホールディングス", "market": "プライム", "sector": "情報・通信業", "price": 819, "graham_price": 338, "discount_rate": -142.4, "mix_index": 132.16, "per": 19.6, "pbr": 6.75, "roe": 33.5, "op_margin": 17.8, "div_yield": 3.03}, {"code": "3676", "name": "デジタルハーツホールディングス", "market": "プライム", "sector": "情報・通信業", "price": 1059, "graham_price": 726, "discount_rate": -45.8, "mix_index": 47.82, "per": 20.0, "pbr": 2.39, "roe": 11.4, "op_margin": 6.3, "div_yield": 2.55}, {"code": "3694", "name": "オプティム", "market": "プライム", "sector": "情報・通信業", "price": 447, "graham_price": 279, "discount_rate": -60.4, "mix_index": 57.91, "per": 22.1, "pbr": 2.62, "roe": 0.3, "op_margin": 11.2, "div_yield": 0.0}, {"code": "3708", "name": "特種東海製紙", "market": "プライム", "sector": "パルプ・紙", "price": 2129, "graham_price": 2603, "discount_rate": 18.2, "mix_index": 15.05, "per": 17.1, "pbr": 0.88, "roe": 5.5, "op_margin": 5.8, "div_yield": 4.45}, {"code": "3762", "name": "テクマトリックス", "market": "プライム", "sector": "情報・通信業", "price": 2314, "graham_price": 1374, "discount_rate": -68.4, "mix_index": 63.81, "per": 18.0, "pbr": 3.54, "roe": 18.7, "op_margin": 8.5, "div_yield": 2.77}, {"code": "3788", "name": "ＧＭＯグローバルサイン・ホールディングス", "market": "プライム", "sector": "情報・通信業", "price": 2110, "graham_price": 1332, "discount_rate": -58.4, "mix_index": 56.49, "per": 24.1, "pbr": 2.34, "roe": 11.1, "op_margin": 2.8, "div_yield": 2.75}, {"code": "3769", "name": "ＧＭＯペイメントゲートウェイ", "market": "プライム", "sector": "情報・通信業", "price": 9070, "graham_price": 3404, "discount_rate": -166.4, "mix_index": 159.72, "per": 29.0, "pbr": 5.51, "roe": 21.7, "op_margin": 43.6, "div_yield": 1.93}, {"code": "3835", "name": "ｅＢＡＳＥ", "market": "プライム", "sector": "情報・通信業", "price": 426, "graham_price": 283, "discount_rate": -50.7, "mix_index": 51.12, "per": 18.5, "pbr": 2.76, "roe": 14.7, "op_margin": 11.2, "div_yield": 2.88}, {"code": "3837", "name": "アドソル日進", "market": "プライム", "sector": "情報・通信業", "price": 1535, "graham_price": 880, "discount_rate": -74.4, "mix_index": 68.42, "per": 18.0, "pbr": 3.8, "roe": 20.1, "op_margin": 13.4, "div_yield": 3.15}, {"code": "3861", "name": "王子ホールディングス", "market": "プライム", "sector": "パルプ・紙", "price": 865, "graham_price": 1325, "discount_rate": 34.7, "mix_index": 9.59, "per": 14.2, "pbr": 0.68, "roe": 6.0, "op_margin": 0.8, "div_yield": 4.18}, {"code": "3916", "name": "デジタル・インフォメーション・テクノロジー", "market": "プライム", "sector": "情報・通信業", "price": 961, "graham_price": 715, "discount_rate": -34.4, "mix_index": 40.66, "per": 13.0, "pbr": 3.13, "roe": 24.2, "op_margin": 9.7, "div_yield": 4.11}, {"code": "3932", "name": "アカツキ", "market": "プライム", "sector": "情報・通信業", "price": 3445, "graham_price": 5266, "discount_rate": 34.6, "mix_index": 9.63, "per": 8.8, "pbr": 1.1, "roe": 13.0, "op_margin": 46.8, "div_yield": 3.51}, {"code": "3941", "name": "レンゴー", "market": "プライム", "sector": "パルプ・紙", "price": 1585, "graham_price": 1981, "discount_rate": 20.0, "mix_index": 14.4, "per": 18.7, "pbr": 0.77, "roe": 5.7, "op_margin": 6.5, "div_yield": 3.08}, {"code": "3964", "name": "オークネット", "market": "プライム", "sector": "情報・通信業", "price": 1517, "graham_price": 755, "discount_rate": -100.8, "mix_index": 90.72, "per": 19.5, "pbr": 4.64, "roe": 25.9, "op_margin": 19.5, "div_yield": 2.96}, {"code": "3946", "name": "トーモク", "market": "プライム", "sector": "パルプ・紙", "price": 4730, "graham_price": 7891, "discount_rate": 40.1, "mix_index": 8.08, "per": 10.6, "pbr": 0.76, "roe": 7.9, "op_margin": 3.1, "div_yield": 3.61}, {"code": "3992", "name": "ニーズウェル", "market": "プライム", "sector": "情報・通信業", "price": 464, "graham_price": 249, "discount_rate": -86.6, "mix_index": 78.39, "per": 21.9, "pbr": 3.58, "roe": 17.3, "op_margin": 8.9, "div_yield": 2.58}, {"code": "4025", "name": "多木化学", "market": "プライム", "sector": "化学", "price": 6200, "graham_price": 7535, "discount_rate": 17.7, "mix_index": 15.23, "per": 13.8, "pbr": 1.1, "roe": 8.7, "op_margin": 10.3, "div_yield": 1.69}, {"code": "4028", "name": "石原産業", "market": "プライム", "sector": "化学", "price": 3090, "graham_price": 5711, "discount_rate": 45.9, "mix_index": 6.59, "per": 7.1, "pbr": 0.93, "roe": 10.6, "op_margin": 5.6, "div_yield": 4.17}, {"code": "4044", "name": "セントラル硝子", "market": "プライム", "sector": "化学", "price": 4655, "graham_price": 6253, "discount_rate": 25.6, "mix_index": 12.47, "per": 13.8, "pbr": 0.9, "roe": 0.0, "op_margin": 10.5, "div_yield": 3.66}, {"code": "4047", "name": "関東電化工業", "market": "プライム", "sector": "化学", "price": 2584, "graham_price": 1403, "discount_rate": -84.1, "mix_index": 76.28, "per": 39.2, "pbr": 1.95, "roe": 9.0, "op_margin": 20.1, "div_yield": 1.33}, {"code": "4064", "name": "日本カーバイド工業", "market": "プライム", "sector": "化学", "price": 3445, "graham_price": 5113, "discount_rate": 32.6, "mix_index": 10.21, "per": 12.3, "pbr": 0.83, "roe": 7.7, "op_margin": 8.3, "div_yield": 3.9}, {"code": "4078", "name": "堺化学工業", "market": "プライム", "sector": "化学", "price": 4020, "graham_price": 4370, "discount_rate": 8.0, "mix_index": 19.04, "per": 25.5, "pbr": 0.75, "roe": 4.5, "op_margin": 7.9, "div_yield": 3.97}, {"code": "4053", "name": "Ｓｕｎ　Ａｓｔｅｒｉｓｋ", "market": "プライム", "sector": "情報・通信業", "price": 466, "graham_price": 280, "discount_rate": -66.5, "mix_index": 62.37, "per": 38.5, "pbr": 1.62, "roe": 6.2, "op_margin": 14.0, "div_yield": 2.19}, {"code": "4097", "name": "高圧ガス工業", "market": "プライム", "sector": "化学", "price": 1202, "graham_price": 1720, "discount_rate": 30.1, "mix_index": 10.98, "per": 14.2, "pbr": 0.77, "roe": 6.2, "op_margin": 7.8, "div_yield": 3.34}, {"code": "409A", "name": "オリオンビール", "market": "プライム", "sector": "食料品", "price": 1197, "graham_price": 1059, "discount_rate": -13.0, "mix_index": 28.74, "per": 10.5, "pbr": 2.74, "roe": 0.0, "op_margin": 13.3, "div_yield": 2.84}, {"code": "4114", "name": "日本触媒", "market": "プライム", "sector": "化学", "price": 2691, "graham_price": 2618, "discount_rate": -2.8, "mix_index": 23.78, "per": 24.0, "pbr": 0.99, "roe": 5.9, "op_margin": 10.0, "div_yield": 5.25}, {"code": "4116", "name": "大日精化工業", "market": "プライム", "sector": "化学", "price": 1345, "graham_price": 2341, "discount_rate": 42.5, "mix_index": 7.43, "per": 11.4, "pbr": 0.65, "roe": 6.4, "op_margin": 9.3, "div_yield": 3.53}, {"code": "4118", "name": "カネカ", "market": "プライム", "sector": "化学", "price": 6245, "graham_price": 9715, "discount_rate": 35.7, "mix_index": 9.3, "per": 12.5, "pbr": 0.74, "roe": 7.4, "op_margin": 6.7, "div_yield": 3.35}, {"code": "4189", "name": "ＫＨネオケム", "market": "プライム", "sector": "化学", "price": 3380, "graham_price": 3536, "discount_rate": 4.4, "mix_index": 20.55, "per": 13.0, "pbr": 1.59, "roe": 12.6, "op_margin": 19.5, "div_yield": 4.42}, {"code": "4187", "name": "大阪有機化学工業", "market": "プライム", "sector": "化学", "price": 4885, "graham_price": 4807, "discount_rate": -1.6, "mix_index": 23.23, "per": 12.7, "pbr": 1.83, "roe": 15.9, "op_margin": 23.6, "div_yield": 1.72}, {"code": "4206", "name": "アイカ工業", "market": "プライム", "sector": "化学", "price": 4056, "graham_price": 4357, "discount_rate": 6.9, "mix_index": 19.5, "per": 14.7, "pbr": 1.33, "roe": 10.4, "op_margin": 12.8, "div_yield": 3.54}, {"code": "4228", "name": "積水化成品工業", "market": "プライム", "sector": "化学", "price": 641, "graham_price": 1103, "discount_rate": 41.9, "mix_index": 7.6, "per": 13.6, "pbr": 0.56, "roe": 7.1, "op_margin": 4.1, "div_yield": 2.61}, {"code": "4229", "name": "群栄化学工業", "market": "プライム", "sector": "化学", "price": 4685, "graham_price": 7601, "discount_rate": 38.4, "mix_index": 8.55, "per": 15.7, "pbr": 0.54, "roe": 3.7, "op_margin": 12.3, "div_yield": 2.36}, {"code": "4246", "name": "ダイキョーニシカワ", "market": "プライム", "sector": "化学", "price": 1139, "graham_price": 1964, "discount_rate": 42.0, "mix_index": 7.56, "per": 9.0, "pbr": 0.84, "roe": 10.4, "op_margin": 6.4, "div_yield": 5.13}, {"code": "4221", "name": "大倉工業", "market": "プライム", "sector": "化学", "price": 5790, "graham_price": 7592, "discount_rate": 23.7, "mix_index": 13.09, "per": 13.1, "pbr": 1.0, "roe": 7.9, "op_margin": 10.1, "div_yield": 4.56}, {"code": "4290", "name": "プレステージ・インターナショナル", "market": "プライム", "sector": "サービス業", "price": 724, "graham_price": 642, "discount_rate": -12.7, "mix_index": 28.51, "per": 15.4, "pbr": 1.85, "roe": 13.6, "op_margin": 12.5, "div_yield": 3.89}, {"code": "4251", "name": "恵和", "market": "プライム", "sector": "化学", "price": 1187, "graham_price": 2206, "discount_rate": 46.2, "mix_index": 6.51, "per": 7.4, "pbr": 0.88, "roe": 12.8, "op_margin": 13.4, "div_yield": 4.17}, {"code": "4310", "name": "ドリームインキュベータ", "market": "プライム", "sector": "サービス業", "price": 2529, "graham_price": 2233, "discount_rate": -13.3, "mix_index": 28.87, "per": 13.9, "pbr": 2.07, "roe": 9.8, "op_margin": 3.8, "div_yield": 10.96}, {"code": "4343", "name": "イオンファンタジー", "market": "プライム", "sector": "サービス業", "price": 2870, "graham_price": 1123, "discount_rate": -155.5, "mix_index": 146.9, "per": 20.4, "pbr": 7.21, "roe": 46.0, "op_margin": 5.4, "div_yield": 0.71}, {"code": "4369", "name": "トリケミカル研究所", "market": "プライム", "sector": "化学", "price": 3425, "graham_price": 2078, "discount_rate": -64.8, "mix_index": 61.13, "per": 20.2, "pbr": 3.03, "roe": 18.1, "op_margin": 27.6, "div_yield": 1.01}, {"code": "4368", "name": "扶桑化学工業", "market": "プライム", "sector": "化学", "price": 3425, "graham_price": 1880, "discount_rate": -82.1, "mix_index": 74.64, "per": 25.3, "pbr": 2.95, "roe": 15.7, "op_margin": 27.0, "div_yield": 0.8}, {"code": "4390", "name": "ＩＰＳ", "market": "プライム", "sector": "情報・通信業", "price": 4125, "graham_price": 3223, "discount_rate": -28.0, "mix_index": 36.87, "per": 13.1, "pbr": 2.82, "roe": 22.2, "op_margin": 30.5, "div_yield": 0.98}, {"code": "4345", "name": "シーティーエス", "market": "プライム", "sector": "サービス業", "price": 833, "graham_price": 765, "discount_rate": -8.9, "mix_index": 26.67, "per": 12.8, "pbr": 2.08, "roe": 18.3, "op_margin": 23.1, "div_yield": 3.61}, {"code": "4410", "name": "ハリマ化成グループ", "market": "プライム", "sector": "化学", "price": 1165, "graham_price": 1933, "discount_rate": 39.7, "mix_index": 8.17, "per": 12.1, "pbr": 0.68, "roe": 7.4, "op_margin": 4.6, "div_yield": 3.57}, {"code": "4471", "name": "三洋化成工業", "market": "プライム", "sector": "化学", "price": 6450, "graham_price": 10806, "discount_rate": 40.3, "mix_index": 8.02, "per": 9.1, "pbr": 0.88, "roe": 7.9, "op_margin": 13.3, "div_yield": 1.97}, {"code": "4480", "name": "メドレー", "market": "プライム", "sector": "情報・通信業", "price": 2833, "graham_price": 765, "discount_rate": -270.4, "mix_index": 308.63, "per": 47.3, "pbr": 6.52, "roe": 11.1, "op_margin": 20.1, "div_yield": 1.28}, {"code": "4507", "name": "塩野義製薬", "market": "プライム", "sector": "医薬品", "price": 2825, "graham_price": 3361, "discount_rate": 15.9, "mix_index": 15.9, "per": 11.7, "pbr": 1.36, "roe": 16.8, "op_margin": 11.4, "div_yield": 2.71}, {"code": "4528", "name": "小野薬品工業", "market": "プライム", "sector": "医薬品", "price": 2422, "graham_price": 2481, "discount_rate": 2.4, "mix_index": 21.44, "per": 16.3, "pbr": 1.31, "roe": 9.3, "op_margin": 26.4, "div_yield": 3.32}, {"code": "4534", "name": "持田製薬", "market": "プライム", "sector": "医薬品", "price": 3230, "graham_price": 4462, "discount_rate": 27.6, "mix_index": 11.79, "per": 14.5, "pbr": 0.81, "roe": 6.8, "op_margin": 11.2, "div_yield": 2.66}, {"code": "4544", "name": "Ｈ．Ｕ．グループホールディングス", "market": "プライム", "sector": "サービス業", "price": 3569, "graham_price": 2579, "discount_rate": -38.4, "mix_index": 43.08, "per": 29.4, "pbr": 1.47, "roe": 7.1, "op_margin": 3.4, "div_yield": 3.53}, {"code": "4549", "name": "栄研化学", "market": "プライム", "sector": "医薬品", "price": 2326, "graham_price": 1825, "discount_rate": -27.5, "mix_index": 36.55, "per": 20.7, "pbr": 1.76, "roe": 8.3, "op_margin": 6.2, "div_yield": 2.48}, {"code": "4536", "name": "参天製薬", "market": "プライム", "sector": "医薬品", "price": 1918, "graham_price": 1547, "discount_rate": -23.9, "mix_index": 34.57, "per": 16.9, "pbr": 2.05, "roe": 13.4, "op_margin": 11.8, "div_yield": 2.21}, {"code": "4552", "name": "ＪＣＲファーマ", "market": "プライム", "sector": "医薬品", "price": 528, "graham_price": 377, "discount_rate": -39.9, "mix_index": 44.03, "per": 29.5, "pbr": 1.49, "roe": 1.9, "op_margin": -21.7, "div_yield": 4.02}, {"code": "4559", "name": "ゼリア新薬工業", "market": "プライム", "sector": "医薬品", "price": 2118, "graham_price": 3252, "discount_rate": 34.9, "mix_index": 9.54, "per": 11.0, "pbr": 0.86, "roe": 8.4, "op_margin": 9.1, "div_yield": 2.39}, {"code": "4574", "name": "大幸薬品", "market": "プライム", "sector": "医薬品", "price": 269, "graham_price": 466, "discount_rate": 42.3, "mix_index": 7.48, "per": 14.6, "pbr": 0.51, "roe": 20.1, "op_margin": 21.3, "div_yield": 1.3}, {"code": "4577", "name": "ダイト", "market": "プライム", "sector": "医薬品", "price": 1341, "graham_price": 2110, "discount_rate": 36.4, "mix_index": 9.09, "per": 12.5, "pbr": 0.73, "roe": 6.0, "op_margin": 6.4, "div_yield": 3.42}, {"code": "4612", "name": "日本ペイントホールディングス", "market": "プライム", "sector": "化学", "price": 1224, "graham_price": 1105, "discount_rate": -10.7, "mix_index": 27.59, "per": 19.5, "pbr": 1.42, "roe": 11.3, "op_margin": 14.9, "div_yield": 1.38}, {"code": "4569", "name": "杏林製薬", "market": "プライム", "sector": "医薬品", "price": 1140, "graham_price": 1816, "discount_rate": 37.2, "mix_index": 8.87, "per": 19.0, "pbr": 0.47, "roe": 1.6, "op_margin": 3.3, "div_yield": 2.24}, {"code": "4641", "name": "アルプス技研", "market": "プライム", "sector": "サービス業", "price": 841, "graham_price": 720, "discount_rate": -16.8, "mix_index": 30.71, "per": 13.1, "pbr": 2.35, "roe": 18.9, "op_margin": 8.3, "div_yield": 4.33}, {"code": "4617", "name": "中国塗料", "market": "プライム", "sector": "化学", "price": 3620, "graham_price": 3120, "discount_rate": -16.0, "mix_index": 30.29, "per": 16.3, "pbr": 1.86, "roe": 15.1, "op_margin": 15.0, "div_yield": 2.73}, {"code": "4676", "name": "フジ・メディア・ホールディングス", "market": "プライム", "sector": "情報・通信業", "price": 4149, "graham_price": 1672, "discount_rate": -148.1, "mix_index": 138.55, "per": 126.4, "pbr": 1.1, "roe": 2.4, "op_margin": 10.8, "div_yield": 4.87}, {"code": "4680", "name": "ラウンドワン", "market": "プライム", "sector": "サービス業", "price": 1326, "graham_price": 682, "discount_rate": -94.6, "mix_index": 85.23, "per": 21.0, "pbr": 4.06, "roe": 21.5, "op_margin": 12.3, "div_yield": 1.39}, {"code": "4684", "name": "オービック", "market": "プライム", "sector": "情報・通信業", "price": 4571, "graham_price": 2101, "discount_rate": -117.6, "mix_index": 106.5, "per": 26.6, "pbr": 4.0, "roe": 16.6, "op_margin": 67.7, "div_yield": 2.07}, {"code": "4714", "name": "リソー教育グループ", "market": "プライム", "sector": "サービス業", "price": 205, "graham_price": 114, "discount_rate": -79.6, "mix_index": 72.54, "per": 21.6, "pbr": 3.36, "roe": 18.0, "op_margin": -2.9, "div_yield": 4.9}, {"code": "4722", "name": "フューチャー", "market": "プライム", "sector": "情報・通信業", "price": 2446, "graham_price": 1530, "discount_rate": -59.9, "mix_index": 57.54, "per": 17.6, "pbr": 3.27, "roe": 19.6, "op_margin": 19.7, "div_yield": 1.92}, {"code": "4725", "name": "ＣＡＣ　Ｈｏｌｄｉｎｇｓ", "market": "プライム", "sector": "情報・通信業", "price": 1947, "graham_price": 3093, "discount_rate": 37.1, "mix_index": 8.91, "per": 9.2, "pbr": 0.97, "roe": 10.7, "op_margin": 4.0, "div_yield": 5.14}, {"code": "4704", "name": "トレンドマイクロ", "market": "プライム", "sector": "情報・通信業", "price": 5497, "graham_price": 2359, "discount_rate": -133.0, "mix_index": 122.19, "per": 20.4, "pbr": 6.0, "roe": 30.0, "op_margin": 8.3, "div_yield": 3.46}, {"code": "4694", "name": "ビー・エム・エル", "market": "プライム", "sector": "サービス業", "price": 3620, "graham_price": 3939, "discount_rate": 8.1, "mix_index": 19.0, "per": 17.8, "pbr": 1.07, "roe": 6.2, "op_margin": 7.7, "div_yield": 3.49}, {"code": "4743", "name": "アイティフォー", "market": "プライム", "sector": "情報・通信業", "price": 1674, "graham_price": 1333, "discount_rate": -25.6, "mix_index": 35.48, "per": 16.1, "pbr": 2.21, "roe": 14.6, "op_margin": 12.0, "div_yield": 4.83}, {"code": "4784", "name": "ＧＭＯインターネット", "market": "プライム", "sector": "サービス業", "price": 574, "graham_price": 160, "discount_rate": -259.9, "mix_index": 291.36, "per": 25.7, "pbr": 11.34, "roe": 43.2, "op_margin": 12.0, "div_yield": 2.7}, {"code": "4801", "name": "セントラルスポーツ", "market": "プライム", "sector": "サービス業", "price": 2458, "graham_price": 2472, "discount_rate": 0.6, "mix_index": 22.24, "per": 21.4, "pbr": 1.04, "roe": 5.0, "op_margin": 2.5, "div_yield": 1.63}, {"code": "4828", "name": "ビジネスエンジニアリング", "market": "プライム", "sector": "情報・通信業", "price": 1383, "graham_price": 718, "discount_rate": -92.7, "mix_index": 83.53, "per": 16.9, "pbr": 4.94, "roe": 0.0, "op_margin": 28.2, "div_yield": 3.12}, {"code": "4819", "name": "デジタルガレージ", "market": "プライム", "sector": "情報・通信業", "price": 2243, "graham_price": 990, "discount_rate": -126.6, "mix_index": 115.55, "per": 81.6, "pbr": 1.42, "roe": 1.7, "op_margin": -6.4, "div_yield": 2.14}, {"code": "4901", "name": "富士フイルムホールディングス", "market": "プライム", "sector": "化学", "price": 3204, "graham_price": 4104, "discount_rate": 21.9, "mix_index": 13.72, "per": 14.0, "pbr": 0.98, "roe": 7.1, "op_margin": 6.2, "div_yield": 2.31}, {"code": "4912", "name": "ライオン", "market": "プライム", "sector": "化学", "price": 1835, "graham_price": 1655, "discount_rate": -10.9, "mix_index": 27.68, "per": 17.6, "pbr": 1.57, "roe": 9.7, "op_margin": 12.2, "div_yield": 1.8}, {"code": "4933", "name": "Ｉ－ｎｅ", "market": "プライム", "sector": "化学", "price": 1426, "graham_price": 1718, "discount_rate": 17.0, "mix_index": 15.51, "per": 11.4, "pbr": 1.37, "roe": 11.5, "op_margin": 6.1, "div_yield": 1.04}, {"code": "4902", "name": "コニカミノルタ", "market": "プライム", "sector": "電気機器", "price": 639, "graham_price": 1276, "discount_rate": 49.9, "mix_index": 5.65, "per": 9.8, "pbr": 0.57, "roe": 6.5, "op_margin": 4.2, "div_yield": 2.68}, {"code": "4975", "name": "ＪＣＵ", "market": "プライム", "sector": "化学", "price": 5560, "graham_price": 4329, "discount_rate": -28.4, "mix_index": 37.11, "per": 15.2, "pbr": 2.44, "roe": 17.6, "op_margin": 36.5, "div_yield": 3.14}, {"code": "4928", "name": "ノエビアホールディングス", "market": "プライム", "sector": "化学", "price": 4750, "graham_price": 2825, "discount_rate": -68.1, "mix_index": 63.61, "per": 20.0, "pbr": 3.18, "roe": 16.1, "op_margin": 15.3, "div_yield": 4.85}, {"code": "5019", "name": "出光興産", "market": "プライム", "sector": "石油・石炭製品", "price": 1366, "graham_price": 2083, "discount_rate": 34.4, "mix_index": 9.68, "per": 9.7, "pbr": 0.99, "roe": 22.5, "op_margin": 13.5, "div_yield": 2.71}, {"code": "5036", "name": "日本ビジネスシステムズ", "market": "プライム", "sector": "情報・通信業", "price": 1590, "graham_price": 1435, "discount_rate": -10.8, "mix_index": 27.63, "per": 11.0, "pbr": 2.5, "roe": 26.1, "op_margin": 2.0, "div_yield": 3.56}, {"code": "5076", "name": "インフロニア・ホールディングス", "market": "プライム", "sector": "建設業", "price": 2832, "graham_price": 3889, "discount_rate": 27.2, "mix_index": 11.93, "per": 11.0, "pbr": 1.09, "roe": 23.7, "op_margin": 4.4, "div_yield": 4.68}, {"code": "4997", "name": "日本農薬", "market": "プライム", "sector": "化学", "price": 1194, "graham_price": 1220, "discount_rate": 2.1, "mix_index": 21.56, "per": 12.9, "pbr": 1.67, "roe": 3.3, "op_margin": 15.3, "div_yield": 4.07}, {"code": "5101", "name": "横浜ゴム", "market": "プライム", "sector": "ゴム製品", "price": 7652, "graham_price": 12044, "discount_rate": 36.5, "mix_index": 9.08, "per": 8.5, "pbr": 1.07, "roe": 14.3, "op_margin": 17.2, "div_yield": 2.91}, {"code": "5110", "name": "住友ゴム工業", "market": "プライム", "sector": "ゴム製品", "price": 2304, "graham_price": 3898, "discount_rate": 40.9, "mix_index": 7.86, "per": 9.8, "pbr": 0.8, "roe": 9.0, "op_margin": 7.3, "div_yield": 3.56}, {"code": "5122", "name": "オカモト", "market": "プライム", "sector": "ゴム製品", "price": 6460, "graham_price": 6397, "discount_rate": -1.0, "mix_index": 22.95, "per": 22.8, "pbr": 1.01, "roe": 6.1, "op_margin": 5.3, "div_yield": 2.05}, {"code": "5142", "name": "アキレス", "market": "プライム", "sector": "化学", "price": 1914, "graham_price": 3366, "discount_rate": 43.1, "mix_index": 7.27, "per": 12.4, "pbr": 0.59, "roe": 7.0, "op_margin": 5.5, "div_yield": 1.57}, {"code": "5208", "name": "有沢製作所", "market": "プライム", "sector": "化学", "price": 2801, "graham_price": 2266, "discount_rate": -23.6, "mix_index": 34.37, "per": 18.6, "pbr": 1.85, "roe": 10.7, "op_margin": 7.5, "div_yield": 3.87}, {"code": "5232", "name": "住友大阪セメント", "market": "プライム", "sector": "ガラス・土石製品", "price": 5879, "graham_price": 6955, "discount_rate": 15.5, "mix_index": 16.07, "per": 16.8, "pbr": 0.96, "roe": 6.2, "op_margin": 6.2, "div_yield": 0.68}, {"code": "5261", "name": "リソルホールディングス", "market": "プライム", "sector": "サービス業", "price": 7700, "graham_price": 6016, "discount_rate": -28.0, "mix_index": 36.86, "per": 15.8, "pbr": 2.33, "roe": 14.6, "op_margin": 9.3, "div_yield": 1.56}, {"code": "5288", "name": "アジアパイルホールディングス", "market": "プライム", "sector": "ガラス・土石製品", "price": 1595, "graham_price": 2527, "discount_rate": 36.9, "mix_index": 8.97, "per": 8.0, "pbr": 1.12, "roe": 15.8, "op_margin": 10.9, "div_yield": 4.47}, {"code": "5302", "name": "日本カーボン", "market": "プライム", "sector": "ガラス・土石製品", "price": 5060, "graham_price": 6331, "discount_rate": 20.1, "mix_index": 14.37, "per": 14.3, "pbr": 1.0, "roe": 7.0, "op_margin": 13.9, "div_yield": 3.98}, {"code": "5331", "name": "ノリタケ", "market": "プライム", "sector": "ガラス・土石製品", "price": 3835, "graham_price": 4326, "discount_rate": 11.3, "mix_index": 17.68, "per": 15.1, "pbr": 1.17, "roe": 9.4, "op_margin": 9.9, "div_yield": 3.08}, {"code": "5351", "name": "品川リフラ", "market": "プライム", "sector": "ガラス・土石製品", "price": 2071, "graham_price": 5571, "discount_rate": 62.8, "mix_index": 3.11, "per": 3.6, "pbr": 0.86, "roe": 27.2, "op_margin": 3.7, "div_yield": 4.7}, {"code": "5384", "name": "フジミインコーポレーテッド", "market": "プライム", "sector": "ガラス・土石製品", "price": 4035, "graham_price": 1775, "discount_rate": -127.3, "mix_index": 116.27, "per": 33.1, "pbr": 3.52, "roe": 13.1, "op_margin": 23.6, "div_yield": 1.88}, {"code": "5393", "name": "ニチアス", "market": "プライム", "sector": "ガラス・土石製品", "price": 3544, "graham_price": 2192, "discount_rate": -61.7, "mix_index": 58.8, "per": 21.4, "pbr": 2.75, "roe": 0.0, "op_margin": 15.5, "div_yield": 1.67}, {"code": "6315", "name": "ＴＯＷＡ", "market": "プライム", "sector": "機械", "price": 2476, "graham_price": 1178, "discount_rate": -110.1, "mix_index": 99.35, "per": 40.4, "pbr": 2.46, "roe": 10.0, "op_margin": 13.7, "div_yield": 0.94}, {"code": "9765", "name": "オオバ", "market": "プライム", "sector": "サービス業", "price": 1150, "graham_price": 1299, "discount_rate": 11.5, "mix_index": 17.62, "per": 14.3, "pbr": 1.23, "roe": 10.5, "op_margin": 11.2, "div_yield": 3.83}, {"code": "2300", "name": "きょくとう", "market": "スタンダード", "sector": "サービス業", "price": 500, "graham_price": 376, "discount_rate": -33.0, "mix_index": 39.78, "per": 48.8, "pbr": 0.81, "roe": 7.2, "op_margin": 2.6, "div_yield": 2.19}];
+        let modalInstance = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
+            applyPreset('graham'); // 初期状態はグレアム標準
+        });
+
+        function applyFilters() {
+            const market = document.getElementById("filter-market").value;
+            const sector = document.getElementById("filter-sector").value;
+            const maxMix = parseFloat(document.getElementById("filter-mix").value);
+            const maxPer = parseFloat(document.getElementById("filter-per").value);
+            const maxPbr = parseFloat(document.getElementById("filter-pbr").value);
+            const minDiscount = parseFloat(document.getElementById("filter-discount").value);
+            const minRoe = parseFloat(document.getElementById("filter-roe").value);
+            const minMargin = parseFloat(document.getElementById("filter-margin").value);
+            const minDiv = parseFloat(document.getElementById("filter-div").value);
+            const sortBy = document.getElementById("sort-by").value;
+
+            let filtered = STOCKS.filter(s => {
+                if (market !== "ALL" && s.market !== market) return false;
+                if (sector !== "ALL" && s.sector !== sector) return false;
+                if (!isNaN(maxMix) && s.mix_index > maxMix) return false;
+                if (!isNaN(maxPer) && s.per > maxPer) return false;
+                if (!isNaN(maxPbr) && s.pbr > maxPbr) return false;
+                if (!isNaN(minDiscount) && s.discount_rate < minDiscount) return false;
+                if (!isNaN(minRoe) && s.roe < minRoe) return false;
+                if (!isNaN(minMargin) && s.op_margin < minMargin) return false;
+                if (!isNaN(minDiv) && s.div_yield < minDiv) return false;
+                return true;
+            });
+
+            // ソート
+            filtered.sort((a, b) => {
+                if (sortBy === "mix_asc") return a.mix_index - b.mix_index;
+                if (sortBy === "discount_desc") return b.discount_rate - a.discount_rate;
+                if (sortBy === "roe_desc") return b.roe - a.roe;
+                if (sortBy === "margin_desc") return b.op_margin - a.op_margin;
+                if (sortBy === "div_desc") return b.div_yield - a.div_yield;
+                return 0;
+            });
+
+            renderTable(filtered);
+        }
+
+        function renderTable(data) {
+            document.getElementById("filtered-count").textContent = data.length;
+            const tbody = document.getElementById("stock-table-body");
+            tbody.innerHTML = "";
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="15" class="p-4 text-muted text-center">条件に一致する銘柄はありません。</td></tr>';
+                return;
+            }
+
+            let html = "";
+            data.forEach((s, idx) => {
+                let mixBadgeClass = "";
+                if (s.mix_index < 5.625) mixBadgeClass = "badge-mix mix-ultra";
+                else if (s.mix_index < 11.25) mixBadgeClass = "badge-mix mix-strict";
+
+                html += `<tr>
+                    <td><strong>${idx + 1}</strong></td>
+                    <td><strong>${s.code}</strong></td>
+                    <td class="text-start">${s.name}</td>
+                    <td><span class="badge ${s.market === 'プライム' ? 'bg-primary' : 'bg-secondary'}">${s.market}</span></td>
+                    <td class="text-muted small">${s.sector}</td>
+                    <td>¥${s.price.toLocaleString()}</td>
+                    <td class="text-danger fw-bold">+${s.discount_rate}%</td>
+                    <td><span class="${mixBadgeClass}">${s.mix_index.toFixed(2)}</span></td>
+                    <td class="fw-bold">${s.div_yield}%</td>
+                    <td>${s.per.toFixed(1)}</td>
+                    <td>${s.pbr.toFixed(2)}</td>
+                    <td>${s.roe}%</td>
+                    <td>${s.op_margin}%</td>
+                    <td>¥${s.graham_price.toLocaleString()}</td>
+                    <td><button class="btn btn-outline-dark btn-sm py-0 px-2" onclick="showStockDetail('${s.code}')"><i class="bi bi-info-circle"></i></button></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function applyPreset(type) {
+            resetInputs();
+            if (type === 'ultra') {
+                document.getElementById("filter-mix").value = 5.625;
+                document.getElementById("filter-roe").value = 7;
+                document.getElementById("filter-margin").value = 6;
+            } else if (type === 'strict') {
+                document.getElementById("filter-mix").value = 11.25;
+                document.getElementById("filter-roe").value = 7;
+                document.getElementById("filter-margin").value = 6;
+            } else if (type === 'graham') {
+                document.getElementById("filter-mix").value = 22.5;
+                document.getElementById("filter-roe").value = 7;
+                document.getElementById("filter-margin").value = 6;
+            } else if (type === 'per15') {
+                document.getElementById("filter-per").value = 15;
+            } else if (type === 'pbr15') {
+                document.getElementById("filter-pbr").value = 1.5;
+            } else if (type === 'highRoe') {
+                document.getElementById("filter-mix").value = 22.5;
+                document.getElementById("filter-roe").value = 10;
+            } else if (type === 'highDiv') {
+                document.getElementById("filter-mix").value = 22.5;
+                document.getElementById("filter-div").value = 3.0;
+            }
+            applyFilters();
+        }
+
+        function resetInputs() {
+            document.getElementById("filter-market").value = "ALL";
+            document.getElementById("filter-sector").value = "ALL";
+            document.getElementById("filter-mix").value = "";
+            document.getElementById("filter-per").value = "";
+            document.getElementById("filter-pbr").value = "";
+            document.getElementById("filter-discount").value = "";
+            document.getElementById("filter-roe").value = "";
+            document.getElementById("filter-margin").value = "";
+            document.getElementById("filter-div").value = "";
+        }
+
+        function resetFilters() {
+            resetInputs();
+            applyFilters();
+        }
+
+        function searchStock() {
+            const query = document.getElementById("quick-search").value.trim().toLowerCase();
+            if (!query) return;
+            const target = STOCKS.find(s => s.code.toLowerCase() === query || s.name.toLowerCase().includes(query));
+            if (target) {
+                showStockDetail(target.code);
+            } else {
+                alert("該当する銘柄が見つかりませんでした: " + query);
+            }
+        }
+
+        function showStockDetail(code) {
+            const s = STOCKS.find(item => item.code === code);
+            if (!s) return;
+
+            document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${s.name}`;
+            document.getElementById("modalBody").innerHTML = `
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><small class="text-muted">市場</small><div><strong>${s.market}</strong> (${s.sector})</div></div>
+                    <div class="col-6"><small class="text-muted">現在株価</small><div class="fs-5 fw-bold text-primary">¥${s.price.toLocaleString()}</div></div>
+                    <div class="col-6"><small class="text-muted">グレアム理論株価</small><div class="fs-5 fw-bold text-success">¥${s.graham_price.toLocaleString()}</div></div>
+                    <div class="col-6"><small class="text-muted">理論株価との割安度</small><div class="fs-5 fw-bold text-danger">+${s.discount_rate}%</div></div>
+                </div>
+                <hr>
+                <div class="row g-2">
+                    <div class="col-4 text-center p-2 border rounded"><small class="text-muted">ミックス係数</small><div class="fw-bold fs-6">${s.mix_index.toFixed(2)}</div></div>
+                    <div class="col-4 text-center p-2 border rounded"><small class="text-muted">PER</small><div class="fw-bold fs-6">${s.per.toFixed(1)} 倍</div></div>
+                    <div class="col-4 text-center p-2 border rounded"><small class="text-muted">PBR</small><div class="fw-bold fs-6">${s.pbr.toFixed(2)} 倍</div></div>
+                    <div class="col-4 text-center p-2 border rounded"><small class="text-muted">ROE</small><div class="fw-bold fs-6">${s.roe} %</div></div>
+                    <div class="col-4 text-center p-2 border rounded"><small class="text-muted">営業利益率</small><div class="fw-bold fs-6">${s.op_margin} %</div></div>
+                    <div class="col-4 text-center p-2 border rounded"><small class="text-muted">配当利回り</small><div class="fw-bold fs-6 text-danger">${s.div_yield} %</div></div>
+                </div>
+            `;
+            modalInstance.show();
+        }
+    </script>
 </body>
 </html>
