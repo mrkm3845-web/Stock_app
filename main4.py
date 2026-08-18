@@ -17,8 +17,8 @@ HISTORY_DIR = os.path.join(DOCS_DIR, "history")
 DB_PATH = os.path.join(DATA_DIR, "stocks.db")
 
 
-# 1. JPX銘柄取得
-def fetch_jpx_stock_list(market_name):
+# 1. JPX銘柄取得（あいまい一致でカッコ表記揺れを100%回避）
+def fetch_jpx_stock_list(keyword):
     url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
     try:
         res = requests.get(
@@ -26,21 +26,30 @@ def fetch_jpx_stock_list(market_name):
         )
         df = pd.read_excel(io.BytesIO(res.content))
         df = df[["コード", "銘柄名", "市場・商品区分", "33業種区分"]]
-        df["コード"] = df["コード"].astype(str)
-        df_filtered = df[df["市場・商品区分"] == market_name]
-        return df_filtered.to_dict("records")
-    except Exception:
+
+        # コードのゴミ（.0や空白）を綺麗に除去
+        df["コード"] = (
+            df["コード"].astype(str).str.strip().str.replace(r"\.0$", "", regex=True)
+        )
+        df["市場・商品区分"] = df["市場・商品区分"].astype(str)
+
+        # ★ 部分一致で確実に抽出
+        df_filtered = df[df["市場・商品区分"].str.contains(keyword, na=False)]
+        stocks = df_filtered.to_dict("records")
+        print(f">> 【{keyword}】JPX対象銘柄数: {len(stocks)} 件")
+        return stocks
+    except Exception as e:
+        print(f">> JPXデータ取得エラー: {e}")
         return []
 
 
-# 2. 個別銘柄のデータ取得（スレッドセーフ安全通信）
-def analyze_single_stock(stock_info, market_name):
+# 2. 個別銘柄のデータ取得
+def analyze_single_stock(stock_info, market_label):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
     sector = stock_info.get("33業種区分", "その他")
 
     info = None
-    # リトライ付きで確実に取得
     for attempt in range(2):
         try:
             ticker = yf.Ticker(f"{code}.T")
@@ -109,9 +118,7 @@ def analyze_single_stock(stock_info, market_name):
         return {
             "code": code,
             "name": name,
-            "market": (
-                "プライム" if "プライム" in market_name else "スタンダード"
-            ),
+            "market": market_label,
             "sector": sector,
             "price": int(round(current_price)),
             "graham_price": int(round(graham_price)),
@@ -128,22 +135,22 @@ def analyze_single_stock(stock_info, market_name):
 
 
 # 3. 並列スキャン
-def scan_market(stocks_list, market_name, max_workers=8):
+def scan_market(stocks_list, market_label, max_workers=8):
     results = []
     print(
-        f">> 【{market_name}】全 {len(stocks_list)} 銘柄のスキャン開始..."
+        f">> 【{market_label}】全 {len(stocks_list)} 銘柄のスキャン開始..."
     )
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(analyze_single_stock, s, market_name): s
+            executor.submit(analyze_single_stock, s, market_label): s
             for s in stocks_list
         }
         for future in as_completed(futures):
             res = future.result()
             if res:
                 results.append(res)
-    print(f">> 【{market_name}】抽出完了: {len(results)} 件")
+    print(f">> 【{market_label}】抽出完了: {len(results)} 件")
     return results
 
 
@@ -283,7 +290,8 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
         return text + "```"
 
     msg = f"📊 **【割安優良株スクリーニング速報】** ({now_str})\n"
-    msg += make_section("プライム") + make_section("スタンダード")
+    msg += make_section("プライム")
+    msg += make_section("スタンダード")
     msg += "\n👉 Web簡易スクリーナー: https://mrkm3845-web.github.io/Stock_app/"
     try:
         requests.post(webhook_url, json={"content": msg}, timeout=10)
@@ -292,14 +300,14 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
 
 
 if __name__ == "__main__":
-    # 1. プライム市場のスキャン
-    prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
+    # 1. プライム市場
+    prime_stocks = fetch_jpx_stock_list("プライム")
     prime_results = scan_market(prime_stocks, "プライム")
 
     time.sleep(3)
 
-    # 2. スタンダード市場のスキャン
-    standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
+    # 2. スタンダード市場（キーワード「スタンダード」で確実に取得）
+    standard_stocks = fetch_jpx_stock_list("スタンダード")
     standard_results = scan_market(standard_stocks, "スタンダード")
 
     all_results = prime_results + standard_results
