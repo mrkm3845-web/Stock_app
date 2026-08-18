@@ -34,11 +34,15 @@ def fetch_jpx_stock_list(market_name):
         return []
 
 
-# 2. 個別銘柄のデータ取得（セッションを受け取って実行）
+# 2. 個別銘柄のデータ取得（微小スリープ付きで安全化）
 def analyze_single_stock(stock_info, market_name, session):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
     sector = stock_info.get("33業種区分", "その他")
+
+    # IP制限回避のための微小待機
+    time.sleep(0.05)
+
     try:
         ticker = yf.Ticker(f"{code}.T", session=session)
         info = ticker.info
@@ -114,14 +118,13 @@ def analyze_single_stock(stock_info, market_name, session):
         return None
 
 
-# 3. 並列スキャン（市場ごとに新品セッションを作成）
-def scan_market(stocks_list, market_name, max_workers=6):
+# 3. 並列スキャン
+def scan_market(stocks_list, market_name, max_workers=5):
     results = []
     print(
         f">> 【{market_name}】全 {len(stocks_list)} 銘柄のスキャン開始..."
     )
 
-    # ★ 市場ごとに新品のブラウザセッションを用意
     session = cffi_requests.Session(impersonate="chrome")
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -282,14 +285,15 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
 
 
 if __name__ == "__main__":
-    # 1. プライム市場のスキャン（プライム専用セッション）
+    # 1. プライム市場のスキャン
     prime_stocks = fetch_jpx_stock_list("プライム（内国株式）")
     prime_results = scan_market(prime_stocks, "プライム")
 
-    print(">> 待機中（3秒間）...")
-    time.sleep(3)
+    # ★ IP制限を完全にリセットするため20秒休憩
+    print(">> IPレート制限リセット待機中（20秒間）...")
+    time.sleep(20)
 
-    # 2. スタンダード市場のスキャン（★新品のリフレッシュセッションで開始！）
+    # 2. スタンダード市場のスキャン（新品セッションで実行）
     standard_stocks = fetch_jpx_stock_list("スタンダード（内国株式）")
     standard_results = scan_market(standard_stocks, "スタンダード")
 
