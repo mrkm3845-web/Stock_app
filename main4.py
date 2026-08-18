@@ -19,6 +19,7 @@ HISTORY_DIR = os.path.join(DOCS_DIR, "history")
 DB_PATH = os.path.join(DATA_DIR, "stocks.db")
 
 
+# 1. JPX銘柄取得
 def fetch_jpx_stock_list(keyword):
     url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
     try:
@@ -36,6 +37,7 @@ def fetch_jpx_stock_list(keyword):
         return []
 
 
+# 2. 個別銘柄のデータ取得
 def analyze_single_stock(stock_info, market_label):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
@@ -126,6 +128,7 @@ def analyze_single_stock(stock_info, market_label):
         return None
 
 
+# 3. 並列スキャン
 def scan_market(keyword, label):
     stocks = fetch_jpx_stock_list(keyword)
     print(f">> 【{label}】{len(stocks)} 件スキャン開始...")
@@ -142,6 +145,7 @@ def scan_market(keyword, label):
     return results
 
 
+# 4. SQLite保存
 def save_to_sqlite(all_stocks):
     os.makedirs(DATA_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
@@ -179,8 +183,12 @@ def save_to_sqlite(all_stocks):
         )
     conn.commit()
     conn.close()
+    print(
+        f">> SQLite DB ({DB_PATH}) に {len(all_stocks)} 件保存しました。"
+    )
 
 
+# 5. 日別JSON保存
 def save_history_json(all_stocks):
     os.makedirs(HISTORY_DIR, exist_ok=True)
     today_str = datetime.now().strftime("%Y-%m-%d")
@@ -203,8 +211,12 @@ def save_history_json(all_stocks):
     existing_dates.sort(reverse=True)
     with open(dates_file, "w", encoding="utf-8") as f:
         json.dump(existing_dates, f, ensure_ascii=False)
+    print(
+        f">> 日別JSON (docs/history/{today_str}.json) を保存しました。"
+    )
 
 
+# 6. 同日内での変更チェック関数
 def check_is_data_changed(new_stocks):
     today_str = datetime.now().strftime("%Y-%m-%d")
     today_file = os.path.join(HISTORY_DIR, f"{today_str}.json")
@@ -222,17 +234,26 @@ def check_is_data_changed(new_stocks):
         return True
 
 
+# 7. Discord通知
 def send_to_discord(all_stocks, is_changed, webhook_url):
-    if not webhook_url or not all_stocks:
+    if not webhook_url:
+        print(">> ⚠️ DISCORD_WEBHOOK_URL が設定されていません。")
         return
+    if not all_stocks:
+        print(">> ⚠️ 送信する銘柄データが空です。")
+        return
+
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     if not is_changed:
-        msg = f"✅ **【データ確認】** ({now_str})\n前回取得時からデータに変更はありませんでした（夕方の確定値と一致・正常稼働中）。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
+        msg = f"✅ **【データ確認】** ({now_str})\n前回取得時からデータに変更はありませんでした（正常稼働中）。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
         try:
-            requests.post(webhook_url, json={"content": msg}, timeout=10)
-        except Exception:
-            pass
+            res = requests.post(
+                webhook_url, json={"content": msg}, timeout=10
+            )
+            print(f">> Discord送信完了 (変更なし): ステータス {res.status_code}")
+        except Exception as e:
+            print(f">> Discord送信エラー: {e}")
         return
 
     df = pd.DataFrame(all_stocks).sort_values(by="mix_index", ascending=True)
@@ -270,11 +291,15 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
     msg += make_section("プライム") + make_section("スタンダード")
     msg += "\n👉 Web簡易スクリーナー: https://mrkm3845-web.github.io/Stock_app/"
     try:
-        requests.post(webhook_url, json={"content": msg}, timeout=10)
-    except Exception:
-        pass
+        res = requests.post(webhook_url, json={"content": msg}, timeout=10)
+        print(f">> Discord送信完了 (フル通知): ステータス {res.status_code}")
+    except Exception as e:
+        print(f">> Discord送信エラー: {e}")
 
 
+# ==========================================
+# 実行部
+# ==========================================
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--market", choices=["prime", "standard"])
@@ -293,27 +318,38 @@ if __name__ == "__main__":
         with open("data/standard.json", "w", encoding="utf-8") as f:
             json.dump(res, f, ensure_ascii=False)
 
-elif args.aggregate:
+    elif args.aggregate:
+        print(">> data フォルダ内のJSONファイルを自動探索中...")
         prime_data = []
         standard_data = []
 
-        # 直下またはサブフォルダのどちらからでも読み込める安全設計
-        p_paths = ["data/prime.json", "data/prime-data/prime.json"]
-        s_paths = ["data/standard.json", "data/standard-data/standard.json"]
+        # ★ data フォルダ配下の全階層から自動でファイルを発見して読み込む
+        for root, dirs, files in os.walk(DATA_DIR):
+            for file in files:
+                filepath = os.path.join(root, file)
+                if "prime" in file.lower() and file.endswith(".json"):
+                    try:
+                        with open(filepath, "r", encoding="utf-8") as f:
+                            prime_data = json.load(f)
+                            print(
+                                f">> 読み込み成功: {filepath} ({len(prime_data)}件)"
+                            )
+                    except Exception as e:
+                        print(f">> エラー {filepath}: {e}")
 
-        for p in p_paths:
-            if os.path.exists(p):
-                with open(p, "r", encoding="utf-8") as f:
-                    prime_data = json.load(f)
-                break
-
-        for s in s_paths:
-            if os.path.exists(s):
-                with open(s, "r", encoding="utf-8") as f:
-                    standard_data = json.load(f)
-                break
+                elif "standard" in file.lower() and file.endswith(".json"):
+                    try:
+                        with open(filepath, "r", encoding="utf-8") as f:
+                            standard_data = json.load(f)
+                            print(
+                                f">> 読み込み成功: {filepath} ({len(standard_data)}件)"
+                            )
+                    except Exception as e:
+                        print(f">> エラー {filepath}: {e}")
 
         new_results = prime_data + standard_data
+        print(f">> 合計読み込み件数: {len(new_results)} 件")
+
         today_str = datetime.now().strftime("%Y-%m-%d")
         today_file = os.path.join(HISTORY_DIR, f"{today_str}.json")
 
