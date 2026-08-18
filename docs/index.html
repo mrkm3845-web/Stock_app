@@ -72,6 +72,13 @@
                     </select>
                 </div>
                 <div class="col-6 col-md-2">
+                    <div class="filter-label">かぶミニ (1株取引)</div>
+                    <select id="filter-kabumini" class="form-select form-select-sm fw-bold text-danger" onchange="applyFilters()">
+                        <option value="ALL">全て表示</option>
+                        <option value="ONLY">1株OK銘柄のみ</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
                     <div class="filter-label">業種</div>
                     <select id="filter-sector" class="form-select form-select-sm" onchange="applyFilters()">
                         <option value="ALL">全業種</option>
@@ -89,6 +96,8 @@
                     <div class="filter-label">PBR (最大)</div>
                     <input type="number" id="filter-pbr" class="form-control form-control-sm" step="0.1" placeholder="上限なし" oninput="applyFilters()">
                 </div>
+
+                <!-- 2段目 -->
                 <div class="col-6 col-md-2">
                     <div class="filter-label">並び替え順 (ソート)</div>
                     <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="applyFilters()">
@@ -99,11 +108,11 @@
                         <option value="div_desc">配当利回り(%) (降順)</option>
                     </select>
                 </div>
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-md-2">
                     <div class="filter-label">割安度 (最小 %)</div>
                     <input type="number" id="filter-discount" class="form-control form-control-sm" step="5" placeholder="下限なし" oninput="applyFilters()">
                 </div>
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-md-2">
                     <div class="filter-label">ROE (最小 %)</div>
                     <input type="number" id="filter-roe" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
                 </div>
@@ -212,8 +221,15 @@
             sectorSelect.innerHTML = '<option value="ALL">全業種</option>' + sectors.map(s => `<option value="${s}">${s}</option>`).join('');
         }
 
+        // かぶミニ判定（後方互換対応：過去データにis_miniがなくても安全に判定）
+        function checkMini(s) {
+            if (typeof s.is_mini !== 'undefined') return s.is_mini;
+            return s.market === 'プライム' || (s.price >= 300 && s.price <= 50000);
+        }
+
         function applyFilters() {
             const market = document.getElementById("filter-market").value;
+            const kabumini = document.getElementById("filter-kabumini").value;
             const sector = document.getElementById("filter-sector").value;
             const maxMix = parseFloat(document.getElementById("filter-mix").value);
             const maxPer = parseFloat(document.getElementById("filter-per").value);
@@ -225,7 +241,9 @@
             const sortBy = document.getElementById("sort-by").value;
 
             let filtered = STOCKS.filter(s => {
+                const isMini = checkMini(s);
                 if (market !== "ALL" && s.market !== market) return false;
+                if (kabumini === "ONLY" && !isMini) return false;
                 if (sector !== "ALL" && s.sector !== sector) return false;
                 if (!isNaN(maxMix) && s.mix_index > maxMix) return false;
                 if (!isNaN(maxPer) && s.per > maxPer) return false;
@@ -249,11 +267,6 @@
             renderTable(filtered);
         }
 
-        // かぶミニ対象判定（プライムはほぼ全銘柄、スタンダードは主要銘柄が対象）
-        function isKabuMiniTarget(s) {
-            return s.market === 'プライム' || (s.price >= 500 && s.price <= 30000);
-        }
-
         function renderTable(data) {
             document.getElementById("filtered-count").textContent = data.length;
             const tbody = document.getElementById("stock-table-body");
@@ -265,13 +278,13 @@
             let html = "";
             data.forEach((s, idx) => {
                 let mixBadgeClass = s.mix_index < 5.625 ? "badge-mix mix-ultra" : (s.mix_index < 11.25 ? "badge-mix mix-strict" : "");
-                const isMini = isKabuMiniTarget(s);
-                const miniBadge = isMini ? `<span class="badge-kabumini" title="1株から取引可能">1株OK</span>` : `<span class="text-muted small">-</span>`;
+                const isMini = checkMini(s);
+                const miniBadge = isMini ? `<span class="badge-kabumini" title="楽天証券で1株から購入可能">1株OK</span>` : `<span class="text-muted small">-</span>`;
                 const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
 
                 html += `<tr>
                     <td><strong>${idx + 1}</strong></td>
-                    <td><a href="${rakutenUrl}" target="_blank" class="rakuten-link" title="楽天証券の銘柄ページを開く">${s.code} <i class="bi bi-box-arrow-up-right small"></i></a></td>
+                    <td><a href="${rakutenUrl}" target="_blank" class="rakuten-link" title="楽天証券を開く">${s.code} <i class="bi bi-box-arrow-up-right small"></i></a></td>
                     <td class="text-start">${s.name}</td>
                     <td>${miniBadge}</td>
                     <td><span class="badge ${s.market === 'プライム' ? 'bg-primary' : 'bg-secondary'}">${s.market}</span></td>
@@ -364,6 +377,7 @@
             document.getElementById("btn-highRoe").classList.add("btn-outline-info");
             document.getElementById("btn-highDiv").classList.add("btn-outline-warning");
             document.getElementById("filter-market").value = "ALL";
+            document.getElementById("filter-kabumini").value = "ALL";
             document.getElementById("filter-sector").value = "ALL";
             document.getElementById("filter-mix").value = "";
             document.getElementById("filter-per").value = "";
@@ -387,7 +401,7 @@
         function showStockDetail(code) {
             const s = STOCKS.find(item => item.code === code);
             if (!s) return;
-            const isMini = isKabuMiniTarget(s);
+            const isMini = checkMini(s);
             const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
 
             document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${s.name}`;
