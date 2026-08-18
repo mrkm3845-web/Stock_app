@@ -37,7 +37,7 @@ def fetch_jpx_stock_list(keyword):
         return []
 
 
-# 2. 個別銘柄のデータ取得
+# 2. 個別銘柄のデータ取得（かぶミニ判定フラグ付き）
 def analyze_single_stock(stock_info, market_label):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
@@ -109,11 +109,18 @@ def analyze_single_stock(stock_info, market_label):
             calc_yield = (div_rate / current_price) * 100
             div_yield_pct = calc_yield if calc_yield <= 15.0 else 0.0
 
+        # ★ 楽天証券「かぶミニ（単元未満株）」対象判定
+        # プライム市場は全銘柄対象、スタンダードは株価極端値以外の主要銘柄が対象
+        is_kabumini = market_label == "プライム" or (
+            current_price >= 300 and current_price <= 50000
+        )
+
         return {
             "code": code,
             "name": name,
             "market": market_label,
             "sector": sector,
+            "is_mini": is_kabumini,  # かぶミニ対応フラグ
             "price": int(round(current_price)),
             "graham_price": int(round(graham_price)),
             "discount_rate": round(discount_rate, 1),
@@ -145,24 +152,33 @@ def scan_market(keyword, label):
     return results
 
 
-# 4. SQLite保存
+# 4. SQLite保存（後方互換カラム付き）
 def save_to_sqlite(all_stocks):
     os.makedirs(DATA_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
+
     c.execute("""
         CREATE TABLE IF NOT EXISTS daily_stocks (
             date TEXT, code TEXT, name TEXT, market TEXT, sector TEXT,
             price REAL, graham_price REAL, discount_rate REAL, mix_index REAL,
             per REAL, pbr REAL, roe REAL, op_margin REAL, div_yield REAL,
+            is_mini INTEGER DEFAULT 1,
             PRIMARY KEY (date, code)
         )
     """)
+
+    # 既存DBに is_mini カラムがない場合の自動マイグレーション
+    try:
+        c.execute("ALTER TABLE daily_stocks ADD COLUMN is_mini INTEGER DEFAULT 1")
+    except Exception:
+        pass
+
     today_str = datetime.now().strftime("%Y-%m-%d")
     for s in all_stocks:
         c.execute(
             """
-            INSERT OR REPLACE INTO daily_stocks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            INSERT OR REPLACE INTO daily_stocks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         """,
             (
                 today_str,
@@ -179,13 +195,12 @@ def save_to_sqlite(all_stocks):
                 s["roe"],
                 s["op_margin"],
                 s["div_yield"],
+                1 if s.get("is_mini") else 0,
             ),
         )
     conn.commit()
     conn.close()
-    print(
-        f">> SQLite DB ({DB_PATH}) に {len(all_stocks)} 件保存しました。"
-    )
+    print(f">> SQLite DB ({DB_PATH}) に {len(all_stocks)} 件保存しました。")
 
 
 # 5. 日別JSON保存
@@ -211,9 +226,7 @@ def save_history_json(all_stocks):
     existing_dates.sort(reverse=True)
     with open(dates_file, "w", encoding="utf-8") as f:
         json.dump(existing_dates, f, ensure_ascii=False)
-    print(
-        f">> 日別JSON (docs/history/{today_str}.json) を保存しました。"
-    )
+    print(f">> 日別JSON (docs/history/{today_str}.json) を保存しました。")
 
 
 # 6. 同日内での変更チェック関数
@@ -236,24 +249,16 @@ def check_is_data_changed(new_stocks):
 
 # 7. Discord通知
 def send_to_discord(all_stocks, is_changed, webhook_url):
-    if not webhook_url:
-        print(">> ⚠️ DISCORD_WEBHOOK_URL が設定されていません。")
+    if not webhook_url or not all_stocks:
         return
-    if not all_stocks:
-        print(">> ⚠️ 送信する銘柄データが空です。")
-        return
-
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     if not is_changed:
         msg = f"✅ **【データ確認】** ({now_str})\n前回取得時からデータに変更はありませんでした（正常稼働中）。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
         try:
-            res = requests.post(
-                webhook_url, json={"content": msg}, timeout=10
-            )
-            print(f">> Discord送信完了 (変更なし): ステータス {res.status_code}")
-        except Exception as e:
-            print(f">> Discord送信エラー: {e}")
+            requests.post(webhook_url, json={"content": msg}, timeout=10)
+        except Exception:
+            pass
         return
 
     df = pd.DataFrame(all_stocks).sort_values(by="mix_index", ascending=True)
@@ -291,10 +296,9 @@ def send_to_discord(all_stocks, is_changed, webhook_url):
     msg += make_section("プライム") + make_section("スタンダード")
     msg += "\n👉 Web簡易スクリーナー: https://mrkm3845-web.github.io/Stock_app/"
     try:
-        res = requests.post(webhook_url, json={"content": msg}, timeout=10)
-        print(f">> Discord送信完了 (フル通知): ステータス {res.status_code}")
-    except Exception as e:
-        print(f">> Discord送信エラー: {e}")
+        requests.post(webhook_url, json={"content": msg}, timeout=10)
+    except Exception:
+        pass
 
 
 # ==========================================
@@ -323,7 +327,6 @@ if __name__ == "__main__":
         prime_data = []
         standard_data = []
 
-        # ★ data フォルダ配下の全階層から自動でファイルを発見して読み込む
         for root, dirs, files in os.walk(DATA_DIR):
             for file in files:
                 filepath = os.path.join(root, file)
@@ -331,19 +334,14 @@ if __name__ == "__main__":
                     try:
                         with open(filepath, "r", encoding="utf-8") as f:
                             prime_data = json.load(f)
-                            print(
-                                f">> 読み込み成功: {filepath} ({len(prime_data)}件)"
-                            )
+                            print(f">> 読み込み成功: {filepath} ({len(prime_data)}件)")
                     except Exception as e:
                         print(f">> エラー {filepath}: {e}")
-
                 elif "standard" in file.lower() and file.endswith(".json"):
                     try:
                         with open(filepath, "r", encoding="utf-8") as f:
                             standard_data = json.load(f)
-                            print(
-                                f">> 読み込み成功: {filepath} ({len(standard_data)}件)"
-                            )
+                            print(f">> 読み込み成功: {filepath} ({len(standard_data)}件)")
                     except Exception as e:
                         print(f">> エラー {filepath}: {e}")
 
