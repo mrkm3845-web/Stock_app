@@ -2,60 +2,78 @@ name: 毎日株価自動スクリーニング
 
 on:
   schedule:
-    # 1. 夕方 18:34 (UTC 09:34) - 当日確定値の第1便
     - cron: '34 9 * * 1-5'
-    
-    # 2. 夜 21:34 (UTC 12:34) - 超安定バックアップ（同日上書き補完）
     - cron: '34 12 * * 1-5'
-
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  run-screener:
+  # 1. プライム市場スキャン（マシンA）
+  scan-prime:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. コードのチェックアウト
-      - name: リポジトリのコードを取得
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # 2. Pythonのセットアップ
-      - name: Pythonをセットアップ
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - run: pip install --upgrade yfinance requests pandas xlrd openpyxl numpy
+      - run: python main4.py --market prime
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prime-data
+          path: data/prime.json
 
-      # 3. 必要なライブラリをインストール（最新版）
-      - name: ライブラリをインストール
-        run: |
-          pip install --upgrade yfinance requests pandas xlrd openpyxl numpy curl_cffi
+  # 2. スタンダード市場スキャン（マシンB・別IPで同時実行！）
+  scan-standard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --upgrade yfinance requests pandas xlrd openpyxl numpy
+      - run: python main4.py --market standard
+      - uses: actions/upload-artifact@v4
+        with:
+          name: standard-data
+          path: data/standard.json
 
-      # 4. スクリプトの実行（★ main4.py に変更）
-      - name: 株価スクリーニングを実行
+  # 3. 合体してHTML・SQLite保存＆Discord通知
+  aggregate-and-publish:
+    needs: [scan-prime, scan-standard]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --upgrade pandas requests
+      - uses: actions/download-artifact@v4
+        with:
+          name: prime-data
+          path: data/
+      - uses: actions/download-artifact@v4
+        with:
+          name: standard-data
+          path: data/
+      - name: 合体＆通知＆保存
         env:
           TZ: 'Asia/Tokyo'
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: |
-          python main4.py
-
-      # 5. 生成したHTMLとSQLiteデータベースを自動コミット＆プッシュ（★ data/ を追加）
-      - name: 結果(HTML・SQLite)をコミット＆プッシュ
+        run: python main4.py --aggregate
+      - name: コミット＆プッシュ
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # docs/（HTML）と data/（SQLite DB）をコミット対象に追加
           git add docs/ data/
-          
           if git diff --staged --quiet; then
-            echo ">> 変更はありませんでした。"
+            echo "変更なし"
           else
-            git commit -m "Update stock dashboard & SQLite database [skip ci]"
+            git commit -m "Update stock data [skip ci]"
             git pull --rebase origin main
             git push origin main
           fi
