@@ -26,12 +26,23 @@
             font-weight: 500;
         }
 
+        /* ★ かぶミニ列の幅詰め用スタイル */
+        .col-mini {
+            width: 42px !important;
+            min-width: 42px !important;
+            max-width: 45px !important;
+            padding-left: 2px !important;
+            padding-right: 2px !important;
+            line-height: 1.15;
+            text-align: center;
+        }
+
         .badge-mix { font-weight: 700; padding: 4px 7px; border-radius: 6px; }
         .mix-ultra { background-color: #ffe3e3; color: #d63301; }
         .mix-strict { background-color: #e6fcf5; color: #0ca678; }
         .rakuten-link { color: #bf0000; font-weight: 700; text-decoration: none; }
         .rakuten-link:hover { text-decoration: underline; color: #900000; }
-        .badge-kabumini { font-size: 0.72rem; background-color: #fff0f0; color: #bf0000; border: 1px solid #ffc9c9; border-radius: 4px; padding: 2px 5px; font-weight: bold; }
+        .badge-kabumini { font-size: 0.8rem; background-color: #fff0f0; color: #bf0000; border: 1px solid #ffc9c9; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -150,7 +161,7 @@
                             <th>順位</th>
                             <th>コード<br><small class="text-muted fw-normal">(楽天)</small></th>
                             <th>社名</th>
-                            <th>かぶミニ</th>
+                            <th class="col-mini">かぶ<br>ミニ</th>
                             <th>市場</th>
                             <th>業種</th>
                             <th>現在値</th>
@@ -288,7 +299,8 @@
             data.forEach((s, idx) => {
                 let mixBadgeClass = s.mix_index < 5.625 ? "badge-mix mix-ultra" : (s.mix_index < 11.25 ? "badge-mix mix-strict" : "");
                 const isMini = checkMini(s);
-                const miniBadge = isMini ? `<span class="badge-kabumini" title="楽天証券で1株から購入可能">1株OK</span>` : `<span class="text-muted small">-</span>`;
+                /* ★ 「1株OK」から「◯」に変更 */
+                const miniBadge = isMini ? `<span class="badge-kabumini" title="楽天証券で1株から購入可能">◯</span>` : `<span class="text-muted small">-</span>`;
                 const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
 
                 html += `<tr>
@@ -296,7 +308,8 @@
                     <td><a href="${rakutenUrl}" target="_blank" class="rakuten-link" title="楽天証券を開く">${s.code} <i class="bi bi-box-arrow-up-right small"></i></a></td>
                     <!-- ★ 社名スリム化（title属性で全社名表示可能） -->
                     <td class="company-name" title="${s.name}">${s.name}</td>
-                    <td>${miniBadge}</td>
+                    <!-- ★ 幅詰めクラス適用 -->
+                    <td class="col-mini">${miniBadge}</td>
                     <td><span class="badge ${s.market === 'プライム' ? 'bg-primary' : 'bg-secondary'}">${s.market}</span></td>
                     <td class="text-muted small">${s.sector}</td>
                     <td>¥${s.price.toLocaleString()}</td>
