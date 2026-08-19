@@ -2,8 +2,15 @@ name: 毎日株価自動スクリーニング
 
 on:
   schedule:
-    - cron: '7 9 * * 1-5'
-    - cron: '7 11 * * 1-5'
+    # 日本時間 (JST) 17:17, 19:17, 21:17 (月〜金)
+    - cron: '17 8 * * 1-5'   # 17:17 JST (UTC 08:17)
+    - cron: '17 10 * * 1-5'  # 19:17 JST (UTC 10:17)
+    - cron: '17 12 * * 1-5'  # 21:17 JST (UTC 12:17)
+
+    # 日本時間 (JST) 翌朝 05:07, 07:07 (火〜土の早朝)
+    - cron: '7 20 * * 1-5'   # 05:07 JST (UTC 20:07 前日)
+    - cron: '7 22 * * 1-5'   # 07:07 JST (UTC 22:07 前日)
+
   workflow_dispatch:
 
 permissions:
@@ -40,7 +47,7 @@ jobs:
           name: standard-data
           path: data/standard.json
 
-  # 3. 合体してHTML・SQLite保存＆Discord通知（マシンC）
+  # 3. OR取り合体＆保存＆Discord通知（マシンC）
   aggregate-and-publish:
     needs: [scan-prime, scan-standard]
     runs-on: ubuntu-latest
@@ -52,7 +59,6 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install --upgrade yfinance pandas requests
-      # ★ merge-multiple: true を追加してフォルダ直下にファイルを展開
       - uses: actions/download-artifact@v4
         with:
           path: data/
@@ -61,7 +67,7 @@ jobs:
         env:
           TZ: 'Asia/Tokyo'
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python main4.py --aggregate
+        run: python main5.py --aggregate
       - name: コミット＆プッシュ
         run: |
           git config --global user.name "github-actions[bot]"
@@ -70,7 +76,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "変更なし"
           else
-            git commit -m "Update stock data [skip ci]"
+            git commit -m "Update stock data (Incremental Merge) [skip ci]"
             git pull --rebase origin main
             git push origin main
           fi
