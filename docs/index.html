@@ -16,7 +16,7 @@
         table th { background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; font-size: 0.82rem; }
         table td { vertical-align: middle; white-space: nowrap; text-align: center; }
         
-        /* ★ 社名欄をスリム化して横幅を詰めるスタイル */
+        /* ★ 社名欄（クリック可能・幅スリム化） */
         .company-name {
             max-width: 130px;
             overflow: hidden;
@@ -24,16 +24,27 @@
             white-space: nowrap;
             text-align: left !important;
             font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .company-name:hover {
+            color: #0d6efd;
         }
 
-        /* ★ かぶミニ列の幅詰め用スタイル */
+        /* ★ ミニ列・市場列の幅詰めスタイル */
         .col-mini {
-            width: 42px !important;
-            min-width: 42px !important;
-            max-width: 45px !important;
+            width: 36px !important;
+            min-width: 36px !important;
             padding-left: 2px !important;
             padding-right: 2px !important;
-            line-height: 1.15;
+            text-align: center;
+        }
+        .col-market {
+            width: 44px !important;
+            min-width: 44px !important;
+            padding-left: 2px !important;
+            padding-right: 2px !important;
             text-align: center;
         }
 
@@ -42,7 +53,8 @@
         .mix-strict { background-color: #e6fcf5; color: #0ca678; }
         .rakuten-link { color: #bf0000; font-weight: 700; text-decoration: none; }
         .rakuten-link:hover { text-decoration: underline; color: #900000; }
-        .badge-kabumini { font-size: 0.8rem; background-color: #fff0f0; color: #bf0000; border: 1px solid #ffc9c9; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
+        .badge-kabumini { font-size: 0.82rem; color: #d63301; font-weight: bold; }
+        .badge-market { font-size: 0.72rem; padding: 2px 4px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -88,16 +100,16 @@
                 <div class="col-6 col-md-2">
                     <div class="filter-label">市場区分</div>
                     <select id="filter-market" class="form-select form-select-sm" onchange="applyFilters()">
-                        <option value="ALL">全市場 (プライム+スタンダード)</option>
-                        <option value="プライム">プライム市場のみ</option>
-                        <option value="スタンダード">スタンダード市場のみ</option>
+                        <option value="ALL">全市場 (PRM / STD)</option>
+                        <option value="プライム">プライム (PRM) のみ</option>
+                        <option value="スタンダード">スタンダード (STD) のみ</option>
                     </select>
                 </div>
                 <div class="col-6 col-md-2">
                     <div class="filter-label">かぶミニ (1株取引)</div>
                     <select id="filter-kabumini" class="form-select form-select-sm fw-bold text-danger" onchange="applyFilters()">
                         <option value="ALL">全て表示</option>
-                        <option value="ONLY">1株OK銘柄のみ</option>
+                        <option value="ONLY">1株OK (◯) 銘柄のみ</option>
                     </select>
                 </div>
                 <div class="col-6 col-md-2">
@@ -152,7 +164,7 @@
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-dark">該当件数: <span id="filtered-count" class="text-primary fs-5">0</span> 件</span>
-                <span class="text-muted small">💡 コードタップで楽天証券へ直行</span>
+                <span class="text-muted small">💡 コード: 楽天証券 / 社名: 銘柄詳細</span>
             </div>
             <div class="table-container">
                 <table class="table table-hover table-striped table-sm mb-0">
@@ -161,8 +173,8 @@
                             <th>順位</th>
                             <th>コード<br><small class="text-muted fw-normal">(楽天)</small></th>
                             <th>社名</th>
-                            <th class="col-mini">かぶ<br>ミニ</th>
-                            <th>市場</th>
+                            <th class="col-mini">ミニ</th>
+                            <th class="col-market">市場</th>
                             <th>業種</th>
                             <th>現在値</th>
                             <th>割安度</th>
@@ -173,7 +185,6 @@
                             <th>ROE</th>
                             <th>営業利益率</th>
                             <th>理論株価</th>
-                            <th>詳細</th>
                         </tr>
                     </thead>
                     <tbody id="stock-table-body"></tbody>
@@ -292,25 +303,27 @@
             const tbody = document.getElementById("stock-table-body");
             tbody.innerHTML = "";
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="16" class="p-4 text-muted text-center">条件に一致する銘柄はありません。</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="15" class="p-4 text-muted text-center">条件に一致する銘柄はありません。</td></tr>';
                 return;
             }
             let html = "";
             data.forEach((s, idx) => {
                 let mixBadgeClass = s.mix_index < 5.625 ? "badge-mix mix-ultra" : (s.mix_index < 11.25 ? "badge-mix mix-strict" : "");
                 const isMini = checkMini(s);
-                /* ★ 「1株OK」から「◯」に変更 */
-                const miniBadge = isMini ? `<span class="badge-kabumini" title="楽天証券で1株から購入可能">◯</span>` : `<span class="text-muted small">-</span>`;
+                const miniBadge = isMini ? `<span class="badge-kabumini" title="楽天証券で1株(かぶミニ)から購入可能">◯</span>` : `<span class="text-muted small">-</span>`;
                 const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
+
+                // ★ 市場を PRM / STD に略称化
+                const isPrime = s.market === 'プライム';
+                const marketBadge = `<span class="badge ${isPrime ? 'bg-primary' : 'bg-secondary'} badge-market" title="${s.market}市場">${isPrime ? 'PRM' : 'STD'}</span>`;
 
                 html += `<tr>
                     <td><strong>${idx + 1}</strong></td>
                     <td><a href="${rakutenUrl}" target="_blank" class="rakuten-link" title="楽天証券を開く">${s.code} <i class="bi bi-box-arrow-up-right small"></i></a></td>
-                    <!-- ★ 社名スリム化（title属性で全社名表示可能） -->
-                    <td class="company-name" title="${s.name}">${s.name}</td>
-                    <!-- ★ 幅詰めクラス適用 -->
+                    <!-- ★ 社名クリックで詳細モーダルを表示 -->
+                    <td class="company-name" onclick="showStockDetail('${s.code}')" title="${s.name}（タップで詳細）">${s.name}</td>
                     <td class="col-mini">${miniBadge}</td>
-                    <td><span class="badge ${s.market === 'プライム' ? 'bg-primary' : 'bg-secondary'}">${s.market}</span></td>
+                    <td class="col-market">${marketBadge}</td>
                     <td class="text-muted small">${s.sector}</td>
                     <td>¥${s.price.toLocaleString()}</td>
                     <td class="text-danger fw-bold">+${s.discount_rate}%</td>
@@ -321,7 +334,6 @@
                     <td>${s.roe}%</td>
                     <td>${s.op_margin}%</td>
                     <td>¥${s.graham_price.toLocaleString()}</td>
-                    <td><button class="btn btn-outline-dark btn-sm py-0 px-2" onclick="showStockDetail('${s.code}')"><i class="bi bi-info-circle"></i></button></td>
                 </tr>`;
             });
             tbody.innerHTML = html;
@@ -445,7 +457,7 @@
                     <div class="col-4 text-center p-2 border rounded"><small class="text-muted">配当利回り</small><div class="fw-bold fs-6 text-danger">${s.div_yield} %</div></div>
                 </div>
             `;
-            document.getElementById("modalMiniInfo").innerHTML = isMini ? `<i class="bi bi-check-circle-fill me-1"></i> かぶミニ®(単元未満株 1株) 対応銘柄` : `<i class="bi bi-info-circle me-1"></i> 単元株(100株) 取引`;
+            document.getElementById("modalMiniInfo").innerHTML = isMini ? `<i class="bi bi-check-circle-fill me-1 text-danger"></i> かぶミニ®(単元未満株 1株) 対応銘柄` : `<i class="bi bi-info-circle me-1"></i> 単元株(100株) 取引`;
             document.getElementById("modalRakutenBtn").href = rakutenUrl;
             modalInstance.show();
         }
