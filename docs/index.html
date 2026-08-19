@@ -15,6 +15,17 @@
         .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; max-height: 70vh; }
         table th { background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; font-size: 0.82rem; }
         table td { vertical-align: middle; white-space: nowrap; text-align: center; }
+        
+        /* ★ 社名欄をスリム化して横幅を詰めるスタイル */
+        .company-name {
+            max-width: 130px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: left !important;
+            font-weight: 500;
+        }
+
         .badge-mix { font-weight: 700; padding: 4px 7px; border-radius: 6px; }
         .mix-ultra { background-color: #ffe3e3; color: #d63301; }
         .mix-strict { background-color: #e6fcf5; color: #0ca678; }
@@ -97,7 +108,6 @@
                     <input type="number" id="filter-pbr" class="form-control form-control-sm" step="0.1" placeholder="上限なし" oninput="applyFilters()">
                 </div>
 
-                <!-- 2段目 -->
                 <div class="col-6 col-md-2">
                     <div class="filter-label">並び替え順 (ソート)</div>
                     <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="applyFilters()">
@@ -138,7 +148,7 @@
                     <thead>
                         <tr>
                             <th>順位</th>
-                            <th>コード<br><small class="text-muted fw-normal">(楽天直結)</small></th>
+                            <th>コード<br><small class="text-muted fw-normal">(楽天)</small></th>
                             <th>社名</th>
                             <th>かぶミニ</th>
                             <th>市場</th>
@@ -221,7 +231,6 @@
             sectorSelect.innerHTML = '<option value="ALL">全業種</option>' + sectors.map(s => `<option value="${s}">${s}</option>`).join('');
         }
 
-        // かぶミニ判定（後方互換対応：過去データにis_miniがなくても安全に判定）
         function checkMini(s) {
             if (typeof s.is_mini !== 'undefined') return s.is_mini;
             return s.market === 'プライム' || (s.price >= 300 && s.price <= 50000);
@@ -285,7 +294,8 @@
                 html += `<tr>
                     <td><strong>${idx + 1}</strong></td>
                     <td><a href="${rakutenUrl}" target="_blank" class="rakuten-link" title="楽天証券を開く">${s.code} <i class="bi bi-box-arrow-up-right small"></i></a></td>
-                    <td class="text-start">${s.name}</td>
+                    <!-- ★ 社名スリム化（title属性で全社名表示可能） -->
+                    <td class="company-name" title="${s.name}">${s.name}</td>
                     <td>${miniBadge}</td>
                     <td><span class="badge ${s.market === 'プライム' ? 'bg-primary' : 'bg-secondary'}">${s.market}</span></td>
                     <td class="text-muted small">${s.sector}</td>
