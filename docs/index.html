@@ -16,7 +16,6 @@
         table th { background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; vertical-align: middle !important; font-size: 0.82rem; }
         table td { vertical-align: middle; white-space: nowrap; text-align: center; }
         
-        /* ★ 社名欄（クリック可能・幅スリム化） */
         .company-name {
             max-width: 130px;
             overflow: hidden;
@@ -28,25 +27,10 @@
             text-decoration: none;
             color: inherit;
         }
-        .company-name:hover {
-            color: #0d6efd;
-        }
+        .company-name:hover { color: #0d6efd; }
 
-        /* ★ ミニ列・市場列の幅詰めスタイル */
-        .col-mini {
-            width: 36px !important;
-            min-width: 36px !important;
-            padding-left: 2px !important;
-            padding-right: 2px !important;
-            text-align: center;
-        }
-        .col-market {
-            width: 44px !important;
-            min-width: 44px !important;
-            padding-left: 2px !important;
-            padding-right: 2px !important;
-            text-align: center;
-        }
+        .col-mini { width: 36px !important; min-width: 36px !important; padding-left: 2px !important; padding-right: 2px !important; text-align: center; }
+        .col-market { width: 44px !important; min-width: 44px !important; padding-left: 2px !important; padding-right: 2px !important; text-align: center; }
 
         .badge-mix { font-weight: 700; padding: 4px 7px; border-radius: 6px; }
         .mix-ultra { background-color: #ffe3e3; color: #d63301; }
@@ -122,9 +106,14 @@
                     <div class="filter-label">ミックス係数 (最大)</div>
                     <input type="number" id="filter-mix" class="form-control form-control-sm" step="0.5" placeholder="上限なし" oninput="applyFilters()">
                 </div>
+                <!-- ★ PER 最小 (デフォルト: 4) / 最大 -->
                 <div class="col-6 col-md-2">
-                    <div class="filter-label">PER (最大)</div>
-                    <input type="number" id="filter-per" class="form-control form-control-sm" step="1" placeholder="上限なし" oninput="applyFilters()">
+                    <div class="filter-label">PER (最小 / 最大)</div>
+                    <div class="input-group input-group-sm">
+                        <input type="number" id="filter-per-min" class="form-control" step="0.5" value="4" placeholder="下限" oninput="applyFilters()">
+                        <span class="input-group-text px-1">〜</span>
+                        <input type="number" id="filter-per" class="form-control" step="1" placeholder="上限" oninput="applyFilters()">
+                    </div>
                 </div>
                 <div class="col-6 col-md-2">
                     <div class="filter-label">PBR (最大)</div>
@@ -263,6 +252,7 @@
             const kabumini = document.getElementById("filter-kabumini").value;
             const sector = document.getElementById("filter-sector").value;
             const maxMix = parseFloat(document.getElementById("filter-mix").value);
+            const minPer = parseFloat(document.getElementById("filter-per-min").value);
             const maxPer = parseFloat(document.getElementById("filter-per").value);
             const maxPbr = parseFloat(document.getElementById("filter-pbr").value);
             const minDiscount = parseFloat(document.getElementById("filter-discount").value);
@@ -277,6 +267,7 @@
                 if (kabumini === "ONLY" && !isMini) return false;
                 if (sector !== "ALL" && s.sector !== sector) return false;
                 if (!isNaN(maxMix) && s.mix_index > maxMix) return false;
+                if (!isNaN(minPer) && s.per < minPer) return false;
                 if (!isNaN(maxPer) && s.per > maxPer) return false;
                 if (!isNaN(maxPbr) && s.pbr > maxPbr) return false;
                 if (!isNaN(minDiscount) && s.discount_rate < minDiscount) return false;
@@ -313,14 +304,12 @@
                 const miniBadge = isMini ? `<span class="badge-kabumini" title="楽天証券で1株(かぶミニ)から購入可能">◯</span>` : `<span class="text-muted small">-</span>`;
                 const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
 
-                // ★ 市場を PRM / STD に略称化
                 const isPrime = s.market === 'プライム';
                 const marketBadge = `<span class="badge ${isPrime ? 'bg-primary' : 'bg-secondary'} badge-market" title="${s.market}市場">${isPrime ? 'PRM' : 'STD'}</span>`;
 
                 html += `<tr>
                     <td><strong>${idx + 1}</strong></td>
                     <td><a href="${rakutenUrl}" target="_blank" class="rakuten-link" title="楽天証券を開く">${s.code} <i class="bi bi-box-arrow-up-right small"></i></a></td>
-                    <!-- ★ 社名クリックで詳細モーダルを表示 -->
                     <td class="company-name" onclick="showStockDetail('${s.code}')" title="${s.name}（タップで詳細）">${s.name}</td>
                     <td class="col-mini">${miniBadge}</td>
                     <td class="col-market">${marketBadge}</td>
@@ -415,6 +404,7 @@
             document.getElementById("filter-kabumini").value = "ALL";
             document.getElementById("filter-sector").value = "ALL";
             document.getElementById("filter-mix").value = "";
+            document.getElementById("filter-per-min").value = "4";
             document.getElementById("filter-per").value = "";
             document.getElementById("filter-pbr").value = "";
             document.getElementById("filter-discount").value = "";
