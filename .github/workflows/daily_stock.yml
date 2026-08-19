@@ -2,14 +2,14 @@ name: 毎日株価自動スクリーニング
 
 on:
   schedule:
-    # 日本時間 (JST) 17:17, 19:17, 21:17 (月〜金)
+    # 夕方・夜 17:17, 19:17, 21:17 (JST 月〜金)
     - cron: '17 8 * * 1-5'   # 17:17 JST (UTC 08:17)
     - cron: '17 10 * * 1-5'  # 19:17 JST (UTC 10:17)
     - cron: '17 12 * * 1-5'  # 21:17 JST (UTC 12:17)
 
-    # 日本時間 (JST) 翌朝 05:07, 07:07 (火〜土の早朝)
-    - cron: '7 20 * * 1-5'   # 05:07 JST (UTC 20:07 前日)
-    - cron: '7 22 * * 1-5'   # 07:07 JST (UTC 22:07 前日)
+    # 早朝 04:17, 06:17 (JST 火〜土の早朝 / UTC 前日)
+    - cron: '17 19 * * 1-5'  # 04:17 JST (UTC 19:17 前日)
+    - cron: '17 21 * * 1-5'  # 06:17 JST (UTC 21:17 前日)
 
   workflow_dispatch:
 
@@ -17,7 +17,6 @@ permissions:
   contents: write
 
 jobs:
-  # 1. プライム市場スキャン（マシンA）
   scan-prime:
     runs-on: ubuntu-latest
     steps:
@@ -26,13 +25,12 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install --upgrade yfinance requests pandas xlrd openpyxl numpy
-      - run: python main4.py --market prime
+      - run: python main5.py --market prime
       - uses: actions/upload-artifact@v4
         with:
           name: prime-data
           path: data/prime.json
 
-  # 2. スタンダード市場スキャン（マシンB）
   scan-standard:
     runs-on: ubuntu-latest
     steps:
@@ -41,13 +39,12 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install --upgrade yfinance requests pandas xlrd openpyxl numpy
-      - run: python main4.py --market standard
+      - run: python main5.py --market standard
       - uses: actions/upload-artifact@v4
         with:
           name: standard-data
           path: data/standard.json
 
-  # 3. OR取り合体＆保存＆Discord通知（マシンC）
   aggregate-and-publish:
     needs: [scan-prime, scan-standard]
     runs-on: ubuntu-latest
