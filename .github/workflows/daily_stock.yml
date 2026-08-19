@@ -2,8 +2,8 @@ name: 毎日株価自動スクリーニング
 
 on:
   schedule:
-    - cron: '34 9 * * 1-5'
-    - cron: '34 11 * * 1-5'
+    - cron: '7 9 * * 1-5'
+    - cron: '7 11 * * 1-5'
   workflow_dispatch:
 
 permissions:
