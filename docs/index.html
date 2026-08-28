@@ -41,7 +41,6 @@
         .badge-market { font-size: 0.72rem; padding: 2px 4px; font-weight: 600; }
         .badge-gc { font-size: 0.68rem; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 4px; padding: 1px 3px; margin-left: 3px; font-weight: bold; }
         
-        /* スイング戦略枠スタイル */
         .strategy-box { background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6; padding: 10px; margin-bottom: 12px; }
         .strategy-item { font-size: 0.8rem; margin-bottom: 4px; }
         .strategy-desc { font-size: 0.72rem; color: #6c757d; margin-left: 18px; margin-bottom: 4px; }
@@ -153,9 +152,9 @@
                         <option value="avgval_desc">5日平均売買代金 (流動性順)</option>
                         <option value="mix_asc">ミックス係数 (昇順/割安順)</option>
                         <option value="gc_asc">GC発生順 (最新順)</option>
+                        <option value="div_desc">配当利回り(%) (降順)</option>
                         <option value="roe_desc">ROE(%) (降順)</option>
                         <option value="margin_desc">営業利益率(%) (降順)</option>
-                        <option value="div_desc">配当利回り(%) (降順)</option>
                     </select>
                 </div>
                 <div class="col-6 col-md-2">
@@ -165,6 +164,16 @@
                 <div class="col-6 col-md-2">
                     <div class="filter-label">ROE (最小 %)</div>
                     <input type="number" id="filter-roe" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
+                </div>
+
+                <!-- ★ 復帰: 営業利益率 ＆ 配当利回り -->
+                <div class="col-6 col-md-3">
+                    <div class="filter-label">営業利益率 (最小 %)</div>
+                    <input type="number" id="filter-margin" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="filter-label text-warning fw-bold">配当利回り (最小 %)</div>
+                    <input type="number" id="filter-div" class="form-control form-control-sm border-warning" step="0.5" placeholder="下限なし" oninput="applyFilters()">
                 </div>
             </div>
         </div>
@@ -214,7 +223,6 @@
                 <div class="modal-footer justify-content-between">
                     <span id="modalMiniInfo" class="badge-kabumini"></span>
                     <div class="d-flex gap-2">
-                        <!-- ★ Gemini相談ボタン -->
                         <button id="modalGeminiBtn" class="btn btn-outline-primary btn-sm fw-bold" onclick="consultGemini()">
                             <i class="bi bi-robot me-1"></i> Geminiで分析
                         </button>
@@ -287,6 +295,9 @@
             const maxPbr = parseFloat(document.getElementById("filter-pbr").value);
             const minDiscount = parseFloat(document.getElementById("filter-discount").value);
             const minRoe = parseFloat(document.getElementById("filter-roe").value);
+            // ★ 修正: 営業利益率と配当利回りを正しく取得
+            const minMargin = parseFloat(document.getElementById("filter-margin").value);
+            const minDiv = parseFloat(document.getElementById("filter-div").value);
             const sortBy = document.getElementById("sort-by").value;
 
             let filtered = STOCKS.filter(s => {
@@ -308,6 +319,9 @@
                 if (!isNaN(maxPbr) && s.pbr > maxPbr) return false;
                 if (!isNaN(minDiscount) && s.discount_rate < minDiscount) return false;
                 if (!isNaN(minRoe) && s.roe < minRoe) return false;
+                // ★ 修正: 判定条件を追加
+                if (!isNaN(minMargin) && s.op_margin < minMargin) return false;
+                if (!isNaN(minDiv) && s.div_yield < minDiv) return false;
                 return true;
             });
 
@@ -321,9 +335,9 @@
                     const gb = (b.gc_days !== null && typeof b.gc_days !== 'undefined') ? b.gc_days : 999;
                     return ga - gb;
                 }
+                if (sortBy === "div_desc") return b.div_yield - a.div_yield;
                 if (sortBy === "roe_desc") return b.roe - a.roe;
                 if (sortBy === "margin_desc") return b.op_margin - a.op_margin;
-                if (sortBy === "div_desc") return b.div_yield - a.div_yield;
                 return 0;
             });
 
@@ -420,7 +434,6 @@
                     if (type === 'ultra') { currentBtn.classList.add("btn-danger"); document.getElementById("filter-mix").value = 5.625; }
                     if (type === 'strict') { currentBtn.classList.add("btn-success"); document.getElementById("filter-mix").value = 11.25; }
                     if (type === 'graham') { currentBtn.classList.add("btn-primary"); document.getElementById("filter-mix").value = 22.5; }
-                    if (!document.getElementById("filter-roe").value) document.getElementById("filter-roe").value = 7;
                 } else {
                     document.getElementById("filter-mix").value = "";
                 }
@@ -478,6 +491,8 @@
             document.getElementById("filter-pbr").value = "";
             document.getElementById("filter-discount").value = "";
             document.getElementById("filter-roe").value = "";
+            document.getElementById("filter-margin").value = "";
+            document.getElementById("filter-div").value = "";
             document.getElementById("sort-by").value = "mix_asc";
             document.getElementById("quick-search").value = "";
             applyFilters();
@@ -509,22 +524,18 @@
             const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
             const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
 
-            // ★ スイング戦略の自動シミュレーション計算
             const p = s.price;
             const sma5 = s.sma5 || Math.round(p * 0.99);
             const sma25 = s.sma25 || Math.round(p * 0.96);
             const low5d = s.low_5d || Math.round(p * 0.97);
             const high20d = s.high_20d || Math.round(p * 1.08);
 
-            // 1. 押し目買い目安（5日線付近〜現在値の98.5%）
             const entryLow = Math.min(sma5, Math.round(p * 0.985));
             const entryHigh = p;
             
-            // 2. 損切りライン（25日線割れまたは直近5日安値割れ）
             const stopLoss = Math.min(Math.round(sma25 * 0.99), Math.round(low5d * 0.99));
             const stopLossPct = (((stopLoss - p) / p) * 100).toFixed(1);
 
-            // 3. 利確ターゲット（直近20日高値または損切り幅の2倍リワード）
             const tpRiskReward = p + (p - stopLoss) * 2;
             const takeProfit = Math.max(high20d, Math.round(tpRiskReward));
             const takeProfitPct = (((takeProfit - p) / p) * 100).toFixed(1);
@@ -538,7 +549,6 @@
                     <div class="col-6"><small class="text-muted">理論株価との割安度</small><div class="fs-5 fw-bold ${discountClass}">${discountText}</div></div>
                 </div>
 
-                <!-- スイング・モメンタム指標 -->
                 <div class="p-2 mb-2 bg-light rounded border">
                     <div class="fw-bold text-danger small mb-1"><i class="bi bi-graph-up-arrow"></i> モメンタム状態:</div>
                     <div class="row g-1 text-center">
@@ -548,7 +558,6 @@
                     </div>
                 </div>
 
-                <!-- ★ スイング戦略（押し目・損切・利確・根拠） -->
                 <div class="strategy-box">
                     <div class="fw-bold text-dark small mb-2"><i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング戦略シミュレーション (目安):</div>
                     
@@ -582,7 +591,6 @@
             modalInstance.show();
         }
 
-        // ★ Gemini相談機能（プロンプト自動生成＆コピーしてGeminiを開く）
         function consultGemini() {
             if (!currentStockForAI) return;
             const s = currentStockForAI;
