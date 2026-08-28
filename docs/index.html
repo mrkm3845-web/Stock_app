@@ -68,7 +68,6 @@
         <div class="card p-3 bg-white">
             <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
-                <!-- ★ スイング専用プリセット -->
                 <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 スイング注目 (GC3日+出来高↑)</button>
                 <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
                 <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
@@ -106,7 +105,6 @@
                     </select>
                 </div>
 
-                <!-- ★ スイング用フィルタ項目 -->
                 <div class="col-6 col-md-2">
                     <div class="filter-label text-danger fw-bold">GC (ゴールデンクロス)</div>
                     <select id="filter-gc" class="form-select form-select-sm fw-bold border-danger" onchange="applyFilters()">
@@ -125,7 +123,6 @@
                     <input type="number" id="filter-valratio" class="form-control form-control-sm" step="0.5" placeholder="下限なし" oninput="applyFilters()">
                 </div>
 
-                <!-- ファンダメンタルズ項目 -->
                 <div class="col-6 col-md-2">
                     <div class="filter-label">ミックス係数 (最大)</div>
                     <input type="number" id="filter-mix" class="form-control form-control-sm" step="0.5" placeholder="上限なし" oninput="applyFilters()">
@@ -286,7 +283,7 @@
                 if (kabumini === "ONLY" && !isMini) return false;
                 if (sector !== "ALL" && s.sector !== sector) return false;
                 
-                // スイング条件フィルタ
+                // スイング条件
                 if (gcFilter !== "ALL") {
                     const maxGcDays = parseInt(gcFilter, 10);
                     if (s.gc_days === null || typeof s.gc_days === 'undefined' || s.gc_days > maxGcDays) return false;
@@ -294,7 +291,7 @@
                 if (!isNaN(minAvgVal) && (s.avg_val_5d || 0) < minAvgVal) return false;
                 if (!isNaN(minValRatio) && (s.val_ratio_5d || 0) < minValRatio) return false;
 
-                // ファンダメンタルズ条件フィルタ
+                // ファンダメンタルズ条件
                 if (!isNaN(maxMix) && s.mix_index > maxMix) return false;
                 if (!isNaN(minPer) && s.per < minPer) return false;
                 if (!isNaN(maxPer) && s.per > maxPer) return false;
@@ -341,9 +338,13 @@
                 const isPrime = s.market === 'プライム';
                 const marketBadge = `<span class="badge ${isPrime ? 'bg-primary' : 'bg-secondary'} badge-market" title="${s.market}市場">${isPrime ? 'PRM' : 'STD'}</span>`;
                 
-                // 直近3日以内のGCならアイコンバッジを付与
                 const hasRecentGC = (s.gc_days !== null && typeof s.gc_days !== 'undefined' && s.gc_days <= 3);
                 const gcBadge = hasRecentGC ? `<span class="badge-gc" title="${s.gc_days === 0 ? '本日' : s.gc_days + '日前'}にゴールデンクロス形成！">🚀GC</span>` : "";
+
+                // ★ 割安度のプラス・マイナス重複を修正
+                const isPositiveDiscount = s.discount_rate > 0;
+                const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
+                const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
 
                 html += `<tr>
                     <td><strong>${idx + 1}</strong></td>
@@ -353,7 +354,7 @@
                     <td class="col-market">${marketBadge}</td>
                     <td class="text-muted small">${s.sector}</td>
                     <td>¥${s.price.toLocaleString()}</td>
-                    <td class="text-danger fw-bold">+${s.discount_rate}%</td>
+                    <td class="${discountClass} fw-bold">${discountText}</td>
                     <td><span class="${mixBadgeClass}">${s.mix_index.toFixed(2)}</span></td>
                     <td class="fw-bold">${s.div_yield}%</td>
                     <td>${s.per.toFixed(1)}</td>
@@ -380,7 +381,6 @@
             const currentBtn = btnMap[type];
             const isActive = currentBtn.classList.contains("active");
 
-            // スイングプリセット
             if (type === 'swing') {
                 if (!isActive) {
                     resetAll();
@@ -487,7 +487,6 @@
             const isMini = checkMini(s);
             const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
 
-            // スイング指標の文字列整形
             let gcStr = "なし (未発生)";
             if (s.gc_days !== null && typeof s.gc_days !== 'undefined') {
                 gcStr = s.gc_days === 0 ? "🔥 本日ゴールデンクロス！" : `🚀 ${s.gc_days}日前にGC形成`;
@@ -495,17 +494,19 @@
             const avgValStr = s.avg_val_5d ? (s.avg_val_5d >= 100000 ? `¥${(s.avg_val_5d / 100000).toFixed(1)} 億円` : `¥${Math.round(s.avg_val_5d / 10).toLocaleString()} 万円`) : "-";
             const valRatioStr = s.val_ratio_5d ? `${s.val_ratio_5d} 倍` : "-";
 
+            const isPositiveDiscount = s.discount_rate > 0;
+            const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
+            const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
+
             document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${s.name}`;
             document.getElementById("modalBody").innerHTML = `
-                <!-- 基本指標 -->
                 <div class="row g-2 mb-2">
                     <div class="col-6"><small class="text-muted">市場 / 業種</small><div><strong>${s.market}</strong> (${s.sector})</div></div>
                     <div class="col-6"><small class="text-muted">現在株価</small><div class="fs-5 fw-bold text-primary">¥${s.price.toLocaleString()}</div></div>
                     <div class="col-6"><small class="text-muted">グレアム理論株価</small><div class="fs-5 fw-bold text-success">¥${s.graham_price.toLocaleString()}</div></div>
-                    <div class="col-6"><small class="text-muted">理論株価との割安度</small><div class="fs-5 fw-bold text-danger">+${s.discount_rate}%</div></div>
+                    <div class="col-6"><small class="text-muted">理論株価との割安度</small><div class="fs-5 fw-bold ${discountClass}">${discountText}</div></div>
                 </div>
 
-                <!-- スイング・テクニカル枠 -->
                 <div class="p-2 mb-3 bg-light rounded border">
                     <div class="fw-bold text-danger small mb-1"><i class="bi bi-graph-up-arrow"></i> スイング・モメンタム指標:</div>
                     <div class="row g-1 text-center">
@@ -515,7 +516,6 @@
                     </div>
                 </div>
 
-                <!-- ファンダメンタルズ -->
                 <div class="row g-2">
                     <div class="col-4 text-center p-2 border rounded"><small class="text-muted">ミックス係数</small><div class="fw-bold fs-6">${s.mix_index.toFixed(2)}</div></div>
                     <div class="col-4 text-center p-2 border rounded"><small class="text-muted">PER</small><div class="fw-bold fs-6">${s.per.toFixed(1)} 倍</div></div>
