@@ -109,18 +109,20 @@ def analyze_single_stock(stock_info, market_label):
 
         # スイング用テクニカル＆売買代金計算
         closes = hist["Close"]
+        lows = hist["Low"]
+        highs = hist["High"]
         volumes = hist["Volume"]
         trading_values = (closes * volumes) / 1000  # 千円単位
 
-        sma5 = closes.rolling(window=5).mean()
-        sma25 = closes.rolling(window=25).mean()
+        sma5_series = closes.rolling(window=5).mean()
+        sma25_series = closes.rolling(window=25).mean()
 
         # ゴールデンクロス判定（過去10営業日以内）
         gc_days = None
         for d in range(min(10, len(closes) - 26)):
             idx_today = len(closes) - 1 - d
             idx_yesterday = idx_today - 1
-            if sma5.iloc[idx_today] > sma25.iloc[idx_today] and sma5.iloc[idx_yesterday] <= sma25.iloc[idx_yesterday]:
+            if sma5_series.iloc[idx_today] > sma25_series.iloc[idx_today] and sma5_series.iloc[idx_yesterday] <= sma25_series.iloc[idx_yesterday]:
                 gc_days = d
                 break
 
@@ -131,6 +133,12 @@ def analyze_single_stock(stock_info, market_label):
         val_today = trading_values.iloc[-1]
         val_5d_ago = trading_values.iloc[-6] if len(trading_values) >= 6 else trading_values.iloc[0]
         val_ratio_5d = round(val_today / val_5d_ago, 2) if val_5d_ago > 0 else 1.0
+
+        # ★ スイング戦略用のサポート＆レジスタンス指標
+        latest_sma5 = int(round(sma5_series.iloc[-1]))
+        latest_sma25 = int(round(sma25_series.iloc[-1]))
+        low_5d = int(round(lows.iloc[-5:].min()))      # 直近5日の最安値（直近サポート）
+        high_20d = int(round(highs.iloc[-20:].max()))  # 直近20日の最高値（ターゲット）
 
         return {
             "code": code,
@@ -149,7 +157,12 @@ def analyze_single_stock(stock_info, market_label):
             "div_yield": round(div_yield_pct, 2),
             "gc_days": gc_days,
             "avg_val_5d": avg_val_5d,
-            "val_ratio_5d": val_ratio_5d
+            "val_ratio_5d": val_ratio_5d,
+            # ★ 追加データ
+            "sma5": latest_sma5,
+            "sma25": latest_sma25,
+            "low_5d": low_5d,
+            "high_20d": high_20d
         }
     except Exception:
         return None
@@ -185,11 +198,13 @@ def save_to_sqlite(all_stocks, target_date):
             per REAL, pbr REAL, roe REAL, op_margin REAL, div_yield REAL,
             is_mini INTEGER DEFAULT 1,
             gc_days INTEGER, avg_val_5d INTEGER, val_ratio_5d REAL,
+            sma5 INTEGER, sma25 INTEGER, low_5d INTEGER, high_20d INTEGER,
             PRIMARY KEY (date, code)
         )
     """)
 
-    for col, col_type in [("gc_days", "INTEGER"), ("avg_val_5d", "INTEGER"), ("val_ratio_5d", "REAL")]:
+    for col, col_type in [("gc_days", "INTEGER"), ("avg_val_5d", "INTEGER"), ("val_ratio_5d", "REAL"),
+                          ("sma5", "INTEGER"), ("sma25", "INTEGER"), ("low_5d", "INTEGER"), ("high_20d", "INTEGER")]:
         try:
             c.execute(f"ALTER TABLE daily_stocks ADD COLUMN {col} {col_type}")
         except Exception:
@@ -198,7 +213,7 @@ def save_to_sqlite(all_stocks, target_date):
     for s in all_stocks:
         c.execute(
             """
-            INSERT OR REPLACE INTO daily_stocks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            INSERT OR REPLACE INTO daily_stocks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         """,
             (
                 target_date,
@@ -219,6 +234,10 @@ def save_to_sqlite(all_stocks, target_date):
                 s.get("gc_days"),
                 s.get("avg_val_5d"),
                 s.get("val_ratio_5d"),
+                s.get("sma5"),
+                s.get("sma25"),
+                s.get("low_5d"),
+                s.get("high_20d"),
             ),
         )
     conn.commit()
@@ -250,7 +269,7 @@ def save_history_json(all_stocks, target_date):
     print(f">> 日別JSON (docs/history/{target_date}.json) を保存しました。")
 
 
-# 6. Discord通知（割安優良株 ＋ スイング注目株）
+# 6. Discord通知
 def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook_url):
     if not webhook_url or not all_stocks:
         return
@@ -258,7 +277,6 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     df = pd.DataFrame(all_stocks)
 
-    # 変化が全くなかった場合
     if added_count == 0 and updated_count == 0:
         msg = f"✅ **【データ確認】** ({now_str})\n対象日: `{target_date}` ➔ 前回から変更なし（現在 計{len(all_stocks)}社マージ済・正常稼働中）。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
         try:
@@ -267,7 +285,6 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
             pass
         return
 
-    # ① 割安優良株セクション
     valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)].sort_values(by="mix_index", ascending=True)
 
     def make_value_section(market_name):
@@ -288,7 +305,6 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
                 text += f"{r['code']:<6} {sname:<8} +{r['discount_rate']}% {r['mix_index']:<5.2f} {r['div_yield']}%\n"
         return text + "```"
 
-    # ② スイングトレード注目株セクション（GC 3日以内 & 5日平均売買代金5千万円以上 & 増加率1.5倍以上）
     swing_df = df[
         (df["gc_days"].notna()) & 
         (df["gc_days"] <= 3) & 
@@ -296,7 +312,6 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
         (df["val_ratio_5d"] >= 1.5)
     ].sort_values(by="val_ratio_5d", ascending=False)
 
-    # ★ 0件でも状況を明示する処理
     swing_section = "\n**🚀 【スイング注目】GC×出来高急増** (GC3日以内 / 5日平均5千万↑ / 増加率1.5倍↑)\n"
     if not swing_df.empty:
         swing_section += f"```\n{'コード':<5} {'社名':<8} {'GC':<5} {'売買代金':<7} {'増加率'}\n" + "-" * 38 + "\n"
