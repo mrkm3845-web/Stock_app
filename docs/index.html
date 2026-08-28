@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>割安優良株 インタラクティブ・スクリーナー</title>
+    <title>割安優良株＆スイング インタラクティブ・スクリーナー</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -17,7 +17,7 @@
         table td { vertical-align: middle; white-space: nowrap; text-align: center; }
         
         .company-name {
-            max-width: 130px;
+            max-width: 140px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -39,6 +39,7 @@
         .rakuten-link:hover { text-decoration: underline; color: #900000; }
         .badge-kabumini { font-size: 0.82rem; color: #d63301; font-weight: bold; }
         .badge-market { font-size: 0.72rem; padding: 2px 4px; font-weight: 600; }
+        .badge-gc { font-size: 0.68rem; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 4px; padding: 1px 3px; margin-left: 3px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -47,7 +48,7 @@
         <div class="card p-3 bg-white">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
-                    <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-sliders"></i> 割安優良株 インタラクティブ・スクリーナー</h1>
+                    <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-sliders"></i> 割安優良株＆スイング スクリーナー</h1>
                     <small class="text-muted">登録総数: <span id="total-count">-</span> 件</small>
                 </div>
                 <div class="d-flex flex-wrap gap-2 align-items-center ms-auto">
@@ -55,7 +56,7 @@
                         <span class="input-group-text bg-light fw-bold"><i class="bi bi-calendar-event me-1"></i> 取得日</span>
                         <select id="date-selector" class="form-select form-select-sm fw-bold" onchange="loadDateData(this.value)"></select>
                     </div>
-                    <div class="input-group input-group-sm" style="width: 200px;">
+                    <div class="input-group input-group-sm" style="width: 180px;">
                         <input type="text" id="quick-search" class="form-control" placeholder="コード or 社名...">
                         <button class="btn btn-primary" onclick="searchStock()"><i class="bi bi-search"></i></button>
                     </div>
@@ -67,6 +68,8 @@
         <div class="card p-3 bg-white">
             <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
+                <!-- ★ スイング専用プリセット -->
+                <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 スイング注目 (GC3日+出来高↑)</button>
                 <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
                 <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
                 <button id="btn-graham" class="btn btn-outline-primary btn-preset" onclick="togglePreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
@@ -102,11 +105,31 @@
                         <option value="ALL">全業種</option>
                     </select>
                 </div>
+
+                <!-- ★ スイング用フィルタ項目 -->
+                <div class="col-6 col-md-2">
+                    <div class="filter-label text-danger fw-bold">GC (ゴールデンクロス)</div>
+                    <select id="filter-gc" class="form-select form-select-sm fw-bold border-danger" onchange="applyFilters()">
+                        <option value="ALL">指定なし</option>
+                        <option value="0">本日GC形成</option>
+                        <option value="3">3営業日以内</option>
+                        <option value="5">5営業日以内</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="filter-label">5日平均売買代金 (最小 千円)</div>
+                    <input type="number" id="filter-avgval" class="form-control form-control-sm" step="10000" placeholder="下限なし" oninput="applyFilters()">
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="filter-label">売買代金増加率 (最小 倍)</div>
+                    <input type="number" id="filter-valratio" class="form-control form-control-sm" step="0.5" placeholder="下限なし" oninput="applyFilters()">
+                </div>
+
+                <!-- ファンダメンタルズ項目 -->
                 <div class="col-6 col-md-2">
                     <div class="filter-label">ミックス係数 (最大)</div>
                     <input type="number" id="filter-mix" class="form-control form-control-sm" step="0.5" placeholder="上限なし" oninput="applyFilters()">
                 </div>
-                <!-- ★ PER 最小 (デフォルト: 4) / 最大 -->
                 <div class="col-6 col-md-2">
                     <div class="filter-label">PER (最小 / 最大)</div>
                     <div class="input-group input-group-sm">
@@ -124,6 +147,9 @@
                     <div class="filter-label">並び替え順 (ソート)</div>
                     <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="applyFilters()">
                         <option value="mix_asc">ミックス係数 (昇順/割安順)</option>
+                        <option value="valratio_desc">売買代金増加率 (急増順 🚀)</option>
+                        <option value="avgval_desc">5日平均売買代金 (流動性順)</option>
+                        <option value="gc_asc">GC発生順 (最新順)</option>
                         <option value="discount_desc">割安度(%) (降順)</option>
                         <option value="roe_desc">ROE(%) (降順)</option>
                         <option value="margin_desc">営業利益率(%) (降順)</option>
@@ -137,14 +163,6 @@
                 <div class="col-6 col-md-2">
                     <div class="filter-label">ROE (最小 %)</div>
                     <input type="number" id="filter-roe" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="filter-label">営業利益率 (最小 %)</div>
-                    <input type="number" id="filter-margin" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="filter-label">配当利回り (最小 %)</div>
-                    <input type="number" id="filter-div" class="form-control form-control-sm" step="0.5" placeholder="下限なし" oninput="applyFilters()">
                 </div>
             </div>
         </div>
@@ -251,14 +269,15 @@
             const market = document.getElementById("filter-market").value;
             const kabumini = document.getElementById("filter-kabumini").value;
             const sector = document.getElementById("filter-sector").value;
+            const gcFilter = document.getElementById("filter-gc").value;
+            const minAvgVal = parseFloat(document.getElementById("filter-avgval").value);
+            const minValRatio = parseFloat(document.getElementById("filter-valratio").value);
             const maxMix = parseFloat(document.getElementById("filter-mix").value);
             const minPer = parseFloat(document.getElementById("filter-per-min").value);
             const maxPer = parseFloat(document.getElementById("filter-per").value);
             const maxPbr = parseFloat(document.getElementById("filter-pbr").value);
             const minDiscount = parseFloat(document.getElementById("filter-discount").value);
             const minRoe = parseFloat(document.getElementById("filter-roe").value);
-            const minMargin = parseFloat(document.getElementById("filter-margin").value);
-            const minDiv = parseFloat(document.getElementById("filter-div").value);
             const sortBy = document.getElementById("sort-by").value;
 
             let filtered = STOCKS.filter(s => {
@@ -266,19 +285,34 @@
                 if (market !== "ALL" && s.market !== market) return false;
                 if (kabumini === "ONLY" && !isMini) return false;
                 if (sector !== "ALL" && s.sector !== sector) return false;
+                
+                // スイング条件フィルタ
+                if (gcFilter !== "ALL") {
+                    const maxGcDays = parseInt(gcFilter, 10);
+                    if (s.gc_days === null || typeof s.gc_days === 'undefined' || s.gc_days > maxGcDays) return false;
+                }
+                if (!isNaN(minAvgVal) && (s.avg_val_5d || 0) < minAvgVal) return false;
+                if (!isNaN(minValRatio) && (s.val_ratio_5d || 0) < minValRatio) return false;
+
+                // ファンダメンタルズ条件フィルタ
                 if (!isNaN(maxMix) && s.mix_index > maxMix) return false;
                 if (!isNaN(minPer) && s.per < minPer) return false;
                 if (!isNaN(maxPer) && s.per > maxPer) return false;
                 if (!isNaN(maxPbr) && s.pbr > maxPbr) return false;
                 if (!isNaN(minDiscount) && s.discount_rate < minDiscount) return false;
                 if (!isNaN(minRoe) && s.roe < minRoe) return false;
-                if (!isNaN(minMargin) && s.op_margin < minMargin) return false;
-                if (!isNaN(minDiv) && s.div_yield < minDiv) return false;
                 return true;
             });
 
             filtered.sort((a, b) => {
                 if (sortBy === "mix_asc") return a.mix_index - b.mix_index;
+                if (sortBy === "valratio_desc") return (b.val_ratio_5d || 0) - (a.val_ratio_5d || 0);
+                if (sortBy === "avgval_desc") return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
+                if (sortBy === "gc_asc") {
+                    const ga = (a.gc_days !== null && typeof a.gc_days !== 'undefined') ? a.gc_days : 999;
+                    const gb = (b.gc_days !== null && typeof b.gc_days !== 'undefined') ? b.gc_days : 999;
+                    return ga - gb;
+                }
                 if (sortBy === "discount_desc") return b.discount_rate - a.discount_rate;
                 if (sortBy === "roe_desc") return b.roe - a.roe;
                 if (sortBy === "margin_desc") return b.op_margin - a.op_margin;
@@ -306,11 +340,15 @@
 
                 const isPrime = s.market === 'プライム';
                 const marketBadge = `<span class="badge ${isPrime ? 'bg-primary' : 'bg-secondary'} badge-market" title="${s.market}市場">${isPrime ? 'PRM' : 'STD'}</span>`;
+                
+                // 直近3日以内のGCならアイコンバッジを付与
+                const hasRecentGC = (s.gc_days !== null && typeof s.gc_days !== 'undefined' && s.gc_days <= 3);
+                const gcBadge = hasRecentGC ? `<span class="badge-gc" title="${s.gc_days === 0 ? '本日' : s.gc_days + '日前'}にゴールデンクロス形成！">🚀GC</span>` : "";
 
                 html += `<tr>
                     <td><strong>${idx + 1}</strong></td>
                     <td><a href="${rakutenUrl}" target="_blank" class="rakuten-link" title="楽天証券を開く">${s.code} <i class="bi bi-box-arrow-up-right small"></i></a></td>
-                    <td class="company-name" onclick="showStockDetail('${s.code}')" title="${s.name}（タップで詳細）">${s.name}</td>
+                    <td class="company-name" onclick="showStockDetail('${s.code}')" title="${s.name}（タップで詳細）">${s.name}${gcBadge}</td>
                     <td class="col-mini">${miniBadge}</td>
                     <td class="col-market">${marketBadge}</td>
                     <td class="text-muted small">${s.sector}</td>
@@ -330,6 +368,7 @@
 
         function togglePreset(type) {
             const btnMap = {
+                swing: document.getElementById("btn-swing"),
                 ultra: document.getElementById("btn-ultra"),
                 strict: document.getElementById("btn-strict"),
                 graham: document.getElementById("btn-graham"),
@@ -340,6 +379,23 @@
             };
             const currentBtn = btnMap[type];
             const isActive = currentBtn.classList.contains("active");
+
+            // スイングプリセット
+            if (type === 'swing') {
+                if (!isActive) {
+                    resetAll();
+                    currentBtn.classList.add("active", "btn-danger");
+                    currentBtn.classList.remove("btn-outline-danger");
+                    document.getElementById("filter-gc").value = "3";
+                    document.getElementById("filter-avgval").value = 50000;
+                    document.getElementById("filter-valratio").value = 1.5;
+                    document.getElementById("sort-by").value = "valratio_desc";
+                } else {
+                    resetAll();
+                }
+                applyFilters();
+                return;
+            }
 
             if (type === 'ultra' || type === 'strict' || type === 'graham') {
                 ['ultra', 'strict', 'graham'].forEach(k => {
@@ -355,7 +411,6 @@
                     if (type === 'strict') { currentBtn.classList.add("btn-success"); document.getElementById("filter-mix").value = 11.25; }
                     if (type === 'graham') { currentBtn.classList.add("btn-primary"); document.getElementById("filter-mix").value = 22.5; }
                     if (!document.getElementById("filter-roe").value) document.getElementById("filter-roe").value = 7;
-                    if (!document.getElementById("filter-margin").value) document.getElementById("filter-margin").value = 6;
                 } else {
                     document.getElementById("filter-mix").value = "";
                 }
@@ -393,6 +448,7 @@
             document.querySelectorAll(".btn-preset").forEach(btn => {
                 btn.classList.remove("active", "btn-danger", "btn-success", "btn-primary", "btn-secondary", "btn-info", "btn-warning", "text-white");
             });
+            document.getElementById("btn-swing").classList.add("btn-outline-danger");
             document.getElementById("btn-ultra").classList.add("btn-outline-danger");
             document.getElementById("btn-strict").classList.add("btn-outline-success");
             document.getElementById("btn-graham").classList.add("btn-outline-primary");
@@ -403,14 +459,16 @@
             document.getElementById("filter-market").value = "ALL";
             document.getElementById("filter-kabumini").value = "ALL";
             document.getElementById("filter-sector").value = "ALL";
+            document.getElementById("filter-gc").value = "ALL";
+            document.getElementById("filter-avgval").value = "";
+            document.getElementById("filter-valratio").value = "";
             document.getElementById("filter-mix").value = "";
             document.getElementById("filter-per-min").value = "4";
             document.getElementById("filter-per").value = "";
             document.getElementById("filter-pbr").value = "";
             document.getElementById("filter-discount").value = "";
             document.getElementById("filter-roe").value = "";
-            document.getElementById("filter-margin").value = "";
-            document.getElementById("filter-div").value = "";
+            document.getElementById("sort-by").value = "mix_asc";
             document.getElementById("quick-search").value = "";
             applyFilters();
         }
@@ -429,15 +487,35 @@
             const isMini = checkMini(s);
             const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
 
+            // スイング指標の文字列整形
+            let gcStr = "なし (未発生)";
+            if (s.gc_days !== null && typeof s.gc_days !== 'undefined') {
+                gcStr = s.gc_days === 0 ? "🔥 本日ゴールデンクロス！" : `🚀 ${s.gc_days}日前にGC形成`;
+            }
+            const avgValStr = s.avg_val_5d ? (s.avg_val_5d >= 100000 ? `¥${(s.avg_val_5d / 100000).toFixed(1)} 億円` : `¥${Math.round(s.avg_val_5d / 10).toLocaleString()} 万円`) : "-";
+            const valRatioStr = s.val_ratio_5d ? `${s.val_ratio_5d} 倍` : "-";
+
             document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${s.name}`;
             document.getElementById("modalBody").innerHTML = `
-                <div class="row g-2 mb-3">
+                <!-- 基本指標 -->
+                <div class="row g-2 mb-2">
                     <div class="col-6"><small class="text-muted">市場 / 業種</small><div><strong>${s.market}</strong> (${s.sector})</div></div>
                     <div class="col-6"><small class="text-muted">現在株価</small><div class="fs-5 fw-bold text-primary">¥${s.price.toLocaleString()}</div></div>
                     <div class="col-6"><small class="text-muted">グレアム理論株価</small><div class="fs-5 fw-bold text-success">¥${s.graham_price.toLocaleString()}</div></div>
                     <div class="col-6"><small class="text-muted">理論株価との割安度</small><div class="fs-5 fw-bold text-danger">+${s.discount_rate}%</div></div>
                 </div>
-                <hr>
+
+                <!-- スイング・テクニカル枠 -->
+                <div class="p-2 mb-3 bg-light rounded border">
+                    <div class="fw-bold text-danger small mb-1"><i class="bi bi-graph-up-arrow"></i> スイング・モメンタム指標:</div>
+                    <div class="row g-1 text-center">
+                        <div class="col-4"><small class="text-muted" style="font-size:0.7rem;">GC状態</small><div class="fw-bold text-danger" style="font-size:0.78rem;">${gcStr}</div></div>
+                        <div class="col-4"><small class="text-muted" style="font-size:0.7rem;">5日平均売買代金</small><div class="fw-bold" style="font-size:0.8rem;">${avgValStr}</div></div>
+                        <div class="col-4"><small class="text-muted" style="font-size:0.7rem;">5日前比 出来高</small><div class="fw-bold text-primary" style="font-size:0.8rem;">${valRatioStr}</div></div>
+                    </div>
+                </div>
+
+                <!-- ファンダメンタルズ -->
                 <div class="row g-2">
                     <div class="col-4 text-center p-2 border rounded"><small class="text-muted">ミックス係数</small><div class="fw-bold fs-6">${s.mix_index.toFixed(2)}</div></div>
                     <div class="col-4 text-center p-2 border rounded"><small class="text-muted">PER</small><div class="fw-bold fs-6">${s.per.toFixed(1)} 倍</div></div>
