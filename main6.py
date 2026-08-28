@@ -296,18 +296,19 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
         (df["val_ratio_5d"] >= 1.5)
     ].sort_values(by="val_ratio_5d", ascending=False)
 
-    swing_section = ""
+    # ★ 0件でも状況を明示する処理
+    swing_section = "\n**🚀 【スイング注目】GC×出来高急増** (GC3日以内 / 5日平均5千万↑ / 増加率1.5倍↑)\n"
     if not swing_df.empty:
-        swing_section = f"\n**🚀 【スイング注目】GC×出来高急増** (計 {len(swing_df)} 件該当)\n```\n"
-        swing_section += f"{'コード':<5} {'社名':<8} {'GC':<5} {'売買代金':<7} {'増加率'}\n" + "-" * 38 + "\n"
+        swing_section += f"```\n{'コード':<5} {'社名':<8} {'GC':<5} {'売買代金':<7} {'増加率'}\n" + "-" * 38 + "\n"
         for _, r in swing_df.head(5).iterrows():
             sname = (r["name"][:6] + "..") if len(r["name"]) > 6 else r["name"]
             gc_label = "当日GC" if r["gc_days"] == 0 else f"{int(r['gc_days'])}日前"
-            # 売買代金を「億円/万円」表記に整形
             val_k = r["avg_val_5d"]
             val_str = f"¥{val_k/100000:.1f}億" if val_k >= 100000 else f"¥{int(val_k/10)}万"
             swing_section += f"{r['code']:<6} {sname:<8} {gc_label:<5} {val_str:<7} {r['val_ratio_5d']}倍\n"
         swing_section += "```"
+    else:
+        swing_section += "└ ※本日の条件合致銘柄はありません (0件)\n"
 
     msg = f"📊 **【株式自動スクリーニング速報】** ({now_str})\n"
     msg += f"📅 対象営業日: **`{target_date}`** (新規: +{added_count}件 / 更新: {updated_count}件)\n"
