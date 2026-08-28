@@ -68,7 +68,8 @@
         <div class="card p-3 bg-white">
             <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
-                <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 スイング注目 (GC3日+出来高↑)</button>
+                <!-- ★ 割安×スイングワンタップボタン -->
+                <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 割安スイング (GC3日+出来高↑+割安)</button>
                 <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
                 <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
                 <button id="btn-graham" class="btn btn-outline-primary btn-preset" onclick="togglePreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
@@ -143,11 +144,11 @@
                 <div class="col-6 col-md-2">
                     <div class="filter-label">並び替え順 (ソート)</div>
                     <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="applyFilters()">
-                        <option value="mix_asc">ミックス係数 (昇順/割安順)</option>
+                        <option value="discount_desc">割安度(%) (降順)</option>
                         <option value="valratio_desc">売買代金増加率 (急増順 🚀)</option>
                         <option value="avgval_desc">5日平均売買代金 (流動性順)</option>
+                        <option value="mix_asc">ミックス係数 (昇順/割安順)</option>
                         <option value="gc_asc">GC発生順 (最新順)</option>
-                        <option value="discount_desc">割安度(%) (降順)</option>
                         <option value="roe_desc">ROE(%) (降順)</option>
                         <option value="margin_desc">営業利益率(%) (降順)</option>
                         <option value="div_desc">配当利回り(%) (降順)</option>
@@ -303,6 +304,7 @@
 
             filtered.sort((a, b) => {
                 if (sortBy === "mix_asc") return a.mix_index - b.mix_index;
+                if (sortBy === "discount_desc") return b.discount_rate - a.discount_rate;
                 if (sortBy === "valratio_desc") return (b.val_ratio_5d || 0) - (a.val_ratio_5d || 0);
                 if (sortBy === "avgval_desc") return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
                 if (sortBy === "gc_asc") {
@@ -310,7 +312,6 @@
                     const gb = (b.gc_days !== null && typeof b.gc_days !== 'undefined') ? b.gc_days : 999;
                     return ga - gb;
                 }
-                if (sortBy === "discount_desc") return b.discount_rate - a.discount_rate;
                 if (sortBy === "roe_desc") return b.roe - a.roe;
                 if (sortBy === "margin_desc") return b.op_margin - a.op_margin;
                 if (sortBy === "div_desc") return b.div_yield - a.div_yield;
@@ -341,7 +342,6 @@
                 const hasRecentGC = (s.gc_days !== null && typeof s.gc_days !== 'undefined' && s.gc_days <= 3);
                 const gcBadge = hasRecentGC ? `<span class="badge-gc" title="${s.gc_days === 0 ? '本日' : s.gc_days + '日前'}にゴールデンクロス形成！">🚀GC</span>` : "";
 
-                // ★ 割安度のプラス・マイナス重複を修正
                 const isPositiveDiscount = s.discount_rate > 0;
                 const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
                 const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
@@ -381,6 +381,7 @@
             const currentBtn = btnMap[type];
             const isActive = currentBtn.classList.contains("active");
 
+            // ★ 割安スイング（ワンタップで割高排除＆割安順ソート）
             if (type === 'swing') {
                 if (!isActive) {
                     resetAll();
@@ -389,7 +390,8 @@
                     document.getElementById("filter-gc").value = "3";
                     document.getElementById("filter-avgval").value = 50000;
                     document.getElementById("filter-valratio").value = 1.5;
-                    document.getElementById("sort-by").value = "valratio_desc";
+                    document.getElementById("filter-discount").value = 0; // 割安度 0%以上（割高カット！）
+                    document.getElementById("sort-by").value = "discount_desc"; // 割安度順にソート
                 } else {
                     resetAll();
                 }
