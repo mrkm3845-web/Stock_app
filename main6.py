@@ -58,7 +58,7 @@ def analyze_single_stock(stock_info, market_label):
     for attempt in range(2):
         try:
             info = ticker.info
-            hist = ticker.history(period="2mo")  # 直近2ヶ月分の日足を一括取得
+            hist = ticker.history(period="2mo")
             if info and not hist.empty and len(hist) >= 26:
                 break
         except Exception:
@@ -107,32 +107,27 @@ def analyze_single_stock(stock_info, market_label):
 
         is_kabumini = market_label == "プライム" or (current_price >= 300 and current_price <= 50000)
 
-        # ----------------------------------------------------
-        # ★ スイング用テクニカル＆売買代金計算
-        # ----------------------------------------------------
+        # スイング用テクニカル＆売買代金計算
         closes = hist["Close"]
         volumes = hist["Volume"]
-        # 売買代金（千円単位 = 円 ÷ 1,000）
-        trading_values = (closes * volumes) / 1000
+        trading_values = (closes * volumes) / 1000  # 千円単位
 
-        # 移動平均線（5日 / 25日）
         sma5 = closes.rolling(window=5).mean()
         sma25 = closes.rolling(window=25).mean()
 
-        # ゴールデンクロス判定（過去10営業日以内を走査）
+        # ゴールデンクロス判定（過去10営業日以内）
         gc_days = None
         for d in range(min(10, len(closes) - 26)):
             idx_today = len(closes) - 1 - d
             idx_yesterday = idx_today - 1
-            # 当日 5日線 > 25日線 かつ 前日 5日線 <= 25日線
             if sma5.iloc[idx_today] > sma25.iloc[idx_today] and sma5.iloc[idx_yesterday] <= sma25.iloc[idx_yesterday]:
-                gc_days = d  # 0=当日GC, 1=1日前GC...
+                gc_days = d
                 break
 
         # 前日までの5日平均売買代金（千円）
         avg_val_5d = int(trading_values.iloc[-6:-1].mean()) if len(trading_values) >= 6 else int(trading_values.mean())
 
-        # 5営業日前からの売買代金増加率（最新日の売買代金 ÷ 5日前の売買代金）
+        # 5営業日前からの売買代金増加率
         val_today = trading_values.iloc[-1]
         val_5d_ago = trading_values.iloc[-6] if len(trading_values) >= 6 else trading_values.iloc[0]
         val_ratio_5d = round(val_today / val_5d_ago, 2) if val_5d_ago > 0 else 1.0
@@ -152,10 +147,9 @@ def analyze_single_stock(stock_info, market_label):
             "roe": round(roe_pct, 1),
             "op_margin": round(op_margin_pct, 1),
             "div_yield": round(div_yield_pct, 2),
-            # ★ 追加テクニカル項目
-            "gc_days": gc_days,              # GCからの日数 (None=なし, 0=当日, 1=1日前...)
-            "avg_val_5d": avg_val_5d,        # 前日まで5日平均売買代金 (千円)
-            "val_ratio_5d": val_ratio_5d     # 5営業日前比 出来高・売買代金増加率
+            "gc_days": gc_days,
+            "avg_val_5d": avg_val_5d,
+            "val_ratio_5d": val_ratio_5d
         }
     except Exception:
         return None
@@ -256,15 +250,15 @@ def save_history_json(all_stocks, target_date):
     print(f">> 日別JSON (docs/history/{target_date}.json) を保存しました。")
 
 
-# 6. Discord通知
+# 6. Discord通知（割安優良株 ＋ スイング注目株）
 def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook_url):
     if not webhook_url or not all_stocks:
         return
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-    df = pd.DataFrame(all_stocks).sort_values(by="mix_index", ascending=True)
-    valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)]
+    df = pd.DataFrame(all_stocks)
 
+    # 変化が全くなかった場合
     if added_count == 0 and updated_count == 0:
         msg = f"✅ **【データ確認】** ({now_str})\n対象日: `{target_date}` ➔ 前回から変更なし（現在 計{len(all_stocks)}社マージ済・正常稼働中）。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
         try:
@@ -273,7 +267,10 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
             pass
         return
 
-    def make_section(market_name):
+    # ① 割安優良株セクション
+    valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)].sort_values(by="mix_index", ascending=True)
+
+    def make_value_section(market_name):
         m_df = valid_df[valid_df["market"] == market_name]
         ultra = m_df[m_df["mix_index"] < 5.625]
         strict = m_df[(m_df["mix_index"] >= 5.625) & (m_df["mix_index"] < 11.25)]
@@ -291,10 +288,32 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
                 text += f"{r['code']:<6} {sname:<8} +{r['discount_rate']}% {r['mix_index']:<5.2f} {r['div_yield']}%\n"
         return text + "```"
 
-    msg = f"📊 **【割安優良株スクリーニング速報】** ({now_str})\n"
-    msg += f"📅 対象営業日: **`{target_date}`** (新規追加: +{added_count}件 / 更新: {updated_count}件)\n"
-    msg += make_section("プライム") + make_section("スタンダード")
-    msg += "\n👉 Web簡易スクリーナー: https://mrkm3845-web.github.io/Stock_app/"
+    # ② スイングトレード注目株セクション（GC 3日以内 & 5日平均売買代金5千万円以上 & 増加率1.5倍以上）
+    swing_df = df[
+        (df["gc_days"].notna()) & 
+        (df["gc_days"] <= 3) & 
+        (df["avg_val_5d"] >= 50000) & 
+        (df["val_ratio_5d"] >= 1.5)
+    ].sort_values(by="val_ratio_5d", ascending=False)
+
+    swing_section = ""
+    if not swing_df.empty:
+        swing_section = f"\n**🚀 【スイング注目】GC×出来高急増** (計 {len(swing_df)} 件該当)\n```\n"
+        swing_section += f"{'コード':<5} {'社名':<8} {'GC':<5} {'売買代金':<7} {'増加率'}\n" + "-" * 38 + "\n"
+        for _, r in swing_df.head(5).iterrows():
+            sname = (r["name"][:6] + "..") if len(r["name"]) > 6 else r["name"]
+            gc_label = "当日GC" if r["gc_days"] == 0 else f"{int(r['gc_days'])}日前"
+            # 売買代金を「億円/万円」表記に整形
+            val_k = r["avg_val_5d"]
+            val_str = f"¥{val_k/100000:.1f}億" if val_k >= 100000 else f"¥{int(val_k/10)}万"
+            swing_section += f"{r['code']:<6} {sname:<8} {gc_label:<5} {val_str:<7} {r['val_ratio_5d']}倍\n"
+        swing_section += "```"
+
+    msg = f"📊 **【株式自動スクリーニング速報】** ({now_str})\n"
+    msg += f"📅 対象営業日: **`{target_date}`** (新規: +{added_count}件 / 更新: {updated_count}件)\n"
+    msg += make_value_section("プライム") + make_value_section("スタンダード")
+    msg += swing_section
+    msg += "\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
 
     try:
         requests.post(webhook_url, json={"content": msg}, timeout=10)
