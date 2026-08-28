@@ -40,6 +40,11 @@
         .badge-kabumini { font-size: 0.82rem; color: #d63301; font-weight: bold; }
         .badge-market { font-size: 0.72rem; padding: 2px 4px; font-weight: 600; }
         .badge-gc { font-size: 0.68rem; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 4px; padding: 1px 3px; margin-left: 3px; font-weight: bold; }
+        
+        /* スイング戦略枠スタイル */
+        .strategy-box { background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6; padding: 10px; margin-bottom: 12px; }
+        .strategy-item { font-size: 0.8rem; margin-bottom: 4px; }
+        .strategy-desc { font-size: 0.72rem; color: #6c757d; margin-left: 18px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -68,7 +73,6 @@
         <div class="card p-3 bg-white">
             <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
-                <!-- ★ 割安×スイングワンタップボタン -->
                 <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 割安スイング (GC3日+出来高↑+割安)</button>
                 <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
                 <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
@@ -209,9 +213,15 @@
                 <div class="modal-body" id="modalBody"></div>
                 <div class="modal-footer justify-content-between">
                     <span id="modalMiniInfo" class="badge-kabumini"></span>
-                    <a id="modalRakutenBtn" href="#" target="_blank" class="btn btn-danger btn-sm fw-bold">
-                        <i class="bi bi-box-arrow-up-right me-1"></i> 楽天証券で見る・注文
-                    </a>
+                    <div class="d-flex gap-2">
+                        <!-- ★ Gemini相談ボタン -->
+                        <button id="modalGeminiBtn" class="btn btn-outline-primary btn-sm fw-bold" onclick="consultGemini()">
+                            <i class="bi bi-robot me-1"></i> Geminiで分析
+                        </button>
+                        <a id="modalRakutenBtn" href="#" target="_blank" class="btn btn-danger btn-sm fw-bold">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> 楽天証券
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -221,6 +231,7 @@
     <script>
         let STOCKS = [];
         let modalInstance = null;
+        let currentStockForAI = null;
 
         document.addEventListener("DOMContentLoaded", async () => {
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
@@ -284,7 +295,6 @@
                 if (kabumini === "ONLY" && !isMini) return false;
                 if (sector !== "ALL" && s.sector !== sector) return false;
                 
-                // スイング条件
                 if (gcFilter !== "ALL") {
                     const maxGcDays = parseInt(gcFilter, 10);
                     if (s.gc_days === null || typeof s.gc_days === 'undefined' || s.gc_days > maxGcDays) return false;
@@ -292,7 +302,6 @@
                 if (!isNaN(minAvgVal) && (s.avg_val_5d || 0) < minAvgVal) return false;
                 if (!isNaN(minValRatio) && (s.val_ratio_5d || 0) < minValRatio) return false;
 
-                // ファンダメンタルズ条件
                 if (!isNaN(maxMix) && s.mix_index > maxMix) return false;
                 if (!isNaN(minPer) && s.per < minPer) return false;
                 if (!isNaN(maxPer) && s.per > maxPer) return false;
@@ -381,7 +390,6 @@
             const currentBtn = btnMap[type];
             const isActive = currentBtn.classList.contains("active");
 
-            // ★ 割安スイング（ワンタップで割高排除＆割安順ソート）
             if (type === 'swing') {
                 if (!isActive) {
                     resetAll();
@@ -390,8 +398,8 @@
                     document.getElementById("filter-gc").value = "3";
                     document.getElementById("filter-avgval").value = 50000;
                     document.getElementById("filter-valratio").value = 1.5;
-                    document.getElementById("filter-discount").value = 0; // 割安度 0%以上（割高カット！）
-                    document.getElementById("sort-by").value = "discount_desc"; // 割安度順にソート
+                    document.getElementById("filter-discount").value = 0;
+                    document.getElementById("sort-by").value = "discount_desc";
                 } else {
                     resetAll();
                 }
@@ -486,6 +494,7 @@
         function showStockDetail(code) {
             const s = STOCKS.find(item => item.code === code);
             if (!s) return;
+            currentStockForAI = s;
             const isMini = checkMini(s);
             const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
 
@@ -500,22 +509,63 @@
             const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
             const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
 
+            // ★ スイング戦略の自動シミュレーション計算
+            const p = s.price;
+            const sma5 = s.sma5 || Math.round(p * 0.99);
+            const sma25 = s.sma25 || Math.round(p * 0.96);
+            const low5d = s.low_5d || Math.round(p * 0.97);
+            const high20d = s.high_20d || Math.round(p * 1.08);
+
+            // 1. 押し目買い目安（5日線付近〜現在値の98.5%）
+            const entryLow = Math.min(sma5, Math.round(p * 0.985));
+            const entryHigh = p;
+            
+            // 2. 損切りライン（25日線割れまたは直近5日安値割れ）
+            const stopLoss = Math.min(Math.round(sma25 * 0.99), Math.round(low5d * 0.99));
+            const stopLossPct = (((stopLoss - p) / p) * 100).toFixed(1);
+
+            // 3. 利確ターゲット（直近20日高値または損切り幅の2倍リワード）
+            const tpRiskReward = p + (p - stopLoss) * 2;
+            const takeProfit = Math.max(high20d, Math.round(tpRiskReward));
+            const takeProfitPct = (((takeProfit - p) / p) * 100).toFixed(1);
+
             document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${s.name}`;
             document.getElementById("modalBody").innerHTML = `
                 <div class="row g-2 mb-2">
                     <div class="col-6"><small class="text-muted">市場 / 業種</small><div><strong>${s.market}</strong> (${s.sector})</div></div>
-                    <div class="col-6"><small class="text-muted">現在株価</small><div class="fs-5 fw-bold text-primary">¥${s.price.toLocaleString()}</div></div>
+                    <div class="col-6"><small class="text-muted">現在株価</small><div class="fs-5 fw-bold text-primary">¥${p.toLocaleString()}</div></div>
                     <div class="col-6"><small class="text-muted">グレアム理論株価</small><div class="fs-5 fw-bold text-success">¥${s.graham_price.toLocaleString()}</div></div>
                     <div class="col-6"><small class="text-muted">理論株価との割安度</small><div class="fs-5 fw-bold ${discountClass}">${discountText}</div></div>
                 </div>
 
-                <div class="p-2 mb-3 bg-light rounded border">
-                    <div class="fw-bold text-danger small mb-1"><i class="bi bi-graph-up-arrow"></i> スイング・モメンタム指標:</div>
+                <!-- スイング・モメンタム指標 -->
+                <div class="p-2 mb-2 bg-light rounded border">
+                    <div class="fw-bold text-danger small mb-1"><i class="bi bi-graph-up-arrow"></i> モメンタム状態:</div>
                     <div class="row g-1 text-center">
                         <div class="col-4"><small class="text-muted" style="font-size:0.7rem;">GC状態</small><div class="fw-bold text-danger" style="font-size:0.78rem;">${gcStr}</div></div>
                         <div class="col-4"><small class="text-muted" style="font-size:0.7rem;">5日平均売買代金</small><div class="fw-bold" style="font-size:0.8rem;">${avgValStr}</div></div>
                         <div class="col-4"><small class="text-muted" style="font-size:0.7rem;">5日前比 出来高</small><div class="fw-bold text-primary" style="font-size:0.8rem;">${valRatioStr}</div></div>
                     </div>
+                </div>
+
+                <!-- ★ スイング戦略（押し目・損切・利確・根拠） -->
+                <div class="strategy-box">
+                    <div class="fw-bold text-dark small mb-2"><i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング戦略シミュレーション (目安):</div>
+                    
+                    <div class="strategy-item text-success fw-bold">
+                        <i class="bi bi-box-arrow-in-down-right me-1"></i> 押し目買い: ¥${entryLow.toLocaleString()} 〜 ¥${entryHigh.toLocaleString()}
+                    </div>
+                    <div class="strategy-desc">└ 【根拠】短期サポートの「5日移動平均線 (¥${sma5.toLocaleString()})」付近への押し目</div>
+
+                    <div class="strategy-item text-danger fw-bold">
+                        <i class="bi bi-shield-x me-1"></i> 損切りライン: ¥${stopLoss.toLocaleString()} (${stopLossPct}%)
+                    </div>
+                    <div class="strategy-desc">└ 【根拠】中期防衛線「25日線 (¥${sma25.toLocaleString()})」および直近5日安値割れで撤退</div>
+
+                    <div class="strategy-item text-primary fw-bold">
+                        <i class="bi bi-trophy me-1"></i> 利確目標: ¥${takeProfit.toLocaleString()} (+${takeProfitPct}%)
+                    </div>
+                    <div class="strategy-desc">└ 【根拠】直近20日高値 (¥${high20d.toLocaleString()}) / リスクリワード比 1:2 達成</div>
                 </div>
 
                 <div class="row g-2">
@@ -530,6 +580,37 @@
             document.getElementById("modalMiniInfo").innerHTML = isMini ? `<i class="bi bi-check-circle-fill me-1 text-danger"></i> かぶミニ®(単元未満株 1株) 対応銘柄` : `<i class="bi bi-info-circle me-1"></i> 単元株(100株) 取引`;
             document.getElementById("modalRakutenBtn").href = rakutenUrl;
             modalInstance.show();
+        }
+
+        // ★ Gemini相談機能（プロンプト自動生成＆コピーしてGeminiを開く）
+        function consultGemini() {
+            if (!currentStockForAI) return;
+            const s = currentStockForAI;
+            const gcText = s.gc_days === 0 ? "本日GC形成" : (s.gc_days ? `${s.gc_days}日前にGC形成` : "GCなし");
+            const valRatioText = s.val_ratio_5d ? `${s.val_ratio_5d}倍` : "通常";
+
+            const prompt = `以下の日本株について、スイングトレード（保有期間数日〜数週間）の戦略を分析してください。
+
+【銘柄情報】
+・コード/社名: ${s.code} ${s.name} (${s.market} / ${s.sector})
+・現在株価: ${s.price}円
+・グレアム理論株価: ${s.graham_price}円 (割安度: ${s.discount_rate}%)
+・ファンダメンタルズ: PER ${s.per}倍 / PBR ${s.pbr}倍 / ROE ${s.roe}% / 利回り ${s.div_yield}%
+・テクニカル/出来高: ${gcText} / 出来高増加率: ${valRatioText}
+・サポート/レジスタンス: 5日線 ${s.sma5 || '-'}円 / 25日線 ${s.sma25 || '-'}円 / 直近高値 ${s.high_20d || '-'}円
+
+【回答してほしい内容】
+1. チャート・需給面から見た買いタイミング（押し目買い価格の目安）
+2. 撤退すべき損切りライン（下値支持線の根拠付き）
+3. 利確ターゲット価格とリスクリワード評価
+4. スイングトレードにおける注意点や好材料/リスク`;
+
+            navigator.clipboard.writeText(prompt).then(() => {
+                alert("📋 Geminiへの分析用プロンプトをクリップボードにコピーしました！\n開いたGeminiの入力欄に「貼り付け」して送信してください。");
+                window.open("https://gemini.google.com/app", "_blank");
+            }).catch(() => {
+                window.open("https://gemini.google.com/app", "_blank");
+            });
         }
     </script>
 </body>
