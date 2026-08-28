@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install --upgrade yfinance requests pandas xlrd openpyxl numpy
-      - run: python main5.py --market standard
+      - run: python main6.py --market standard
       - uses: actions/upload-artifact@v4
         with:
           name: standard-data
@@ -64,7 +64,7 @@ jobs:
         env:
           TZ: 'Asia/Tokyo'
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python main5.py --aggregate
+        run: python main6.py --aggregate
       - name: コミット＆プッシュ
         run: |
           git config --global user.name "github-actions[bot]"
