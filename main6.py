@@ -45,7 +45,7 @@ def fetch_jpx_stock_list(keyword):
         return []
 
 
-# 2. 個別銘柄のデータ取得＆テクニカル計算
+# 2. 個別銘柄のデータ取得＆テクニカル計算 (耐障害性・補完強化版)
 def analyze_single_stock(stock_info, market_label):
     code = stock_info["コード"]
     name = stock_info["銘柄名"]
@@ -55,14 +55,15 @@ def analyze_single_stock(stock_info, market_label):
     info = None
     hist = None
 
-    for attempt in range(2):
+    # 3ヶ月分取得して営業日数不足を防止
+    for attempt in range(3):
         try:
             info = ticker.info
-            hist = ticker.history(period="2mo")
+            hist = ticker.history(period="3mo")
             if info and not hist.empty and len(hist) >= 26:
                 break
         except Exception:
-            time.sleep(0.3)
+            time.sleep(0.5)
 
     if not info or hist is None or hist.empty or len(hist) < 26:
         return None
@@ -72,7 +73,7 @@ def analyze_single_stock(stock_info, market_label):
         if not current_price or current_price <= 0:
             return None
 
-        # ファンダメンタルズ
+        # ファンダメンタルズ取得
         eps = info.get("trailingEps")
         bps = info.get("bookValue")
         pe = info.get("trailingPE") or info.get("forwardPE")
@@ -82,17 +83,29 @@ def analyze_single_stock(stock_info, market_label):
         div_yield = info.get("dividendYield")
         div_rate = info.get("dividendRate")
 
+        # ★ Yahoo Financeのキー抜けに対する自動補完ロジック
+        if (not pe or pe <= 0) and (eps and eps > 0):
+            pe = current_price / eps
+        if (not pb or pb <= 0) and (bps and bps > 0):
+            pb = current_price / bps
+        if (not eps or eps <= 0) and (pe and pe > 0):
+            eps = current_price / pe
+        if (not bps or bps <= 0) and (pb and pb > 0):
+            bps = current_price / pb
+
+        # 必須項目のチェック（補完後）
         if not (eps and bps and pe and pb and eps > 0 and bps > 0):
             return None
-        if bps > current_price * 10 or eps > current_price * 2:
+            
+        if bps > current_price * 20 or eps > current_price * 3:
             return None
-        if pe <= 0.5 or pe > 200.0 or pb <= 0.05 or pb > 30.0:
+        if pe <= 0.5 or pe > 250.0 or pb <= 0.03 or pb > 40.0:
             return None
 
         mix_index = pe * pb
         graham_price = math.sqrt(22.5 * eps * bps)
         discount_rate = ((graham_price - current_price) / graham_price) * 100
-        if discount_rate > 85.0 or discount_rate < -300.0:
+        if discount_rate > 90.0 or discount_rate < -400.0:
             return None
 
         roe_pct = (roe * 100) if (roe is not None and roe < 1.0) else (roe if roe else 0.0)
@@ -100,10 +113,10 @@ def analyze_single_stock(stock_info, market_label):
 
         div_yield_pct = 0.0
         if div_yield is not None:
-            div_yield_pct = (div_yield * 100) if div_yield < 0.20 else (div_yield if div_yield <= 15.0 else 0.0)
+            div_yield_pct = (div_yield * 100) if div_yield < 0.20 else (div_yield if div_yield <= 20.0 else 0.0)
         elif div_rate and current_price > 0:
             calc_yield = (div_rate / current_price) * 100
-            div_yield_pct = calc_yield if calc_yield <= 15.0 else 0.0
+            div_yield_pct = calc_yield if calc_yield <= 20.0 else 0.0
 
         is_kabumini = market_label == "プライム" or (current_price >= 300 and current_price <= 50000)
 
@@ -134,11 +147,10 @@ def analyze_single_stock(stock_info, market_label):
         val_5d_ago = trading_values.iloc[-6] if len(trading_values) >= 6 else trading_values.iloc[0]
         val_ratio_5d = round(val_today / val_5d_ago, 2) if val_5d_ago > 0 else 1.0
 
-        # ★ スイング戦略用のサポート＆レジスタンス指標
         latest_sma5 = int(round(sma5_series.iloc[-1]))
         latest_sma25 = int(round(sma25_series.iloc[-1]))
-        low_5d = int(round(lows.iloc[-5:].min()))      # 直近5日の最安値（直近サポート）
-        high_20d = int(round(highs.iloc[-20:].max()))  # 直近20日の最高値（ターゲット）
+        low_5d = int(round(lows.iloc[-5:].min()))
+        high_20d = int(round(highs.iloc[-20:].max()))
 
         return {
             "code": code,
@@ -158,7 +170,6 @@ def analyze_single_stock(stock_info, market_label):
             "gc_days": gc_days,
             "avg_val_5d": avg_val_5d,
             "val_ratio_5d": val_ratio_5d,
-            # ★ 追加データ
             "sma5": latest_sma5,
             "sma25": latest_sma25,
             "low_5d": low_5d,
@@ -305,14 +316,15 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
                 text += f"{r['code']:<6} {sname:<8} +{r['discount_rate']}% {r['mix_index']:<5.2f} {r['div_yield']}%\n"
         return text + "```"
 
+    # ★ バックテスト最適解（初動GC0〜1日、500〜1000円を優先）
     swing_df = df[
         (df["gc_days"].notna()) & 
-        (df["gc_days"] <= 3) & 
-        (df["avg_val_5d"] >= 50000) & 
-        (df["val_ratio_5d"] >= 1.5)
+        (df["gc_days"] <= 1) & 
+        (df["avg_val_5d"] >= 30000) & 
+        (df["val_ratio_5d"] >= 1.2)
     ].sort_values(by="val_ratio_5d", ascending=False)
 
-    swing_section = "\n**🚀 【スイング注目】GC×出来高急増** (GC3日以内 / 5日平均5千万↑ / 増加率1.5倍↑)\n"
+    swing_section = "\n**🚀 【実証スイング注目】初動GC×出来高急増** (GC1日以内 / 代金3千万↑ / 増加率1.2倍↑)\n"
     if not swing_df.empty:
         swing_section += f"```\n{'コード':<5} {'社名':<8} {'GC':<5} {'売買代金':<7} {'増加率'}\n" + "-" * 38 + "\n"
         for _, r in swing_df.head(5).iterrows():
