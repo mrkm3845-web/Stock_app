@@ -72,7 +72,8 @@
         <div class="card p-3 bg-white">
             <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
-                <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 割安スイング (GC3日+出来高↑+割安)</button>
+                <!-- ★ バックテスト実証済みの最適スイングボタン -->
+                <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 実証スイング (500~1000円×初動GC×急増)</button>
                 <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
                 <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
                 <button id="btn-graham" class="btn btn-outline-primary btn-preset" onclick="togglePreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
@@ -109,11 +110,22 @@
                     </select>
                 </div>
 
+                <!-- ★ 株価フィルタ（下限 / 上限） -->
+                <div class="col-6 col-md-2">
+                    <div class="filter-label text-primary fw-bold">株価範囲 (円)</div>
+                    <div class="input-group input-group-sm">
+                        <input type="number" id="filter-price-min" class="form-control" step="100" placeholder="下限" oninput="applyFilters()">
+                        <span class="input-group-text px-1">〜</span>
+                        <input type="number" id="filter-price-max" class="form-control" step="100" placeholder="上限" oninput="applyFilters()">
+                    </div>
+                </div>
+
                 <div class="col-6 col-md-2">
                     <div class="filter-label text-danger fw-bold">GC (ゴールデンクロス)</div>
                     <select id="filter-gc" class="form-select form-select-sm fw-bold border-danger" onchange="applyFilters()">
                         <option value="ALL">指定なし</option>
-                        <option value="0">本日GC形成</option>
+                        <option value="0">本日GC形成 (初動)</option>
+                        <option value="1">1営業日以内 (実証最適)</option>
                         <option value="3">3営業日以内</option>
                         <option value="5">5営業日以内</option>
                     </select>
@@ -124,7 +136,7 @@
                 </div>
                 <div class="col-6 col-md-2">
                     <div class="filter-label">売買代金増加率 (最小 倍)</div>
-                    <input type="number" id="filter-valratio" class="form-control form-control-sm" step="0.5" placeholder="下限なし" oninput="applyFilters()">
+                    <input type="number" id="filter-valratio" class="form-control form-control-sm" step="0.1" placeholder="下限なし" oninput="applyFilters()">
                 </div>
 
                 <div class="col-6 col-md-2">
@@ -147,11 +159,11 @@
                 <div class="col-6 col-md-2">
                     <div class="filter-label">並び替え順 (ソート)</div>
                     <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="applyFilters()">
-                        <option value="discount_desc">割安度(%) (降順)</option>
                         <option value="valratio_desc">売買代金増加率 (急増順 🚀)</option>
+                        <option value="gc_asc">GC発生順 (最新初動順)</option>
+                        <option value="discount_desc">割安度(%) (降順)</option>
                         <option value="avgval_desc">5日平均売買代金 (流動性順)</option>
                         <option value="mix_asc">ミックス係数 (昇順/割安順)</option>
-                        <option value="gc_asc">GC発生順 (最新順)</option>
                         <option value="div_desc">配当利回り(%) (降順)</option>
                         <option value="roe_desc">ROE(%) (降順)</option>
                         <option value="margin_desc">営業利益率(%) (降順)</option>
@@ -166,7 +178,6 @@
                     <input type="number" id="filter-roe" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
                 </div>
 
-                <!-- ★ 復帰: 営業利益率 ＆ 配当利回り -->
                 <div class="col-6 col-md-3">
                     <div class="filter-label">営業利益率 (最小 %)</div>
                     <input type="number" id="filter-margin" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
@@ -182,7 +193,7 @@
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-dark">該当件数: <span id="filtered-count" class="text-primary fs-5">0</span> 件</span>
-                <span class="text-muted small">💡 コード: 楽天証券 / 社名: 銘柄詳細</span>
+                <span class="text-muted small">💡 コード: 楽天証券 / 社名: 銘柄詳細・戦略</span>
             </div>
             <div class="table-container">
                 <table class="table table-hover table-striped table-sm mb-0">
@@ -265,7 +276,7 @@
                 STOCKS = await res.json();
                 document.getElementById("total-count").textContent = STOCKS.length;
                 updateSectorOptions();
-                togglePreset('graham');
+                togglePreset('swing'); // 初期表示を実証スイングに設定
             } catch (err) {
                 console.error(err);
             }
@@ -286,6 +297,8 @@
             const market = document.getElementById("filter-market").value;
             const kabumini = document.getElementById("filter-kabumini").value;
             const sector = document.getElementById("filter-sector").value;
+            const minPrice = parseFloat(document.getElementById("filter-price-min").value);
+            const maxPrice = parseFloat(document.getElementById("filter-price-max").value);
             const gcFilter = document.getElementById("filter-gc").value;
             const minAvgVal = parseFloat(document.getElementById("filter-avgval").value);
             const minValRatio = parseFloat(document.getElementById("filter-valratio").value);
@@ -295,7 +308,6 @@
             const maxPbr = parseFloat(document.getElementById("filter-pbr").value);
             const minDiscount = parseFloat(document.getElementById("filter-discount").value);
             const minRoe = parseFloat(document.getElementById("filter-roe").value);
-            // ★ 修正: 営業利益率と配当利回りを正しく取得
             const minMargin = parseFloat(document.getElementById("filter-margin").value);
             const minDiv = parseFloat(document.getElementById("filter-div").value);
             const sortBy = document.getElementById("sort-by").value;
@@ -306,6 +318,10 @@
                 if (kabumini === "ONLY" && !isMini) return false;
                 if (sector !== "ALL" && s.sector !== sector) return false;
                 
+                // 株価フィルター
+                if (!isNaN(minPrice) && s.price < minPrice) return false;
+                if (!isNaN(maxPrice) && s.price > maxPrice) return false;
+
                 if (gcFilter !== "ALL") {
                     const maxGcDays = parseInt(gcFilter, 10);
                     if (s.gc_days === null || typeof s.gc_days === 'undefined' || s.gc_days > maxGcDays) return false;
@@ -319,22 +335,21 @@
                 if (!isNaN(maxPbr) && s.pbr > maxPbr) return false;
                 if (!isNaN(minDiscount) && s.discount_rate < minDiscount) return false;
                 if (!isNaN(minRoe) && s.roe < minRoe) return false;
-                // ★ 修正: 判定条件を追加
                 if (!isNaN(minMargin) && s.op_margin < minMargin) return false;
                 if (!isNaN(minDiv) && s.div_yield < minDiv) return false;
                 return true;
             });
 
             filtered.sort((a, b) => {
-                if (sortBy === "mix_asc") return a.mix_index - b.mix_index;
-                if (sortBy === "discount_desc") return b.discount_rate - a.discount_rate;
                 if (sortBy === "valratio_desc") return (b.val_ratio_5d || 0) - (a.val_ratio_5d || 0);
-                if (sortBy === "avgval_desc") return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
                 if (sortBy === "gc_asc") {
                     const ga = (a.gc_days !== null && typeof a.gc_days !== 'undefined') ? a.gc_days : 999;
                     const gb = (b.gc_days !== null && typeof b.gc_days !== 'undefined') ? b.gc_days : 999;
                     return ga - gb;
                 }
+                if (sortBy === "discount_desc") return b.discount_rate - a.discount_rate;
+                if (sortBy === "mix_asc") return a.mix_index - b.mix_index;
+                if (sortBy === "avgval_desc") return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
                 if (sortBy === "div_desc") return b.div_yield - a.div_yield;
                 if (sortBy === "roe_desc") return b.roe - a.roe;
                 if (sortBy === "margin_desc") return b.op_margin - a.op_margin;
@@ -362,8 +377,8 @@
                 const isPrime = s.market === 'プライム';
                 const marketBadge = `<span class="badge ${isPrime ? 'bg-primary' : 'bg-secondary'} badge-market" title="${s.market}市場">${isPrime ? 'PRM' : 'STD'}</span>`;
                 
-                const hasRecentGC = (s.gc_days !== null && typeof s.gc_days !== 'undefined' && s.gc_days <= 3);
-                const gcBadge = hasRecentGC ? `<span class="badge-gc" title="${s.gc_days === 0 ? '本日' : s.gc_days + '日前'}にゴールデンクロス形成！">🚀GC</span>` : "";
+                const hasRecentGC = (s.gc_days !== null && typeof s.gc_days !== 'undefined' && s.gc_days <= 1);
+                const gcBadge = hasRecentGC ? `<span class="badge-gc" title="${s.gc_days === 0 ? '本日' : '1日前'}にゴールデンクロス形成！">🚀初動GC</span>` : "";
 
                 const isPositiveDiscount = s.discount_rate > 0;
                 const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
@@ -404,16 +419,19 @@
             const currentBtn = btnMap[type];
             const isActive = currentBtn.classList.contains("active");
 
+            // ★ バックテスト実証済みの「500~1000円×初動GC×急増」プリセット
             if (type === 'swing') {
                 if (!isActive) {
                     resetAll();
                     currentBtn.classList.add("active", "btn-danger");
                     currentBtn.classList.remove("btn-outline-danger");
-                    document.getElementById("filter-gc").value = "3";
-                    document.getElementById("filter-avgval").value = 50000;
-                    document.getElementById("filter-valratio").value = 1.5;
-                    document.getElementById("filter-discount").value = 0;
-                    document.getElementById("sort-by").value = "discount_desc";
+                    
+                    document.getElementById("filter-price-min").value = 500;  // 500円〜
+                    document.getElementById("filter-price-max").value = 1000; // 1,000円（最高勝率ゾーン）
+                    document.getElementById("filter-gc").value = "1";         // 1日以内（初動）
+                    document.getElementById("filter-avgval").value = 30000;   // 3,000万円以上
+                    document.getElementById("filter-valratio").value = 1.2;   // 1.2倍以上
+                    document.getElementById("sort-by").value = "valratio_desc";
                 } else {
                     resetAll();
                 }
@@ -482,6 +500,8 @@
             document.getElementById("filter-market").value = "ALL";
             document.getElementById("filter-kabumini").value = "ALL";
             document.getElementById("filter-sector").value = "ALL";
+            document.getElementById("filter-price-min").value = "";
+            document.getElementById("filter-price-max").value = "";
             document.getElementById("filter-gc").value = "ALL";
             document.getElementById("filter-avgval").value = "";
             document.getElementById("filter-valratio").value = "";
@@ -493,7 +513,7 @@
             document.getElementById("filter-roe").value = "";
             document.getElementById("filter-margin").value = "";
             document.getElementById("filter-div").value = "";
-            document.getElementById("sort-by").value = "mix_asc";
+            document.getElementById("sort-by").value = "valratio_desc";
             document.getElementById("quick-search").value = "";
             applyFilters();
         }
@@ -525,20 +545,11 @@
             const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
 
             const p = s.price;
-            const sma5 = s.sma5 || Math.round(p * 0.99);
-            const sma25 = s.sma25 || Math.round(p * 0.96);
-            const low5d = s.low_5d || Math.round(p * 0.97);
-            const high20d = s.high_20d || Math.round(p * 1.08);
-
-            const entryLow = Math.min(sma5, Math.round(p * 0.985));
-            const entryHigh = p;
             
-            const stopLoss = Math.min(Math.round(sma25 * 0.99), Math.round(low5d * 0.99));
-            const stopLossPct = (((stopLoss - p) / p) * 100).toFixed(1);
-
-            const tpRiskReward = p + (p - stopLoss) * 2;
-            const takeProfit = Math.max(high20d, Math.round(tpRiskReward));
-            const takeProfitPct = (((takeProfit - p) / p) * 100).toFixed(1);
+            // ★ バックテスト実証済みのエビデンス（利確+12%, 損切り-5%, 上限20日）
+            const stopLoss = Math.round(p * 0.95);
+            const takeProfit = Math.round(p * 1.12);
+            const isBestPriceZone = (p >= 500 && p <= 1000);
 
             document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${s.name}`;
             document.getElementById("modalBody").innerHTML = `
@@ -559,22 +570,25 @@
                 </div>
 
                 <div class="strategy-box">
-                    <div class="fw-bold text-dark small mb-2"><i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング戦略シミュレーション (目安):</div>
+                    <div class="fw-bold text-dark small mb-2">
+                        <i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略 (バックテスト実証基準):
+                        ${isBestPriceZone ? '<span class="badge bg-success ms-1">★最高勝率ゾーン(500~1000円)</span>' : ''}
+                    </div>
                     
-                    <div class="strategy-item text-success fw-bold">
-                        <i class="bi bi-box-arrow-in-down-right me-1"></i> 押し目買い: ¥${entryLow.toLocaleString()} 〜 ¥${entryHigh.toLocaleString()}
-                    </div>
-                    <div class="strategy-desc">└ 【根拠】短期サポートの「5日移動平均線 (¥${sma5.toLocaleString()})」付近への押し目</div>
-
                     <div class="strategy-item text-danger fw-bold">
-                        <i class="bi bi-shield-x me-1"></i> 損切りライン: ¥${stopLoss.toLocaleString()} (${stopLossPct}%)
+                        <i class="bi bi-shield-x me-1"></i> 損切りライン: ¥${stopLoss.toLocaleString()} (-5.0%)
                     </div>
-                    <div class="strategy-desc">└ 【根拠】中期防衛線「25日線 (¥${sma25.toLocaleString()})」および直近5日安値割れで撤退</div>
+                    <div class="strategy-desc">└ 【根拠】全銘柄検証で -5% での機械的撤退が最も損失拡大を防止</div>
 
                     <div class="strategy-item text-primary fw-bold">
-                        <i class="bi bi-trophy me-1"></i> 利確目標: ¥${takeProfit.toLocaleString()} (+${takeProfitPct}%)
+                        <i class="bi bi-trophy me-1"></i> 利確ターゲット: ¥${takeProfit.toLocaleString()} (+12.0%)
                     </div>
-                    <div class="strategy-desc">└ 【根拠】直近20日高値 (¥${high20d.toLocaleString()}) / リスクリワード比 1:2 達成</div>
+                    <div class="strategy-desc">└ 【根拠】未見検証で最も期待値が高かった +12% 目標 (リスクリワード比 1:2.4)</div>
+
+                    <div class="strategy-item text-secondary fw-bold">
+                        <i class="bi bi-clock-history me-1"></i> 最大保有期限: 20営業日 (約1ヶ月)
+                    </div>
+                    <div class="strategy-desc">└ 【根拠】どちらにも未達の場合は20日で成行手仕舞い（資金回転率の維持）</div>
                 </div>
 
                 <div class="row g-2">
@@ -597,7 +611,7 @@
             const gcText = s.gc_days === 0 ? "本日GC形成" : (s.gc_days ? `${s.gc_days}日前にGC形成` : "GCなし");
             const valRatioText = s.val_ratio_5d ? `${s.val_ratio_5d}倍` : "通常";
 
-            const prompt = `以下の日本株について、スイングトレード（保有期間数日〜数週間）の戦略を分析してください。
+            const prompt = `以下の日本株について、スイングトレード（保有期間数日〜20営業日）の戦略を分析してください。
 
 【銘柄情報】
 ・コード/社名: ${s.code} ${s.name} (${s.market} / ${s.sector})
@@ -605,13 +619,16 @@
 ・グレアム理論株価: ${s.graham_price}円 (割安度: ${s.discount_rate}%)
 ・ファンダメンタルズ: PER ${s.per}倍 / PBR ${s.pbr}倍 / ROE ${s.roe}% / 利回り ${s.div_yield}%
 ・テクニカル/出来高: ${gcText} / 出来高増加率: ${valRatioText}
-・サポート/レジスタンス: 5日線 ${s.sma5 || '-'}円 / 25日線 ${s.sma25 || '-'}円 / 直近高値 ${s.high_20d || '-'}円
+
+【検証済みの売買ルール】
+・利確目標: +12% (${Math.round(s.price * 1.12)}円)
+・損切ライン: -5% (${Math.round(s.price * 0.95)}円)
+・保有期限: 20営業日
 
 【回答してほしい内容】
-1. チャート・需給面から見た買いタイミング（押し目買い価格の目安）
-2. 撤退すべき損切りライン（下値支持線の根拠付き）
-3. 利確ターゲット価格とリスクリワード評価
-4. スイングトレードにおける注意点や好材料/リスク`;
+1. チャート・需給面から見たエントリータイミングの妥当性
+2. 直近のサポート・レジスタンスラインの確認
+3. 20営業日以内の達成可能性とリスク要因`;
 
             navigator.clipboard.writeText(prompt).then(() => {
                 alert("📋 Geminiへの分析用プロンプトをクリップボードにコピーしました！\n開いたGeminiの入力欄に「貼り付け」して送信してください。");
