@@ -72,8 +72,8 @@
         <div class="card p-3 bg-white">
             <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
-                <!-- ★ バックテスト実証済みの最適スイングボタン -->
-                <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 実証スイング (500~1000円×初動GC×急増)</button>
+                <!-- ★ 実証スイング（500〜1,500円の黄金バランス） -->
+                <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 実証スイング (初動GC×急増×低位)</button>
                 <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
                 <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
                 <button id="btn-graham" class="btn btn-outline-primary btn-preset" onclick="togglePreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
@@ -110,26 +110,30 @@
                     </select>
                 </div>
 
-                <!-- ★ 株価フィルタ（下限 / 上限） -->
-                <div class="col-6 col-md-2">
-                    <div class="filter-label text-primary fw-bold">株価範囲 (円)</div>
-                    <div class="input-group input-group-sm">
-                        <input type="number" id="filter-price-min" class="form-control" step="100" placeholder="下限" oninput="applyFilters()">
-                        <span class="input-group-text px-1">〜</span>
-                        <input type="number" id="filter-price-max" class="form-control" step="100" placeholder="上限" oninput="applyFilters()">
-                    </div>
+                <!-- ★ 改良: ワンタップで選べる株価範囲セレクター -->
+                <div class="col-6 col-md-3">
+                    <div class="filter-label text-primary fw-bold"><i class="bi bi-tag-fill me-1"></i> 株価帯クイック選択</div>
+                    <select id="filter-price-preset" class="form-select form-select-sm fw-bold border-primary text-primary" onchange="applyFilters()">
+                        <option value="ALL">指定なし (全価格帯)</option>
+                        <option value="500-1000">¥500 〜 ¥1,000 (★最高勝率・厳選)</option>
+                        <option value="500-1500" selected>¥500 〜 ¥1,500 (🎯推奨バランス)</option>
+                        <option value="500-2000">¥500 〜 ¥2,000 (🚀Discord連動・広め)</option>
+                        <option value="1000-3000">¥1,000 〜 ¥3,000 (中位株・かぶミニ)</option>
+                        <option value="3000-UP">¥3,000 以上 (値がさ・大型)</option>
+                    </select>
                 </div>
 
-                <div class="col-6 col-md-2">
+                <div class="col-6 col-md-3">
                     <div class="filter-label text-danger fw-bold">GC (ゴールデンクロス)</div>
                     <select id="filter-gc" class="form-select form-select-sm fw-bold border-danger" onchange="applyFilters()">
                         <option value="ALL">指定なし</option>
                         <option value="0">本日GC形成 (初動)</option>
-                        <option value="1">1営業日以内 (実証最適)</option>
+                        <option value="1" selected>1営業日以内 (実証最適)</option>
                         <option value="3">3営業日以内</option>
                         <option value="5">5営業日以内</option>
                     </select>
                 </div>
+
                 <div class="col-6 col-md-2">
                     <div class="filter-label">5日平均売買代金 (最小 千円)</div>
                     <input type="number" id="filter-avgval" class="form-control form-control-sm" step="10000" placeholder="下限なし" oninput="applyFilters()">
@@ -138,11 +142,11 @@
                     <div class="filter-label">売買代金増加率 (最小 倍)</div>
                     <input type="number" id="filter-valratio" class="form-control form-control-sm" step="0.1" placeholder="下限なし" oninput="applyFilters()">
                 </div>
-
                 <div class="col-6 col-md-2">
                     <div class="filter-label">ミックス係数 (最大)</div>
                     <input type="number" id="filter-mix" class="form-control form-control-sm" step="0.5" placeholder="上限なし" oninput="applyFilters()">
                 </div>
+
                 <div class="col-6 col-md-2">
                     <div class="filter-label">PER (最小 / 最大)</div>
                     <div class="input-group input-group-sm">
@@ -177,12 +181,11 @@
                     <div class="filter-label">ROE (最小 %)</div>
                     <input type="number" id="filter-roe" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
                 </div>
-
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-md-2">
                     <div class="filter-label">営業利益率 (最小 %)</div>
                     <input type="number" id="filter-margin" class="form-control form-control-sm" step="1" placeholder="下限なし" oninput="applyFilters()">
                 </div>
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-md-2">
                     <div class="filter-label text-warning fw-bold">配当利回り (最小 %)</div>
                     <input type="number" id="filter-div" class="form-control form-control-sm border-warning" step="0.5" placeholder="下限なし" oninput="applyFilters()">
                 </div>
@@ -276,7 +279,7 @@
                 STOCKS = await res.json();
                 document.getElementById("total-count").textContent = STOCKS.length;
                 updateSectorOptions();
-                togglePreset('swing'); // 初期表示を実証スイングに設定
+                togglePreset('swing'); // 初期表示を実証スイングに
             } catch (err) {
                 console.error(err);
             }
@@ -297,8 +300,7 @@
             const market = document.getElementById("filter-market").value;
             const kabumini = document.getElementById("filter-kabumini").value;
             const sector = document.getElementById("filter-sector").value;
-            const minPrice = parseFloat(document.getElementById("filter-price-min").value);
-            const maxPrice = parseFloat(document.getElementById("filter-price-max").value);
+            const pricePreset = document.getElementById("filter-price-preset").value;
             const gcFilter = document.getElementById("filter-gc").value;
             const minAvgVal = parseFloat(document.getElementById("filter-avgval").value);
             const minValRatio = parseFloat(document.getElementById("filter-valratio").value);
@@ -318,9 +320,12 @@
                 if (kabumini === "ONLY" && !isMini) return false;
                 if (sector !== "ALL" && s.sector !== sector) return false;
                 
-                // 株価フィルター
-                if (!isNaN(minPrice) && s.price < minPrice) return false;
-                if (!isNaN(maxPrice) && s.price > maxPrice) return false;
+                // 株価クイックフィルター判定
+                if (pricePreset === "500-1000" && (s.price < 500 || s.price > 1000)) return false;
+                if (pricePreset === "500-1500" && (s.price < 500 || s.price > 1500)) return false;
+                if (pricePreset === "500-2000" && (s.price < 500 || s.price > 2000)) return false;
+                if (pricePreset === "1000-3000" && (s.price < 1000 || s.price > 3000)) return false;
+                if (pricePreset === "3000-UP" && s.price < 3000) return false;
 
                 if (gcFilter !== "ALL") {
                     const maxGcDays = parseInt(gcFilter, 10);
@@ -419,18 +424,16 @@
             const currentBtn = btnMap[type];
             const isActive = currentBtn.classList.contains("active");
 
-            // ★ バックテスト実証済みの「500~1000円×初動GC×急増」プリセット
             if (type === 'swing') {
                 if (!isActive) {
                     resetAll();
                     currentBtn.classList.add("active", "btn-danger");
                     currentBtn.classList.remove("btn-outline-danger");
                     
-                    document.getElementById("filter-price-min").value = 500;  // 500円〜
-                    document.getElementById("filter-price-max").value = 1000; // 1,000円（最高勝率ゾーン）
-                    document.getElementById("filter-gc").value = "1";         // 1日以内（初動）
-                    document.getElementById("filter-avgval").value = 30000;   // 3,000万円以上
-                    document.getElementById("filter-valratio").value = 1.2;   // 1.2倍以上
+                    document.getElementById("filter-price-preset").value = "500-2000"; // Discord通知と連動
+                    document.getElementById("filter-gc").value = "1";                 // 1日以内（初動）
+                    document.getElementById("filter-avgval").value = 30000;           // 3,000万円以上
+                    document.getElementById("filter-valratio").value = 1.2;           // 1.2倍以上
                     document.getElementById("sort-by").value = "valratio_desc";
                 } else {
                     resetAll();
@@ -500,8 +503,7 @@
             document.getElementById("filter-market").value = "ALL";
             document.getElementById("filter-kabumini").value = "ALL";
             document.getElementById("filter-sector").value = "ALL";
-            document.getElementById("filter-price-min").value = "";
-            document.getElementById("filter-price-max").value = "";
+            document.getElementById("filter-price-preset").value = "ALL";
             document.getElementById("filter-gc").value = "ALL";
             document.getElementById("filter-avgval").value = "";
             document.getElementById("filter-valratio").value = "";
@@ -545,8 +547,6 @@
             const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
 
             const p = s.price;
-            
-            // ★ バックテスト実証済みのエビデンス（利確+12%, 損切り-5%, 上限20日）
             const stopLoss = Math.round(p * 0.95);
             const takeProfit = Math.round(p * 1.12);
             const isBestPriceZone = (p >= 500 && p <= 1000);
@@ -571,7 +571,7 @@
 
                 <div class="strategy-box">
                     <div class="fw-bold text-dark small mb-2">
-                        <i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略 (バックテスト実証基準):
+                        <i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略 (実証基準):
                         ${isBestPriceZone ? '<span class="badge bg-success ms-1">★最高勝率ゾーン(500~1000円)</span>' : ''}
                     </div>
                     
