@@ -8,34 +8,35 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.88rem; padding-bottom: 60px; }
+        body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.85rem; padding-bottom: 60px; }
         .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
         .nav-pills .nav-link { font-weight: bold; border-radius: 20px; padding: 6px 16px; font-size: 0.82rem; }
-        .dropzone { border: 2px dashed #0d6efd; border-radius: 12px; padding: 20px; text-align: center; background: #e7f1ff; cursor: pointer; transition: 0.2s; }
+        .dropzone { border: 2px dashed #0d6efd; border-radius: 12px; padding: 15px; text-align: center; background: #e7f1ff; cursor: pointer; transition: 0.2s; }
         .dropzone:hover { background: #d0e2ff; }
         .badge-alert-danger { background-color: #ffe3e3; color: #d63301; border: 1px solid #ffc9c9; font-weight: bold; }
         .badge-alert-warning { background-color: #fff3bf; color: #d9480f; border: 1px solid #ffe066; font-weight: bold; }
         .badge-alert-normal { background-color: #e6fcf5; color: #0ca678; font-weight: bold; }
         .metric-card { border-left: 4px solid #0d6efd; padding: 12px; }
-        .table-sm th { background-color: #212529 !important; color: white !important; font-size: 0.8rem; text-align: center; white-space: nowrap; }
-        .table-sm td { vertical-align: middle; text-align: center; white-space: nowrap; }
+        /* スマホ向け超コンパクトテーブル設定 */
+        .table-compact th { background-color: #212529 !important; color: white !important; font-size: 0.75rem; text-align: center; padding: 6px 4px !important; white-space: nowrap; }
+        .table-compact td { vertical-align: middle; text-align: center; font-size: 0.78rem; padding: 5px 3px !important; white-space: nowrap; }
     </style>
 </head>
 <body>
-    <div class="container-fluid py-3 px-md-4 max-w-7xl">
+    <div class="container-fluid py-2 px-md-4 max-w-7xl">
         <!-- ヘッダー -->
         <div class="card p-3 bg-white">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <div>
-                    <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> スイング・トレードジャーナル</h1>
-                    <small class="text-muted">実戦記録 ＆ 4大切り口パフォーマンス自動分析</small>
+                    <h1 class="h6 mb-0 text-primary fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> スイング・トレードジャーナル</h1>
+                    <small class="text-muted" style="font-size:0.75rem;">実戦記録 ＆ 4大切り口パフォーマンス分析</small>
                 </div>
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="index.html" class="btn btn-outline-secondary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナーへ戻る</a>
+                <div class="d-flex flex-wrap gap-1">
+                    <a href="index.html" class="btn btn-outline-secondary btn-sm py-1 px-2 fw-bold" style="font-size:0.75rem;"><i class="bi bi-sliders me-1"></i>スクリーナー</a>
                     
                     <div class="dropdown">
-                        <button class="btn btn-outline-success btn-sm fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-arrow-left-right me-1"></i> データ同期
+                        <button class="btn btn-outline-success btn-sm py-1 px-2 fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown" style="font-size:0.75rem;">
+                            <i class="bi bi-arrow-left-right me-1"></i>同期
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                             <li><a class="dropdown-item" href="javascript:void(0)" onclick="exportData()"><i class="bi bi-download me-2 text-primary"></i> データを書き出す (保存)</a></li>
@@ -44,17 +45,17 @@
                     </div>
                     <input type="file" id="backup-file-input" accept=".json" style="display:none;" onclick="this.value=null" onchange="importData(this.files[0])">
 
-                    <button class="btn btn-primary btn-sm fw-bold" onclick="openAddModal()"><i class="bi bi-plus-lg me-1"></i> 手動で取引追加</button>
-                    <button class="btn btn-outline-danger btn-sm fw-bold" onclick="openTrashModal()"><i class="bi bi-trash3 me-1"></i> ゴミ箱 (<span id="trash-count">0</span>)</button>
+                    <button class="btn btn-primary btn-sm py-1 px-2 fw-bold" onclick="openAddModal()" style="font-size:0.75rem;"><i class="bi bi-plus-lg me-1"></i>手動追加</button>
+                    <button class="btn btn-outline-danger btn-sm py-1 px-2 fw-bold" onclick="openTrashModal()" style="font-size:0.75rem;"><i class="bi bi-trash3 me-1"></i>ゴミ箱 (<span id="trash-count">0</span>)</button>
                 </div>
             </div>
             <!-- タブ切り替え -->
-            <ul class="nav nav-pills mt-3 gap-2 border-top pt-2" id="mainTab" role="tablist">
+            <ul class="nav nav-pills mt-2 gap-1 border-top pt-2" id="mainTab" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link active" id="tab-positions-btn" data-bs-toggle="pill" data-bs-target="#tab-positions" type="button"><i class="bi bi-box-seam me-1"></i> ポジション ＆ 取引一覧</button>
+                    <button class="nav-link active py-1 px-3" id="tab-positions-btn" data-bs-toggle="pill" data-bs-target="#tab-positions" type="button"><i class="bi bi-box-seam me-1"></i> ポジション一覧</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="tab-analytics-btn" data-bs-toggle="pill" data-bs-target="#tab-analytics" type="button"><i class="bi bi-graph-up-arrow me-1"></i> データ分析・見える化</button>
+                    <button class="nav-link py-1 px-3" id="tab-analytics-btn" data-bs-toggle="pill" data-bs-target="#tab-analytics" type="button"><i class="bi bi-graph-up-arrow me-1"></i> データ分析</button>
                 </li>
             </ul>
         </div>
@@ -62,33 +63,31 @@
         <div class="tab-content" id="mainTabContent">
             <!-- タブ 1: 取引一覧 & ポジション管理 -->
             <div class="tab-pane fade show active" id="tab-positions" role="tabpanel">
-                <div class="card p-3 bg-white">
-                    <div class="dropzone" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
-                        <i class="bi bi-cloud-arrow-up-fill fs-3 text-primary"></i>
-                        <div class="fw-bold mt-1">楽天証券の約定履歴CSVをここにドラッグ＆ドロップ (またはタップして選択)</div>
-                        <small class="text-muted">※ 同じCSVを何度入れても二重登録は防止されます</small>
+                <div class="card p-2 bg-white">
+                    <div class="dropzone py-2" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
+                        <i class="bi bi-cloud-arrow-up-fill fs-4 text-primary"></i>
+                        <div class="fw-bold mt-1" style="font-size:0.8rem;">楽天証券CSVをタップして選択</div>
                         <input type="file" id="csv-file-input" accept=".csv" style="display:none;" onclick="this.value=null" onchange="handleCSVFile(this.files[0])">
                     </div>
                 </div>
 
-                <!-- 📦 保有中ポジション -->
-                <div class="card p-3 bg-white">
-                    <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">
-                        <i class="bi bi-hourglass-split text-warning me-1"></i> 現在保有中のポジション (<span id="open-count">0</span> 件)
-                    </h6>
+                <!-- 📦 保有中ポジション（スマホ最適化 6列） -->
+                <div class="card p-2 bg-white">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <h6 class="fw-bold text-dark mb-0" style="font-size:0.85rem;">
+                            <i class="bi bi-hourglass-split text-warning me-1"></i> 保有ポジション (<span id="open-count">0</span>)
+                        </h6>
+                        <small class="text-muted" style="font-size:0.7rem;">※✏️でトレール逆指値を変更可能</small>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped table-sm mb-0">
+                        <table class="table table-hover table-striped table-compact mb-0">
                             <thead>
                                 <tr>
-                                    <th>コード / 銘柄名</th>
-                                    <th>買付日</th>
-                                    <th>買付株価</th>
-                                    <th>株数</th>
-                                    <th>現在株価</th>
-                                    <th>含み損益</th>
-                                    <th>🎯利確 / 🛑逆指値</th>
-                                    <th>保有日数 / 20日期限</th>
-                                    <th>直近の勢い (GC / 出来高)</th>
+                                    <th class="text-start">銘柄 / 買付</th>
+                                    <th>株価 (現/買)</th>
+                                    <th>損益</th>
+                                    <th>目標 (🎯/🛑)</th>
+                                    <th>期限 / 勢い</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -98,25 +97,21 @@
                 </div>
 
                 <!-- 📜 決済済み取引履歴 -->
-                <div class="card p-3 bg-white">
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
-                        <h6 class="fw-bold text-dark mb-0"><i class="bi bi-check2-all text-success me-1"></i> 決済済みトレード履歴 (<span id="closed-count">0</span> 件)</h6>
-                        <span class="text-muted small">💡 右側のボタンでメモ編集・非表示が可能</span>
+                <div class="card p-2 bg-white">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <h6 class="fw-bold text-dark mb-0" style="font-size:0.85rem;"><i class="bi bi-check2-all text-success me-1"></i> 決済済みトレード (<span id="closed-count">0</span>)</h6>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped table-sm mb-0">
+                        <table class="table table-hover table-striped table-compact mb-0">
                             <thead>
                                 <tr>
-                                    <th>銘柄 (コード/社名)</th>
-                                    <th>取引期間 (買➔売)</th>
-                                    <th>保有</th>
-                                    <th>買値 ➔ 売値</th>
+                                    <th class="text-start">銘柄</th>
+                                    <th>期間</th>
+                                    <th>買 ➔ 売</th>
                                     <th>株数</th>
                                     <th>損益(%)</th>
-                                    <th>確定損益額</th>
+                                    <th>損益額</th>
                                     <th>決済理由</th>
-                                    <th>エントリー状況</th>
-                                    <th>メモ</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -128,61 +123,61 @@
 
             <!-- タブ 2: データ分析 -->
             <div class="tab-pane fade" id="tab-analytics" role="tabpanel">
-                <div class="row g-2 mb-3">
+                <div class="row g-2 mb-2">
                     <div class="col-6 col-md-3">
-                        <div class="card p-3 bg-white metric-card">
-                            <small class="text-muted fw-bold">確定損益 合計</small>
-                            <div class="fs-4 fw-bold" id="metric-total-pl">¥0</div>
+                        <div class="card p-2 bg-white metric-card">
+                            <small class="text-muted fw-bold" style="font-size:0.75rem;">確定損益 合計</small>
+                            <div class="fs-5 fw-bold" id="metric-total-pl">¥0</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="card p-3 bg-white metric-card" style="border-left-color: #20c997;">
-                            <small class="text-muted fw-bold">勝率 / 取引数</small>
-                            <div class="fs-4 fw-bold" id="metric-win-rate">0% (0勝0敗)</div>
+                        <div class="card p-2 bg-white metric-card" style="border-left-color: #20c997;">
+                            <small class="text-muted fw-bold" style="font-size:0.75rem;">勝率 / 取引数</small>
+                            <div class="fs-6 fw-bold" id="metric-win-rate">0% (0勝0敗)</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="card p-3 bg-white metric-card" style="border-left-color: #fd7e14;">
-                            <small class="text-muted fw-bold">プロフィットファクター (PF)</small>
-                            <div class="fs-4 fw-bold" id="metric-pf">0.00</div>
+                        <div class="card p-2 bg-white metric-card" style="border-left-color: #fd7e14;">
+                            <small class="text-muted fw-bold" style="font-size:0.75rem;">PF (損益レシオ)</small>
+                            <div class="fs-5 fw-bold" id="metric-pf">0.00</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="card p-3 bg-white metric-card" style="border-left-color: #6f42c1;">
-                            <small class="text-muted fw-bold">平均利益 / 平均損失</small>
-                            <div class="fs-5 fw-bold" id="metric-avg-pl">+0% / -0%</div>
+                        <div class="card p-2 bg-white metric-card" style="border-left-color: #6f42c1;">
+                            <small class="text-muted fw-bold" style="font-size:0.75rem;">平均利益 / 平均損失</small>
+                            <div class="fs-6 fw-bold" id="metric-avg-pl">+0% / -0%</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card p-3 bg-white mb-3">
-                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-graph-up me-1 text-primary"></i> 累積確定損益 推移チャート</h6>
-                    <div style="height: 240px;"><canvas id="equityChart"></canvas></div>
+                <div class="card p-2 bg-white mb-2">
+                    <h6 class="fw-bold text-dark mb-1" style="font-size:0.8rem;"><i class="bi bi-graph-up me-1 text-primary"></i> 累積損益 推移チャート</h6>
+                    <div style="height: 200px;"><canvas id="equityChart"></canvas></div>
                 </div>
 
-                <div class="row g-3">
+                <div class="row g-2">
                     <div class="col-md-6">
-                        <div class="card p-3 bg-white h-100">
-                            <h6 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-lightning-charge text-danger me-1"></i> ① 【初動に乗れたか？】GC日数別 成績</h6>
-                            <div id="analysis-gc" class="py-2"></div>
+                        <div class="card p-2 bg-white h-100">
+                            <h6 class="fw-bold text-dark border-bottom pb-1" style="font-size:0.8rem;"><i class="bi bi-lightning-charge text-danger me-1"></i> ① GC日数別</h6>
+                            <div id="analysis-gc" class="py-1"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card p-3 bg-white h-100">
-                            <h6 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-fire text-danger me-1"></i> ② 【資金流入に乗れたか？】出来高増加率別 成績</h6>
-                            <div id="analysis-vol" class="py-2"></div>
+                        <div class="card p-2 bg-white h-100">
+                            <h6 class="fw-bold text-dark border-bottom pb-1" style="font-size:0.8rem;"><i class="bi bi-fire text-danger me-1"></i> ② 出来高増加率別</h6>
+                            <div id="analysis-vol" class="py-1"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card p-3 bg-white h-100">
-                            <h6 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-tag text-primary me-1"></i> ③ 【どの価格帯で勝てたか？】株価帯別 成績</h6>
-                            <div id="analysis-price" class="py-2"></div>
+                        <div class="card p-2 bg-white h-100">
+                            <h6 class="fw-bold text-dark border-bottom pb-1" style="font-size:0.8rem;"><i class="bi bi-tag text-primary me-1"></i> ③ 株価帯別</h6>
+                            <div id="analysis-price" class="py-1"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card p-3 bg-white h-100">
-                            <h6 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-shield-check text-success me-1"></i> ④ 【規律を守れたか？】決済理由別の内訳</h6>
-                            <div id="analysis-reason" class="py-2"></div>
+                        <div class="card p-2 bg-white h-100">
+                            <h6 class="fw-bold text-dark border-bottom pb-1" style="font-size:0.8rem;"><i class="bi bi-shield-check text-success me-1"></i> ④ 決済理由別</h6>
+                            <div id="analysis-reason" class="py-1"></div>
                         </div>
                     </div>
                 </div>
@@ -194,16 +189,16 @@
     <div class="modal fade" id="tradeModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="tradeModalTitle">取引の登録 / 編集</h5>
+                <div class="modal-header bg-dark text-white py-2">
+                    <h6 class="modal-title" id="tradeModalTitle">取引の登録 / 編集</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-3">
                     <form id="tradeForm">
                         <input type="hidden" id="form-trade-id">
                         <div class="row g-2 mb-2">
                             <div class="col-4">
-                                <label class="form-label small fw-bold">銘柄コード</label>
+                                <label class="form-label small fw-bold">コード</label>
                                 <input type="text" id="form-code" class="form-control form-control-sm" placeholder="例: 5423" required onblur="autoFillStockInfo()">
                             </div>
                             <div class="col-8">
@@ -217,7 +212,7 @@
                                 <input type="date" id="form-buy-date" class="form-control form-control-sm" required>
                             </div>
                             <div class="col-3">
-                                <label class="form-label small fw-bold">買付株価 (円)</label>
+                                <label class="form-label small fw-bold">買付株価</label>
                                 <input type="number" id="form-buy-price" class="form-control form-control-sm" required oninput="calcDefaultTargets()">
                             </div>
                             <div class="col-3">
@@ -226,7 +221,7 @@
                             </div>
                         </div>
 
-                        <!-- 🎯 OCO注文 (利確 / 逆指値トレール) 設定欄 -->
+                        <!-- 🎯 OCO注文設定欄 -->
                         <div class="row g-2 mb-2 p-2 bg-light rounded border">
                             <div class="col-6">
                                 <label class="form-label small fw-bold text-success"><i class="bi bi-bullseye me-1"></i>利確目標 (円)</label>
@@ -237,13 +232,13 @@
                                 <input type="number" id="form-target-sl" class="form-control form-control-sm" placeholder="自動: -7%">
                             </div>
                             <div class="col-12 mt-1">
-                                <small class="text-muted" style="font-size:0.75rem;">※ 空欄なら+15%/-7%を自動計算。株価上昇時のトレール引き上げも自由に変更可能</small>
+                                <small class="text-muted" style="font-size:0.72rem;">※ トレール引き上げ時は逆指値の数値を書き換えて保存してください</small>
                             </div>
                         </div>
 
                         <div class="row g-2 mb-2 p-2 bg-light rounded border">
                             <div class="col-6">
-                                <label class="form-label small fw-bold">売却日 (未決済なら空欄)</label>
+                                <label class="form-label small fw-bold">売却日 (決済時)</label>
                                 <input type="date" id="form-sell-date" class="form-control form-control-sm">
                             </div>
                             <div class="col-6">
@@ -257,23 +252,23 @@
                                     <option value="TP_15">🎯 ルール利確 (+15%)</option>
                                     <option value="SL_7">🛑 ルール損切 (-7%)</option>
                                     <option value="TIME_20">⏳ 20日時間切れ手仕舞い</option>
-                                    <option value="MANUAL_PROFIT">⚠️ 裁量・手動利食い (途中離脱)</option>
+                                    <option value="MANUAL_PROFIT">⚠️ 裁量・手動利食い/トレール</option>
                                     <option value="MANUAL_LOSS">⚠️ 裁量・手動損切り</option>
                                 </select>
                             </div>
                         </div>
                         <div class="mb-2">
-                            <label class="form-label small fw-bold">エントリー時状況 (GC/出来高など)</label>
-                            <input type="text" id="form-entry-state" class="form-control form-control-sm" placeholder="例: 当日GC / 出来高3.9倍 / 割安+21%">
+                            <label class="form-label small fw-bold">エントリー時状況</label>
+                            <input type="text" id="form-entry-state" class="form-control form-control-sm" placeholder="例: 当日GC / 出来高3.9倍">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small fw-bold">トレードメモ</label>
-                            <textarea id="form-memo" class="form-control form-control-sm" rows="2" placeholder="反省点やトレール変更の理由など"></textarea>
+                            <textarea id="form-memo" class="form-control form-control-sm" rows="2" placeholder="反省点やトレールの理由など"></textarea>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">キャンセル</button>
+                <div class="modal-footer py-1">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">閉じる</button>
                     <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveTradeForm()">保存する</button>
                 </div>
             </div>
@@ -282,18 +277,17 @@
 
     <!-- ゴミ箱モーダル -->
     <div class="modal fade" id="trashModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-secondary text-white">
-                    <h5 class="modal-title"><i class="bi bi-trash3 me-1"></i> ゴミ箱 (非表示にした取引)</h5>
+                <div class="modal-header bg-secondary text-white py-2">
+                    <h6 class="modal-title"><i class="bi bi-trash3 me-1"></i> ゴミ箱</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <p class="small text-muted mb-2">※ 削除した取引はここに入ります。「復元」を押せばいつでも一覧に戻せます。</p>
+                <div class="modal-body p-2">
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0">
+                        <table class="table table-sm table-compact mb-0">
                             <thead>
-                                <tr><th>銘柄</th><th>買付日</th><th>買値</th><th>売値</th><th>確定損益</th><th>操作</th></tr>
+                                <tr><th>銘柄</th><th>買付日</th><th>買値</th><th>売値</th><th>操作</th></tr>
                             </thead>
                             <tbody id="trash-tbody"></tbody>
                         </table>
@@ -363,12 +357,12 @@
             renderClosedTrades(closedTrades);
         }
 
-        // 保有中ポジションの描画（スッキリ整列 & 直近モメンタム表示）
+        // 保有中ポジションの描画（スマホ最適化：超省スペース 6列）
         function renderOpenPositions(list) {
             const tbody = document.getElementById("open-positions-tbody");
             tbody.innerHTML = "";
             if (list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" class="p-3 text-muted">現在保有中のポジションはありません。</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-muted">現在保有中のポジションはありません。</td></tr>';
                 return;
             }
 
@@ -387,7 +381,7 @@
                 const plClass = plAmount >= 0 ? "text-danger fw-bold" : "text-primary fw-bold";
                 const plSign = plAmount >= 0 ? "+" : "";
 
-                // 目標価格（整数丸めでスッキリ表示）
+                // 目標価格（整数）
                 const defaultTp = Math.round(t.buy_price * 1.15);
                 const defaultSl = Math.round(t.buy_price * 0.93);
                 const tpPrice = Math.round(t.target_tp || defaultTp);
@@ -399,57 +393,50 @@
 
                 // トレール判定
                 const isTrailed = slPrice >= t.buy_price;
-                const slBadge = isTrailed ? `<span class="badge bg-success py-0" style="font-size:0.65rem;">🛡️確約</span>` : '';
+                const slBadge = isTrailed ? `<span class="badge bg-success p-0 px-1" style="font-size:0.6rem;">確約</span>` : '';
 
-                // 直近の勢い（出来高モメンタム判定）
-                let volBadge = `<span class="badge bg-light text-dark border">出来高不明</span>`;
+                // 直近出来高バッジ（超省スペース）
+                let volBadge = `-`;
                 if (stock.val_ratio_5d !== undefined && stock.val_ratio_5d !== null) {
                     const vr = parseFloat(stock.val_ratio_5d);
-                    if (vr >= 2.0) {
-                        volBadge = `<span class="badge bg-danger">🔥 ${vr.toFixed(2)}倍 (大口継続)</span>`;
-                    } else if (vr >= 1.3) {
-                        volBadge = `<span class="badge bg-warning text-dark">⚡ ${vr.toFixed(2)}倍 (勢い維持)</span>`;
-                    } else if (vr >= 0.8) {
-                        volBadge = `<span class="badge bg-light text-dark border">⚖️ ${vr.toFixed(2)}倍 (通常)</span>`;
-                    } else {
-                        volBadge = `<span class="badge bg-secondary-subtle text-muted border">❄️ ${vr.toFixed(2)}倍 (過疎/失速)</span>`;
-                    }
+                    if (vr >= 2.0) volBadge = `<span class="badge bg-danger p-1 py-0">🔥${vr.toFixed(1)}倍</span>`;
+                    else if (vr >= 1.3) volBadge = `<span class="badge bg-warning text-dark p-1 py-0">⚡${vr.toFixed(1)}倍</span>`;
+                    else if (vr >= 0.8) volBadge = `<span class="badge bg-light text-dark border p-1 py-0">⚖️${vr.toFixed(1)}倍</span>`;
+                    else volBadge = `<span class="badge bg-secondary-subtle text-muted border p-1 py-0">❄️${vr.toFixed(2)}倍</span>`;
                 }
 
-                // GC判定
-                let gcText = "-";
-                if (stock.gc_days !== undefined && stock.gc_days !== null) {
-                    gcText = stock.gc_days === 0 ? `<span class="text-danger fw-bold">本日GC</span>` : `${stock.gc_days}日前GC`;
-                }
+                // 20日期限バッジ（短縮）
+                let alertBadge = `<span class="badge badge-alert-normal py-0">⏳${holdBusinessDays}/20日</span>`;
+                if (holdBusinessDays >= 20) alertBadge = `<span class="badge badge-alert-danger py-0">🚨${holdBusinessDays}日切</span>`;
+                else if (holdBusinessDays >= 17) alertBadge = `<span class="badge badge-alert-warning py-0">⚠️${holdBusinessDays}日目</span>`;
 
-                let alertBadge = "";
-                if (holdBusinessDays >= 20) {
-                    alertBadge = `<span class="badge badge-alert-danger">🚨 ${holdBusinessDays}日目 (本日手仕舞い!)</span>`;
-                } else if (holdBusinessDays >= 17) {
-                    alertBadge = `<span class="badge badge-alert-warning">⚠️ ${holdBusinessDays}日目 (期限間近)</span>`;
-                } else {
-                    alertBadge = `<span class="badge badge-alert-normal">⏳ ${holdBusinessDays} / 20日</span>`;
-                }
+                // 日付短縮 (2026-08-20 -> 08/20)
+                const shortDate = t.buy_date.substring(5).replace('-', '/');
 
                 tbody.innerHTML += `<tr>
-                    <td><strong>${t.code}</strong> ${t.name || ''}</td>
-                    <td>${t.buy_date}</td>
-                    <td>¥${Number(t.buy_price).toLocaleString()}</td>
-                    <td>${t.qty}株</td>
-                    <td class="fw-bold">¥${Number(currentPrice).toLocaleString()}</td>
-                    <td class="${plClass}">${plSign}${plPct}% (${plSign}¥${plAmount.toLocaleString()})</td>
-                    <td class="text-start" style="font-size:0.8rem; line-height: 1.4;">
-                        <div><span class="text-success fw-bold">🎯 ¥${Number(tpPrice).toLocaleString()}</span> <small class="text-muted">(あと+¥${tpDiff})</small></div>
-                        <div><span class="${isTrailed ? 'text-success' : 'text-danger'} fw-bold">🛑 ¥${Number(slPrice).toLocaleString()}</span> ${slBadge} <small class="text-muted">(余力-¥${slDiff})</small></div>
+                    <td class="text-start">
+                        <div class="fw-bold text-dark">${t.code} <small>${t.name || ''}</small></div>
+                        <div class="text-muted" style="font-size:0.7rem;">${shortDate}買 · ${t.qty}株</div>
                     </td>
-                    <td>${alertBadge}</td>
-                    <td class="text-start" style="font-size:0.8rem; line-height: 1.3;">
-                        <div><small class="text-muted">状態:</small> ${gcText}</div>
+                    <td>
+                        <div class="fw-bold">¥${Number(currentPrice).toLocaleString()}</div>
+                        <div class="text-muted" style="font-size:0.7rem;">買¥${Number(t.buy_price).toLocaleString()}</div>
+                    </td>
+                    <td>
+                        <div class="${plClass}">${plSign}${plPct}%</div>
+                        <div class="${plClass}" style="font-size:0.7rem;">${plSign}¥${plAmount.toLocaleString()}</div>
+                    </td>
+                    <td class="text-start" style="font-size:0.72rem; line-height:1.25;">
+                        <div><strong class="text-success">🎯¥${Number(tpPrice).toLocaleString()}</strong> <span class="text-muted">(+${tpDiff})</span></div>
+                        <div><strong class="${isTrailed ? 'text-success' : 'text-danger'}">🛑¥${Number(slPrice).toLocaleString()}</strong> ${slBadge} <span class="text-muted">(-${slDiff})</span></div>
+                    </td>
+                    <td>
+                        <div>${alertBadge}</div>
                         <div class="mt-1">${volBadge}</div>
                     </td>
                     <td>
-                        <button class="btn btn-outline-primary btn-sm p-1 py-0" onclick="openEditModal('${t.id}')">編集/トレール</button>
-                        <button class="btn btn-outline-danger btn-sm p-1 py-0 ms-1" onclick="moveToTrash('${t.id}')"><i class="bi bi-trash3"></i></button>
+                        <button class="btn btn-outline-primary btn-sm p-1 py-0" title="編集/トレール" onclick="openEditModal('${t.id}')"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-outline-danger btn-sm p-1 py-0 ms-1" title="削除" onclick="moveToTrash('${t.id}')"><i class="bi bi-trash3"></i></button>
                     </td>
                 </tr>`;
             });
@@ -460,7 +447,7 @@
             const tbody = document.getElementById("closed-trades-tbody");
             tbody.innerHTML = "";
             if (list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="11" class="p-3 text-muted">決済済みの取引はまだありません。</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="p-3 text-muted">決済済みの取引はまだありません。</td></tr>';
                 return;
             }
 
@@ -477,25 +464,22 @@
                 const plSign = plAmount >= 0 ? "+" : "";
 
                 const reasonLabelMap = {
-                    "TP_15": "<span class='badge bg-success'>🎯 利確(+15%)</span>",
-                    "SL_7": "<span class='badge bg-danger'>🛑 損切(-7%)</span>",
-                    "TIME_20": "<span class='badge bg-secondary'>⏳ 20日期限</span>",
-                    "MANUAL_PROFIT": "<span class='badge bg-warning text-dark'>⚠️ 手動利食い/トレール</span>",
-                    "MANUAL_LOSS": "<span class='badge bg-dark'>⚠️ 手動損切</span>"
+                    "TP_15": "<span class='badge bg-success p-1 py-0'>🎯利確(+15%)</span>",
+                    "SL_7": "<span class='badge bg-danger p-1 py-0'>🛑損切(-7%)</span>",
+                    "TIME_20": "<span class='badge bg-secondary p-1 py-0'>⏳20日期限</span>",
+                    "MANUAL_PROFIT": "<span class='badge bg-warning text-dark p-1 py-0'>⚠️手動利食い</span>",
+                    "MANUAL_LOSS": "<span class='badge bg-dark p-1 py-0'>⚠️手動損切</span>"
                 };
-                const reasonBadge = reasonLabelMap[t.exit_reason] || `<span class='badge bg-light text-dark border'>${t.exit_reason || '手仕舞い'}</span>`;
+                const reasonBadge = reasonLabelMap[t.exit_reason] || `<span class='badge bg-light text-dark border p-1 py-0'>手仕舞い</span>`;
 
                 tbody.innerHTML += `<tr>
-                    <td><strong>${t.code}</strong> ${t.name || ''}</td>
-                    <td class="small">${t.buy_date} ➔ ${t.sell_date}</td>
-                    <td>${holdDays}日</td>
-                    <td>¥${Number(t.buy_price).toLocaleString()} ➔ ¥${Number(t.sell_price).toLocaleString()}</td>
+                    <td class="text-start fw-bold">${t.code} <small class="fw-normal">${t.name || ''}</small></td>
+                    <td style="font-size:0.7rem;">${t.buy_date.substring(5)}➔${t.sell_date.substring(5)} (${holdDays}日)</td>
+                    <td style="font-size:0.75rem;">¥${Number(t.buy_price).toLocaleString()}➔¥${Number(t.sell_price).toLocaleString()}</td>
                     <td>${t.qty}株</td>
                     <td class="${plClass}">${plSign}${plPct}%</td>
-                    <td class="${plClass}">${plSign}¥${plAmount.toLocaleString()}</td>
+                    <td class="${plClass}">¥${plAmount.toLocaleString()}</td>
                     <td>${reasonBadge}</td>
-                    <td class="small text-muted">${t.entry_state || '-'}</td>
-                    <td class="small text-start text-truncate" style="max-width:140px;" title="${t.memo||''}">${t.memo || '-'}</td>
                     <td>
                         <button class="btn btn-outline-secondary btn-sm p-1 py-0" onclick="openEditModal('${t.id}')"><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-outline-danger btn-sm p-1 py-0 ms-1" onclick="moveToTrash('${t.id}')"><i class="bi bi-trash3"></i></button>
@@ -530,7 +514,7 @@
             const avgLoss = losses > 0 ? `-¥${Math.round(sumLoss / losses).toLocaleString()}` : "¥0";
 
             document.getElementById("metric-total-pl").textContent = `${totalPL >= 0 ? '+' : ''}¥${totalPL.toLocaleString()}`;
-            document.getElementById("metric-total-pl").className = `fs-4 fw-bold ${totalPL >= 0 ? 'text-danger' : 'text-primary'}`;
+            document.getElementById("metric-total-pl").className = `fs-5 fw-bold ${totalPL >= 0 ? 'text-danger' : 'text-primary'}`;
             document.getElementById("metric-win-rate").textContent = `${winRate}% (${wins}勝${losses}敗)`;
             document.getElementById("metric-pf").textContent = pf;
             document.getElementById("metric-avg-pl").textContent = `${avgProfit} / ${avgLoss}`;
@@ -568,7 +552,7 @@
             const gcGroups = { "初動 (0~1日GC)": [], "出遅れ (2日以上)": [], "GCなし/その他": [] };
             const volGroups = { "急増 (1.5倍以上)": [], "通常 (<1.5倍)": [] };
             const priceGroups = { "500~1,000円 (低位)": [], "1,000~3,000円 (中位)": [], "その他": [] };
-            const reasonGroups = { "🎯 ルール利確": [], "🛑 ルール損切": [], "⏳ 20日期限": [], "⚠️ 裁量/トレール決済": [] };
+            const reasonGroups = { "🎯 ルール利確": [], "🛑 ルール損切": [], "⏳ 20日期限": [], "⚠️ 裁量/トレール": [] };
 
             closed.forEach(t => {
                 const pl = (t.sell_price - t.buy_price) * t.qty;
@@ -590,11 +574,11 @@
                 if (t.exit_reason === "TP_15") reasonGroups["🎯 ルール利確"].push(pl);
                 else if (t.exit_reason === "SL_7") reasonGroups["🛑 ルール損切"].push(pl);
                 else if (t.exit_reason === "TIME_20") reasonGroups["⏳ 20日期限"].push(pl);
-                else reasonGroups["⚠️ 裁量/トレール決済"].push(pl);
+                else reasonGroups["⚠️ 裁量/トレール"].push(pl);
             });
 
             function buildTable(groups) {
-                let html = "<table class='table table-sm text-center mb-0'><thead><tr><th class='text-start'>区分</th><th>件数</th><th>勝率</th><th>損益計</th></tr></thead><tbody>";
+                let html = "<table class='table table-sm table-compact text-center mb-0'><thead><tr><th class='text-start'>区分</th><th>件数</th><th>勝率</th><th>損益計</th></tr></thead><tbody>";
                 for (let k in groups) {
                     const arr = groups[k];
                     if (arr.length === 0) continue;
@@ -632,7 +616,6 @@
             document.getElementById("form-buy-price").value = t.buy_price;
             document.getElementById("form-qty").value = t.qty;
 
-            // OCO目標値
             document.getElementById("form-target-tp").value = t.target_tp ? Math.round(t.target_tp) : Math.round(t.buy_price * 1.15);
             document.getElementById("form-target-sl").value = t.target_sl ? Math.round(t.target_sl) : Math.round(t.buy_price * 0.93);
 
@@ -668,7 +651,7 @@
                 }
                 if (!document.getElementById("form-entry-state").value) {
                     const gc = (s.gc_days !== null && s.gc_days !== undefined) ? (s.gc_days === 0 ? "当日GC" : `${s.gc_days}日前GC`) : "-";
-                    document.getElementById("form-entry-state").value = `${gc} / 出来高${s.val_ratio_5d||1.0}倍 / 割安${s.discount_rate||0}%`;
+                    document.getElementById("form-entry-state").value = `${gc} / 出来高${s.val_ratio_5d||1.0}倍`;
                 }
             }
         }
@@ -720,7 +703,7 @@
         // 6. ゴミ箱
         function moveToTrash(id) {
             const target = TRADES.find(t => t.id === id);
-            if (target && confirm(`【${target.code} ${target.name||''}】をゴミ箱に移動しますか？ (後から復元可能)`)) {
+            if (target && confirm(`【${target.code} ${target.name||''}】をゴミ箱に移動しますか？`)) {
                 target.is_deleted = true;
                 saveTradesToStorage();
             }
@@ -745,18 +728,16 @@
             tbody.innerHTML = "";
             const trash = TRADES.filter(t => t.is_deleted);
             if (trash.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='6' class='text-muted text-center p-3'>ゴミ箱は空です。</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='5' class='text-muted text-center p-2'>ゴミ箱は空です。</td></tr>";
                 return;
             }
             trash.forEach(t => {
-                const pl = t.sell_price ? (t.sell_price - t.buy_price) * t.qty : 0;
                 tbody.innerHTML += `<tr>
                     <td>${t.code} ${t.name||''}</td>
-                    <td>${t.buy_date}</td>
+                    <td>${t.buy_date.substring(5)}</td>
                     <td>¥${t.buy_price}</td>
                     <td>${t.sell_price ? '¥'+t.sell_price : '保有中'}</td>
-                    <td>${t.sell_price ? (pl>=0?'+':'')+'¥'+pl.toLocaleString() : '-'}</td>
-                    <td><button class="btn btn-outline-success btn-sm py-0" onclick="restoreFromTrash('${t.id}')">復元</button></td>
+                    <td><button class="btn btn-outline-success btn-sm p-1 py-0" onclick="restoreFromTrash('${t.id}')">復元</button></td>
                 </tr>`;
             });
         }
