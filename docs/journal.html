@@ -66,7 +66,7 @@
                     <div class="dropzone" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
                         <i class="bi bi-cloud-arrow-up-fill fs-3 text-primary"></i>
                         <div class="fw-bold mt-1">楽天証券の約定履歴CSVをここにドラッグ＆ドロップ (またはタップして選択)</div>
-                        <small class="text-muted">※ 小分け買付・一括売却（単元未満株）の自動相殺に対応しています</small>
+                        <small class="text-muted">※ 同じCSVを何度入れても二重登録は防止されます</small>
                         <input type="file" id="csv-file-input" accept=".csv" style="display:none;" onclick="this.value=null" onchange="handleCSVFile(this.files[0])">
                     </div>
                 </div>
@@ -86,6 +86,7 @@
                                     <th>株数</th>
                                     <th>現在株価</th>
                                     <th>含み損益</th>
+                                    <th>🎯利確 / 🛑逆指値 (トレール)</th>
                                     <th>保有日数 / 20日期限</th>
                                     <th>エントリー状況</th>
                                     <th>操作</th>
@@ -217,13 +218,29 @@
                             </div>
                             <div class="col-3">
                                 <label class="form-label small fw-bold">買付株価 (円)</label>
-                                <input type="number" id="form-buy-price" class="form-control form-control-sm" required>
+                                <input type="number" id="form-buy-price" class="form-control form-control-sm" required oninput="calcDefaultTargets()">
                             </div>
                             <div class="col-3">
                                 <label class="form-label small fw-bold">株数</label>
                                 <input type="number" id="form-qty" class="form-control form-control-sm" value="100" required>
                             </div>
                         </div>
+
+                        <!-- 🎯 OCO注文 (利確 / 逆指値トレール) 設定欄 -->
+                        <div class="row g-2 mb-2 p-2 bg-light rounded border">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-success"><i class="bi bi-bullseye me-1"></i>利確目標 (円)</label>
+                                <input type="number" id="form-target-tp" class="form-control form-control-sm" placeholder="自動: +15%">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-danger"><i class="bi bi-shield-shaded me-1"></i>逆指値/トレール (円)</label>
+                                <input type="number" id="form-target-sl" class="form-control form-control-sm" placeholder="自動: -7%">
+                            </div>
+                            <div class="col-12 mt-1">
+                                <small class="text-muted" style="font-size:0.75rem;">※ 空欄なら+15%/-7%を自動計算。株価上昇時のトレール引き上げも自由に変更可能</small>
+                            </div>
+                        </div>
+
                         <div class="row g-2 mb-2 p-2 bg-light rounded border">
                             <div class="col-6">
                                 <label class="form-label small fw-bold">売却日 (未決済なら空欄)</label>
@@ -251,7 +268,7 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label small fw-bold">トレードメモ</label>
-                            <textarea id="form-memo" class="form-control form-control-sm" rows="2" placeholder="反省点やエントリーの狙いなど"></textarea>
+                            <textarea id="form-memo" class="form-control form-control-sm" rows="2" placeholder="反省点やトレール変更の理由など"></textarea>
                         </div>
                     </form>
                 </div>
@@ -346,12 +363,12 @@
             renderClosedTrades(closedTrades);
         }
 
-        // 保有中ポジションの描画
+        // 保有中ポジションの描画（OCO利確・トレール逆指値の表示）
         function renderOpenPositions(list) {
             const tbody = document.getElementById("open-positions-tbody");
             tbody.innerHTML = "";
             if (list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" class="p-3 text-muted">現在保有中のポジションはありません。</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="10" class="p-3 text-muted">現在保有中のポジションはありません。</td></tr>';
                 return;
             }
 
@@ -370,6 +387,20 @@
                 const plClass = plAmount >= 0 ? "text-danger fw-bold" : "text-primary fw-bold";
                 const plSign = plAmount >= 0 ? "+" : "";
 
+                // 目標価格（未設定なら自動計算: +15% / -7%）
+                const defaultTp = Math.round(t.buy_price * 1.15 * 10) / 10;
+                const defaultSl = Math.round(t.buy_price * 0.93 * 10) / 10;
+                const tpPrice = t.target_tp || defaultTp;
+                const slPrice = t.target_sl || defaultSl;
+
+                // 到達までの残り株価
+                const tpDiff = Math.round((tpPrice - currentPrice) * 10) / 10;
+                const slDiff = Math.round((currentPrice - slPrice) * 10) / 10;
+
+                // トレール判定（逆指値が買値以上なら「利確確約」）
+                const isTrailed = slPrice >= t.buy_price;
+                const slBadge = isTrailed ? `<span class="badge bg-success py-0" style="font-size:0.65rem;">🛡️利確確約</span>` : '';
+
                 let alertBadge = "";
                 if (holdBusinessDays >= 20) {
                     alertBadge = `<span class="badge badge-alert-danger">🚨 ${holdBusinessDays}日目 (本日手仕舞い!)</span>`;
@@ -386,10 +417,14 @@
                     <td>${t.qty}株</td>
                     <td class="fw-bold">¥${Number(currentPrice).toLocaleString()}</td>
                     <td class="${plClass}">${plSign}${plPct}% (${plSign}¥${plAmount.toLocaleString()})</td>
+                    <td class="text-start small" style="line-height:1.3;">
+                        <div><strong class="text-success">🎯 ¥${Number(tpPrice).toLocaleString()}</strong> <span class="text-muted" style="font-size:0.75rem;">(あと+¥${tpDiff})</span></div>
+                        <div><strong class="${isTrailed ? 'text-success' : 'text-danger'}">🛑 ¥${Number(slPrice).toLocaleString()}</strong> ${slBadge} <span class="text-muted" style="font-size:0.75rem;">(余力-¥${slDiff})</span></div>
+                    </td>
                     <td>${alertBadge}</td>
                     <td class="small text-muted">${t.entry_state || '-'}</td>
                     <td>
-                        <button class="btn btn-outline-primary btn-sm p-1 py-0" onclick="openEditModal('${t.id}')">編集/決済</button>
+                        <button class="btn btn-outline-primary btn-sm p-1 py-0" onclick="openEditModal('${t.id}')">編集/トレール</button>
                         <button class="btn btn-outline-danger btn-sm p-1 py-0 ms-1" onclick="moveToTrash('${t.id}')"><i class="bi bi-trash3"></i></button>
                     </td>
                 </tr>`;
@@ -421,7 +456,7 @@
                     "TP_15": "<span class='badge bg-success'>🎯 利確(+15%)</span>",
                     "SL_7": "<span class='badge bg-danger'>🛑 損切(-7%)</span>",
                     "TIME_20": "<span class='badge bg-secondary'>⏳ 20日期限</span>",
-                    "MANUAL_PROFIT": "<span class='badge bg-warning text-dark'>⚠️ 手動利食い</span>",
+                    "MANUAL_PROFIT": "<span class='badge bg-warning text-dark'>⚠️ 手動利食い/トレール</span>",
                     "MANUAL_LOSS": "<span class='badge bg-dark'>⚠️ 手動損切</span>"
                 };
                 const reasonBadge = reasonLabelMap[t.exit_reason] || `<span class='badge bg-light text-dark border'>${t.exit_reason || '手仕舞い'}</span>`;
@@ -509,7 +544,7 @@
             const gcGroups = { "初動 (0~1日GC)": [], "出遅れ (2日以上)": [], "GCなし/その他": [] };
             const volGroups = { "急増 (1.5倍以上)": [], "通常 (<1.5倍)": [] };
             const priceGroups = { "500~1,000円 (低位)": [], "1,000~3,000円 (中位)": [], "その他": [] };
-            const reasonGroups = { "🎯 ルール利確": [], "🛑 ルール損切": [], "⏳ 20日期限": [], "⚠️ 裁量/手動決済": [] };
+            const reasonGroups = { "🎯 ルール利確": [], "🛑 ルール損切": [], "⏳ 20日期限": [], "⚠️ 裁量/トレール決済": [] };
 
             closed.forEach(t => {
                 const pl = (t.sell_price - t.buy_price) * t.qty;
@@ -531,7 +566,7 @@
                 if (t.exit_reason === "TP_15") reasonGroups["🎯 ルール利確"].push(pl);
                 else if (t.exit_reason === "SL_7") reasonGroups["🛑 ルール損切"].push(pl);
                 else if (t.exit_reason === "TIME_20") reasonGroups["⏳ 20日期限"].push(pl);
-                else reasonGroups["⚠️ 裁量/手動決済"].push(pl);
+                else reasonGroups["⚠️ 裁量/トレール決済"].push(pl);
             });
 
             function buildTable(groups) {
@@ -554,7 +589,7 @@
             document.getElementById("analysis-reason").innerHTML = buildTable(reasonGroups);
         }
 
-        // 5. 手動モーダル
+        // 5. 手動モーダル操作
         function openAddModal() {
             document.getElementById("form-trade-id").value = "";
             document.getElementById("tradeForm").reset();
@@ -572,13 +607,30 @@
             document.getElementById("form-buy-date").value = t.buy_date;
             document.getElementById("form-buy-price").value = t.buy_price;
             document.getElementById("form-qty").value = t.qty;
+
+            // OCO目標値
+            document.getElementById("form-target-tp").value = t.target_tp || Math.round(t.buy_price * 1.15 * 10) / 10;
+            document.getElementById("form-target-sl").value = t.target_sl || Math.round(t.buy_price * 0.93 * 10) / 10;
+
             document.getElementById("form-sell-date").value = t.sell_date || "";
             document.getElementById("form-sell-price").value = t.sell_price || "";
             document.getElementById("form-exit-reason").value = t.exit_reason || "OPEN";
             document.getElementById("form-entry-state").value = t.entry_state || "";
             document.getElementById("form-memo").value = t.memo || "";
-            document.getElementById("tradeModalTitle").textContent = "取引の編集 / 決済";
+            document.getElementById("tradeModalTitle").textContent = "取引の編集 / トレール設定";
             tradeModalInstance.show();
+        }
+
+        function calcDefaultTargets() {
+            const price = parseFloat(document.getElementById("form-buy-price").value);
+            if (!isNaN(price) && price > 0) {
+                if (!document.getElementById("form-target-tp").value) {
+                    document.getElementById("form-target-tp").placeholder = `自動: ¥${Math.round(price * 1.15)}`;
+                }
+                if (!document.getElementById("form-target-sl").value) {
+                    document.getElementById("form-target-sl").placeholder = `自動: ¥${Math.round(price * 0.93)}`;
+                }
+            }
         }
 
         function autoFillStockInfo() {
@@ -586,7 +638,10 @@
             if (LATEST_STOCKS_MAP[code]) {
                 const s = LATEST_STOCKS_MAP[code];
                 if (!document.getElementById("form-name").value) document.getElementById("form-name").value = s.name;
-                if (!document.getElementById("form-buy-price").value) document.getElementById("form-buy-price").value = s.price;
+                if (!document.getElementById("form-buy-price").value) {
+                    document.getElementById("form-buy-price").value = s.price;
+                    calcDefaultTargets();
+                }
                 if (!document.getElementById("form-entry-state").value) {
                     const gc = (s.gc_days !== null && s.gc_days !== undefined) ? (s.gc_days === 0 ? "当日GC" : `${s.gc_days}日前GC`) : "-";
                     document.getElementById("form-entry-state").value = `${gc} / 出来高${s.val_ratio_5d||1.0}倍 / 割安${s.discount_rate||0}%`;
@@ -601,6 +656,10 @@
             const buyDate = document.getElementById("form-buy-date").value;
             const buyPrice = parseFloat(document.getElementById("form-buy-price").value);
             const qty = parseInt(document.getElementById("form-qty").value, 10) || 100;
+            
+            const targetTp = document.getElementById("form-target-tp").value ? parseFloat(document.getElementById("form-target-tp").value) : null;
+            const targetSl = document.getElementById("form-target-sl").value ? parseFloat(document.getElementById("form-target-sl").value) : null;
+
             const sellDate = document.getElementById("form-sell-date").value;
             const sellPrice = document.getElementById("form-sell-price").value ? parseFloat(document.getElementById("form-sell-price").value) : null;
             const exitReason = document.getElementById("form-exit-reason").value;
@@ -615,12 +674,17 @@
             if (id) {
                 const target = TRADES.find(t => t.id === id);
                 if (target) {
-                    Object.assign(target, { code, name, buy_date: buyDate, buy_price: buyPrice, qty, sell_date: sellDate, sell_price: sellPrice, exit_reason: exitReason, entry_state: entryState, memo });
+                    Object.assign(target, { 
+                        code, name, buy_date: buyDate, buy_price: buyPrice, qty, 
+                        target_tp: targetTp, target_sl: targetSl,
+                        sell_date: sellDate, sell_price: sellPrice, exit_reason: exitReason, entry_state: entryState, memo 
+                    });
                 }
             } else {
                 TRADES.push({
                     id: "manual_" + Date.now(),
                     code, name, buy_date: buyDate, buy_price: buyPrice, qty,
+                    target_tp: targetTp, target_sl: targetSl,
                     sell_date: sellDate, sell_price: sellPrice, exit_reason: exitReason,
                     entry_state: entryState, memo, is_deleted: false
                 });
@@ -763,7 +827,6 @@
                     return;
                 }
 
-                // 全行を抽出
                 let rawBuyList = [];
                 let rawSellList = [];
 
@@ -809,13 +872,10 @@
                     return;
                 }
 
-                // 古い順（日付昇順）にソートして先入れ先出しの相殺処理
                 rawBuyList.sort((a, b) => new Date(a.date) - new Date(b.date));
                 rawSellList.sort((a, b) => new Date(a.date) - new Date(b.date));
 
                 let newTrades = [];
-
-                // 銘柄ごとに先入れ先出し（FIFO）マッチング
                 const allCodes = [...new Set([...rawBuyList.map(b => b.code), ...rawSellList.map(s => s.code)])];
 
                 allCodes.forEach(code => {
@@ -823,11 +883,10 @@
                     const sells = rawSellList.filter(s => s.code === code);
 
                     sells.forEach(sell => {
-                        // この売り以前の、未消化の買いを古い順に探して相殺
                         for (let buy of buys) {
                             if (sell.remainingQty <= 0) break;
                             if (buy.remainingQty <= 0) continue;
-                            if (buy.date > sell.date) continue; // 売りより後の買いは対象外
+                            if (buy.date > sell.date) continue;
 
                             const matchQty = Math.min(buy.remainingQty, sell.remainingQty);
                             buy.remainingQty -= matchQty;
@@ -856,7 +915,6 @@
                         }
                     });
 
-                    // 売り切れずに残った買い ➔ 【現在保有中のポジション】
                     buys.forEach(buy => {
                         if (buy.remainingQty > 0) {
                             const stock = LATEST_STOCKS_MAP[code] || {};
@@ -869,6 +927,8 @@
                                 buy_date: buy.date,
                                 buy_price: buy.price,
                                 qty: buy.remainingQty,
+                                target_tp: Math.round(buy.price * 1.15 * 10) / 10,
+                                target_sl: Math.round(buy.price * 0.93 * 10) / 10,
                                 sell_date: "",
                                 sell_price: null,
                                 exit_reason: "OPEN",
@@ -879,7 +939,6 @@
                         }
                     });
 
-                    // 買いが見つからなかった売り（過去の買いが期間外のもの）
                     sells.forEach(sell => {
                         if (sell.remainingQty > 0) {
                             const stock = LATEST_STOCKS_MAP[code] || {};
@@ -901,19 +960,12 @@
                     });
                 });
 
-                // 既存の取引データと統合するか、全置換するか
-                // 全履歴CSVの場合は綺麗に上書き再構築するのが最も正確
-                const replace = confirm(`全 ${newTrades.length} 件の取引（保有＆決済）を解析しました！\n\n既存のデータを最新CSVで綺麗に【全件再構築】しますか？\n（「OK」を押すと小分け買付の未決済残骸が解消されて最も正確になります）`);
-                
+                const replace = confirm(`全 ${newTrades.length} 件の取引を解析しました！\n\n既存のデータを最新CSVで綺麗に【全件再構築】しますか？`);
                 if (replace) {
                     TRADES = newTrades;
                 } else {
-                    let addCount = 0;
                     newTrades.forEach(nt => {
-                        if (!TRADES.some(t => t.id === nt.id)) {
-                            TRADES.push(nt);
-                            addCount++;
-                        }
+                        if (!TRADES.some(t => t.id === nt.id)) TRADES.push(nt);
                     });
                 }
 
@@ -921,7 +973,6 @@
                 alert(`🎉 楽天証券CSVの相殺解析が完了しました！`);
             } catch (err) {
                 alert("❌ 解析処理エラー: " + err.message);
-                console.error(err);
             }
         }
 
@@ -955,9 +1006,7 @@
                         return;
                     }
 
-                    let addedCount = 0;
-                    let updatedCount = 0;
-
+                    let addedCount = 0, updatedCount = 0;
                     imported.forEach(imp => {
                         if (!imp.id) return;
                         const existIdx = TRADES.findIndex(t => t.id === imp.id);
