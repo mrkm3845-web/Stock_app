@@ -17,8 +17,8 @@
         .badge-alert-warning { background-color: #fff3bf; color: #d9480f; border: 1px solid #ffe066; font-weight: bold; }
         .badge-alert-normal { background-color: #e6fcf5; color: #0ca678; font-weight: bold; }
         .metric-card { border-left: 4px solid #0d6efd; padding: 12px; }
-        .table-sm th { background-color: #212529 !important; color: white !important; font-size: 0.8rem; text-align: center; }
-        .table-sm td { vertical-align: middle; text-align: center; }
+        .table-sm th { background-color: #212529 !important; color: white !important; font-size: 0.8rem; text-align: center; white-space: nowrap; }
+        .table-sm td { vertical-align: middle; text-align: center; white-space: nowrap; }
     </style>
 </head>
 <body>
@@ -86,9 +86,9 @@
                                     <th>株数</th>
                                     <th>現在株価</th>
                                     <th>含み損益</th>
-                                    <th>🎯利確 / 🛑逆指値 (トレール)</th>
+                                    <th>🎯利確 / 🛑逆指値</th>
                                     <th>保有日数 / 20日期限</th>
-                                    <th>エントリー状況</th>
+                                    <th>直近の勢い (GC / 出来高)</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -282,7 +282,7 @@
 
     <!-- ゴミ箱モーダル -->
     <div class="modal fade" id="trashModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-secondary text-white">
                     <h5 class="modal-title"><i class="bi bi-trash3 me-1"></i> ゴミ箱 (非表示にした取引)</h5>
@@ -363,7 +363,7 @@
             renderClosedTrades(closedTrades);
         }
 
-        // 保有中ポジションの描画（OCO利確・トレール逆指値の表示）
+        // 保有中ポジションの描画（スッキリ整列 & 直近モメンタム表示）
         function renderOpenPositions(list) {
             const tbody = document.getElementById("open-positions-tbody");
             tbody.innerHTML = "";
@@ -387,19 +387,40 @@
                 const plClass = plAmount >= 0 ? "text-danger fw-bold" : "text-primary fw-bold";
                 const plSign = plAmount >= 0 ? "+" : "";
 
-                // 目標価格（未設定なら自動計算: +15% / -7%）
-                const defaultTp = Math.round(t.buy_price * 1.15 * 10) / 10;
-                const defaultSl = Math.round(t.buy_price * 0.93 * 10) / 10;
-                const tpPrice = t.target_tp || defaultTp;
-                const slPrice = t.target_sl || defaultSl;
+                // 目標価格（整数丸めでスッキリ表示）
+                const defaultTp = Math.round(t.buy_price * 1.15);
+                const defaultSl = Math.round(t.buy_price * 0.93);
+                const tpPrice = Math.round(t.target_tp || defaultTp);
+                const slPrice = Math.round(t.target_sl || defaultSl);
 
-                // 到達までの残り株価
-                const tpDiff = Math.round((tpPrice - currentPrice) * 10) / 10;
-                const slDiff = Math.round((currentPrice - slPrice) * 10) / 10;
+                // 残り値幅
+                const tpDiff = Math.max(0, tpPrice - Math.round(currentPrice));
+                const slDiff = Math.max(0, Math.round(currentPrice) - slPrice);
 
-                // トレール判定（逆指値が買値以上なら「利確確約」）
+                // トレール判定
                 const isTrailed = slPrice >= t.buy_price;
-                const slBadge = isTrailed ? `<span class="badge bg-success py-0" style="font-size:0.65rem;">🛡️利確確約</span>` : '';
+                const slBadge = isTrailed ? `<span class="badge bg-success py-0" style="font-size:0.65rem;">🛡️確約</span>` : '';
+
+                // 直近の勢い（出来高モメンタム判定）
+                let volBadge = `<span class="badge bg-light text-dark border">出来高不明</span>`;
+                if (stock.val_ratio_5d !== undefined && stock.val_ratio_5d !== null) {
+                    const vr = parseFloat(stock.val_ratio_5d);
+                    if (vr >= 2.0) {
+                        volBadge = `<span class="badge bg-danger">🔥 ${vr.toFixed(2)}倍 (大口継続)</span>`;
+                    } else if (vr >= 1.3) {
+                        volBadge = `<span class="badge bg-warning text-dark">⚡ ${vr.toFixed(2)}倍 (勢い維持)</span>`;
+                    } else if (vr >= 0.8) {
+                        volBadge = `<span class="badge bg-light text-dark border">⚖️ ${vr.toFixed(2)}倍 (通常)</span>`;
+                    } else {
+                        volBadge = `<span class="badge bg-secondary-subtle text-muted border">❄️ ${vr.toFixed(2)}倍 (過疎/失速)</span>`;
+                    }
+                }
+
+                // GC判定
+                let gcText = "-";
+                if (stock.gc_days !== undefined && stock.gc_days !== null) {
+                    gcText = stock.gc_days === 0 ? `<span class="text-danger fw-bold">本日GC</span>` : `${stock.gc_days}日前GC`;
+                }
 
                 let alertBadge = "";
                 if (holdBusinessDays >= 20) {
@@ -417,12 +438,15 @@
                     <td>${t.qty}株</td>
                     <td class="fw-bold">¥${Number(currentPrice).toLocaleString()}</td>
                     <td class="${plClass}">${plSign}${plPct}% (${plSign}¥${plAmount.toLocaleString()})</td>
-                    <td class="text-start small" style="line-height:1.3;">
-                        <div><strong class="text-success">🎯 ¥${Number(tpPrice).toLocaleString()}</strong> <span class="text-muted" style="font-size:0.75rem;">(あと+¥${tpDiff})</span></div>
-                        <div><strong class="${isTrailed ? 'text-success' : 'text-danger'}">🛑 ¥${Number(slPrice).toLocaleString()}</strong> ${slBadge} <span class="text-muted" style="font-size:0.75rem;">(余力-¥${slDiff})</span></div>
+                    <td class="text-start" style="font-size:0.8rem; line-height: 1.4;">
+                        <div><span class="text-success fw-bold">🎯 ¥${Number(tpPrice).toLocaleString()}</span> <small class="text-muted">(あと+¥${tpDiff})</small></div>
+                        <div><span class="${isTrailed ? 'text-success' : 'text-danger'} fw-bold">🛑 ¥${Number(slPrice).toLocaleString()}</span> ${slBadge} <small class="text-muted">(余力-¥${slDiff})</small></div>
                     </td>
                     <td>${alertBadge}</td>
-                    <td class="small text-muted">${t.entry_state || '-'}</td>
+                    <td class="text-start" style="font-size:0.8rem; line-height: 1.3;">
+                        <div><small class="text-muted">状態:</small> ${gcText}</div>
+                        <div class="mt-1">${volBadge}</div>
+                    </td>
                     <td>
                         <button class="btn btn-outline-primary btn-sm p-1 py-0" onclick="openEditModal('${t.id}')">編集/トレール</button>
                         <button class="btn btn-outline-danger btn-sm p-1 py-0 ms-1" onclick="moveToTrash('${t.id}')"><i class="bi bi-trash3"></i></button>
@@ -609,8 +633,8 @@
             document.getElementById("form-qty").value = t.qty;
 
             // OCO目標値
-            document.getElementById("form-target-tp").value = t.target_tp || Math.round(t.buy_price * 1.15 * 10) / 10;
-            document.getElementById("form-target-sl").value = t.target_sl || Math.round(t.buy_price * 0.93 * 10) / 10;
+            document.getElementById("form-target-tp").value = t.target_tp ? Math.round(t.target_tp) : Math.round(t.buy_price * 1.15);
+            document.getElementById("form-target-sl").value = t.target_sl ? Math.round(t.target_sl) : Math.round(t.buy_price * 0.93);
 
             document.getElementById("form-sell-date").value = t.sell_date || "";
             document.getElementById("form-sell-price").value = t.sell_price || "";
@@ -927,8 +951,8 @@
                                 buy_date: buy.date,
                                 buy_price: buy.price,
                                 qty: buy.remainingQty,
-                                target_tp: Math.round(buy.price * 1.15 * 10) / 10,
-                                target_sl: Math.round(buy.price * 0.93 * 10) / 10,
+                                target_tp: Math.round(buy.price * 1.15),
+                                target_sl: Math.round(buy.price * 0.93),
                                 sell_date: "",
                                 sell_price: null,
                                 exit_reason: "OPEN",
