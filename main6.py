@@ -322,21 +322,13 @@ def save_history_json(all_stocks, target_date):
     print(f">> 日別JSON (docs/history/{target_date}.json) を保存しました。")
 
 
-# 8. Discord通知 (バックテスト最高勝率ルール適用)
+# 8. Discord通知 (バックテスト最高勝率ルール適用・常時フル速報送信)
 def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook_url):
     if not webhook_url or not all_stocks:
         return
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     df = pd.DataFrame(all_stocks)
-
-    if added_count == 0 and updated_count == 0:
-        msg = f"✅ **【データ確認】** ({now_str})\n対象日: `{target_date}` ➔ 現在 計{len(all_stocks)}社マージ済・正常稼働中。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
-        try:
-            requests.post(webhook_url, json={"content": msg}, timeout=10)
-        except Exception:
-            pass
-        return
 
     # 割安セクション
     valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)].sort_values(by="mix_index", ascending=True)
