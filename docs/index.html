@@ -51,6 +51,11 @@
                     <small class="text-muted">登録総数: <span id="total-count">-</span> 件</small>
                 </div>
                 <div class="d-flex flex-wrap gap-2 align-items-center ms-auto">
+                    <!-- ★ ここに「取引記録・分析」ボタンを追加しました -->
+                    <a href="journal.html" class="btn btn-outline-primary btn-sm fw-bold">
+                        <i class="bi bi-journal-bookmark-fill me-1"></i> 取引記録・分析
+                    </a>
+                    
                     <div class="input-group input-group-sm" style="width: auto;">
                         <span class="input-group-text bg-light fw-bold"><i class="bi bi-calendar-event me-1"></i> 取得日</span>
                         <select id="date-selector" class="form-select form-select-sm fw-bold" onchange="loadDateData(this.value)"></select>
@@ -414,10 +419,10 @@
                     currentBtn.classList.add("active", "btn-danger");
                     currentBtn.classList.remove("btn-outline-danger");
                     
-                    document.getElementById("filter-price-preset").value = "500-1000"; // ★最高勝率ゾーンに連動
-                    document.getElementById("filter-gc").value = "1";                 // 1日以内
-                    document.getElementById("filter-avgval").value = 30000;           // 3,000万円以上
-                    document.getElementById("filter-valratio").value = 1.2;           // 1.2倍以上
+                    document.getElementById("filter-price-preset").value = "500-1000";
+                    document.getElementById("filter-gc").value = "1";
+                    document.getElementById("filter-avgval").value = 30000;
+                    document.getElementById("filter-valratio").value = 1.2;
                     document.getElementById("sort-by").value = "valratio_desc";
                 } else {
                     resetAll();
@@ -511,7 +516,6 @@
             else alert("該当する銘柄が見つかりませんでした: " + q);
         }
 
-        // ★ 株価帯ごとに最適な利確・損切・保有期間を自動生成
         function showStockDetail(code) {
             const s = STOCKS.find(item => item.code === code);
             if (!s) return;
@@ -532,7 +536,6 @@
 
             const p = s.price;
             
-            // ★ バックテスト実証結果に基づく株価帯別の最適パラメータ
             let tpPct = 0.15;
             let slPct = 0.07;
             let maxHoldDays = 20;
