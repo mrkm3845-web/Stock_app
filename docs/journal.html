@@ -33,7 +33,6 @@
                 <div class="d-flex flex-wrap gap-2">
                     <a href="index.html" class="btn btn-outline-secondary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナーへ戻る</a>
                     
-                    <!-- 🔄 PC・スマホ データ同期ドロップダウン -->
                     <div class="dropdown">
                         <button class="btn btn-outline-success btn-sm fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             <i class="bi bi-arrow-left-right me-1"></i> データ同期
@@ -63,12 +62,11 @@
         <div class="tab-content" id="mainTabContent">
             <!-- タブ 1: 取引一覧 & ポジション管理 -->
             <div class="tab-pane fade show active" id="tab-positions" role="tabpanel">
-                <!-- CSVインポート枠 -->
                 <div class="card p-3 bg-white">
                     <div class="dropzone" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
                         <i class="bi bi-cloud-arrow-up-fill fs-3 text-primary"></i>
                         <div class="fw-bold mt-1">楽天証券の約定履歴CSVをここにドラッグ＆ドロップ (またはタップして選択)</div>
-                        <small class="text-muted">※ 同じCSVを何度入れても二重登録や削除データの復活は防止されます</small>
+                        <small class="text-muted">※ 小分け買付・一括売却（単元未満株）の自動相殺に対応しています</small>
                         <input type="file" id="csv-file-input" accept=".csv" style="display:none;" onclick="this.value=null" onchange="handleCSVFile(this.files[0])">
                     </div>
                 </div>
@@ -590,7 +588,7 @@
                 if (!document.getElementById("form-name").value) document.getElementById("form-name").value = s.name;
                 if (!document.getElementById("form-buy-price").value) document.getElementById("form-buy-price").value = s.price;
                 if (!document.getElementById("form-entry-state").value) {
-                    const gc = s.gc_days === 0 ? "当日GC" : (s.gc_days ? `${s.gc_days}日前GC` : "GCなし");
+                    const gc = (s.gc_days !== null && s.gc_days !== undefined) ? (s.gc_days === 0 ? "当日GC" : `${s.gc_days}日前GC`) : "-";
                     document.getElementById("form-entry-state").value = `${gc} / 出来高${s.val_ratio_5d||1.0}倍 / 割安${s.discount_rate||0}%`;
                 }
             }
@@ -675,7 +673,7 @@
             });
         }
 
-        // 7. 楽天証券CSVインポート & マッチング
+        // 7. 楽天証券CSVインポート & FIFO自動相殺マッチング
         function setupDragAndDrop() {
             const dz = document.getElementById("csv-dropzone");
             dz.addEventListener("dragover", e => { e.preventDefault(); dz.style.background = "#d0e2ff"; });
@@ -765,8 +763,9 @@
                     return;
                 }
 
-                let buyRecords = [];
-                let sellRecords = [];
+                // 全行を抽出
+                let rawBuyList = [];
+                let rawSellList = [];
 
                 for (let i = headerLineIdx + 1; i < lines.length; i++) {
                     const cols = splitCSVLine(lines[i]);
@@ -797,96 +796,136 @@
                         code: code,
                         name: name,
                         qty: qty,
+                        remainingQty: qty,
                         price: price
                     };
 
-                    if (side.includes("買")) {
-                        buyRecords.push(rec);
-                    } else if (side.includes("売")) {
-                        sellRecords.push(rec);
-                    }
+                    if (side.includes("買")) rawBuyList.push(rec);
+                    else if (side.includes("売")) rawSellList.push(rec);
                 }
 
-                if (buyRecords.length === 0 && sellRecords.length === 0) {
+                if (rawBuyList.length === 0 && rawSellList.length === 0) {
                     alert("⚠️ 有効な取引レコードが見つかりませんでした。");
                     return;
                 }
 
-                let addedCount = 0;
+                // 古い順（日付昇順）にソートして先入れ先出しの相殺処理
+                rawBuyList.sort((a, b) => new Date(a.date) - new Date(b.date));
+                rawSellList.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-                // 買付レコード
-                buyRecords.forEach(b => {
-                    const tradeId = `csv_${b.date}_${b.code}_${b.price}_${b.qty}`;
-                    if (TRADES.some(t => t.id === tradeId)) return;
+                let newTrades = [];
 
-                    const sellMatchIdx = sellRecords.findIndex(s => s.code === b.code && s.qty === b.qty && s.date >= b.date);
-                    let matchSell = null;
-                    if (sellMatchIdx !== -1) {
-                        matchSell = sellRecords.splice(sellMatchIdx, 1)[0];
-                    }
+                // 銘柄ごとに先入れ先出し（FIFO）マッチング
+                const allCodes = [...new Set([...rawBuyList.map(b => b.code), ...rawSellList.map(s => s.code)])];
 
-                    const stock = LATEST_STOCKS_MAP[b.code] || {};
-                    const name = b.name || stock.name || "";
-                    let entryState = stock.gc_days !== undefined ? `${stock.gc_days === 0 ? '当日GC' : stock.gc_days + '日前GC'} / 出来高${stock.val_ratio_5d||1.0}倍` : "";
+                allCodes.forEach(code => {
+                    const buys = rawBuyList.filter(b => b.code === code);
+                    const sells = rawSellList.filter(s => s.code === code);
 
-                    let exitReason = "OPEN";
-                    if (matchSell) {
-                        const ret = (matchSell.price - b.price) / b.price;
-                        if (ret >= 0.14) exitReason = "TP_15";
-                        else if (ret <= -0.06) exitReason = "SL_7";
-                        else exitReason = ret >= 0 ? "MANUAL_PROFIT" : "MANUAL_LOSS";
-                    }
+                    sells.forEach(sell => {
+                        // この売り以前の、未消化の買いを古い順に探して相殺
+                        for (let buy of buys) {
+                            if (sell.remainingQty <= 0) break;
+                            if (buy.remainingQty <= 0) continue;
+                            if (buy.date > sell.date) continue; // 売りより後の買いは対象外
 
-                    TRADES.push({
-                        id: tradeId,
-                        code: b.code,
-                        name: name,
-                        buy_date: b.date,
-                        buy_price: b.price,
-                        qty: b.qty,
-                        sell_date: matchSell ? matchSell.date : "",
-                        sell_price: matchSell ? matchSell.price : null,
-                        exit_reason: exitReason,
-                        entry_state: entryState,
-                        memo: "楽天証券CSVより自動取り込み",
-                        is_deleted: false
+                            const matchQty = Math.min(buy.remainingQty, sell.remainingQty);
+                            buy.remainingQty -= matchQty;
+                            sell.remainingQty -= matchQty;
+
+                            const ret = (sell.price - buy.price) / buy.price;
+                            let exitReason = ret >= 0.14 ? "TP_15" : (ret <= -0.06 ? "SL_7" : (ret >= 0 ? "MANUAL_PROFIT" : "MANUAL_LOSS"));
+
+                            const stock = LATEST_STOCKS_MAP[code] || {};
+                            const entryState = (stock.gc_days !== null && stock.gc_days !== undefined) ? `${stock.gc_days === 0 ? '当日GC' : stock.gc_days + '日前GC'} / 出来高${stock.val_ratio_5d||1.0}倍` : "-";
+
+                            newTrades.push({
+                                id: `csv_closed_${buy.date}_${sell.date}_${code}_${matchQty}_${buy.price}_${sell.price}`,
+                                code: code,
+                                name: buy.name || sell.name || stock.name || "",
+                                buy_date: buy.date,
+                                buy_price: buy.price,
+                                qty: matchQty,
+                                sell_date: sell.date,
+                                sell_price: sell.price,
+                                exit_reason: exitReason,
+                                entry_state: entryState,
+                                memo: "楽天証券CSVより自動取り込み",
+                                is_deleted: false
+                            });
+                        }
                     });
-                    addedCount++;
+
+                    // 売り切れずに残った買い ➔ 【現在保有中のポジション】
+                    buys.forEach(buy => {
+                        if (buy.remainingQty > 0) {
+                            const stock = LATEST_STOCKS_MAP[code] || {};
+                            const entryState = (stock.gc_days !== null && stock.gc_days !== undefined) ? `${stock.gc_days === 0 ? '当日GC' : stock.gc_days + '日前GC'} / 出来高${stock.val_ratio_5d||1.0}倍` : "-";
+
+                            newTrades.push({
+                                id: `csv_open_${buy.date}_${code}_${buy.remainingQty}_${buy.price}`,
+                                code: code,
+                                name: buy.name || stock.name || "",
+                                buy_date: buy.date,
+                                buy_price: buy.price,
+                                qty: buy.remainingQty,
+                                sell_date: "",
+                                sell_price: null,
+                                exit_reason: "OPEN",
+                                entry_state: entryState,
+                                memo: "楽天証券CSVより自動取り込み",
+                                is_deleted: false
+                            });
+                        }
+                    });
+
+                    // 買いが見つからなかった売り（過去の買いが期間外のもの）
+                    sells.forEach(sell => {
+                        if (sell.remainingQty > 0) {
+                            const stock = LATEST_STOCKS_MAP[code] || {};
+                            newTrades.push({
+                                id: `csv_sellonly_${sell.date}_${code}_${sell.remainingQty}_${sell.price}`,
+                                code: code,
+                                name: sell.name || stock.name || "",
+                                buy_date: sell.date,
+                                buy_price: sell.price,
+                                qty: sell.remainingQty,
+                                sell_date: sell.date,
+                                sell_price: sell.price,
+                                exit_reason: "MANUAL_PROFIT",
+                                entry_state: "-",
+                                memo: "※過去の売却（買値・買付日は鉛筆アイコンから編集可能）",
+                                is_deleted: false
+                            });
+                        }
+                    });
                 });
 
-                // 売却レコード
-                sellRecords.forEach(s => {
-                    const tradeId = `csv_sell_${s.date}_${s.code}_${s.price}_${s.qty}`;
-                    if (TRADES.some(t => t.id === tradeId)) return;
-
-                    const stock = LATEST_STOCKS_MAP[s.code] || {};
-                    const name = s.name || stock.name || "";
-
-                    TRADES.push({
-                        id: tradeId,
-                        code: s.code,
-                        name: name,
-                        buy_date: s.date,
-                        buy_price: s.price,
-                        qty: s.qty,
-                        sell_date: s.date,
-                        sell_price: s.price,
-                        exit_reason: "MANUAL_PROFIT",
-                        entry_state: "-",
-                        memo: "※過去の売却（買値・買付日は鉛筆アイコンから編集可能）",
-                        is_deleted: false
+                // 既存の取引データと統合するか、全置換するか
+                // 全履歴CSVの場合は綺麗に上書き再構築するのが最も正確
+                const replace = confirm(`全 ${newTrades.length} 件の取引（保有＆決済）を解析しました！\n\n既存のデータを最新CSVで綺麗に【全件再構築】しますか？\n（「OK」を押すと小分け買付の未決済残骸が解消されて最も正確になります）`);
+                
+                if (replace) {
+                    TRADES = newTrades;
+                } else {
+                    let addCount = 0;
+                    newTrades.forEach(nt => {
+                        if (!TRADES.some(t => t.id === nt.id)) {
+                            TRADES.push(nt);
+                            addCount++;
+                        }
                     });
-                    addedCount++;
-                });
+                }
 
                 saveTradesToStorage();
-                alert(`🎉 楽天証券CSVの解析完了: ${addedCount} 件の取引を取り込みました！`);
+                alert(`🎉 楽天証券CSVの相殺解析が完了しました！`);
             } catch (err) {
                 alert("❌ 解析処理エラー: " + err.message);
+                console.error(err);
             }
         }
 
-        // 8. データ同期機能 (エクスポート & インポート)
+        // 8. データ同期機能
         function exportData() {
             if (TRADES.length === 0) {
                 alert("保存する取引データがありません。");
@@ -923,7 +962,6 @@
                         if (!imp.id) return;
                         const existIdx = TRADES.findIndex(t => t.id === imp.id);
                         if (existIdx !== -1) {
-                            // 既存取引は最新データ（編集メモ等）をマージ
                             TRADES[existIdx] = Object.assign({}, TRADES[existIdx], imp);
                             updatedCount++;
                         } else {
