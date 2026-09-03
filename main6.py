@@ -418,7 +418,7 @@ if __name__ == "__main__":
         prime_data = []
         standard_data = []
 
-        for root, dirs, files in os.walk(DATA_DIR):
+        for root, dirs, files in os.walk("."):
             for file in files:
                 filepath = os.path.join(root, file)
                 if "prime" in file.lower() and file.endswith(".json"):
