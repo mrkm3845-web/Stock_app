@@ -30,8 +30,21 @@
                     <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> スイング・トレードジャーナル</h1>
                     <small class="text-muted">実戦記録 ＆ 4大切り口パフォーマンス自動分析</small>
                 </div>
-                <div class="d-flex gap-2">
+                <div class="d-flex flex-wrap gap-2">
                     <a href="index.html" class="btn btn-outline-secondary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナーへ戻る</a>
+                    
+                    <!-- 🔄 PC・スマホ データ同期ドロップダウン -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-success btn-sm fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-arrow-left-right me-1"></i> データ同期
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                            <li><a class="dropdown-item" href="javascript:void(0)" onclick="exportData()"><i class="bi bi-download me-2 text-primary"></i> データを書き出す (保存)</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0)" onclick="document.getElementById('backup-file-input').click()"><i class="bi bi-upload me-2 text-success"></i> データを読み込む (復元)</a></li>
+                        </ul>
+                    </div>
+                    <input type="file" id="backup-file-input" accept=".json" style="display:none;" onclick="this.value=null" onchange="importData(this.files[0])">
+
                     <button class="btn btn-primary btn-sm fw-bold" onclick="openAddModal()"><i class="bi bi-plus-lg me-1"></i> 手動で取引追加</button>
                     <button class="btn btn-outline-danger btn-sm fw-bold" onclick="openTrashModal()"><i class="bi bi-trash3 me-1"></i> ゴミ箱 (<span id="trash-count">0</span>)</button>
                 </div>
@@ -685,7 +698,6 @@
 
                 const buffer = await file.arrayBuffer();
 
-                // Shift-JISでデコードを試みる
                 let text = "";
                 try {
                     text = new TextDecoder("shift_jis").decode(buffer);
@@ -693,7 +705,6 @@
                     console.warn("Shift-JIS decode fallback");
                 }
 
-                // 「約定日」が見つからないか文字化けしている場合はUTF-8で再デコード
                 if (!text || !text.includes("約定日")) {
                     text = new TextDecoder("utf-8").decode(buffer);
                 }
@@ -737,7 +748,6 @@
                     return;
                 }
 
-                // ヘッダー行を検出
                 let headerLineIdx = lines.findIndex(l => l.includes("約定日"));
                 if (headerLineIdx === -1) headerLineIdx = 0;
 
@@ -769,12 +779,10 @@
                     const rawQty = qtyIdx !== -1 ? (cols[qtyIdx] || "") : "";
                     const rawPrice = priceIdx !== -1 ? (cols[priceIdx] || "") : "";
 
-                    // 4桁コード
                     const codeMatch = rawCode.match(/\d{4}/);
                     if (!codeMatch) continue;
                     const code = codeMatch[0];
 
-                    // 日付変換 (2026/8/20 -> 2026-08-20)
                     const dateParts = rawDate.split(/[\/\-]/);
                     if (dateParts.length < 3) continue;
                     const formattedDate = `${dateParts[0]}-${dateParts[1].padStart(2, '0')}-${dateParts[2].padStart(2, '0')}`;
@@ -806,7 +814,7 @@
 
                 let addedCount = 0;
 
-                // ① 買いレコード（保有中ポジションへ）
+                // 買付レコード
                 buyRecords.forEach(b => {
                     const tradeId = `csv_${b.date}_${b.code}_${b.price}_${b.qty}`;
                     if (TRADES.some(t => t.id === tradeId)) return;
@@ -846,7 +854,7 @@
                     addedCount++;
                 });
 
-                // ② 過去の売却レコード
+                // 売却レコード
                 sellRecords.forEach(s => {
                     const tradeId = `csv_sell_${s.date}_${s.code}_${s.price}_${s.qty}`;
                     if (TRADES.some(t => t.id === tradeId)) return;
@@ -876,6 +884,61 @@
             } catch (err) {
                 alert("❌ 解析処理エラー: " + err.message);
             }
+        }
+
+        // 8. データ同期機能 (エクスポート & インポート)
+        function exportData() {
+            if (TRADES.length === 0) {
+                alert("保存する取引データがありません。");
+                return;
+            }
+            const dataStr = JSON.stringify(TRADES, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            const today = new Date().toISOString().substring(0, 10);
+            a.href = url;
+            a.download = `swing_journal_backup_${today}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (!Array.isArray(imported)) {
+                        alert("⚠️ 有効なバックアップファイルではありません。");
+                        return;
+                    }
+
+                    let addedCount = 0;
+                    let updatedCount = 0;
+
+                    imported.forEach(imp => {
+                        if (!imp.id) return;
+                        const existIdx = TRADES.findIndex(t => t.id === imp.id);
+                        if (existIdx !== -1) {
+                            // 既存取引は最新データ（編集メモ等）をマージ
+                            TRADES[existIdx] = Object.assign({}, TRADES[existIdx], imp);
+                            updatedCount++;
+                        } else {
+                            TRADES.push(imp);
+                            addedCount++;
+                        }
+                    });
+
+                    saveTradesToStorage();
+                    alert(`✅ データ同期完了！\n・新規追加: ${addedCount}件\n・更新: ${updatedCount}件`);
+                } catch (err) {
+                    alert("❌ データ読み込みエラー: " + err.message);
+                }
+            };
+            reader.readAsText(file, "utf-8");
         }
     </script>
 </body>
