@@ -7,6 +7,7 @@ import io
 import json
 import math
 import os
+import re
 import sqlite3
 import sys
 import time
@@ -32,17 +33,32 @@ def get_target_date_str():
     return now.strftime("%Y-%m-%d")
 
 
-# 1. JPX銘柄リスト取得（遮断対策 ＆ 失敗時は既存DBから完全復旧）
+# 1. JPX銘柄リスト取得（案内ページから最新Excelリンクを動的抽出して完全自動取得）
 def fetch_jpx_stock_list(keyword):
-    url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+    page_url = "https://www.jpx.co.jp/markets/statistics-equities/misc/01.html"
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
-    
+
+    excel_url = None
     try:
-        res = requests.get(url, headers=headers, timeout=30)
-        # HTML（エラーページ）ではなくバイナリか確認
+        res = requests.get(page_url, headers=headers, timeout=30)
+        if res.status_code == 200:
+            # ページ内から「data_j.xls」または「data_j.xlsx」の最新URLを抽出
+            match = re.search(r'href="([^"]+data_j\.xls[x]?)"', res.text)
+            if match:
+                rel_url = match.group(1)
+                excel_url = "https://www.jpx.co.jp" + rel_url if rel_url.startswith("/") else rel_url
+                print(f">> JPX公式ページから最新ExcelのURLを自動検出: {excel_url}")
+    except Exception as e:
+        print(f">> JPX案内ページ取得エラー: {e}")
+
+    # 抽出できなかった場合のフォールバックURL
+    if not excel_url:
+        excel_url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+
+    try:
+        res = requests.get(excel_url, headers=headers, timeout=30)
         if res.status_code == 200 and not res.content.startswith(b"<!DOCTYPE") and not res.content.startswith(b"<html"):
             try:
                 df = pd.read_excel(io.BytesIO(res.content), engine="xlrd")
@@ -53,13 +69,13 @@ def fetch_jpx_stock_list(keyword):
             df["コード"] = df["コード"].astype(str).str.strip().str.replace(r"\.0$", "", regex=True)
             records = df[df["市場・商品区分"].str.contains(keyword, na=False)].to_dict("records")
             if records:
-                print(f">> JPX公式Excelから取得成功: 【{keyword}】{len(records)} 銘柄")
+                print(f">> JPX公式最新Excelの取得に成功: 【{keyword}】{len(records)} 銘柄")
                 return records
     except Exception as e:
-        print(f">> JPX取得トライ失敗: {e}")
+        print(f">> 最新Excelダウンロード/解析エラー: {e}")
 
-    # 【最強のフォールバック】JPXが遮断・URL変更された場合は既存のSQLite DBから銘柄リストを復旧
-    print(f">> ⚠️ JPX接続不可のため、ローカルDBから【{keyword}】銘柄リストを復元します...")
+    # 万が一JPXサイト全体が落ちている場合の緊急避難用
+    print(f">> ⚠️ JPX障害のため、緊急用としてローカルDBから【{keyword}】銘柄リストを復元します...")
     if os.path.exists(DB_PATH):
         try:
             conn = sqlite3.connect(DB_PATH)
@@ -69,20 +85,7 @@ def fetch_jpx_stock_list(keyword):
             conn.close()
             if rows:
                 backup_records = [{"コード": r[0], "銘柄名": r[1], "市場・商品区分": r[2], "33業種区分": r[3]} for r in rows]
-                print(f">> ローカルDBから復元完了: 【{keyword}】{len(backup_records)} 銘柄")
-                return backup_records
-        except Exception as err:
-            print(f">> ローカルDB復元エラー: {err}")
-
-    # もしDBも無ければ最新JSONから復旧
-    latest_file = os.path.join(HISTORY_DIR, "latest.json")
-    if os.path.exists(latest_file):
-        try:
-            with open(latest_file, "r", encoding="utf-8") as f:
-                jdata = json.load(f)
-            backup_records = [{"コード": s["code"], "銘柄名": s["name"], "市場・商品区分": s["market"], "33業種区分": s.get("sector", "その他")} for s in jdata if keyword in s["market"]]
-            if backup_records:
-                print(f">> latest.jsonから復元完了: 【{keyword}】{len(backup_records)} 銘柄")
+                print(f">> 緊急用DB復元完了: 【{keyword}】{len(backup_records)} 銘柄")
                 return backup_records
         except Exception:
             pass
@@ -355,7 +358,7 @@ def save_history_json(all_stocks, target_date):
     print(f">> 日別JSON (docs/history/{target_date}.json) を保存しました。")
 
 
-# 8. Discord通知
+# 8. Discord通知 (本日GC最優先 ＆ 1日前GCの2段表示 / 変更なし時はスマート通知)
 def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook_url):
     if not webhook_url or not all_stocks:
         return
