@@ -32,29 +32,62 @@ def get_target_date_str():
     return now.strftime("%Y-%m-%d")
 
 
-# 1. JPX銘柄リスト取得（Excelエンジン明示＆自動フォールバック対応）
+# 1. JPX銘柄リスト取得（遮断対策 ＆ 失敗時は既存DBから完全復旧）
 def fetch_jpx_stock_list(keyword):
     url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+    }
+    
     try:
-        res = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=30)
-        if res.status_code != 200:
-            print(f">> JPX銘柄リスト取得失敗 (HTTPステータス: {res.status_code})")
-            return []
-        
-        # xlrd (.xls) と openpyxl (.xlsx) の両方に対応
-        try:
-            df = pd.read_excel(io.BytesIO(res.content), engine="xlrd")
-        except Exception:
-            df = pd.read_excel(io.BytesIO(res.content), engine="openpyxl")
+        res = requests.get(url, headers=headers, timeout=30)
+        # HTML（エラーページ）ではなくバイナリか確認
+        if res.status_code == 200 and not res.content.startswith(b"<!DOCTYPE") and not res.content.startswith(b"<html"):
+            try:
+                df = pd.read_excel(io.BytesIO(res.content), engine="xlrd")
+            except Exception:
+                df = pd.read_excel(io.BytesIO(res.content), engine="openpyxl")
 
-        df = df[["コード", "銘柄名", "市場・商品区分", "33業種区分"]]
-        df["コード"] = df["コード"].astype(str).str.strip().str.replace(r"\.0$", "", regex=True)
-        records = df[df["市場・商品区分"].str.contains(keyword, na=False)].to_dict("records")
-        print(f">> JPX銘柄リスト取得成功: 【{keyword}】{len(records)} 銘柄を検出")
-        return records
+            df = df[["コード", "銘柄名", "市場・商品区分", "33業種区分"]]
+            df["コード"] = df["コード"].astype(str).str.strip().str.replace(r"\.0$", "", regex=True)
+            records = df[df["市場・商品区分"].str.contains(keyword, na=False)].to_dict("records")
+            if records:
+                print(f">> JPX公式Excelから取得成功: 【{keyword}】{len(records)} 銘柄")
+                return records
     except Exception as e:
-        print(f">> JPX銘柄リスト取得エラー: {e}")
-        return []
+        print(f">> JPX取得トライ失敗: {e}")
+
+    # 【最強のフォールバック】JPXが遮断・URL変更された場合は既存のSQLite DBから銘柄リストを復旧
+    print(f">> ⚠️ JPX接続不可のため、ローカルDBから【{keyword}】銘柄リストを復元します...")
+    if os.path.exists(DB_PATH):
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            c = conn.cursor()
+            c.execute("SELECT DISTINCT code, name, market, sector FROM daily_stocks WHERE market LIKE ?", (f"%{keyword}%",))
+            rows = c.fetchall()
+            conn.close()
+            if rows:
+                backup_records = [{"コード": r[0], "銘柄名": r[1], "市場・商品区分": r[2], "33業種区分": r[3]} for r in rows]
+                print(f">> ローカルDBから復元完了: 【{keyword}】{len(backup_records)} 銘柄")
+                return backup_records
+        except Exception as err:
+            print(f">> ローカルDB復元エラー: {err}")
+
+    # もしDBも無ければ最新JSONから復旧
+    latest_file = os.path.join(HISTORY_DIR, "latest.json")
+    if os.path.exists(latest_file):
+        try:
+            with open(latest_file, "r", encoding="utf-8") as f:
+                jdata = json.load(f)
+            backup_records = [{"コード": s["code"], "銘柄名": s["name"], "市場・商品区分": s["market"], "33業種区分": s.get("sector", "その他")} for s in jdata if keyword in s["market"]]
+            if backup_records:
+                print(f">> latest.jsonから復元完了: 【{keyword}】{len(backup_records)} 銘柄")
+                return backup_records
+        except Exception:
+            pass
+
+    return []
 
 
 # 2. SQLiteからの財務データキャッシュ読み込み
@@ -79,13 +112,11 @@ def load_cached_fundamentals():
         return {}
 
 
-# 3. 日足OHLCVのバッチ一括ダウンロード（取りこぼしゼロ）
+# 3. 日足OHLCVのバッチ一括ダウンロード
 def fetch_ohlcv_batch(codes):
     print(f">> 全 {len(codes)} 銘柄の日足株価データをバッチ一括取得中...")
     stock_dfs = {}
     batch_size = 100
-    
-    # 直近3ヶ月分
     start_date = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
     
     for i in range(0, len(codes), batch_size):
@@ -109,7 +140,7 @@ def fetch_ohlcv_batch(codes):
     return stock_dfs
 
 
-# 4. 個別銘柄のファンダメンタルズ取得（軽量並列）
+# 4. 個別銘柄のファンダメンタルズ取得
 def fetch_single_fundamental(stock):
     code = stock["コード"]
     try:
@@ -122,25 +153,20 @@ def fetch_single_fundamental(stock):
         return code, None
 
 
-# 5. 市場全体のスキャン＆高精度テクニカル・ファンダメンタルズ統合
+# 5. 市場全体のスキャン
 def scan_market(keyword, label):
     stocks = fetch_jpx_stock_list(keyword)
     if not stocks:
-        print(f">> ⚠️ 【{label}】銘柄リストが0件のためスキャンを中断します。")
+        print(f">> ⚠️ 【{label}】銘柄リストが取得できませんでした。")
         return []
 
     print(f">> 【{label}】{len(stocks)} 件の本格スキャンを開始します...")
-    
     codes = [s["コード"] for s in stocks]
     stock_map = {s["コード"]: s for s in stocks}
     
-    # 1. 株価OHLCVを一括取得
     ohlcv_dict = fetch_ohlcv_batch(codes)
-    
-    # 2. 過去の財務キャッシュをロード
     cached_fund = load_cached_fundamentals()
     
-    # 3. 財務データを並列取得（取得成功分で更新）
     print(f">> 【{label}】最新ファンダメンタルズ情報を取得中...")
     latest_fund = {}
     with ThreadPoolExecutor(max_workers=10) as executor:
@@ -151,7 +177,6 @@ def scan_market(keyword, label):
                 latest_fund[code] = info
                 
     results = []
-    
     for code, df in ohlcv_dict.items():
         try:
             s_info = stock_map[code]
@@ -167,12 +192,10 @@ def scan_market(keyword, label):
             if current_price <= 0:
                 continue
                 
-            # --- テクニカル計算 ---
-            trading_values = (closes * volumes) / 1000.0  # 千円単位
+            trading_values = (closes * volumes) / 1000.0
             sma5_series = closes.rolling(window=5).mean()
             sma25_series = closes.rolling(window=25).mean()
             
-            # GC判定 (過去10営業日以内)
             gc_days = None
             for d in range(min(10, len(closes) - 2)):
                 idx_today = len(closes) - 1 - d
@@ -191,9 +214,7 @@ def scan_market(keyword, label):
             low_5d = int(round(lows.iloc[-5:].min()))
             high_20d = int(round(highs.iloc[-20:].max()))
             
-            # --- ファンダメンタルズ計算（キャッシュ＋最新のハイブリッド） ---
             info = latest_fund.get(code)
-            
             eps, bps, pe, pb, roe_pct, op_margin_pct, div_yield_pct = None, None, None, None, 0.0, 0.0, 0.0
             
             if info:
@@ -206,7 +227,6 @@ def scan_market(keyword, label):
                 div_yield = info.get("dividendYield")
                 div_rate = info.get("dividendRate")
                 
-                # 自動補完
                 if (not pe or pe <= 0) and (eps and eps > 0): pe = current_price / eps
                 if (not pb or pb <= 0) and (bps and bps > 0): pb = current_price / bps
                 if (not eps or eps <= 0) and (pe and pe > 0): eps = current_price / pe
@@ -219,7 +239,6 @@ def scan_market(keyword, label):
                 elif div_rate and current_price > 0:
                     div_yield_pct = min(20.0, (div_rate / current_price) * 100)
             
-            # キャッシュからの救出
             if not (eps and bps and eps > 0 and bps > 0) and (code in cached_fund):
                 c_item = cached_fund[code]
                 if c_item.get("per") and c_item.get("pbr"):
@@ -237,7 +256,6 @@ def scan_market(keyword, label):
             mix_index = round(pe * pb, 2)
             graham_price = int(round(math.sqrt(22.5 * eps * bps)))
             discount_rate = round(((graham_price - current_price) / graham_price) * 100, 1)
-            
             is_kabumini = label == "プライム" or (300 <= current_price <= 50000)
             
             results.append({
@@ -337,7 +355,7 @@ def save_history_json(all_stocks, target_date):
     print(f">> 日別JSON (docs/history/{target_date}.json) を保存しました。")
 
 
-# 8. Discord通知 (本日GC最優先 ＆ 1日前GCの2段表示 / 変更なし時はスマート通知)
+# 8. Discord通知
 def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook_url):
     if not webhook_url or not all_stocks:
         return
@@ -345,7 +363,7 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     df = pd.DataFrame(all_stocks)
 
-    # 変更がなかった場合（未反映や再実行）は「変更なし」の簡易通知で終了
+    # 変更がなかった場合は「変更なし」の簡易通知で終了
     if added_count == 0 and updated_count == 0:
         msg = f"☕ **【株価データ変更なし】** ({now_str})\n対象日: `{target_date}` ➔ 本日の更新はすでに完了済み、または市場データ更新待ちです。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
         try:
@@ -354,7 +372,6 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
             pass
         return
 
-    # 割安セクション
     valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)].sort_values(by="mix_index", ascending=True)
 
     def make_value_section(market_name):
@@ -375,7 +392,6 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
                 text += f"{r['code']:<6} {sname:<8} +{r['discount_rate']}% {r['mix_index']:<5.2f} {r['div_yield']}%\n"
         return text + "```"
 
-    # ★ バックテスト実証スイング（株価500~2000円 / 代金3千万↑ / 増加率1.2倍↑）
     swing_base = df[
         (df["price"] >= 500) & (df["price"] <= 2000) &
         (df["gc_days"].notna()) & 
@@ -384,7 +400,6 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
         (df["val_ratio_5d"] >= 1.2)
     ]
 
-    # ① 本日GC と ② 1日前GC に分離してそれぞれ出来高順ソート
     today_gc_df = swing_base[swing_base["gc_days"] == 0].sort_values(by="val_ratio_5d", ascending=False)
     yesterday_gc_df = swing_base[swing_base["gc_days"] == 1].sort_values(by="val_ratio_5d", ascending=False)
 
@@ -399,14 +414,12 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
     swing_section = "\n**🚀 【実証スイング注目】初動GC×出来高急増 (最高勝率ゾーン)**\n"
     swing_section += "└ 条件: 株価500~2000円 / 代金3千万↑ / 増加率1.2倍↑\n"
 
-    # 本日GC枠
     if not today_gc_df.empty:
         swing_section += f"▼ 🔥 **本日GC形成 (初動ど真ん中・{len(today_gc_df)}件)**\n"
         swing_section += format_swing_table(today_gc_df, max_rows=5)
     else:
         swing_section += "▼ 🔥 **本日GC形成**: 該当なし (0件)\n"
 
-    # 1日前GC枠
     if not yesterday_gc_df.empty:
         swing_section += f"▼ ⚡ **1日前GC (モメンタム継続・{len(yesterday_gc_df)}件)**\n"
         swing_section += format_swing_table(yesterday_gc_df, max_rows=5)
