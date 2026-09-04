@@ -29,8 +29,8 @@
         .company-name:hover { color: #0d6efd; }
         .stock-sub-info { font-size: 0.7rem; color: #6c757d; }
 
-        .rakuten-link { color: #bf0000; font-weight: 700; text-decoration: none; font-size: 0.75rem; }
-        .rakuten-link:hover { text-decoration: underline; color: #900000; }
+        .rakuten-link { color: #bf0000; font-weight: 700; text-decoration: underline; font-size: 0.8rem; cursor: pointer; }
+        .rakuten-link:hover { color: #900000; }
         
         .badge-gc { font-size: 0.68rem; background-color: #ffeeba; color: #856404; border-radius: 4px; padding: 1px 3px; font-weight: bold; }
         .badge-valratio { font-size: 0.82rem; font-weight: 800; padding: 3px 6px; border-radius: 6px; background-color: #e7f5ff; color: #1971c2; }
@@ -71,7 +71,6 @@
         <div class="card p-3 bg-white">
             <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
-                <!-- ★ 500〜2000円に変更 -->
                 <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 実証スイング (500~2000円×初動GC×急増)</button>
                 <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
                 <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
@@ -111,7 +110,6 @@
 
                 <div class="col-6 col-md-3">
                     <div class="filter-label text-primary fw-bold">株価帯クイック選択</div>
-                    <!-- ★ 500〜2000円を初期選択(selected)に変更 -->
                     <select id="filter-price-preset" class="form-select form-select-sm fw-bold border-primary text-primary" onchange="applyFilters()">
                         <option value="ALL">指定なし (全価格帯)</option>
                         <option value="500-1000">¥500 〜 ¥1,000 (低位株・PF1.17)</option>
@@ -190,7 +188,7 @@
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-dark">該当件数: <span id="filtered-count" class="text-primary fs-5">0</span> 件</span>
-                <span class="text-muted small">💡 社名をタップで最適化スイング戦略を表示</span>
+                <span class="text-muted small">💡 コードでiSPEED直行 / 社名でスイング戦略</span>
             </div>
             <div class="table-container">
                 <table class="table table-hover table-striped table-sm mb-0">
@@ -228,9 +226,10 @@
                         <button id="modalGeminiBtn" class="btn btn-outline-primary btn-sm fw-bold" onclick="consultGemini()">
                             <i class="bi bi-robot me-1"></i> Geminiで分析
                         </button>
-                        <a id="modalRakutenBtn" href="#" target="_blank" class="btn btn-danger btn-sm fw-bold">
-                            <i class="bi bi-box-arrow-up-right me-1"></i> 楽天証券
-                        </a>
+                        <!-- ★ iSPEED/楽天証券直接起動ボタン -->
+                        <button id="modalRakutenBtn" class="btn btn-danger btn-sm fw-bold" onclick="openRakutenFromModal()">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> 楽天証券 / iSPEED
+                        </button>
                     </div>
                 </div>
             </div>
@@ -247,6 +246,40 @@
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
             await initDates();
         });
+
+        // 楽天証券 / iSPEED 直接起動ロジック
+        function openRakuten(code) {
+            if (!code) return;
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const webUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${code}.T`;
+
+            if (isMobile) {
+                // スマホ：iSPEEDアプリの個別チャート・サマリー画面を直接起動
+                const appUrl = `ispeed://stock/detail?code=${code}.T`;
+                const a = document.createElement("a");
+                a.href = appUrl;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                // アプリ未インストールの場合はWebにフォールバック
+                const start = Date.now();
+                setTimeout(() => {
+                    if (Date.now() - start < 1800) {
+                        window.open(webUrl, "_blank");
+                    }
+                }, 1200);
+            } else {
+                // PC：楽天証券のWeb画面を別タブで開く
+                window.open(webUrl, "_blank");
+            }
+        }
+
+        function openRakutenFromModal() {
+            if (currentStockForAI && currentStockForAI.code) {
+                openRakuten(currentStockForAI.code);
+            }
+        }
 
         async function initDates() {
             try {
@@ -360,7 +393,6 @@
             data.forEach((s, idx) => {
                 const isMini = checkMini(s);
                 const miniText = isMini ? `<span class="text-danger fw-bold ms-1" title="1株取引対応">◯</span>` : "";
-                const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
                 const isPrime = s.market === 'プライム';
                 const marketText = isPrime ? 'PRM' : 'STD';
                 
@@ -378,8 +410,9 @@
                     <td><strong>${idx + 1}</strong></td>
                     <td class="stock-main-cell">
                         <div class="d-flex align-items-center">
-                            <a href="${rakutenUrl}" target="_blank" class="rakuten-link me-1" title="楽天証券">${s.code}</a>
-                            <span class="company-name" onclick="showStockDetail('${s.code}')" title="${s.name}（タップで詳細）">${s.name}</span>
+                            <!-- ★ コードタップでiSPEED直接起動 -->
+                            <span onclick="openRakuten('${s.code}')" class="rakuten-link me-1" title="タップでiSPEEDを開く">${s.code}</span>
+                            <span class="company-name" onclick="showStockDetail('${s.code}')" title="${s.name}（タップで戦略詳細）">${s.name}</span>
                             ${gcBadge}
                         </div>
                         <div class="stock-sub-info">
@@ -420,7 +453,6 @@
                     currentBtn.classList.add("active", "btn-danger");
                     currentBtn.classList.remove("btn-outline-danger");
                     
-                    // ★ 500〜2000円に設定
                     document.getElementById("filter-price-preset").value = "500-2000";
                     document.getElementById("filter-gc").value = "1";
                     document.getElementById("filter-avgval").value = 30000;
@@ -523,7 +555,6 @@
             if (!s) return;
             currentStockForAI = s;
             const isMini = checkMini(s);
-            const rakutenUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${s.code}.T`;
 
             let gcStr = "なし (未発生)";
             if (s.gc_days !== null && typeof s.gc_days !== 'undefined') {
@@ -615,7 +646,6 @@
                 </div>
             `;
             document.getElementById("modalMiniInfo").innerHTML = isMini ? `<i class="bi bi-check-circle-fill me-1 text-danger"></i> かぶミニ®(単元未満株 1株) 対応銘柄` : `<i class="bi bi-info-circle me-1"></i> 単元株(100株) 取引`;
-            document.getElementById("modalRakutenBtn").href = rakutenUrl;
             modalInstance.show();
         }
 
