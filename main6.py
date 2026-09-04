@@ -32,15 +32,26 @@ def get_target_date_str():
     return now.strftime("%Y-%m-%d")
 
 
-# 1. JPX銘柄リスト取得
+# 1. JPX銘柄リスト取得（Excelエンジン明示＆自動フォールバック対応）
 def fetch_jpx_stock_list(keyword):
     url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
     try:
-        res = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=30)
-        df = pd.read_excel(io.BytesIO(res.content))
+        res = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=30)
+        if res.status_code != 200:
+            print(f">> JPX銘柄リスト取得失敗 (HTTPステータス: {res.status_code})")
+            return []
+        
+        # xlrd (.xls) と openpyxl (.xlsx) の両方に対応
+        try:
+            df = pd.read_excel(io.BytesIO(res.content), engine="xlrd")
+        except Exception:
+            df = pd.read_excel(io.BytesIO(res.content), engine="openpyxl")
+
         df = df[["コード", "銘柄名", "市場・商品区分", "33業種区分"]]
         df["コード"] = df["コード"].astype(str).str.strip().str.replace(r"\.0$", "", regex=True)
-        return df[df["市場・商品区分"].str.contains(keyword, na=False)].to_dict("records")
+        records = df[df["市場・商品区分"].str.contains(keyword, na=False)].to_dict("records")
+        print(f">> JPX銘柄リスト取得成功: 【{keyword}】{len(records)} 銘柄を検出")
+        return records
     except Exception as e:
         print(f">> JPX銘柄リスト取得エラー: {e}")
         return []
@@ -114,6 +125,10 @@ def fetch_single_fundamental(stock):
 # 5. 市場全体のスキャン＆高精度テクニカル・ファンダメンタルズ統合
 def scan_market(keyword, label):
     stocks = fetch_jpx_stock_list(keyword)
+    if not stocks:
+        print(f">> ⚠️ 【{label}】銘柄リストが0件のためスキャンを中断します。")
+        return []
+
     print(f">> 【{label}】{len(stocks)} 件の本格スキャンを開始します...")
     
     codes = [s["コード"] for s in stocks]
@@ -330,7 +345,7 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     df = pd.DataFrame(all_stocks)
 
-    # ★ 変更がなかった場合（未反映や再実行）は「変更なし」の簡易通知で終了
+    # 変更がなかった場合（未反映や再実行）は「変更なし」の簡易通知で終了
     if added_count == 0 and updated_count == 0:
         msg = f"☕ **【株価データ変更なし】** ({now_str})\n対象日: `{target_date}` ➔ 本日の更新はすでに完了済み、または市場データ更新待ちです。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
         try:
@@ -439,13 +454,13 @@ if __name__ == "__main__":
         for root, dirs, files in os.walk("."):
             for file in files:
                 filepath = os.path.join(root, file)
-                if "prime" in file.lower() and file.endswith(".json"):
+                if "prime" in file.lower() and file.endswith(".json") and "history" not in filepath:
                     try:
                         with open(filepath, "r", encoding="utf-8") as f:
                             prime_data = json.load(f)
                     except Exception:
                         pass
-                elif "standard" in file.lower() and file.endswith(".json"):
+                elif "standard" in file.lower() and file.endswith(".json") and "history" not in filepath:
                     try:
                         with open(filepath, "r", encoding="utf-8") as f:
                             standard_data = json.load(f)
@@ -453,6 +468,8 @@ if __name__ == "__main__":
                         pass
 
         new_batch = prime_data + standard_data
+        print(f">> 合体対象データ読み込み完了: プライム {len(prime_data)} 件 / スタンダード {len(standard_data)} 件 / 合計 {len(new_batch)} 件")
+
         target_date = get_target_date_str()
         target_file = os.path.join(HISTORY_DIR, f"{target_date}.json")
         latest_file = os.path.join(HISTORY_DIR, "latest.json")
