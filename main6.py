@@ -322,13 +322,22 @@ def save_history_json(all_stocks, target_date):
     print(f">> 日別JSON (docs/history/{target_date}.json) を保存しました。")
 
 
-# 8. Discord通知 (本日GC最優先 ＆ 1日前GCの2段表示)
+# 8. Discord通知 (本日GC最優先 ＆ 1日前GCの2段表示 / 変更なし時はスマート通知)
 def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook_url):
     if not webhook_url or not all_stocks:
         return
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     df = pd.DataFrame(all_stocks)
+
+    # ★ 変更がなかった場合（未反映や再実行）は「変更なし」の簡易通知で終了
+    if added_count == 0 and updated_count == 0:
+        msg = f"☕ **【株価データ変更なし】** ({now_str})\n対象日: `{target_date}` ➔ 本日の更新はすでに完了済み、または市場データ更新待ちです。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
+        try:
+            requests.post(webhook_url, json={"content": msg}, timeout=10)
+        except Exception:
+            pass
+        return
 
     # 割安セクション
     valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)].sort_values(by="mix_index", ascending=True)
