@@ -21,7 +21,6 @@
         .table-journal th { background-color: #1e293b !important; color: #f8fafc !important; font-size: 0.76rem; text-align: center; padding: 8px 6px !important; white-space: nowrap; }
         .table-journal td { vertical-align: middle; text-align: center; font-size: 0.8rem; padding: 7px 6px !important; white-space: nowrap; }
         
-        /* 楽天iSPEED連携リンクのスタイル */
         .stock-link { color: #0d6efd; font-weight: bold; text-decoration: underline; cursor: pointer; }
         .stock-link:hover { color: #0a58ca; }
     </style>
@@ -33,7 +32,7 @@
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <div>
                     <h1 class="h6 mb-0 text-primary fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> スイング・トレードジャーナル</h1>
-                    <small class="text-muted" style="font-size:0.75rem;">実戦記録 ＆ 4大切り口パフォーマンス自動分析</small>
+                    <small class="text-muted" style="font-size:0.75rem;">14日最適ルール連動 ＆ 4大切り口パフォーマンス自動分析</small>
                 </div>
                 <div class="d-flex flex-wrap gap-1">
                     <a href="index.html" class="btn btn-outline-secondary btn-sm py-1 px-2 fw-bold" style="font-size:0.75rem;"><i class="bi bi-sliders me-1"></i>スクリーナー</a>
@@ -91,7 +90,7 @@
                                     <th>株価 (現/買)</th>
                                     <th>含み損益</th>
                                     <th>目標 (🎯利確 / 🛑逆指値)</th>
-                                    <th>20日期限</th>
+                                    <th>14日期限</th>
                                     <th>直近の勢い</th>
                                     <th>操作</th>
                                 </tr>
@@ -169,13 +168,13 @@
                     </div>
                     <div class="col-md-6">
                         <div class="card p-2 bg-white h-100">
-                            <h6 class="fw-bold text-dark border-bottom pb-1" style="font-size:0.8rem;"><i class="bi bi-fire text-danger me-1"></i> ② 【資金流入に乗れたか？】出来高増加率別 成績</h6>
+                            <h6 class="fw-bold text-dark border-bottom pb-1" style="font-size:0.8rem;"><i class="bi bi-fire text-danger me-1"></i> ② 【大口急増に乗れたか？】出来高増加率別 成績</h6>
                             <div id="analysis-vol" class="py-1"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="card p-2 bg-white h-100">
-                            <h6 class="fw-bold text-dark border-bottom pb-1" style="font-size:0.8rem;"><i class="bi bi-tag text-primary me-1"></i> ③ 【どの価格帯で勝てたか？】株価帯別 成績</h6>
+                            <h6 class="fw-bold text-dark border-bottom pb-1" style="font-size:0.8rem;"><i class="bi bi-tag text-primary me-1"></i> ③ 【どの価格帯で勝てたか？】実証4大株価帯別 成績</h6>
                             <div id="analysis-price" class="py-1"></div>
                         </div>
                     </div>
@@ -230,14 +229,14 @@
                         <div class="row g-2 mb-2 p-2 bg-light rounded border">
                             <div class="col-6">
                                 <label class="form-label small fw-bold text-danger"><i class="bi bi-bullseye me-1"></i>利確目標 (円)</label>
-                                <input type="number" id="form-target-tp" class="form-control form-control-sm" placeholder="自動: +15%">
+                                <input type="number" id="form-target-tp" class="form-control form-control-sm" placeholder="自動: +12%">
                             </div>
                             <div class="col-6">
                                 <label class="form-label small fw-bold text-primary"><i class="bi bi-shield-shaded me-1"></i>逆指値/トレール (円)</label>
-                                <input type="number" id="form-target-sl" class="form-control form-control-sm" placeholder="自動: -7%">
+                                <input type="number" id="form-target-sl" class="form-control form-control-sm" placeholder="自動: -5% / -2%">
                             </div>
                             <div class="col-12 mt-1">
-                                <small class="text-muted" style="font-size:0.72rem;">※ トレール時は逆指値の株価を引き上げて保存してください</small>
+                                <small class="text-muted" style="font-size:0.72rem;">※ 買値に応じ最適値（3,000円以下: +12%/-5%, 3,000円超: +12%/-2%）が自動設定されます</small>
                             </div>
                         </div>
 
@@ -254,9 +253,9 @@
                                 <label class="form-label small fw-bold">決済理由</label>
                                 <select id="form-exit-reason" class="form-select form-select-sm">
                                     <option value="OPEN">保有中 (未決済)</option>
-                                    <option value="TP_15">🎯 ルール利確 (+15%)</option>
-                                    <option value="SL_7">🛑 ルール損切 (-7%)</option>
-                                    <option value="TIME_20">⏳ 20日時間切れ手仕舞い</option>
+                                    <option value="TP_RULE">🎯 ルール利確 (+12%)</option>
+                                    <option value="SL_RULE">🛑 ルール損切 (-5% / -2%)</option>
+                                    <option value="TIME_14">⏳ 14日時間切れ手仕舞い</option>
                                     <option value="MANUAL_PROFIT">⚠️ 裁量・手動利食い/トレール</option>
                                     <option value="MANUAL_LOSS">⚠️ 裁量・手動損切り</option>
                                 </select>
@@ -264,7 +263,7 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label small fw-bold">エントリー時状況</label>
-                            <input type="text" id="form-entry-state" class="form-control form-control-sm" placeholder="例: 当日GC / 出来高3.9倍">
+                            <input type="text" id="form-entry-state" class="form-control form-control-sm" placeholder="例: 当日GC / 出来高4.2倍">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small fw-bold">トレードメモ</label>
@@ -282,7 +281,7 @@
 
     <!-- ゴミ箱モーダル -->
     <div class="modal fade" id="trashModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-secondary text-white py-2">
                     <h6 class="modal-title"><i class="bi bi-trash3 me-1"></i> ゴミ箱</h6>
@@ -324,14 +323,12 @@
             });
         });
 
-        // 楽天証券 Web / iSPEED 直接起動ロジック
         function openRakuten(code) {
             if (!code) return;
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             const webUrl = `https://www.rakuten-sec.co.jp/web/market/search/quote.html?ric=${code}.T`;
 
             if (isMobile) {
-                // スマホ：iSPEEDアプリの個別チャート・サマリー画面を直接起動
                 const appUrl = `ispeed://stock/detail?code=${code}.T`;
                 const a = document.createElement("a");
                 a.href = appUrl;
@@ -339,7 +336,6 @@
                 a.click();
                 document.body.removeChild(a);
 
-                // アプリ未インストールの場合はWebに遷移
                 const start = Date.now();
                 setTimeout(() => {
                     if (Date.now() - start < 1800) {
@@ -347,12 +343,10 @@
                     }
                 }, 1200);
             } else {
-                // PC：楽天証券のWeb画面を別タブで開く
                 window.open(webUrl, "_blank");
             }
         }
 
-        // 1. 最新株価データのロード
         async function loadLatestPrices() {
             try {
                 const res = await fetch('history/latest.json');
@@ -363,7 +357,6 @@
             }
         }
 
-        // 2. ストレージ読み書き
         function loadTradesFromStorage() {
             const data = localStorage.getItem(STORAGE_KEY);
             TRADES = data ? JSON.parse(data) : [];
@@ -374,7 +367,6 @@
             renderAll();
         }
 
-        // 3. 画面描画
         function renderAll() {
             const activeTrades = TRADES.filter(t => !t.is_deleted);
             const trashTrades = TRADES.filter(t => t.is_deleted);
@@ -390,7 +382,7 @@
             renderClosedTrades(closedTrades);
         }
 
-        // 保有中ポジションの描画（銘柄タップでiSPEED起動対応）
+        // 14営業日ルール対応の保有中ポジション描画
         function renderOpenPositions(list) {
             const tbody = document.getElementById("open-positions-tbody");
             tbody.innerHTML = "";
@@ -414,32 +406,33 @@
                 const plClass = plAmount >= 0 ? "text-danger fw-bold" : "text-primary fw-bold";
                 const plSign = plAmount >= 0 ? "+" : "";
 
-                // 目標価格
-                const defaultTp = Math.round(t.buy_price * 1.15);
-                const defaultSl = Math.round(t.buy_price * 0.93);
+                // 最新最適化デフォルト目標
+                let defTpPct = 0.12;
+                let defSlPct = t.buy_price > 3000 ? 0.02 : 0.05;
+
+                const defaultTp = Math.round(t.buy_price * (1 + defTpPct));
+                const defaultSl = Math.round(t.buy_price * (1 - defSlPct));
                 const tpPrice = Math.round(t.target_tp || defaultTp);
                 const slPrice = Math.round(t.target_sl || defaultSl);
 
-                // 残り値幅
                 const tpDiff = Math.max(0, tpPrice - Math.round(currentPrice));
                 const slDiff = Math.max(0, Math.round(currentPrice) - slPrice);
 
-                // トレール判定
                 const isTrailed = slPrice >= t.buy_price;
                 const slBadge = isTrailed ? `<span class="badge bg-danger py-0" style="font-size:0.65rem;">🛡️確約</span>` : '';
 
-                // 20日期限バッジ
-                let alertBadge = `<span class="badge badge-alert-normal py-1">⏳ ${holdBusinessDays} / 20日</span>`;
-                if (holdBusinessDays >= 20) alertBadge = `<span class="badge badge-alert-danger py-1">🚨 ${holdBusinessDays}日目 (手仕舞い)</span>`;
-                else if (holdBusinessDays >= 17) alertBadge = `<span class="badge badge-alert-warning py-1">⚠️ ${holdBusinessDays}日目 (期限間近)</span>`;
+                // ★ 14日期限バッジ（14日以上で手仕舞い勧告）
+                let alertBadge = `<span class="badge badge-alert-normal py-1">⏳ ${holdBusinessDays} / 14日</span>`;
+                if (holdBusinessDays >= 14) alertBadge = `<span class="badge badge-alert-danger py-1">🚨 ${holdBusinessDays}日目 (時間切れ手仕舞い)</span>`;
+                else if (holdBusinessDays >= 11) alertBadge = `<span class="badge badge-alert-warning py-1">⚠️ ${holdBusinessDays}日目 (期限間近)</span>`;
 
-                // 直近の勢いバッジ
+                // 直近の勢い（4.0倍以上で特大急増）
                 let volBadge = `<span class="badge bg-light text-dark border">-</span>`;
                 if (stock.val_ratio_5d !== undefined && stock.val_ratio_5d !== null) {
                     const vr = parseFloat(stock.val_ratio_5d);
-                    if (vr >= 2.0) volBadge = `<span class="badge bg-danger py-1">🔥 ${vr.toFixed(2)}倍</span>`;
-                    else if (vr >= 1.3) volBadge = `<span class="badge bg-warning text-dark py-1">⚡ ${vr.toFixed(2)}倍</span>`;
-                    else if (vr >= 0.8) volBadge = `<span class="badge bg-light text-dark border py-1">⚖️ ${vr.toFixed(2)}倍</span>`;
+                    if (vr >= 4.0) volBadge = `<span class="badge bg-danger py-1">🔥 ${vr.toFixed(2)}倍</span>`;
+                    else if (vr >= 2.0) volBadge = `<span class="badge bg-warning text-dark py-1">⚡ ${vr.toFixed(2)}倍</span>`;
+                    else if (vr >= 1.0) volBadge = `<span class="badge bg-light text-dark border py-1">⚖️ ${vr.toFixed(2)}倍</span>`;
                     else volBadge = `<span class="badge bg-secondary-subtle text-muted border py-1">❄️ ${vr.toFixed(2)}倍</span>`;
                 }
 
@@ -452,7 +445,6 @@
 
                 tbody.innerHTML += `<tr>
                     <td class="text-start">
-                        <!-- ★ 銘柄タップでiSPEED/楽天証券起動 -->
                         <div class="fw-bold" onclick="openRakuten('${t.code}')" style="cursor:pointer;" title="タップでiSPEEDを開く">
                             <span class="stock-link">${t.code}</span> <span class="text-dark">${t.name || ''}</span>
                             <i class="bi bi-box-arrow-up-right text-muted" style="font-size:0.65rem;"></i>
@@ -506,9 +498,12 @@
                 const plSign = plAmount >= 0 ? "+" : "";
 
                 const reasonLabelMap = {
-                    "TP_15": "<span class='badge bg-danger p-1 py-0'>🎯利確(+15%)</span>",
-                    "SL_7": "<span class='badge bg-primary p-1 py-0'>🛑損切(-7%)</span>",
-                    "TIME_20": "<span class='badge bg-secondary p-1 py-0'>⏳20日期限</span>",
+                    "TP_RULE": "<span class='badge bg-danger p-1 py-0'>🎯利確(+12%)</span>",
+                    "TP_15": "<span class='badge bg-danger p-1 py-0'>🎯利確</span>",
+                    "SL_RULE": "<span class='badge bg-primary p-1 py-0'>🛑ルール損切</span>",
+                    "SL_7": "<span class='badge bg-primary p-1 py-0'>🛑損切</span>",
+                    "TIME_14": "<span class='badge bg-secondary p-1 py-0'>⏳14日期限</span>",
+                    "TIME_20": "<span class='badge bg-secondary p-1 py-0'>⏳期限手仕舞い</span>",
                     "MANUAL_PROFIT": "<span class='badge bg-warning text-dark p-1 py-0'>⚠️手動利食い</span>",
                     "MANUAL_LOSS": "<span class='badge bg-dark p-1 py-0'>⚠️手動損切</span>"
                 };
@@ -532,7 +527,7 @@
             });
         }
 
-        // 4. 分析ダッシュボード
+        // 4. 分析ダッシュボード（最新4大切り口）
         function renderAnalytics() {
             const closed = TRADES.filter(t => !t.is_deleted && t.sell_date);
             if (closed.length === 0) return;
@@ -593,31 +588,38 @@
         }
 
         function renderBreakdowns(closed) {
-            const gcGroups = { "初動 (0~1日GC)": [], "出遅れ (2日以上)": [], "GCなし/その他": [] };
-            const volGroups = { "急増 (1.5倍以上)": [], "通常 (<1.5倍)": [] };
-            const priceGroups = { "500~1,000円 (低位)": [], "1,000~3,000円 (中位)": [], "その他": [] };
-            const reasonGroups = { "🎯 ルール利確": [], "🛑 ルール損切": [], "⏳ 20日期限": [], "⚠️ 裁量/トレール": [] };
+            // バックテストの最適切り口に同期
+            const gcGroups = { "初動 (0~1日GC)": [], "追随 (2~3日GC)": [], "出遅れ (4日以上/なし)": [] };
+            const volGroups = { "🔥 特大急増 (4.0倍以上)": [], "⚡ 急増 (2.0~4.0倍)": [], "通常 (<2.0倍)": [] };
+            const priceGroups = { "①低位 (~1,000円)": [], "🏆②中低位 (1,000~3,000円)": [], "③中高位 (3,000~6,000円)": [], "⚠️④値がさ (6,000円~)": [] };
+            const reasonGroups = { "🎯 ルール利確": [], "🛑 ルール損切": [], "⏳ 14日期限": [], "⚠️ 裁量/トレール": [] };
 
             closed.forEach(t => {
                 const pl = (t.sell_price - t.buy_price) * t.qty;
                 const state = t.entry_state || "";
 
+                // ① GC日数別
                 if (state.includes("当日") || state.includes("1日前")) gcGroups["初動 (0~1日GC)"].push(pl);
-                else if (state.includes("日前")) gcGroups["出遅れ (2日以上)"].push(pl);
-                else gcGroups["GCなし/その他"].push(pl);
+                else if (state.includes("2日前") || state.includes("3日前")) gcGroups["追随 (2~3日GC)"].push(pl);
+                else gcGroups["出遅れ (4日以上/なし)"].push(pl);
 
+                // ② 出来高増加率別 (4.0倍/2.0倍基準)
                 const volMatch = state.match(/([0-9.]+)倍/);
                 const vRatio = volMatch ? parseFloat(volMatch[1]) : 1.0;
-                if (vRatio >= 1.5) volGroups["急増 (1.5倍以上)"].push(pl);
-                else volGroups["通常 (<1.5倍)"].push(pl);
+                if (vRatio >= 4.0) volGroups["🔥 特大急増 (4.0倍以上)"].push(pl);
+                else if (vRatio >= 2.0) volGroups["⚡ 急増 (2.0~4.0倍)"].push(pl);
+                else volGroups["通常 (<2.0倍)"].push(pl);
 
-                if (t.buy_price >= 500 && t.buy_price <= 1000) priceGroups["500~1,000円 (低位)"].push(pl);
-                else if (t.buy_price > 1000 && t.buy_price <= 3000) priceGroups["1,000~3,000円 (中位)"].push(pl);
-                else priceGroups["その他"].push(pl);
+                // ③ 株価帯別
+                if (t.buy_price <= 1000) priceGroups["①低位 (~1,000円)"].push(pl);
+                else if (t.buy_price <= 3000) priceGroups["🏆②中低位 (1,000~3,000円)"].push(pl);
+                else if (t.buy_price <= 6000) priceGroups["③中高位 (3,000~6,000円)"].push(pl);
+                else priceGroups["⚠️④値がさ (6,000円~)"].push(pl);
 
-                if (t.exit_reason === "TP_15") reasonGroups["🎯 ルール利確"].push(pl);
-                else if (t.exit_reason === "SL_7") reasonGroups["🛑 ルール損切"].push(pl);
-                else if (t.exit_reason === "TIME_20") reasonGroups["⏳ 20日期限"].push(pl);
+                // ④ 決済理由別
+                if (t.exit_reason === "TP_RULE" || t.exit_reason === "TP_15") reasonGroups["🎯 ルール利確"].push(pl);
+                else if (t.exit_reason === "SL_RULE" || t.exit_reason === "SL_7") reasonGroups["🛑 ルール損切"].push(pl);
+                else if (t.exit_reason === "TIME_14" || t.exit_reason === "TIME_20") reasonGroups["⏳ 14日期限"].push(pl);
                 else reasonGroups["⚠️ 裁量/トレール"].push(pl);
             });
 
@@ -660,8 +662,11 @@
             document.getElementById("form-buy-price").value = t.buy_price;
             document.getElementById("form-qty").value = t.qty;
 
-            document.getElementById("form-target-tp").value = t.target_tp ? Math.round(t.target_tp) : Math.round(t.buy_price * 1.15);
-            document.getElementById("form-target-sl").value = t.target_sl ? Math.round(t.target_sl) : Math.round(t.buy_price * 0.93);
+            const defTp = Math.round(t.buy_price * 1.12);
+            const defSl = Math.round(t.buy_price * (t.buy_price > 3000 ? 0.98 : 0.95));
+
+            document.getElementById("form-target-tp").value = t.target_tp ? Math.round(t.target_tp) : defTp;
+            document.getElementById("form-target-sl").value = t.target_sl ? Math.round(t.target_sl) : defSl;
 
             document.getElementById("form-sell-date").value = t.sell_date || "";
             document.getElementById("form-sell-price").value = t.sell_price || "";
@@ -675,11 +680,12 @@
         function calcDefaultTargets() {
             const price = parseFloat(document.getElementById("form-buy-price").value);
             if (!isNaN(price) && price > 0) {
+                const slPct = price > 3000 ? 0.02 : 0.05;
                 if (!document.getElementById("form-target-tp").value) {
-                    document.getElementById("form-target-tp").placeholder = `自動: ¥${Math.round(price * 1.15)}`;
+                    document.getElementById("form-target-tp").placeholder = `自動: ¥${Math.round(price * 1.12)}`;
                 }
                 if (!document.getElementById("form-target-sl").value) {
-                    document.getElementById("form-target-sl").placeholder = `自動: ¥${Math.round(price * 0.93)}`;
+                    document.getElementById("form-target-sl").placeholder = `自動: ¥${Math.round(price * (1 - slPct))}`;
                 }
             }
         }
@@ -786,7 +792,7 @@
             });
         }
 
-        // 7. 楽天証券CSVインポート & FIFO自動相殺マッチング
+        // 7. 楽天証券CSVインポート & FIFO自動マッチング
         function setupDragAndDrop() {
             const dz = document.getElementById("csv-dropzone");
             dz.addEventListener("dragover", e => { e.preventDefault(); dz.style.background = "#d0e2ff"; });
@@ -808,7 +814,6 @@
                 }
 
                 const buffer = await file.arrayBuffer();
-
                 let text = "";
                 try {
                     text = new TextDecoder("shift_jis").decode(buffer);
@@ -942,7 +947,10 @@
                             sell.remainingQty -= matchQty;
 
                             const ret = (sell.price - buy.price) / buy.price;
-                            let exitReason = ret >= 0.14 ? "TP_15" : (ret <= -0.06 ? "SL_7" : (ret >= 0 ? "MANUAL_PROFIT" : "MANUAL_LOSS"));
+                            const isHighPrice = buy.price > 3000;
+                            const slThreshold = isHighPrice ? -0.019 : -0.048;
+                            
+                            let exitReason = ret >= 0.11 ? "TP_RULE" : (ret <= slThreshold ? "SL_RULE" : (ret >= 0 ? "MANUAL_PROFIT" : "MANUAL_LOSS"));
 
                             const stock = LATEST_STOCKS_MAP[code] || {};
                             const entryState = (stock.gc_days !== null && stock.gc_days !== undefined) ? `${stock.gc_days === 0 ? '当日GC' : stock.gc_days + '日前GC'} / 出来高${stock.val_ratio_5d||1.0}倍` : "-";
@@ -968,6 +976,7 @@
                         if (buy.remainingQty > 0) {
                             const stock = LATEST_STOCKS_MAP[code] || {};
                             const entryState = (stock.gc_days !== null && stock.gc_days !== undefined) ? `${stock.gc_days === 0 ? '当日GC' : stock.gc_days + '日前GC'} / 出来高${stock.val_ratio_5d||1.0}倍` : "-";
+                            const slPct = buy.price > 3000 ? 0.02 : 0.05;
 
                             newTrades.push({
                                 id: `csv_open_${buy.date}_${code}_${buy.remainingQty}_${buy.price}`,
@@ -976,8 +985,8 @@
                                 buy_date: buy.date,
                                 buy_price: buy.price,
                                 qty: buy.remainingQty,
-                                target_tp: Math.round(buy.price * 1.15),
-                                target_sl: Math.round(buy.price * 0.93),
+                                target_tp: Math.round(buy.price * 1.12),
+                                target_sl: Math.round(buy.price * (1 - slPct)),
                                 sell_date: "",
                                 sell_price: null,
                                 exit_reason: "OPEN",
@@ -1025,7 +1034,6 @@
             }
         }
 
-        // 8. データ同期機能
         function exportData() {
             if (TRADES.length === 0) {
                 alert("保存する取引データがありません。");
@@ -1036,8 +1044,8 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             const today = new Date().toISOString().substring(0, 10);
-            a.href = url;
             a.download = `swing_journal_backup_${today}.json`;
+            a.href = url;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
