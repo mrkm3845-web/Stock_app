@@ -23,12 +23,14 @@
         
         .stock-link { color: #0d6efd; font-weight: bold; text-decoration: underline; cursor: pointer; }
         .stock-link:hover { color: #0a58ca; }
+
+        .btn-period { font-size: 0.75rem; padding: 3px 10px; border-radius: 15px; }
     </style>
 </head>
 <body>
     <div class="container-fluid py-2 px-md-4 max-w-7xl">
         <!-- ヘッダー -->
-        <div class="card p-3 bg-white">
+        <div class="card p-3 bg-white mb-2">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <div>
                     <h1 class="h6 mb-0 text-primary fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> スイング・トレードジャーナル</h1>
@@ -52,6 +54,7 @@
                     <button class="btn btn-outline-danger btn-sm py-1 px-2 fw-bold" onclick="openTrashModal()" style="font-size:0.75rem;"><i class="bi bi-trash3 me-1"></i>ゴミ箱 (<span id="trash-count">0</span>)</button>
                 </div>
             </div>
+
             <!-- タブ切り替え -->
             <ul class="nav nav-pills mt-2 gap-1 border-top pt-2" id="mainTab" role="tablist">
                 <li class="nav-item">
@@ -61,6 +64,29 @@
                     <button class="nav-link py-1 px-3" id="tab-analytics-btn" data-bs-toggle="pill" data-bs-target="#tab-analytics" type="button"><i class="bi bi-graph-up-arrow me-1"></i> データ分析</button>
                 </li>
             </ul>
+        </div>
+
+        <!-- 📅 共通：期間指定フィルターバー (決済済トレード & 分析に完全同期) -->
+        <div class="card p-2 bg-white mb-2">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div class="d-flex flex-wrap align-items-center gap-1">
+                    <span class="fw-bold text-dark me-1" style="font-size:0.78rem;"><i class="bi bi-calendar-range text-primary me-1"></i>集計・表示期間:</span>
+                    <button type="button" class="btn btn-outline-primary btn-period active" id="btn-period-all" onclick="setQuickPeriod('ALL')">全期間</button>
+                    <button type="button" class="btn btn-outline-secondary btn-period" id="btn-period-this-month" onclick="setQuickPeriod('THIS_MONTH')">今月</button>
+                    <button type="button" class="btn btn-outline-secondary btn-period" id="btn-period-last-month" onclick="setQuickPeriod('LAST_MONTH')">先月</button>
+                    <button type="button" class="btn btn-outline-secondary btn-period" id="btn-period-3m" onclick="setQuickPeriod('LAST_3M')">直近3ヶ月</button>
+                    <button type="button" class="btn btn-outline-secondary btn-period" id="btn-period-ytd" onclick="setQuickPeriod('YTD')">今年(年初来)</button>
+                </div>
+                <div class="d-flex align-items-center gap-1 ms-auto">
+                    <input type="date" id="filter-start-date" class="form-control form-control-sm py-0" style="font-size:0.75rem; width:130px;" onchange="onCustomDateChange()">
+                    <span class="text-muted" style="font-size:0.75rem;">〜</span>
+                    <input type="date" id="filter-end-date" class="form-control form-control-sm py-0" style="font-size:0.75rem; width:130px;" onchange="onCustomDateChange()">
+                    <button class="btn btn-light btn-sm py-0 px-2 border text-muted" title="期間リセット" onclick="setQuickPeriod('ALL')"><i class="bi bi-x-circle"></i></button>
+                </div>
+            </div>
+            <div class="text-muted mt-1" style="font-size:0.68rem;">
+                ※ 保有期間（買付〜売却）が指定期間と少しでも重なっている取引を抽出・集計します。
+            </div>
         </div>
 
         <div class="tab-content" id="mainTabContent">
@@ -100,10 +126,13 @@
                     </div>
                 </div>
 
-                <!-- 📜 決済済み取引履歴 -->
+                <!-- 📜 決済済み取引履歴 (期間指定連動) -->
                 <div class="card p-2 bg-white">
                     <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
-                        <h6 class="fw-bold text-dark mb-0" style="font-size:0.85rem;"><i class="bi bi-check2-all text-success me-1"></i> 決済済みトレード (<span id="closed-count">0</span>)</h6>
+                        <h6 class="fw-bold text-dark mb-0" style="font-size:0.85rem;">
+                            <i class="bi bi-check2-all text-success me-1"></i> 決済済みトレード (<span id="closed-count">0</span> / 全<span id="closed-total-count">0</span>件)
+                        </h6>
+                        <span id="period-display-label" class="badge bg-light text-secondary border" style="font-size:0.7rem;">全期間</span>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover table-striped table-journal mb-0">
@@ -125,18 +154,18 @@
                 </div>
             </div>
 
-            <!-- タブ 2: データ分析 -->
+            <!-- タブ 2: データ分析 (期間指定連動) -->
             <div class="tab-pane fade" id="tab-analytics" role="tabpanel">
                 <div class="row g-2 mb-2">
                     <div class="col-6 col-md-3">
                         <div class="card p-2 bg-white metric-card">
-                            <small class="text-muted fw-bold" style="font-size:0.75rem;">確定損益 合計</small>
+                            <small class="text-muted fw-bold" style="font-size:0.75rem;">期間 確定損益 合計</small>
                             <div class="fs-5 fw-bold" id="metric-total-pl">¥0</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
                         <div class="card p-2 bg-white metric-card" style="border-left-color: #20c997;">
-                            <small class="text-muted fw-bold" style="font-size:0.75rem;">勝率 / 取引数</small>
+                            <small class="text-muted fw-bold" style="font-size:0.75rem;">勝率 / 対象取引数</small>
                             <div class="fs-6 fw-bold" id="metric-win-rate">0% (0勝0敗)</div>
                         </div>
                     </div>
@@ -155,7 +184,7 @@
                 </div>
 
                 <div class="card p-2 bg-white mb-2">
-                    <h6 class="fw-bold text-dark mb-1" style="font-size:0.8rem;"><i class="bi bi-graph-up me-1 text-primary"></i> 累積確定損益 推移チャート</h6>
+                    <h6 class="fw-bold text-dark mb-1" style="font-size:0.8rem;"><i class="bi bi-graph-up me-1 text-primary"></i> 累積確定損益 推移チャート (期間内)</h6>
                     <div style="height: 200px;"><canvas id="equityChart"></canvas></div>
                 </div>
 
@@ -281,7 +310,7 @@
 
     <!-- ゴミ箱モーダル -->
     <div class="modal fade" id="trashModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-secondary text-white py-2">
                     <h6 class="modal-title"><i class="bi bi-trash3 me-1"></i> ゴミ箱</h6>
@@ -310,6 +339,10 @@
         let trashModalInstance = null;
         let chartInstance = null;
 
+        // 期間フィルター状態 (初期値: 全期間)
+        let FILTER_START_DATE = "";
+        let FILTER_END_DATE = "";
+
         document.addEventListener("DOMContentLoaded", async () => {
             tradeModalInstance = new bootstrap.Modal(document.getElementById('tradeModal'));
             trashModalInstance = new bootstrap.Modal(document.getElementById('trashModal'));
@@ -323,6 +356,7 @@
             });
         });
 
+        // 楽天証券 / iSPEED 直行
         function openRakuten(code) {
             if (!code) return;
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -367,19 +401,111 @@
             renderAll();
         }
 
+        // 📅 期間指定フィルターの判定ロジック
+        // 「保有期間（買付〜売却）が、指定した期間に少しでも重なっているか」
+        function isTradeInSelectedPeriod(t) {
+            if (!FILTER_START_DATE && !FILTER_END_DATE) return true;
+
+            const buy = t.buy_date; // YYYY-MM-DD
+            // 未決済の場合は本日まで保有中とみなす
+            const sell = t.sell_date || new Date().toISOString().substring(0, 10);
+
+            // 売却日が指定開始日より前なら重なりなし
+            if (FILTER_START_DATE && sell < FILTER_START_DATE) return false;
+            // 買付日が指定終了日より後なら重なりなし
+            if (FILTER_END_DATE && buy > FILTER_END_DATE) return false;
+
+            return true;
+        }
+
+        // クイック期間ボタン操作
+        function setQuickPeriod(type) {
+            document.querySelectorAll(".btn-period").forEach(b => b.classList.remove("active", "btn-outline-primary"));
+            document.querySelectorAll(".btn-period").forEach(b => b.classList.add("btn-outline-secondary"));
+
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = today.getMonth(); // 0-11
+
+            const formatDate = (d) => {
+                const year = d.getFullYear();
+                const mon = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${mon}-${day}`;
+            };
+
+            if (type === 'ALL') {
+                FILTER_START_DATE = "";
+                FILTER_END_DATE = "";
+                document.getElementById("btn-period-all").classList.add("active", "btn-outline-primary");
+                document.getElementById("btn-period-all").classList.remove("btn-outline-secondary");
+            } else if (type === 'THIS_MONTH') {
+                FILTER_START_DATE = formatDate(new Date(y, m, 1));
+                FILTER_END_DATE = formatDate(new Date(y, m + 1, 0));
+                document.getElementById("btn-period-this-month").classList.add("active", "btn-outline-primary");
+                document.getElementById("btn-period-this-month").classList.remove("btn-outline-secondary");
+            } else if (type === 'LAST_MONTH') {
+                FILTER_START_DATE = formatDate(new Date(y, m - 1, 1));
+                FILTER_END_DATE = formatDate(new Date(y, m, 0));
+                document.getElementById("btn-period-last-month").classList.add("active", "btn-outline-primary");
+                document.getElementById("btn-period-last-month").classList.remove("btn-outline-secondary");
+            } else if (type === 'LAST_3M') {
+                const past = new Date();
+                past.setMonth(past.getMonth() - 3);
+                FILTER_START_DATE = formatDate(past);
+                FILTER_END_DATE = formatDate(today);
+                document.getElementById("btn-period-3m").classList.add("active", "btn-outline-primary");
+                document.getElementById("btn-period-3m").classList.remove("btn-outline-secondary");
+            } else if (type === 'YTD') {
+                FILTER_START_DATE = `${y}-01-01`;
+                FILTER_END_DATE = formatDate(today);
+                document.getElementById("btn-period-ytd").classList.add("active", "btn-outline-primary");
+                document.getElementById("btn-period-ytd").classList.remove("btn-outline-secondary");
+            }
+
+            document.getElementById("filter-start-date").value = FILTER_START_DATE;
+            document.getElementById("filter-end-date").value = FILTER_END_DATE;
+            renderAll();
+        }
+
+        function onCustomDateChange() {
+            FILTER_START_DATE = document.getElementById("filter-start-date").value;
+            FILTER_END_DATE = document.getElementById("filter-end-date").value;
+            document.querySelectorAll(".btn-period").forEach(b => b.classList.remove("active", "btn-outline-primary"));
+            document.querySelectorAll(".btn-period").forEach(b => b.classList.add("btn-outline-secondary"));
+            renderAll();
+        }
+
+        // 描画更新（期間指定に連動）
         function renderAll() {
             const activeTrades = TRADES.filter(t => !t.is_deleted);
             const trashTrades = TRADES.filter(t => t.is_deleted);
             document.getElementById("trash-count").textContent = trashTrades.length;
 
             const openTrades = activeTrades.filter(t => !t.sell_date);
-            const closedTrades = activeTrades.filter(t => t.sell_date);
+            const allClosedTrades = activeTrades.filter(t => t.sell_date);
+
+            // 期間でフィルタリングされた決済済み取引
+            const periodClosedTrades = allClosedTrades.filter(isTradeInSelectedPeriod);
 
             document.getElementById("open-count").textContent = openTrades.length;
-            document.getElementById("closed-count").textContent = closedTrades.length;
+            document.getElementById("closed-count").textContent = periodClosedTrades.length;
+            document.getElementById("closed-total-count").textContent = allClosedTrades.length;
+
+            // ラベル表示更新
+            let periodText = "全期間";
+            if (FILTER_START_DATE || FILTER_END_DATE) {
+                periodText = `${FILTER_START_DATE || '始'} 〜 ${FILTER_END_DATE || '今日'}`;
+            }
+            document.getElementById("period-display-label").textContent = periodText;
 
             renderOpenPositions(openTrades);
-            renderClosedTrades(closedTrades);
+            renderClosedTrades(periodClosedTrades);
+
+            // 分析タブが開いていれば再計算
+            if (document.getElementById('tab-analytics').classList.contains('active')) {
+                renderAnalytics(periodClosedTrades);
+            }
         }
 
         // 14営業日ルール対応の保有中ポジション描画
@@ -406,7 +532,6 @@
                 const plClass = plAmount >= 0 ? "text-danger fw-bold" : "text-primary fw-bold";
                 const plSign = plAmount >= 0 ? "+" : "";
 
-                // 最新最適化デフォルト目標
                 let defTpPct = 0.12;
                 let defSlPct = t.buy_price > 3000 ? 0.02 : 0.05;
 
@@ -421,12 +546,11 @@
                 const isTrailed = slPrice >= t.buy_price;
                 const slBadge = isTrailed ? `<span class="badge bg-danger py-0" style="font-size:0.65rem;">🛡️確約</span>` : '';
 
-                // ★ 14日期限バッジ（14日以上で手仕舞い勧告）
+                // 14日期限アラート
                 let alertBadge = `<span class="badge badge-alert-normal py-1">⏳ ${holdBusinessDays} / 14日</span>`;
                 if (holdBusinessDays >= 14) alertBadge = `<span class="badge badge-alert-danger py-1">🚨 ${holdBusinessDays}日目 (時間切れ手仕舞い)</span>`;
                 else if (holdBusinessDays >= 11) alertBadge = `<span class="badge badge-alert-warning py-1">⚠️ ${holdBusinessDays}日目 (期限間近)</span>`;
 
-                // 直近の勢い（4.0倍以上で特大急増）
                 let volBadge = `<span class="badge bg-light text-dark border">-</span>`;
                 if (stock.val_ratio_5d !== undefined && stock.val_ratio_5d !== null) {
                     const vr = parseFloat(stock.val_ratio_5d);
@@ -476,18 +600,18 @@
             });
         }
 
-        // 決済済み取引の描画
+        // 決済済み取引の描画 (期間指定フィルタ済みのリスト)
         function renderClosedTrades(list) {
             const tbody = document.getElementById("closed-trades-tbody");
             tbody.innerHTML = "";
             if (list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-3 text-muted">決済済みの取引はまだありません。</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="p-3 text-muted">指定期間に該当する決済済み取引はありません。</td></tr>';
                 return;
             }
 
-            list.sort((a, b) => new Date(b.sell_date) - new Date(a.sell_date));
+            const sorted = [...list].sort((a, b) => new Date(b.sell_date) - new Date(a.sell_date));
 
-            list.forEach(t => {
+            sorted.forEach(t => {
                 const buyDt = new Date(t.buy_date);
                 const sellDt = new Date(t.sell_date);
                 const holdDays = Math.max(1, Math.round(Math.ceil(Math.abs(sellDt - buyDt) / (1000 * 60 * 60 * 24)) * 5 / 7));
@@ -527,17 +651,28 @@
             });
         }
 
-        // 4. 分析ダッシュボード（最新4大切り口）
-        function renderAnalytics() {
-            const closed = TRADES.filter(t => !t.is_deleted && t.sell_date);
-            if (closed.length === 0) return;
+        // 4. 分析ダッシュボード (期間指定に完全連動)
+        function renderAnalytics(specifiedList) {
+            const activeTrades = TRADES.filter(t => !t.is_deleted && t.sell_date);
+            const closed = specifiedList || activeTrades.filter(isTradeInSelectedPeriod);
+
+            if (closed.length === 0) {
+                document.getElementById("metric-total-pl").textContent = "¥0";
+                document.getElementById("metric-total-pl").className = "fs-5 fw-bold text-muted";
+                document.getElementById("metric-win-rate").textContent = "0% (0勝0敗)";
+                document.getElementById("metric-pf").textContent = "0.00";
+                document.getElementById("metric-avg-pl").textContent = "+¥0 / -¥0";
+                if (chartInstance) chartInstance.destroy();
+                renderBreakdowns([]);
+                return;
+            }
 
             let totalPL = 0, wins = 0, losses = 0, sumProfit = 0, sumLoss = 0;
             let cumPLArray = [], cumDates = [];
 
-            closed.sort((a, b) => new Date(a.sell_date) - new Date(b.sell_date));
+            const sorted = [...closed].sort((a, b) => new Date(a.sell_date) - new Date(b.sell_date));
 
-            closed.forEach(t => {
+            sorted.forEach(t => {
                 const pl = (t.sell_price - t.buy_price) * t.qty;
                 totalPL += pl;
                 if (pl > 0) { wins++; sumProfit += pl; }
@@ -546,7 +681,7 @@
                 cumDates.push(t.sell_date.substring(5));
             });
 
-            const totalTrades = closed.length;
+            const totalTrades = sorted.length;
             const winRate = ((wins / totalTrades) * 100).toFixed(1);
             const pf = sumLoss > 0 ? (sumProfit / sumLoss).toFixed(2) : (sumProfit > 0 ? "99.0" : "0.00");
             const avgProfit = wins > 0 ? `+¥${Math.round(sumProfit / wins).toLocaleString()}` : "¥0";
@@ -559,7 +694,7 @@
             document.getElementById("metric-avg-pl").textContent = `${avgProfit} / ${avgLoss}`;
 
             renderEquityChart(cumDates, cumPLArray);
-            renderBreakdowns(closed);
+            renderBreakdowns(sorted);
         }
 
         function renderEquityChart(labels, data) {
@@ -588,7 +723,6 @@
         }
 
         function renderBreakdowns(closed) {
-            // バックテストの最適切り口に同期
             const gcGroups = { "初動 (0~1日GC)": [], "追随 (2~3日GC)": [], "出遅れ (4日以上/なし)": [] };
             const volGroups = { "🔥 特大急増 (4.0倍以上)": [], "⚡ 急増 (2.0~4.0倍)": [], "通常 (<2.0倍)": [] };
             const priceGroups = { "①低位 (~1,000円)": [], "🏆②中低位 (1,000~3,000円)": [], "③中高位 (3,000~6,000円)": [], "⚠️④値がさ (6,000円~)": [] };
@@ -598,25 +732,21 @@
                 const pl = (t.sell_price - t.buy_price) * t.qty;
                 const state = t.entry_state || "";
 
-                // ① GC日数別
                 if (state.includes("当日") || state.includes("1日前")) gcGroups["初動 (0~1日GC)"].push(pl);
                 else if (state.includes("2日前") || state.includes("3日前")) gcGroups["追随 (2~3日GC)"].push(pl);
                 else gcGroups["出遅れ (4日以上/なし)"].push(pl);
 
-                // ② 出来高増加率別 (4.0倍/2.0倍基準)
                 const volMatch = state.match(/([0-9.]+)倍/);
                 const vRatio = volMatch ? parseFloat(volMatch[1]) : 1.0;
                 if (vRatio >= 4.0) volGroups["🔥 特大急増 (4.0倍以上)"].push(pl);
                 else if (vRatio >= 2.0) volGroups["⚡ 急増 (2.0~4.0倍)"].push(pl);
                 else volGroups["通常 (<2.0倍)"].push(pl);
 
-                // ③ 株価帯別
                 if (t.buy_price <= 1000) priceGroups["①低位 (~1,000円)"].push(pl);
                 else if (t.buy_price <= 3000) priceGroups["🏆②中低位 (1,000~3,000円)"].push(pl);
                 else if (t.buy_price <= 6000) priceGroups["③中高位 (3,000~6,000円)"].push(pl);
                 else priceGroups["⚠️④値がさ (6,000円~)"].push(pl);
 
-                // ④ 決済理由別
                 if (t.exit_reason === "TP_RULE" || t.exit_reason === "TP_15") reasonGroups["🎯 ルール利確"].push(pl);
                 else if (t.exit_reason === "SL_RULE" || t.exit_reason === "SL_7") reasonGroups["🛑 ルール損切"].push(pl);
                 else if (t.exit_reason === "TIME_14" || t.exit_reason === "TIME_20") reasonGroups["⏳ 14日期限"].push(pl);
@@ -625,14 +755,19 @@
 
             function buildTable(groups) {
                 let html = "<table class='table table-sm table-journal text-center mb-0'><thead><tr><th class='text-start'>区分</th><th>件数</th><th>勝率</th><th>損益計</th></tr></thead><tbody>";
+                let hasData = false;
                 for (let k in groups) {
                     const arr = groups[k];
                     if (arr.length === 0) continue;
+                    hasData = true;
                     const w = arr.filter(p => p > 0).length;
                     const rate = ((w / arr.length) * 100).toFixed(0);
                     const sum = arr.reduce((a, b) => a + b, 0);
                     const color = sum >= 0 ? "text-danger fw-bold" : "text-primary fw-bold";
                     html += `<tr><td class='text-start'>${k}</td><td>${arr.length}件</td><td>${rate}%</td><td class='${color}'>${sum>=0?'+':''}¥${sum.toLocaleString()}</td></tr>`;
+                }
+                if (!hasData) {
+                    html += "<tr><td colspan='4' class='text-muted p-2'>データなし</td></tr>";
                 }
                 return html + "</tbody></table>";
             }
@@ -1034,18 +1169,19 @@
             }
         }
 
+        // 8. データ同期機能 (安全マージ & 完全置換の選択可能)
         function exportData() {
             if (TRADES.length === 0) {
                 alert("保存する取引データがありません。");
                 return;
             }
+            // 全取引データ（保有中・決済済・ゴミ箱すべて）をJSON保存
             const dataStr = JSON.stringify(TRADES, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             const today = new Date().toISOString().substring(0, 10);
             a.download = `swing_journal_backup_${today}.json`;
-            a.href = url;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -1063,12 +1199,37 @@
                         return;
                     }
 
+                    const overwriteAll = confirm(
+                        `ファイル内に ${imported.length} 件のデータが見つかりました。\n\n` +
+                        `【OK】を押すと、既存データを残しつつ安全に結合（メモやトレール値を保護マージ）します。\n` +
+                        `【キャンセル】を押すと、バックアップファイルの内容で「完全に全置換復元」します。`
+                    );
+
+                    if (!overwriteAll) {
+                        // 完全全置換復元
+                        if (confirm("⚠️ 本当に現在の画面のデータをすべて消去し、バックアップファイルで全置換しますか？")) {
+                            TRADES = imported;
+                            saveTradesToStorage();
+                            alert(`✅ バックアップファイルから ${TRADES.length} 件を完全に復元しました！`);
+                            return;
+                        }
+                    }
+
+                    // 安全マージ（画面側で追記したトレールやメモを空値で上書き消去しない安全ロジック）
                     let addedCount = 0, updatedCount = 0;
                     imported.forEach(imp => {
                         if (!imp.id) return;
                         const existIdx = TRADES.findIndex(t => t.id === imp.id);
                         if (existIdx !== -1) {
-                            TRADES[existIdx] = Object.assign({}, TRADES[existIdx], imp);
+                            const exist = TRADES[existIdx];
+                            // ファイル側が空（null/空文字）の場合、画面側の既存値を優先保護
+                            const merged = Object.assign({}, exist, imp);
+                            if (!imp.memo && exist.memo) merged.memo = exist.memo;
+                            if (imp.target_sl === null && exist.target_sl !== null) merged.target_sl = exist.target_sl;
+                            if (imp.target_tp === null && exist.target_tp !== null) merged.target_tp = exist.target_tp;
+                            if (!imp.entry_state && exist.entry_state) merged.entry_state = exist.entry_state;
+
+                            TRADES[existIdx] = merged;
                             updatedCount++;
                         } else {
                             TRADES.push(imp);
@@ -1077,7 +1238,7 @@
                     });
 
                     saveTradesToStorage();
-                    alert(`✅ データ同期完了！\n・新規追加: ${addedCount}件\n・更新: ${updatedCount}件`);
+                    alert(`✅ データ同期完了！\n・新規追加: ${addedCount}件\n・安全更新(メモ保護): ${updatedCount}件\n\n画面だけにあった未登録データも保持されています。`);
                 } catch (err) {
                     alert("❌ データ読み込みエラー: " + err.message);
                 }
