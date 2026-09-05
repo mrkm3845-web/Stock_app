@@ -44,8 +44,8 @@
                             <i class="bi bi-arrow-left-right me-1"></i>同期
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                            <li><a class="dropdown-item" href="javascript:void(0)" onclick="exportData()"><i class="bi bi-download me-2 text-primary"></i> データを書き出す (保存)</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0)" onclick="document.getElementById('backup-file-input').click()"><i class="bi bi-upload me-2 text-success"></i> データを読み込む (復元)</a></li>
+                            <li><button type="button" class="dropdown-item py-2" onclick="exportData()"><i class="bi bi-download me-2 text-primary"></i> データを書き出す (保存)</button></li>
+                            <li><button type="button" class="dropdown-item py-2" onclick="document.getElementById('backup-file-input').click()"><i class="bi bi-upload me-2 text-success"></i> データを読み込む (復元)</button></li>
                         </ul>
                     </div>
                     <input type="file" id="backup-file-input" accept=".json" style="display:none;" onclick="this.value=null" onchange="importData(this.files[0])">
@@ -1134,11 +1134,9 @@
                     });
                 });
 
-                // ★ スマート自動マージ（編集メモ・トレール設定・手動追加の完全継承）
-                // 1. 手動登録された取引を取り出して温存
+                // スマート自動マージ
                 const manualTrades = TRADES.filter(t => t.id && t.id.startsWith("manual_"));
 
-                // 2. 既存のCSVデータから、ユーザーが追記・編集したメモやトレール値を抽出
                 const userEditsMap = new Map();
                 TRADES.filter(t => t.id && t.id.startsWith("csv_")).forEach(t => {
                     const key = `${t.code}_${t.buy_date}_${Math.round(t.buy_price)}`;
@@ -1154,7 +1152,6 @@
                     });
                 });
 
-                // 3. 最新CSV解析データに既存の編集内容を自動継承
                 let inheritedMemoCount = 0;
                 newTrades.forEach(nt => {
                     const key = `${nt.code}_${nt.buy_date}_${Math.round(nt.buy_price)}`;
@@ -1173,7 +1170,6 @@
                     }
                 });
 
-                // 4. 最新CSVデータと手動登録データを合体して保存
                 TRADES = [...newTrades, ...manualTrades];
                 saveTradesToStorage();
 
@@ -1187,21 +1183,49 @@
             }
         }
 
+        // ★ 強化版：データ書き出し機能（安全待機 ＆ クリップボード二重バックアップ）
         function exportData() {
-            if (TRADES.length === 0) {
-                alert("保存する取引データがありません。");
-                return;
+            try {
+                if (!TRADES || TRADES.length === 0) {
+                    loadTradesFromStorage();
+                }
+
+                if (!TRADES || TRADES.length === 0) {
+                    alert("⚠️ 保存する取引データがありません（0件です）。\n取引を手動追加するか、CSVを読み込んでから保存してください。");
+                    return;
+                }
+
+                const dataStr = JSON.stringify(TRADES, null, 2);
+                const blob = new Blob([dataStr], { type: "application/json;charset=utf-8;" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                const today = new Date().toISOString().substring(0, 10);
+                
+                a.href = url;
+                a.download = `swing_journal_backup_${today}.json`;
+                a.style.display = "none";
+                document.body.appendChild(a);
+                a.click();
+
+                // メモリ解放を2秒遅延させて確実に保存させる
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 2000);
+
+                // 万が一のダウンロードブロックに備えてクリップボードにもバックアップ
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(dataStr).then(() => {
+                        alert(`✅ 取引データ ${TRADES.length} 件のファイルをダウンロードしました！\n\n※万が一ダウンロードされない場合に備えて、クリップボードにもJSONをコピー済みです。`);
+                    }).catch(() => {
+                        alert(`✅ 取引データ ${TRADES.length} 件のファイルをダウンロードしました！`);
+                    });
+                } else {
+                    alert(`✅ 取引データ ${TRADES.length} 件のファイルをダウンロードしました！`);
+                }
+            } catch (err) {
+                alert("❌ 書き出し処理エラー: " + err.message);
             }
-            const dataStr = JSON.stringify(TRADES, null, 2);
-            const blob = new Blob([dataStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            const today = new Date().toISOString().substring(0, 10);
-            a.download = `swing_journal_backup_${today}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
         }
 
         function importData(file) {
