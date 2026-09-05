@@ -38,7 +38,6 @@
         .badge-valratio { font-size: 0.82rem; font-weight: 800; padding: 3px 6px; border-radius: 6px; background-color: #e7f5ff; color: #1971c2; }
         .badge-valratio.hot { background-color: #ffe3e3; color: #e03131; }
         
-        /* シグナル・警告バッジ */
         .badge-signal-gold { font-size: 0.68rem; background-color: #fff3bf; color: #d9480f; border: 1px solid #ffd43b; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
         .badge-signal-green { font-size: 0.68rem; background-color: #d3f9d8; color: #2b8a3e; border: 1px solid #b2f2bb; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
         .badge-signal-blue { font-size: 0.68rem; background-color: #e7f5ff; color: #1971c2; border: 1px solid #a5d8ff; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
@@ -78,33 +77,33 @@
         <!-- 実証プリセットボタン (バックテスト最適シグナル) -->
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="filter-label mb-0"><i class="bi bi-lightning-charge-fill text-warning"></i> 実証バックテスト最強プリセット（成績上位シグナル）:</div>
+                <div class="filter-label mb-0"><i class="bi bi-lightning-charge-fill text-warning"></i> 実証バックテスト最強プリセット（押すと下の条件欄も自動連動）:</div>
                 <span class="badge bg-light text-secondary border" style="font-size:0.7rem;">デフォルト: 3大実証パターンのOR結合</span>
             </div>
             <div class="d-flex flex-wrap gap-2 mb-2">
-                <button id="btn-combo-all" class="btn btn-danger btn-preset fw-bold active" onclick="toggleSmartPreset('combo')">
+                <button id="btn-combo-all" class="btn btn-danger btn-preset fw-bold active" onclick="applyPresetPattern('combo')">
                     🔥 3大実証厳選 (OR結合・デフォルト)
                 </button>
-                <button id="btn-best-mid" class="btn btn-outline-danger btn-preset fw-bold" onclick="toggleSmartPreset('bestMid')">
+                <button id="btn-best-mid" class="btn btn-outline-danger btn-preset fw-bold" onclick="applyPresetPattern('bestMid')">
                     🏆 最高期待値 (中低位3日目×2倍↑ / PF 1.79)
                 </button>
-                <button id="btn-best-low" class="btn btn-outline-success btn-preset fw-bold" onclick="toggleSmartPreset('bestLow')">
+                <button id="btn-best-low" class="btn btn-outline-success btn-preset fw-bold" onclick="applyPresetPattern('bestLow')">
                     🚀 低位初動 (500~1000円×当日×1.5~3倍 / PF 1.26)
                 </button>
-                <button id="btn-best-highmid" class="btn btn-outline-primary btn-preset fw-bold" onclick="toggleSmartPreset('bestHighMid')">
+                <button id="btn-best-highmid" class="btn btn-outline-primary btn-preset fw-bold" onclick="applyPresetPattern('bestHighMid')">
                     🎯 中位ブレイク (2000~3000円×2~3日×2~4倍 / PF 1.59)
                 </button>
             </div>
 
             <div class="filter-label mb-2"><i class="bi bi-funnel text-secondary"></i> バリュー・ファンダメンタルズ絞り込み（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
-                <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
-                <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
-                <button id="btn-graham" class="btn btn-outline-primary btn-preset" onclick="togglePreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
-                <button id="btn-per15" class="btn btn-outline-secondary btn-preset" onclick="togglePreset('per15')">PER 15以下</button>
-                <button id="btn-pbr15" class="btn btn-outline-secondary btn-preset" onclick="togglePreset('pbr15')">PBR 1.5以下</button>
-                <button id="btn-highRoe" class="btn btn-outline-info btn-preset" onclick="togglePreset('highRoe')">💎 高ROE (10%↑)</button>
-                <button id="btn-highDiv" class="btn btn-outline-warning btn-preset" onclick="togglePreset('highDiv')">💰 高配当 (利回り 3%↑)</button>
+                <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="toggleFundamentalPreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
+                <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="toggleFundamentalPreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
+                <button id="btn-graham" class="btn btn-outline-primary btn-preset" onclick="toggleFundamentalPreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
+                <button id="btn-per15" class="btn btn-outline-secondary btn-preset" onclick="toggleFundamentalPreset('per15')">PER 15以下</button>
+                <button id="btn-pbr15" class="btn btn-outline-secondary btn-preset" onclick="toggleFundamentalPreset('pbr15')">PBR 1.5以下</button>
+                <button id="btn-highRoe" class="btn btn-outline-info btn-preset" onclick="toggleFundamentalPreset('highRoe')">💎 高ROE (10%↑)</button>
+                <button id="btn-highDiv" class="btn btn-outline-warning btn-preset" onclick="toggleFundamentalPreset('highDiv')">💰 高配当 (利回り 3%↑)</button>
                 <button class="btn btn-light btn-preset border text-muted ms-auto" onclick="resetAll()"><i class="bi bi-arrow-counterclockwise"></i> 全リセット</button>
             </div>
         </div>
@@ -114,7 +113,7 @@
             <div class="row g-2 align-items-end">
                 <div class="col-6 col-md-2">
                     <div class="filter-label">市場区分</div>
-                    <select id="filter-market" class="form-select form-select-sm" onchange="clearSmartPreset(); applyFilters();">
+                    <select id="filter-market" class="form-select form-select-sm" onchange="onManualFilterChange()">
                         <option value="ALL">全市場 (PRM / STD)</option>
                         <option value="プライム">プライム のみ</option>
                         <option value="スタンダード">スタンダード のみ</option>
@@ -136,7 +135,7 @@
 
                 <div class="col-6 col-md-3">
                     <div class="filter-label text-primary fw-bold">株価帯クイック選択</div>
-                    <select id="filter-price-preset" class="form-select form-select-sm fw-bold border-primary text-primary" onchange="clearSmartPreset(); applyFilters();">
+                    <select id="filter-price-preset" class="form-select form-select-sm fw-bold border-primary text-primary" onchange="onManualFilterChange()">
                         <option value="ALL">指定なし (全価格帯)</option>
                         <option value="500-1000">① 〜¥1,000 (低位株・1.5~3倍推奨)</option>
                         <option value="1000-2000">② ¥1,000〜¥2,000 (🏆最高期待値・3日目×2倍↑)</option>
@@ -149,7 +148,7 @@
 
                 <div class="col-6 col-md-3">
                     <div class="filter-label text-danger fw-bold">GC (ゴールデンクロス)</div>
-                    <select id="filter-gc" class="form-select form-select-sm fw-bold border-danger" onchange="clearSmartPreset(); applyFilters();">
+                    <select id="filter-gc" class="form-select form-select-sm fw-bold border-danger" onchange="onManualFilterChange()">
                         <option value="ALL">指定なし</option>
                         <option value="0">本日GC形成 (初動)</option>
                         <option value="1">1営業日以内</option>
@@ -160,11 +159,11 @@
 
                 <div class="col-6 col-md-2">
                     <div class="filter-label">5日平均代金 (最小 千円)</div>
-                    <input type="number" id="filter-avgval" class="form-control form-control-sm" step="10000" placeholder="下限なし" oninput="clearSmartPreset(); applyFilters();">
+                    <input type="number" id="filter-avgval" class="form-control form-control-sm" step="10000" placeholder="下限なし" oninput="onManualFilterChange()">
                 </div>
                 <div class="col-6 col-md-2">
                     <div class="filter-label text-primary fw-bold">売買代金増加率 (最小 倍)</div>
-                    <input type="number" id="filter-valratio" class="form-control form-control-sm border-primary" step="0.5" placeholder="下限なし" oninput="clearSmartPreset(); applyFilters();">
+                    <input type="number" id="filter-valratio" class="form-control form-control-sm border-primary" step="0.5" placeholder="下限なし" oninput="onManualFilterChange()">
                 </div>
                 <div class="col-6 col-md-2">
                     <div class="filter-label">ミックス係数 (最大)</div>
@@ -323,8 +322,7 @@
                 STOCKS = await res.json();
                 document.getElementById("total-count").textContent = STOCKS.length;
                 updateSectorOptions();
-                applySmartPresetUI();
-                applyFilters();
+                applyPresetPattern('combo'); // 初期ロード時は3大実証厳選に完全同期
             } catch (err) {
                 console.error(err);
             }
@@ -341,6 +339,7 @@
             return s.market === 'プライム' || (s.price >= 300 && s.price <= 50000);
         }
 
+        // 銘柄のシグナル＆警告判定
         function evaluateSignal(s) {
             const p = s.price;
             const vr = (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? s.val_ratio_5d : 0.0;
@@ -358,7 +357,7 @@
                 recReason: ''
             };
 
-            // 1. ⚠️ 過熱天井警戒判定
+            // 1. ⚠️ 過熱天井警戒判定 (低位4倍超・中位4倍超)
             if (p <= 1000 && vr >= 4.0) {
                 result.isWarning = true;
                 result.badgeHtml = `<span class="badge-signal-danger ms-1" title="低位株の出来高4倍超は仕手天井の罠リスク(PF 0.85)">⚠️過熱天井警戒(${vr}倍)</span>`;
@@ -390,11 +389,93 @@
                 result.recReason = '【中位ブレイク】過熱天井を避け、2〜4倍の適正大口流入に乗る最強パターン(PF 1.59)。';
             }
 
+            // 3大実証パターンのOR結合判定 (過熱天井は除外)
             if ((result.isBestMid || result.isBestLow || result.isBestHighMid) && !result.isWarning) {
                 result.isComboMatch = true;
             }
 
             return result;
+        }
+
+        // ★ プリセットボタンを押した時に、条件欄の選択・入力を完全に同期させる！
+        function applyPresetPattern(type) {
+            if (currentSmartPreset === type) {
+                // 同じボタンをもう一度押した場合は全解除
+                resetAll();
+                return;
+            }
+
+            currentSmartPreset = type;
+            updatePresetButtonsUI();
+
+            // フォームの入力・選択値を同期
+            if (type === 'combo') {
+                document.getElementById("filter-price-preset").value = "500-3000";
+                document.getElementById("filter-gc").value = "3";
+                document.getElementById("filter-avgval").value = 30000;
+                document.getElementById("filter-valratio").value = 1.5;
+                document.getElementById("filter-per-min").value = 4;
+                document.getElementById("sort-by").value = "valratio_desc";
+            } else if (type === 'bestMid') {
+                document.getElementById("filter-price-preset").value = "1000-2000";
+                document.getElementById("filter-gc").value = "3";
+                document.getElementById("filter-avgval").value = 30000;
+                document.getElementById("filter-valratio").value = 2.0;
+                document.getElementById("filter-per-min").value = 4;
+                document.getElementById("sort-by").value = "valratio_desc";
+            } else if (type === 'bestLow') {
+                document.getElementById("filter-price-preset").value = "500-1000";
+                document.getElementById("filter-gc").value = "0"; // 本日GC形成
+                document.getElementById("filter-avgval").value = 30000;
+                document.getElementById("filter-valratio").value = 1.5;
+                document.getElementById("filter-per-min").value = 4;
+                document.getElementById("sort-by").value = "valratio_desc";
+            } else if (type === 'bestHighMid') {
+                document.getElementById("filter-price-preset").value = "2000-3000";
+                document.getElementById("filter-gc").value = "3";
+                document.getElementById("filter-avgval").value = 30000;
+                document.getElementById("filter-valratio").value = 2.0;
+                document.getElementById("filter-per-min").value = 4;
+                document.getElementById("sort-by").value = "valratio_desc";
+            }
+
+            applyFilters();
+        }
+
+        function onManualFilterChange() {
+            // ユーザーが手動で条件欄を変更した場合はプリセット解除
+            currentSmartPreset = 'none';
+            updatePresetButtonsUI();
+            applyFilters();
+        }
+
+        function updatePresetButtonsUI() {
+            const btnCombo = document.getElementById("btn-combo-all");
+            const btnMid = document.getElementById("btn-best-mid");
+            const btnLow = document.getElementById("btn-best-low");
+            const btnHighMid = document.getElementById("btn-best-highmid");
+
+            [btnCombo, btnMid, btnLow, btnHighMid].forEach(b => {
+                b.classList.remove("active", "btn-danger", "btn-success", "btn-primary");
+            });
+            btnCombo.classList.add("btn-outline-danger");
+            btnMid.classList.add("btn-outline-danger");
+            btnLow.classList.add("btn-outline-success");
+            btnHighMid.classList.add("btn-outline-primary");
+
+            if (currentSmartPreset === 'combo') {
+                btnCombo.classList.add("active", "btn-danger");
+                btnCombo.classList.remove("btn-outline-danger");
+            } else if (currentSmartPreset === 'bestMid') {
+                btnMid.classList.add("active", "btn-danger");
+                btnMid.classList.remove("btn-outline-danger");
+            } else if (currentSmartPreset === 'bestLow') {
+                btnLow.classList.add("active", "btn-success");
+                btnLow.classList.remove("btn-outline-success");
+            } else if (currentSmartPreset === 'bestHighMid') {
+                btnHighMid.classList.add("active", "btn-primary");
+                btnHighMid.classList.remove("btn-outline-primary");
+            }
         }
 
         function applyFilters() {
@@ -422,12 +503,17 @@
                 
                 const sig = evaluateSignal(s);
 
-                if (currentSmartPreset === 'combo' && !sig.isComboMatch) return false;
-                if (currentSmartPreset === 'bestMid' && (!sig.isBestMid || sig.isWarning)) return false;
-                if (currentSmartPreset === 'bestLow' && (!sig.isBestLow || sig.isWarning)) return false;
-                if (currentSmartPreset === 'bestHighMid' && (!sig.isBestHighMid || sig.isWarning)) return false;
-
-                if (currentSmartPreset === 'none') {
+                // ★ プリセット連動モード
+                if (currentSmartPreset === 'combo') {
+                    if (!sig.isComboMatch) return false;
+                } else if (currentSmartPreset === 'bestMid') {
+                    if (!sig.isBestMid || sig.isWarning) return false;
+                } else if (currentSmartPreset === 'bestLow') {
+                    if (!sig.isBestLow || sig.isWarning) return false;
+                } else if (currentSmartPreset === 'bestHighMid') {
+                    if (!sig.isBestHighMid || sig.isWarning) return false;
+                } else {
+                    // 通常フィルタモード
                     if (pricePreset === "500-1000" && (s.price < 500 || s.price > 1000)) return false;
                     if (pricePreset === "1000-2000" && (s.price < 1000 || s.price > 2000)) return false;
                     if (pricePreset === "2000-3000" && (s.price < 2000 || s.price > 3000)) return false;
@@ -475,7 +561,6 @@
             renderTable(filtered);
         }
 
-        // ★ 修正：出来高0倍の銘柄が「1倍」と化ける不具合を完全解消
         function renderTable(data) {
             document.getElementById("filtered-count").textContent = data.length;
             const tbody = document.getElementById("stock-table-body");
@@ -503,7 +588,6 @@
                 const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
                 const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
 
-                // ★ 出来高増加率の厳密判定 (0は正しく0倍と表示し、1倍に化けない)
                 let vRatio = 0;
                 let vRatioText = "-";
                 if (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') {
@@ -539,51 +623,7 @@
             tbody.innerHTML = html;
         }
 
-        function toggleSmartPreset(type) {
-            if (currentSmartPreset === type) {
-                currentSmartPreset = 'none';
-            } else {
-                currentSmartPreset = type;
-            }
-            applySmartPresetUI();
-            applyFilters();
-        }
-
-        function clearSmartPreset() {
-            currentSmartPreset = 'none';
-            applySmartPresetUI();
-        }
-
-        function applySmartPresetUI() {
-            const btnCombo = document.getElementById("btn-combo-all");
-            const btnMid = document.getElementById("btn-best-mid");
-            const btnLow = document.getElementById("btn-best-low");
-            const btnHighMid = document.getElementById("btn-best-highmid");
-
-            [btnCombo, btnMid, btnLow, btnHighMid].forEach(b => {
-                b.classList.remove("active", "btn-danger", "btn-success", "btn-primary");
-            });
-            btnCombo.classList.add("btn-outline-danger");
-            btnMid.classList.add("btn-outline-danger");
-            btnLow.classList.add("btn-outline-success");
-            btnHighMid.classList.add("btn-outline-primary");
-
-            if (currentSmartPreset === 'combo') {
-                btnCombo.classList.add("active", "btn-danger");
-                btnCombo.classList.remove("btn-outline-danger");
-            } else if (currentSmartPreset === 'bestMid') {
-                btnMid.classList.add("active", "btn-danger");
-                btnMid.classList.remove("btn-outline-danger");
-            } else if (currentSmartPreset === 'bestLow') {
-                btnLow.classList.add("active", "btn-success");
-                btnLow.classList.remove("btn-outline-success");
-            } else if (currentSmartPreset === 'bestHighMid') {
-                btnHighMid.classList.add("active", "btn-primary");
-                btnHighMid.classList.remove("btn-outline-primary");
-            }
-        }
-
-        function togglePreset(type) {
+        function toggleFundamentalPreset(type) {
             const btnMap = {
                 ultra: document.getElementById("btn-ultra"),
                 strict: document.getElementById("btn-strict"),
@@ -644,7 +684,7 @@
 
         function resetAll() {
             currentSmartPreset = 'none';
-            applySmartPresetUI();
+            updatePresetButtonsUI();
 
             document.querySelectorAll(".btn-preset").forEach(btn => {
                 btn.classList.remove("active", "btn-danger", "btn-success", "btn-primary", "btn-secondary", "btn-info", "btn-warning", "text-white");
@@ -656,6 +696,7 @@
             document.getElementById("btn-pbr15").classList.add("btn-outline-secondary");
             document.getElementById("btn-highRoe").classList.add("btn-outline-info");
             document.getElementById("btn-highDiv").classList.add("btn-outline-warning");
+            
             document.getElementById("filter-market").value = "ALL";
             document.getElementById("filter-kabumini").value = "ALL";
             document.getElementById("filter-sector").value = "ALL";
