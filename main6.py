@@ -404,7 +404,7 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
         (df["per"] >= 4.0)
     ].sort_values(by="val_ratio_5d", ascending=False)  # スクリーナー初期ソートと同じ「増加率急増順」
 
-    swing_section = "\n**🚀 【実証スイングBEST注目】(スクリーナー初期条件と同期)**\n"
+    swing_section = "\n**🚀 【スイングトレードBEST注目】**\n"
     swing_section += "└ 条件: 株価500~3,000円 / 代金5千万↑ / 増加率2.0倍↑ / GC 3日以内\n"
 
     if not swing_df.empty:
