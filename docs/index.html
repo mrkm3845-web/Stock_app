@@ -42,7 +42,7 @@
         .badge-signal-gold { font-size: 0.68rem; background-color: #fff3bf; color: #d9480f; border: 1px solid #ffd43b; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
         .badge-signal-green { font-size: 0.68rem; background-color: #d3f9d8; color: #2b8a3e; border: 1px solid #b2f2bb; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
         .badge-signal-blue { font-size: 0.68rem; background-color: #e7f5ff; color: #1971c2; border: 1px solid #a5d8ff; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
-        .badge-signal-danger { font-size: 0.68rem; background-color: #ffe3e3; color: #c92a2a; border: 1px solid #ffc9c9; border-radius: 4px; padding: 1px 4px; font-weight: bold; animation: pulse 2s infinite; }
+        .badge-signal-danger { font-size: 0.68rem; background-color: #ffe3e3; color: #c92a2a; border: 1px solid #ffc9c9; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
         
         .strategy-box { background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6; padding: 10px; margin-bottom: 12px; }
         .strategy-item { font-size: 0.8rem; margin-bottom: 4px; }
@@ -82,7 +82,6 @@
                 <span class="badge bg-light text-secondary border" style="font-size:0.7rem;">デフォルト: 3大実証パターンのOR結合</span>
             </div>
             <div class="d-flex flex-wrap gap-2 mb-2">
-                <!-- デフォルト推奨: 3大パターンのOR結合 -->
                 <button id="btn-combo-all" class="btn btn-danger btn-preset fw-bold active" onclick="toggleSmartPreset('combo')">
                     🔥 3大実証厳選 (OR結合・デフォルト)
                 </button>
@@ -268,7 +267,7 @@
         let STOCKS = [];
         let modalInstance = null;
         let currentStockForAI = null;
-        let currentSmartPreset = 'combo'; // 初期値: 3大パターンのOR結合
+        let currentSmartPreset = 'combo';
 
         document.addEventListener("DOMContentLoaded", async () => {
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
@@ -342,10 +341,9 @@
             return s.market === 'プライム' || (s.price >= 300 && s.price <= 50000);
         }
 
-        // ★ 銘柄のシグナル＆警告判定ロジック
         function evaluateSignal(s) {
             const p = s.price;
-            const vr = s.val_ratio_5d || 1.0;
+            const vr = (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? s.val_ratio_5d : 0.0;
             const gcd = (s.gc_days !== null && typeof s.gc_days !== 'undefined') ? s.gc_days : 999;
             const avgVal = s.avg_val_5d || 0;
 
@@ -392,7 +390,6 @@
                 result.recReason = '【中位ブレイク】過熱天井を避け、2〜4倍の適正大口流入に乗る最強パターン(PF 1.59)。';
             }
 
-            // 3大実証パターンのOR結合判定 (警告銘柄は除外)
             if ((result.isBestMid || result.isBestLow || result.isBestHighMid) && !result.isWarning) {
                 result.isComboMatch = true;
             }
@@ -425,13 +422,11 @@
                 
                 const sig = evaluateSignal(s);
 
-                // ★ 実証プリセットモードの判定
                 if (currentSmartPreset === 'combo' && !sig.isComboMatch) return false;
                 if (currentSmartPreset === 'bestMid' && (!sig.isBestMid || sig.isWarning)) return false;
                 if (currentSmartPreset === 'bestLow' && (!sig.isBestLow || sig.isWarning)) return false;
                 if (currentSmartPreset === 'bestHighMid' && (!sig.isBestHighMid || sig.isWarning)) return false;
 
-                // 通常の条件フィルタ（スマートプリセットが指定なし、または重ねがけ時）
                 if (currentSmartPreset === 'none') {
                     if (pricePreset === "500-1000" && (s.price < 500 || s.price > 1000)) return false;
                     if (pricePreset === "1000-2000" && (s.price < 1000 || s.price > 2000)) return false;
@@ -445,7 +440,7 @@
                         if (s.gc_days === null || typeof s.gc_days === 'undefined' || s.gc_days > maxGcDays) return false;
                     }
                     if (!isNaN(minAvgVal) && (s.avg_val_5d || 0) < minAvgVal) return false;
-                    if (!isNaN(minValRatio) && (s.val_ratio_5d || 0) < minValRatio) return false;
+                    if (!isNaN(minValRatio) && ((s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? s.val_ratio_5d : 0) < minValRatio) return false;
                 }
 
                 if (!isNaN(maxMix) && s.mix_index > maxMix) return false;
@@ -459,7 +454,11 @@
             });
 
             filtered.sort((a, b) => {
-                if (sortBy === "valratio_desc") return (b.val_ratio_5d || 0) - (a.val_ratio_5d || 0);
+                if (sortBy === "valratio_desc") {
+                    const va = (a.val_ratio_5d !== null && typeof a.val_ratio_5d !== 'undefined') ? a.val_ratio_5d : 0;
+                    const vb = (b.val_ratio_5d !== null && typeof b.val_ratio_5d !== 'undefined') ? b.val_ratio_5d : 0;
+                    return vb - va;
+                }
                 if (sortBy === "gc_asc") {
                     const ga = (a.gc_days !== null && typeof a.gc_days !== 'undefined') ? a.gc_days : 999;
                     const gb = (b.gc_days !== null && typeof b.gc_days !== 'undefined') ? b.gc_days : 999;
@@ -476,6 +475,7 @@
             renderTable(filtered);
         }
 
+        // ★ 修正：出来高0倍の銘柄が「1倍」と化ける不具合を完全解消
         function renderTable(data) {
             document.getElementById("filtered-count").textContent = data.length;
             const tbody = document.getElementById("stock-table-body");
@@ -491,21 +491,25 @@
                 const isPrime = s.market === 'プライム';
                 const marketText = isPrime ? 'PRM' : 'STD';
                 
-                // GCバッジ
                 const hasRecentGC = (s.gc_days !== null && typeof s.gc_days !== 'undefined' && s.gc_days <= 3);
                 let gcBadge = "";
                 if (hasRecentGC) {
                     gcBadge = `<span class="badge-gc ms-1">${s.gc_days === 0 ? '本日' : s.gc_days + '日前'}GC</span>`;
                 }
 
-                // ★ シグナル ＆ 警告バッジ（一覧の時点で表示）
                 const sig = evaluateSignal(s);
 
                 const isPositiveDiscount = s.discount_rate > 0;
                 const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
                 const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
 
-                const vRatio = s.val_ratio_5d || 1.0;
+                // ★ 出来高増加率の厳密判定 (0は正しく0倍と表示し、1倍に化けない)
+                let vRatio = 0;
+                let vRatioText = "-";
+                if (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') {
+                    vRatio = s.val_ratio_5d;
+                    vRatioText = `${vRatio}倍`;
+                }
                 const vRatioClass = vRatio >= 4.0 ? "badge-valratio hot" : "badge-valratio";
 
                 html += `<tr>
@@ -524,7 +528,7 @@
                         </div>
                     </td>
                     <td class="fw-bold">¥${s.price.toLocaleString()}</td>
-                    <td><span class="${vRatioClass}">${vRatio}倍</span></td>
+                    <td><span class="${vRatioClass}">${vRatioText}</span></td>
                     <td class="${discountClass} fw-bold">${discountText}</td>
                     <td class="fw-bold text-dark">${s.div_yield}%</td>
                     <td>${s.per.toFixed(1)}</td>
@@ -535,10 +539,9 @@
             tbody.innerHTML = html;
         }
 
-        // 実証プリセット切り替え
         function toggleSmartPreset(type) {
             if (currentSmartPreset === type) {
-                currentSmartPreset = 'none'; // 解除
+                currentSmartPreset = 'none';
             } else {
                 currentSmartPreset = type;
             }
@@ -691,7 +694,7 @@
                 gcStr = s.gc_days === 0 ? "🔥 本日ゴールデンクロス！" : `🚀 ${s.gc_days}日前にGC形成`;
             }
             const avgValStr = s.avg_val_5d ? (s.avg_val_5d >= 100000 ? `¥${(s.avg_val_5d / 100000).toFixed(1)} 億円` : `¥${Math.round(s.avg_val_5d / 10).toLocaleString()} 万円`) : "-";
-            const valRatioStr = s.val_ratio_5d ? `${s.val_ratio_5d} 倍` : "-";
+            const valRatioStr = (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? `${s.val_ratio_5d} 倍` : "-";
 
             const isPositiveDiscount = s.discount_rate > 0;
             const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
@@ -704,7 +707,6 @@
             let slPct = p > 3000 ? 0.02 : 0.05;
             let maxHoldDays = 14;
 
-            // 診断コメントの生成
             let alertBoxHtml = "";
             if (sig.isWarning) {
                 alertBoxHtml = `
@@ -782,7 +784,7 @@
             if (!currentStockForAI) return;
             const s = currentStockForAI;
             const gcText = s.gc_days === 0 ? "本日GC形成" : (s.gc_days ? `${s.gc_days}日前にGC形成` : "GCなし");
-            const valRatioText = s.val_ratio_5d ? `${s.val_ratio_5d}倍` : "通常";
+            const valRatioText = (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? `${s.val_ratio_5d}倍` : "通常";
 
             let targetTpPct = 0.12, targetSlPct = 0.05;
             if (s.price > 3000) { targetSlPct = 0.02; }
