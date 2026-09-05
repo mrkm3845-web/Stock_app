@@ -44,7 +44,6 @@ def fetch_jpx_stock_list(keyword):
     try:
         res = requests.get(page_url, headers=headers, timeout=30)
         if res.status_code == 200:
-            # ページ内から「data_j.xls」または「data_j.xlsx」の最新URLを抽出
             match = re.search(r'href="([^"]+data_j\.xls[x]?)"', res.text)
             if match:
                 rel_url = match.group(1)
@@ -53,7 +52,6 @@ def fetch_jpx_stock_list(keyword):
     except Exception as e:
         print(f">> JPX案内ページ取得エラー: {e}")
 
-    # 抽出できなかった場合のフォールバックURL
     if not excel_url:
         excel_url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
 
@@ -74,7 +72,6 @@ def fetch_jpx_stock_list(keyword):
     except Exception as e:
         print(f">> 最新Excelダウンロード/解析エラー: {e}")
 
-    # 万が一JPXサイト全体が落ちている場合の緊急避難用
     print(f">> ⚠️ JPX障害のため、緊急用としてローカルDBから【{keyword}】銘柄リストを復元します...")
     if os.path.exists(DB_PATH):
         try:
@@ -358,7 +355,7 @@ def save_history_json(all_stocks, target_date):
     print(f">> 日別JSON (docs/history/{target_date}.json) を保存しました。")
 
 
-# 8. Discord通知 (本日GC最優先 ＆ 1日前GCの2段表示 / 変更なし時はスマート通知)
+# 8. Discord通知 (スクリーナー初期条件と完全同期: 500~3000円×急増2倍↑×代金5千万↑×GC3日以内)
 def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook_url):
     if not webhook_url or not all_stocks:
         return
@@ -366,7 +363,7 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     df = pd.DataFrame(all_stocks)
 
-    # 変更がなかった場合は「変更なし」の簡易通知で終了
+    # 変更なし時の通知
     if added_count == 0 and updated_count == 0:
         msg = f"☕ **【株価データ変更なし】** ({now_str})\n対象日: `{target_date}` ➔ 本日の更新はすでに完了済み、または市場データ更新待ちです。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
         try:
@@ -375,6 +372,7 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
             pass
         return
 
+    # ① バリュー株セクション (プライム・スタンダード)
     valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)].sort_values(by="mix_index", ascending=True)
 
     def make_value_section(market_name):
@@ -395,39 +393,34 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
                 text += f"{r['code']:<6} {sname:<8} +{r['discount_rate']}% {r['mix_index']:<5.2f} {r['div_yield']}%\n"
         return text + "```"
 
-    swing_base = df[
-        (df["price"] >= 500) & (df["price"] <= 2000) &
+    # ② スイングセクション（★スクリーナーのデフォルト「実証スイングBEST」条件と完全同期）
+    # 条件: 株価 500〜3000円 / 5日平均代金 5,000万円以上 / 売買代金増加率 2.0倍以上 / GC 3日以内 / PER 4.0以上
+    swing_df = df[
+        (df["price"] >= 500) & (df["price"] <= 3000) &
         (df["gc_days"].notna()) & 
-        (df["gc_days"] <= 1) & 
-        (df["avg_val_5d"] >= 30000) & 
-        (df["val_ratio_5d"] >= 1.2)
-    ]
+        (df["gc_days"] <= 3) & 
+        (df["avg_val_5d"] >= 50000) & 
+        (df["val_ratio_5d"] >= 2.0) &
+        (df["per"] >= 4.0)
+    ].sort_values(by="val_ratio_5d", ascending=False)  # スクリーナー初期ソートと同じ「増加率急増順」
 
-    today_gc_df = swing_base[swing_base["gc_days"] == 0].sort_values(by="val_ratio_5d", ascending=False)
-    yesterday_gc_df = swing_base[swing_base["gc_days"] == 1].sort_values(by="val_ratio_5d", ascending=False)
+    swing_section = "\n**🚀 【実証スイングBEST注目】(スクリーナー初期条件と同期)**\n"
+    swing_section += "└ 条件: 株価500~3,000円 / 代金5千万↑ / 増加率2.0倍↑ / GC 3日以内\n"
 
-    def format_swing_table(target_sub_df, max_rows=5):
-        t = f"```\n{'コード':<5} {'社名':<8} {'株価':<6} {'GC':<5} {'増加率'}\n" + "-" * 38 + "\n"
-        for _, r in target_sub_df.head(max_rows).iterrows():
-            sname = (r["name"][:6] + "..") if len(r["name"]) > 6 else r["name"]
-            gc_label = "当日GC" if r["gc_days"] == 0 else "1日前"
-            t += f"{r['code']:<6} {sname:<8} ¥{r['price']:<5} {gc_label:<5} {r['val_ratio_5d']}倍\n"
-        return t + "```"
-
-    swing_section = "\n**🚀 【実証スイング注目】初動GC×出来高急増 (最高勝率ゾーン)**\n"
-    swing_section += "└ 条件: 株価500~2000円 / 代金3千万↑ / 増加率1.2倍↑\n"
-
-    if not today_gc_df.empty:
-        swing_section += f"▼ 🔥 **本日GC形成 (初動ど真ん中・{len(today_gc_df)}件)**\n"
-        swing_section += format_swing_table(today_gc_df, max_rows=5)
+    if not swing_df.empty:
+        swing_section += f"▼ 該当: **{len(swing_df)} 件** (売買代金増加率順)\n```\n"
+        swing_section += f"{'コード':<5} {'社名':<7} {'現在値':<7} {'GC状態':<6} {'増加率'}\n" + "-" * 38 + "\n"
+        for _, r in swing_df.head(10).iterrows():
+            sname = (r["name"][:5] + "..") if len(r["name"]) > 5 else r["name"]
+            gc_d = int(r["gc_days"])
+            if gc_d == 0:
+                gc_label = "本日GC"
+            else:
+                gc_label = f"{gc_d}日前"
+            swing_section += f"{r['code']:<6} {sname:<7} ¥{int(r['price']):<6} {gc_label:<6} {r['val_ratio_5d']}倍\n"
+        swing_section += "```"
     else:
-        swing_section += "▼ 🔥 **本日GC形成**: 該当なし (0件)\n"
-
-    if not yesterday_gc_df.empty:
-        swing_section += f"▼ ⚡ **1日前GC (モメンタム継続・{len(yesterday_gc_df)}件)**\n"
-        swing_section += format_swing_table(yesterday_gc_df, max_rows=5)
-    else:
-        swing_section += "▼ ⚡ **1日前GC**: 該当なし (0件)\n"
+        swing_section += "▼ 該当銘柄なし (0件)\n"
 
     msg = f"📊 **【株式自動スクリーニング速報 (高精度版)】** ({now_str})\n"
     msg += f"📅 対象営業日: **`{target_date}`** (総登録: {len(all_stocks)}社 / 新規: +{added_count} / 更新: {updated_count})\n"
