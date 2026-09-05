@@ -16,7 +16,7 @@
         table th { background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; vertical-align: middle !important; font-size: 0.8rem; }
         table td { vertical-align: middle; white-space: nowrap; text-align: center; }
         
-        .stock-main-cell { text-align: left !important; min-width: 140px; max-width: 180px; }
+        .stock-main-cell { text-align: left !important; min-width: 150px; max-width: 200px; }
         .company-name {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -24,7 +24,9 @@
             font-weight: bold;
             cursor: pointer;
             color: #212529;
-            display: block;
+            display: inline-block;
+            max-width: 120px;
+            vertical-align: middle;
         }
         .company-name:hover { color: #0d6efd; }
         .stock-sub-info { font-size: 0.7rem; color: #6c757d; }
@@ -32,9 +34,15 @@
         .rakuten-link { color: #bf0000; font-weight: 700; text-decoration: underline; font-size: 0.8rem; cursor: pointer; }
         .rakuten-link:hover { color: #900000; }
         
-        .badge-gc { font-size: 0.68rem; background-color: #ffeeba; color: #856404; border-radius: 4px; padding: 1px 3px; font-weight: bold; }
+        .badge-gc { font-size: 0.68rem; background-color: #ffeeba; color: #856404; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
         .badge-valratio { font-size: 0.82rem; font-weight: 800; padding: 3px 6px; border-radius: 6px; background-color: #e7f5ff; color: #1971c2; }
         .badge-valratio.hot { background-color: #ffe3e3; color: #e03131; }
+        
+        /* シグナル・警告バッジ */
+        .badge-signal-gold { font-size: 0.68rem; background-color: #fff3bf; color: #d9480f; border: 1px solid #ffd43b; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
+        .badge-signal-green { font-size: 0.68rem; background-color: #d3f9d8; color: #2b8a3e; border: 1px solid #b2f2bb; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
+        .badge-signal-blue { font-size: 0.68rem; background-color: #e7f5ff; color: #1971c2; border: 1px solid #a5d8ff; border-radius: 4px; padding: 1px 4px; font-weight: bold; }
+        .badge-signal-danger { font-size: 0.68rem; background-color: #ffe3e3; color: #c92a2a; border: 1px solid #ffc9c9; border-radius: 4px; padding: 1px 4px; font-weight: bold; animation: pulse 2s infinite; }
         
         .strategy-box { background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6; padding: 10px; margin-bottom: 12px; }
         .strategy-item { font-size: 0.8rem; margin-bottom: 4px; }
@@ -67,11 +75,30 @@
             </div>
         </div>
 
-        <!-- プリセットボタン -->
+        <!-- 実証プリセットボタン (バックテスト最適シグナル) -->
         <div class="card p-3 bg-white">
-            <div class="filter-label mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> 絞り込みプリセット（重ねがけ可能）:</div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="filter-label mb-0"><i class="bi bi-lightning-charge-fill text-warning"></i> 実証バックテスト最強プリセット（成績上位シグナル）:</div>
+                <span class="badge bg-light text-secondary border" style="font-size:0.7rem;">デフォルト: 3大実証パターンのOR結合</span>
+            </div>
+            <div class="d-flex flex-wrap gap-2 mb-2">
+                <!-- デフォルト推奨: 3大パターンのOR結合 -->
+                <button id="btn-combo-all" class="btn btn-danger btn-preset fw-bold active" onclick="toggleSmartPreset('combo')">
+                    🔥 3大実証厳選 (OR結合・デフォルト)
+                </button>
+                <button id="btn-best-mid" class="btn btn-outline-danger btn-preset fw-bold" onclick="toggleSmartPreset('bestMid')">
+                    🏆 最高期待値 (中低位3日目×2倍↑ / PF 1.79)
+                </button>
+                <button id="btn-best-low" class="btn btn-outline-success btn-preset fw-bold" onclick="toggleSmartPreset('bestLow')">
+                    🚀 低位初動 (500~1000円×当日×1.5~3倍 / PF 1.26)
+                </button>
+                <button id="btn-best-highmid" class="btn btn-outline-primary btn-preset fw-bold" onclick="toggleSmartPreset('bestHighMid')">
+                    🎯 中位ブレイク (2000~3000円×2~3日×2~4倍 / PF 1.59)
+                </button>
+            </div>
+
+            <div class="filter-label mb-2"><i class="bi bi-funnel text-secondary"></i> バリュー・ファンダメンタルズ絞り込み（重ねがけ可能）:</div>
             <div class="d-flex flex-wrap gap-2">
-                <button id="btn-swing" class="btn btn-outline-danger btn-preset fw-bold" onclick="togglePreset('swing')">🚀 実証スイングBEST (500~3000円×急増×14日)</button>
                 <button id="btn-ultra" class="btn btn-outline-danger btn-preset" onclick="togglePreset('ultra')">🔥 超割安 (係数 < 5.625)</button>
                 <button id="btn-strict" class="btn btn-outline-success btn-preset" onclick="togglePreset('strict')">🎯 厳選割安 (係数 < 11.25)</button>
                 <button id="btn-graham" class="btn btn-outline-primary btn-preset" onclick="togglePreset('graham')">📋 グレアム標準 (係数 < 22.5)</button>
@@ -88,7 +115,7 @@
             <div class="row g-2 align-items-end">
                 <div class="col-6 col-md-2">
                     <div class="filter-label">市場区分</div>
-                    <select id="filter-market" class="form-select form-select-sm" onchange="applyFilters()">
+                    <select id="filter-market" class="form-select form-select-sm" onchange="clearSmartPreset(); applyFilters();">
                         <option value="ALL">全市場 (PRM / STD)</option>
                         <option value="プライム">プライム のみ</option>
                         <option value="スタンダード">スタンダード のみ</option>
@@ -109,35 +136,36 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <div class="filter-label text-primary fw-bold">株価帯クイック選択 (実証最適化)</div>
-                    <select id="filter-price-preset" class="form-select form-select-sm fw-bold border-primary text-primary" onchange="applyFilters()">
+                    <div class="filter-label text-primary fw-bold">株価帯クイック選択</div>
+                    <select id="filter-price-preset" class="form-select form-select-sm fw-bold border-primary text-primary" onchange="clearSmartPreset(); applyFilters();">
                         <option value="ALL">指定なし (全価格帯)</option>
-                        <option value="500-1000">① 〜¥1,000 (低位株・PF1.02・2倍急増)</option>
-                        <option value="1000-3000">② ¥1,000〜¥3,000 (🏆最高期待値・PF1.05・4倍急増)</option>
-                        <option value="500-3000" selected>①+② ¥500〜¥3,000 (🚀実証推奨コアゾーン)</option>
-                        <option value="3000-6000">③ ¥3,000〜¥6,000 (中高位・タイト損切-2%)</option>
-                        <option value="6000-UP">④ ¥6,000以上 (⚠️値がさ株・スイング非推奨)</option>
+                        <option value="500-1000">① 〜¥1,000 (低位株・1.5~3倍推奨)</option>
+                        <option value="1000-2000">② ¥1,000〜¥2,000 (🏆最高期待値・3日目×2倍↑)</option>
+                        <option value="2000-3000">③ ¥2,000〜¥3,000 (中位・2~4倍推奨/PF1.59)</option>
+                        <option value="500-3000">①〜③ ¥500〜¥3,000 (実証推奨コアゾーン)</option>
+                        <option value="3000-6000">④ ¥3,000〜¥6,000 (中高位・タイト損切-2%)</option>
+                        <option value="6000-UP">⑤ ¥6,000以上 (⚠️値がさ株・非推奨)</option>
                     </select>
                 </div>
 
                 <div class="col-6 col-md-3">
                     <div class="filter-label text-danger fw-bold">GC (ゴールデンクロス)</div>
-                    <select id="filter-gc" class="form-select form-select-sm fw-bold border-danger" onchange="applyFilters()">
+                    <select id="filter-gc" class="form-select form-select-sm fw-bold border-danger" onchange="clearSmartPreset(); applyFilters();">
                         <option value="ALL">指定なし</option>
                         <option value="0">本日GC形成 (初動)</option>
-                        <option value="1">1営業日以内 (3,000円超必須)</option>
-                        <option value="3" selected>3営業日以内 (3,000円以下最適)</option>
+                        <option value="1">1営業日以内</option>
+                        <option value="3">3営業日以内 (実証最適)</option>
                         <option value="5">5営業日以内</option>
                     </select>
                 </div>
 
                 <div class="col-6 col-md-2">
                     <div class="filter-label">5日平均代金 (最小 千円)</div>
-                    <input type="number" id="filter-avgval" class="form-control form-control-sm" step="10000" placeholder="下限なし" oninput="applyFilters()">
+                    <input type="number" id="filter-avgval" class="form-control form-control-sm" step="10000" placeholder="下限なし" oninput="clearSmartPreset(); applyFilters();">
                 </div>
                 <div class="col-6 col-md-2">
                     <div class="filter-label text-primary fw-bold">売買代金増加率 (最小 倍)</div>
-                    <input type="number" id="filter-valratio" class="form-control form-control-sm border-primary" step="0.5" placeholder="下限なし" oninput="applyFilters()">
+                    <input type="number" id="filter-valratio" class="form-control form-control-sm border-primary" step="0.5" placeholder="下限なし" oninput="clearSmartPreset(); applyFilters();">
                 </div>
                 <div class="col-6 col-md-2">
                     <div class="filter-label">ミックス係数 (最大)</div>
@@ -188,14 +216,14 @@
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-dark">該当件数: <span id="filtered-count" class="text-primary fs-5">0</span> 件</span>
-                <span class="text-muted small">💡 コードでiSPEED直行 / 社名で14日最適スイング戦略</span>
+                <span class="text-muted small">💡 コードでiSPEED直行 / ⚠️過熱天井マークに注意</span>
             </div>
             <div class="table-container">
                 <table class="table table-hover table-striped table-sm mb-0">
                     <thead>
                         <tr>
                             <th style="width: 35px;">No</th>
-                            <th class="text-start">銘柄 (コード / 社名 / 市場)</th>
+                            <th class="text-start">銘柄 (コード / 社名 / シグナル)</th>
                             <th>現在値</th>
                             <th class="text-danger">🚀 増加率</th>
                             <th>割安度</th>
@@ -240,6 +268,7 @@
         let STOCKS = [];
         let modalInstance = null;
         let currentStockForAI = null;
+        let currentSmartPreset = 'combo'; // 初期値: 3大パターンのOR結合
 
         document.addEventListener("DOMContentLoaded", async () => {
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
@@ -295,7 +324,8 @@
                 STOCKS = await res.json();
                 document.getElementById("total-count").textContent = STOCKS.length;
                 updateSectorOptions();
-                togglePreset('swing');
+                applySmartPresetUI();
+                applyFilters();
             } catch (err) {
                 console.error(err);
             }
@@ -310,6 +340,64 @@
         function checkMini(s) {
             if (typeof s.is_mini !== 'undefined') return s.is_mini;
             return s.market === 'プライム' || (s.price >= 300 && s.price <= 50000);
+        }
+
+        // ★ 銘柄のシグナル＆警告判定ロジック
+        function evaluateSignal(s) {
+            const p = s.price;
+            const vr = s.val_ratio_5d || 1.0;
+            const gcd = (s.gc_days !== null && typeof s.gc_days !== 'undefined') ? s.gc_days : 999;
+            const avgVal = s.avg_val_5d || 0;
+
+            let result = {
+                badgeHtml: '',
+                isWarning: false,
+                isBestMid: false,
+                isBestLow: false,
+                isBestHighMid: false,
+                isComboMatch: false,
+                warnReason: '',
+                recReason: ''
+            };
+
+            // 1. ⚠️ 過熱天井警戒判定
+            if (p <= 1000 && vr >= 4.0) {
+                result.isWarning = true;
+                result.badgeHtml = `<span class="badge-signal-danger ms-1" title="低位株の出来高4倍超は仕手天井の罠リスク(PF 0.85)">⚠️過熱天井警戒(${vr}倍)</span>`;
+                result.warnReason = '低位株(〜1,000円)の出来高4倍超はイナゴタワー天井になりやすく、未見期PF 0.85に急落します。高値掴みに厳重警戒！';
+            } else if (p > 2000 && p <= 3000 && vr >= 4.0) {
+                result.isWarning = true;
+                result.badgeHtml = `<span class="badge-signal-danger ms-1" title="中位株の出来高4倍超は過熱急落リスク(PF 0.72)">⚠️過熱警戒(${vr}倍)</span>`;
+                result.warnReason = '2,000〜3,000円ゾーンの出来高4倍超は過熱感による急反落リスク高(PF 0.72)。';
+            }
+
+            // 2. 🏆 最高期待値シグナル (中低位 1,000〜2,000円 × 2~3日目GC × 2.0倍以上)
+            if (p >= 1000 && p <= 2000 && (gcd === 2 || gcd === 3) && vr >= 2.0 && avgVal >= 30000) {
+                result.isBestMid = true;
+                result.badgeHtml = `<span class="badge-signal-gold ms-1" title="全検証中最高成績(PF 1.79・勝率55%)">🏆最高期待値(3日目)</span>`;
+                result.recReason = '【全検証中最高期待値】GC直後の押し目を通過し、3日目でも大口急増が持続している本物のトレンド確定シグナル！(PF 1.69〜1.79)';
+            }
+
+            // 3. 🚀 低位初動シグナル (低位 500〜1,000円 × 当日GC × 1.5~3.0倍)
+            if (p >= 500 && p <= 1000 && gcd === 0 && vr >= 1.5 && vr < 4.0 && avgVal >= 30000) {
+                result.isBestLow = true;
+                result.badgeHtml = `<span class="badge-signal-green ms-1" title="手堅い初動高勝率(PF 1.26・861件実証)">🚀低位初動(当日)</span>`;
+                result.recReason = '【手堅い低位初動】861件のビッグサンプルでPF 1.26を実証した最強の初動パターン。';
+            }
+
+            // 4. 🎯 中位ブレイクシグナル (中位 2,000〜3,000円 × 2~3日目GC × 2.0~4.0倍)
+            if (p > 2000 && p <= 3000 && (gcd === 2 || gcd === 3) && vr >= 2.0 && vr < 4.0 && avgVal >= 30000) {
+                result.isBestHighMid = true;
+                result.badgeHtml = `<span class="badge-signal-blue ms-1" title="大口集中ブレイク(PF 1.59)">🎯中位ブレイク</span>`;
+                result.recReason = '【中位ブレイク】過熱天井を避け、2〜4倍の適正大口流入に乗る最強パターン(PF 1.59)。';
+            }
+
+            // 3大実証パターンのOR結合判定 (警告銘柄は除外)
+            if ((result.isBestMid || result.isBestLow || result.isBestHighMid) && !result.isWarning) {
+                result.isComboMatch = true;
+            }
+
+            return result;
         }
 
         function applyFilters() {
@@ -335,18 +423,30 @@
                 if (kabumini === "ONLY" && !isMini) return false;
                 if (sector !== "ALL" && s.sector !== sector) return false;
                 
-                if (pricePreset === "500-1000" && (s.price < 500 || s.price > 1000)) return false;
-                if (pricePreset === "1000-3000" && (s.price < 1000 || s.price > 3000)) return false;
-                if (pricePreset === "500-3000" && (s.price < 500 || s.price > 3000)) return false;
-                if (pricePreset === "3000-6000" && (s.price < 3000 || s.price > 6000)) return false;
-                if (pricePreset === "6000-UP" && s.price < 6000) return false;
+                const sig = evaluateSignal(s);
 
-                if (gcFilter !== "ALL") {
-                    const maxGcDays = parseInt(gcFilter, 10);
-                    if (s.gc_days === null || typeof s.gc_days === 'undefined' || s.gc_days > maxGcDays) return false;
+                // ★ 実証プリセットモードの判定
+                if (currentSmartPreset === 'combo' && !sig.isComboMatch) return false;
+                if (currentSmartPreset === 'bestMid' && (!sig.isBestMid || sig.isWarning)) return false;
+                if (currentSmartPreset === 'bestLow' && (!sig.isBestLow || sig.isWarning)) return false;
+                if (currentSmartPreset === 'bestHighMid' && (!sig.isBestHighMid || sig.isWarning)) return false;
+
+                // 通常の条件フィルタ（スマートプリセットが指定なし、または重ねがけ時）
+                if (currentSmartPreset === 'none') {
+                    if (pricePreset === "500-1000" && (s.price < 500 || s.price > 1000)) return false;
+                    if (pricePreset === "1000-2000" && (s.price < 1000 || s.price > 2000)) return false;
+                    if (pricePreset === "2000-3000" && (s.price < 2000 || s.price > 3000)) return false;
+                    if (pricePreset === "500-3000" && (s.price < 500 || s.price > 3000)) return false;
+                    if (pricePreset === "3000-6000" && (s.price < 3000 || s.price > 6000)) return false;
+                    if (pricePreset === "6000-UP" && s.price < 6000) return false;
+
+                    if (gcFilter !== "ALL") {
+                        const maxGcDays = parseInt(gcFilter, 10);
+                        if (s.gc_days === null || typeof s.gc_days === 'undefined' || s.gc_days > maxGcDays) return false;
+                    }
+                    if (!isNaN(minAvgVal) && (s.avg_val_5d || 0) < minAvgVal) return false;
+                    if (!isNaN(minValRatio) && (s.val_ratio_5d || 0) < minValRatio) return false;
                 }
-                if (!isNaN(minAvgVal) && (s.avg_val_5d || 0) < minAvgVal) return false;
-                if (!isNaN(minValRatio) && (s.val_ratio_5d || 0) < minValRatio) return false;
 
                 if (!isNaN(maxMix) && s.mix_index > maxMix) return false;
                 if (!isNaN(minPer) && s.per < minPer) return false;
@@ -391,11 +491,15 @@
                 const isPrime = s.market === 'プライム';
                 const marketText = isPrime ? 'PRM' : 'STD';
                 
+                // GCバッジ
                 const hasRecentGC = (s.gc_days !== null && typeof s.gc_days !== 'undefined' && s.gc_days <= 3);
                 let gcBadge = "";
                 if (hasRecentGC) {
-                    gcBadge = `<span class="badge-gc ms-1">🚀${s.gc_days === 0 ? '本日' : s.gc_days + '日前'}GC</span>`;
+                    gcBadge = `<span class="badge-gc ms-1">${s.gc_days === 0 ? '本日' : s.gc_days + '日前'}GC</span>`;
                 }
+
+                // ★ シグナル ＆ 警告バッジ（一覧の時点で表示）
+                const sig = evaluateSignal(s);
 
                 const isPositiveDiscount = s.discount_rate > 0;
                 const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
@@ -407,10 +511,11 @@
                 html += `<tr>
                     <td><strong>${idx + 1}</strong></td>
                     <td class="stock-main-cell">
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center flex-wrap">
                             <span onclick="openRakuten('${s.code}')" class="rakuten-link me-1" title="タップでiSPEEDを開く">${s.code}</span>
                             <span class="company-name" onclick="showStockDetail('${s.code}')" title="${s.name}（タップで最新スイング戦略）">${s.name}</span>
                             ${gcBadge}
+                            ${sig.badgeHtml}
                         </div>
                         <div class="stock-sub-info">
                             <span class="badge ${isPrime ? 'bg-primary' : 'bg-secondary'} p-0 px-1" style="font-size:0.65rem;">${marketText}</span>
@@ -430,9 +535,53 @@
             tbody.innerHTML = html;
         }
 
+        // 実証プリセット切り替え
+        function toggleSmartPreset(type) {
+            if (currentSmartPreset === type) {
+                currentSmartPreset = 'none'; // 解除
+            } else {
+                currentSmartPreset = type;
+            }
+            applySmartPresetUI();
+            applyFilters();
+        }
+
+        function clearSmartPreset() {
+            currentSmartPreset = 'none';
+            applySmartPresetUI();
+        }
+
+        function applySmartPresetUI() {
+            const btnCombo = document.getElementById("btn-combo-all");
+            const btnMid = document.getElementById("btn-best-mid");
+            const btnLow = document.getElementById("btn-best-low");
+            const btnHighMid = document.getElementById("btn-best-highmid");
+
+            [btnCombo, btnMid, btnLow, btnHighMid].forEach(b => {
+                b.classList.remove("active", "btn-danger", "btn-success", "btn-primary");
+            });
+            btnCombo.classList.add("btn-outline-danger");
+            btnMid.classList.add("btn-outline-danger");
+            btnLow.classList.add("btn-outline-success");
+            btnHighMid.classList.add("btn-outline-primary");
+
+            if (currentSmartPreset === 'combo') {
+                btnCombo.classList.add("active", "btn-danger");
+                btnCombo.classList.remove("btn-outline-danger");
+            } else if (currentSmartPreset === 'bestMid') {
+                btnMid.classList.add("active", "btn-danger");
+                btnMid.classList.remove("btn-outline-danger");
+            } else if (currentSmartPreset === 'bestLow') {
+                btnLow.classList.add("active", "btn-success");
+                btnLow.classList.remove("btn-outline-success");
+            } else if (currentSmartPreset === 'bestHighMid') {
+                btnHighMid.classList.add("active", "btn-primary");
+                btnHighMid.classList.remove("btn-outline-primary");
+            }
+        }
+
         function togglePreset(type) {
             const btnMap = {
-                swing: document.getElementById("btn-swing"),
                 ultra: document.getElementById("btn-ultra"),
                 strict: document.getElementById("btn-strict"),
                 graham: document.getElementById("btn-graham"),
@@ -443,25 +592,6 @@
             };
             const currentBtn = btnMap[type];
             const isActive = currentBtn.classList.contains("active");
-
-            if (type === 'swing') {
-                if (!isActive) {
-                    resetAll();
-                    currentBtn.classList.add("active", "btn-danger");
-                    currentBtn.classList.remove("btn-outline-danger");
-                    
-                    // 最新バックテストのコア推奨条件（500〜3000円 / 出来高2.0倍以上 / 代金5000万以上 / GC3日以内）
-                    document.getElementById("filter-price-preset").value = "500-3000";
-                    document.getElementById("filter-gc").value = "3";
-                    document.getElementById("filter-avgval").value = 50000;
-                    document.getElementById("filter-valratio").value = 2.0;
-                    document.getElementById("sort-by").value = "valratio_desc";
-                } else {
-                    resetAll();
-                }
-                applyFilters();
-                return;
-            }
 
             if (type === 'ultra' || type === 'strict' || type === 'graham') {
                 ['ultra', 'strict', 'graham'].forEach(k => {
@@ -510,10 +640,12 @@
         }
 
         function resetAll() {
+            currentSmartPreset = 'none';
+            applySmartPresetUI();
+
             document.querySelectorAll(".btn-preset").forEach(btn => {
                 btn.classList.remove("active", "btn-danger", "btn-success", "btn-primary", "btn-secondary", "btn-info", "btn-warning", "text-white");
             });
-            document.getElementById("btn-swing").classList.add("btn-outline-danger");
             document.getElementById("btn-ultra").classList.add("btn-outline-danger");
             document.getElementById("btn-strict").classList.add("btn-outline-success");
             document.getElementById("btn-graham").classList.add("btn-outline-primary");
@@ -566,42 +698,36 @@
             const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
 
             const p = s.price;
+            const sig = evaluateSignal(s);
             
-            // 最新バックテスト（3000円超・出来高急増最適化）のルール判定
             let tpPct = 0.12;
-            let slPct = 0.05;
+            let slPct = p > 3000 ? 0.02 : 0.05;
             let maxHoldDays = 14;
-            let tierBadge = '';
-            let tierComment = '';
-            let recommendedVol = '';
 
-            if (p <= 1000) {
-                tpPct = 0.12; slPct = 0.05; maxHoldDays = 14;
-                tierBadge = '<span class="badge bg-success ms-1">①低位株 (~1,000円) 最適化 [PF 1.02]</span>';
-                tierComment = 'GC 3日以内・出来高2.0倍以上で実証。-5%の浅い損切りで守りつつ+12%を狙う設定。';
-                recommendedVol = '2.0倍以上 (5日代金5,000万以上)';
-            } else if (p > 1000 && p <= 3000) {
-                tpPct = 0.12; slPct = 0.05; maxHoldDays = 14;
-                tierBadge = '<span class="badge bg-danger ms-1">🏆②中低位 (1,000~3,000円) 最高期待値 [PF 1.05]</span>';
-                tierComment = '全価格帯で最高PF 1.05を記録！出来高4.0倍以上の猛烈な資金流入を捉える最強設定。';
-                recommendedVol = '4.0倍以上 (大口急増必須)';
-            } else if (p > 3000 && p <= 6000) {
-                tpPct = 0.12; slPct = 0.02; maxHoldDays = 14;
-                tierBadge = '<span class="badge bg-warning text-dark ms-1">③中高位 (3,000~6,000円) [PF 1.01]</span>';
-                tierComment = 'GC 1日以内初動×出来高4.0倍必須。損切りライン-2.0%と非常にタイトな規律重視型。';
-                recommendedVol = '4.0倍以上 (初動GC厳守)';
-            } else {
-                tpPct = 0.05; slPct = 0.02; maxHoldDays = 14;
-                tierBadge = '<span class="badge bg-secondary ms-1">⚠️④超値がさ (6,000円~) [PF 0.90・非推奨]</span>';
-                tierComment = '未見検証で期待値マイナス(PF 0.90)。大口のダマシが多くスイングでの手出しは非推奨。';
-                recommendedVol = '静観推奨';
+            // 診断コメントの生成
+            let alertBoxHtml = "";
+            if (sig.isWarning) {
+                alertBoxHtml = `
+                    <div class="p-2 mb-2 bg-danger-subtle border border-danger rounded text-danger fw-bold small">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> 【バックテスト警戒シグナル】
+                        <div class="fw-normal mt-1">${sig.warnReason}</div>
+                    </div>
+                `;
+            } else if (sig.recReason) {
+                alertBoxHtml = `
+                    <div class="p-2 mb-2 bg-success-subtle border border-success rounded text-success fw-bold small">
+                        <i class="bi bi-award-fill me-1"></i> 【バックテスト推奨シグナル】
+                        <div class="fw-normal mt-1">${sig.recReason}</div>
+                    </div>
+                `;
             }
 
             const stopLoss = Math.round(p * (1.0 - slPct));
             const takeProfit = Math.round(p * (1.0 + tpPct));
 
-            document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${s.name}`;
+            document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${s.name} ${sig.badgeHtml}`;
             document.getElementById("modalBody").innerHTML = `
+                ${alertBoxHtml}
                 <div class="row g-2 mb-2">
                     <div class="col-6"><small class="text-muted">市場 / 業種</small><div><strong>${s.market}</strong> (${s.sector})</div></div>
                     <div class="col-6"><small class="text-muted">現在株価</small><div class="fs-5 fw-bold text-primary">¥${p.toLocaleString()}</div></div>
@@ -620,8 +746,7 @@
 
                 <div class="strategy-box">
                     <div class="fw-bold text-dark small mb-2">
-                        <i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略 (最新バックテスト最適化):
-                        ${tierBadge}
+                        <i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略 (14日実証最適化):
                     </div>
                     
                     <div class="strategy-item text-danger fw-bold">
@@ -632,12 +757,12 @@
                     <div class="strategy-item text-primary fw-bold">
                         <i class="bi bi-trophy me-1"></i> 利確ターゲット: ¥${takeProfit.toLocaleString()} (+${(tpPct*100).toFixed(1)}%)
                     </div>
-                    <div class="strategy-desc">└ 【利食い】勢いがあるうちに確実に手仕舞う設定</div>
+                    <div class="strategy-desc">└ 【利食い】勢いがあるうちに確実に手仕舞う設定 (リスクリワード比 1:2.4)</div>
 
                     <div class="strategy-item text-secondary fw-bold">
                         <i class="bi bi-clock-history me-1"></i> 最適保有期間: ${maxHoldDays}営業日 (約3週間)
                     </div>
-                    <div class="strategy-desc">└ 【考察】${tierComment} (推奨出来高: ${recommendedVol})</div>
+                    <div class="strategy-desc">└ 【手仕舞い】14営業日経過時点で目標未達の場合は終値で手仕舞い推奨</div>
                 </div>
 
                 <div class="row g-2">
