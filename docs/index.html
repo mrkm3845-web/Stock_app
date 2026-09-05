@@ -77,7 +77,7 @@
         <!-- 実証プリセットボタン (バックテスト最適シグナル) -->
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="filter-label mb-0"><i class="bi bi-lightning-charge-fill text-warning"></i> 実証バックテスト最強プリセット（押すと下の条件欄も自動連動）:</div>
+                <div class="filter-label mb-0"><i class="bi bi-lightning-charge-fill text-warning"></i> 実証バックテスト最強プリセット（下の条件欄に完全同期）:</div>
                 <span class="badge bg-light text-secondary border" style="font-size:0.7rem;">デフォルト: 3大実証パターンのOR結合</span>
             </div>
             <div class="d-flex flex-wrap gap-2 mb-2">
@@ -85,7 +85,7 @@
                     🔥 3大実証厳選 (OR結合・デフォルト)
                 </button>
                 <button id="btn-best-mid" class="btn btn-outline-danger btn-preset fw-bold" onclick="applyPresetPattern('bestMid')">
-                    🏆 最高期待値 (中低位3日目×2倍↑ / PF 1.79)
+                    🏆 最高期待値 (中低位 2~3日目×2倍↑ / PF 1.79)
                 </button>
                 <button id="btn-best-low" class="btn btn-outline-success btn-preset fw-bold" onclick="applyPresetPattern('bestLow')">
                     🚀 低位初動 (500~1000円×当日×1.5~3倍 / PF 1.26)
@@ -151,7 +151,8 @@
                     <select id="filter-gc" class="form-select form-select-sm fw-bold border-danger" onchange="onManualFilterChange()">
                         <option value="ALL">指定なし</option>
                         <option value="0">本日GC形成 (初動)</option>
-                        <option value="1">1営業日以内</option>
+                        <option value="1">1営業日前 (翌日)</option>
+                        <option value="2-3">2〜3営業日前 (🏆押し目抜け確定)</option>
                         <option value="3">3営業日以内 (実証最適)</option>
                         <option value="5">5営業日以内</option>
                     </select>
@@ -161,10 +162,17 @@
                     <div class="filter-label">5日平均代金 (最小 千円)</div>
                     <input type="number" id="filter-avgval" class="form-control form-control-sm" step="10000" placeholder="下限なし" oninput="onManualFilterChange()">
                 </div>
+
+                <!-- ★ 改良：売買代金増加率を [ 最小 〜 最大 ] で入力できるように拡張 -->
                 <div class="col-6 col-md-2">
-                    <div class="filter-label text-primary fw-bold">売買代金増加率 (最小 倍)</div>
-                    <input type="number" id="filter-valratio" class="form-control form-control-sm border-primary" step="0.5" placeholder="下限なし" oninput="onManualFilterChange()">
+                    <div class="filter-label text-primary fw-bold">売買代金増加率 (最小 / 最大)</div>
+                    <div class="input-group input-group-sm">
+                        <input type="number" id="filter-valratio" class="form-control border-primary" step="0.5" placeholder="下限" oninput="onManualFilterChange()">
+                        <span class="input-group-text px-1">〜</span>
+                        <input type="number" id="filter-valratio-max" class="form-control border-primary" step="0.5" placeholder="上限" oninput="onManualFilterChange()">
+                    </div>
                 </div>
+
                 <div class="col-6 col-md-2">
                     <div class="filter-label">ミックス係数 (最大)</div>
                     <input type="number" id="filter-mix" class="form-control form-control-sm" step="0.5" placeholder="上限なし" oninput="applyFilters()">
@@ -339,7 +347,7 @@
             return s.market === 'プライム' || (s.price >= 300 && s.price <= 50000);
         }
 
-        // 銘柄のシグナル＆警告判定
+        // 銘柄のシグナル＆警告判定ロジック (厳密判定)
         function evaluateSignal(s) {
             const p = s.price;
             const vr = (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? s.val_ratio_5d : 0.0;
@@ -357,7 +365,7 @@
                 recReason: ''
             };
 
-            // 1. ⚠️ 過熱天井警戒判定 (低位4倍超・中位4倍超)
+            // 1. ⚠️ 過熱天井警戒 (低位4倍超、中位4倍超)
             if (p <= 1000 && vr >= 4.0) {
                 result.isWarning = true;
                 result.badgeHtml = `<span class="badge-signal-danger ms-1" title="低位株の出来高4倍超は仕手天井の罠リスク(PF 0.85)">⚠️過熱天井警戒(${vr}倍)</span>`;
@@ -397,10 +405,9 @@
             return result;
         }
 
-        // ★ プリセットボタンを押した時に、条件欄の選択・入力を完全に同期させる！
+        // ★ プリセットボタンを押した時に、条件欄の選択・入力を【完全一致】で同期させる！
         function applyPresetPattern(type) {
             if (currentSmartPreset === type) {
-                // 同じボタンをもう一度押した場合は全解除
                 resetAll();
                 return;
             }
@@ -408,33 +415,40 @@
             currentSmartPreset = type;
             updatePresetButtonsUI();
 
-            // フォームの入力・選択値を同期
             if (type === 'combo') {
+                // 3大実証厳選 (OR結合)
                 document.getElementById("filter-price-preset").value = "500-3000";
-                document.getElementById("filter-gc").value = "3";
+                document.getElementById("filter-gc").value = "3"; // 3営業日以内
                 document.getElementById("filter-avgval").value = 30000;
                 document.getElementById("filter-valratio").value = 1.5;
+                document.getElementById("filter-valratio-max").value = ""; // 上限は内部で銘柄ごとに個別判定
                 document.getElementById("filter-per-min").value = 4;
                 document.getElementById("sort-by").value = "valratio_desc";
             } else if (type === 'bestMid') {
+                // 🏆 最高期待値 (中低位 1,000~2,000円 × 2~3日目 × 2.0倍以上)
                 document.getElementById("filter-price-preset").value = "1000-2000";
-                document.getElementById("filter-gc").value = "3";
+                document.getElementById("filter-gc").value = "2-3"; // ★新設：2〜3営業日前
                 document.getElementById("filter-avgval").value = 30000;
                 document.getElementById("filter-valratio").value = 2.0;
+                document.getElementById("filter-valratio-max").value = "";
                 document.getElementById("filter-per-min").value = 4;
                 document.getElementById("sort-by").value = "valratio_desc";
             } else if (type === 'bestLow') {
+                // 🚀 低位初動 (500~1,000円 × 当日GC × 1.5~3.0倍)
                 document.getElementById("filter-price-preset").value = "500-1000";
                 document.getElementById("filter-gc").value = "0"; // 本日GC形成
                 document.getElementById("filter-avgval").value = 30000;
                 document.getElementById("filter-valratio").value = 1.5;
+                document.getElementById("filter-valratio-max").value = 3.0; // ★新設：上限3.0倍
                 document.getElementById("filter-per-min").value = 4;
                 document.getElementById("sort-by").value = "valratio_desc";
             } else if (type === 'bestHighMid') {
+                // 🎯 中位ブレイク (2,000~3,000円 × 2~3日目 × 2.0~4.0倍)
                 document.getElementById("filter-price-preset").value = "2000-3000";
-                document.getElementById("filter-gc").value = "3";
+                document.getElementById("filter-gc").value = "2-3"; // ★新設：2〜3営業日前
                 document.getElementById("filter-avgval").value = 30000;
                 document.getElementById("filter-valratio").value = 2.0;
+                document.getElementById("filter-valratio-max").value = 4.0; // ★新設：上限4.0倍
                 document.getElementById("filter-per-min").value = 4;
                 document.getElementById("sort-by").value = "valratio_desc";
             }
@@ -443,7 +457,6 @@
         }
 
         function onManualFilterChange() {
-            // ユーザーが手動で条件欄を変更した場合はプリセット解除
             currentSmartPreset = 'none';
             updatePresetButtonsUI();
             applyFilters();
@@ -486,6 +499,7 @@
             const gcFilter = document.getElementById("filter-gc").value;
             const minAvgVal = parseFloat(document.getElementById("filter-avgval").value);
             const minValRatio = parseFloat(document.getElementById("filter-valratio").value);
+            const maxValRatio = parseFloat(document.getElementById("filter-valratio-max").value); // ★上限
             const maxMix = parseFloat(document.getElementById("filter-mix").value);
             const minPer = parseFloat(document.getElementById("filter-per-min").value);
             const maxPer = parseFloat(document.getElementById("filter-per").value);
@@ -503,17 +517,11 @@
                 
                 const sig = evaluateSignal(s);
 
-                // ★ プリセット連動モード
+                // 3大実証パターンのOR結合時
                 if (currentSmartPreset === 'combo') {
                     if (!sig.isComboMatch) return false;
-                } else if (currentSmartPreset === 'bestMid') {
-                    if (!sig.isBestMid || sig.isWarning) return false;
-                } else if (currentSmartPreset === 'bestLow') {
-                    if (!sig.isBestLow || sig.isWarning) return false;
-                } else if (currentSmartPreset === 'bestHighMid') {
-                    if (!sig.isBestHighMid || sig.isWarning) return false;
                 } else {
-                    // 通常フィルタモード
+                    // 通常フィルタ / 個別プリセット（条件欄と完全同期）
                     if (pricePreset === "500-1000" && (s.price < 500 || s.price > 1000)) return false;
                     if (pricePreset === "1000-2000" && (s.price < 1000 || s.price > 2000)) return false;
                     if (pricePreset === "2000-3000" && (s.price < 2000 || s.price > 3000)) return false;
@@ -521,12 +529,22 @@
                     if (pricePreset === "3000-6000" && (s.price < 3000 || s.price > 6000)) return false;
                     if (pricePreset === "6000-UP" && s.price < 6000) return false;
 
+                    // ★ GC条件の判定（2〜3日前対応）
                     if (gcFilter !== "ALL") {
-                        const maxGcDays = parseInt(gcFilter, 10);
-                        if (s.gc_days === null || typeof s.gc_days === 'undefined' || s.gc_days > maxGcDays) return false;
+                        const gcd = (s.gc_days !== null && typeof s.gc_days !== 'undefined') ? s.gc_days : 999;
+                        if (gcFilter === "0" && gcd !== 0) return false;
+                        if (gcFilter === "1" && gcd !== 1) return false;
+                        if (gcFilter === "2-3" && (gcd !== 2 && gcd !== 3)) return false;
+                        if (gcFilter === "3" && gcd > 3) return false;
+                        if (gcFilter === "5" && gcd > 5) return false;
                     }
+
                     if (!isNaN(minAvgVal) && (s.avg_val_5d || 0) < minAvgVal) return false;
-                    if (!isNaN(minValRatio) && ((s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? s.val_ratio_5d : 0) < minValRatio) return false;
+
+                    // ★ 出来高増加率の下限 ＆ 上限の判定
+                    const vr = (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? s.val_ratio_5d : 0;
+                    if (!isNaN(minValRatio) && vr < minValRatio) return false;
+                    if (!isNaN(maxValRatio) && vr > maxValRatio) return false;
                 }
 
                 if (!isNaN(maxMix) && s.mix_index > maxMix) return false;
@@ -704,6 +722,7 @@
             document.getElementById("filter-gc").value = "ALL";
             document.getElementById("filter-avgval").value = "";
             document.getElementById("filter-valratio").value = "";
+            document.getElementById("filter-valratio-max").value = ""; // リセット
             document.getElementById("filter-mix").value = "";
             document.getElementById("filter-per-min").value = "4";
             document.getElementById("filter-per").value = "";
