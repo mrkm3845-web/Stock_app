@@ -34,7 +34,7 @@
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <div>
                     <h1 class="h6 mb-0 text-primary fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> スイング・トレードジャーナル</h1>
-                    <small class="text-muted" style="font-size:0.75rem;">14日最適ルール連動 ＆ 4大切り口パフォーマンス自動分析</small>
+                    <small class="text-muted" style="font-size:0.75rem;">14日最適ルール連動 ＆ スマート全期間CSV同期対応</small>
                 </div>
                 <div class="d-flex flex-wrap gap-1">
                     <a href="index.html" class="btn btn-outline-secondary btn-sm py-1 px-2 fw-bold" style="font-size:0.75rem;"><i class="bi bi-sliders me-1"></i>スクリーナー</a>
@@ -66,7 +66,7 @@
             </ul>
         </div>
 
-        <!-- 📅 共通：期間指定フィルターバー (決済済トレード & 分析に完全同期) -->
+        <!-- 📅 共通：期間指定フィルターバー -->
         <div class="card p-2 bg-white mb-2">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
                 <div class="d-flex flex-wrap align-items-center gap-1">
@@ -85,7 +85,7 @@
                 </div>
             </div>
             <div class="text-muted mt-1" style="font-size:0.68rem;">
-                ※ 保有期間（買付〜売却）が指定期間と少しでも重なっている取引を抽出・集計します。
+                ※ 保有期間（買付〜売却）が指定期間と重なっている取引を同期抽出します。
             </div>
         </div>
 
@@ -95,7 +95,7 @@
                 <div class="card p-2 bg-white">
                     <div class="dropzone py-2" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
                         <i class="bi bi-cloud-arrow-up-fill fs-4 text-primary"></i>
-                        <div class="fw-bold mt-1" style="font-size:0.8rem;">楽天証券CSVをタップして選択</div>
+                        <div class="fw-bold mt-1" style="font-size:0.8rem;">楽天証券CSVをタップして選択（全期間いつでもOK）</div>
                         <input type="file" id="csv-file-input" accept=".csv" style="display:none;" onclick="this.value=null" onchange="handleCSVFile(this.files[0])">
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                     </div>
                 </div>
 
-                <!-- 📜 決済済み取引履歴 (期間指定連動) -->
+                <!-- 📜 決済済み取引履歴 -->
                 <div class="card p-2 bg-white">
                     <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
                         <h6 class="fw-bold text-dark mb-0" style="font-size:0.85rem;">
@@ -154,7 +154,7 @@
                 </div>
             </div>
 
-            <!-- タブ 2: データ分析 (期間指定連動) -->
+            <!-- タブ 2: データ分析 -->
             <div class="tab-pane fade" id="tab-analytics" role="tabpanel">
                 <div class="row g-2 mb-2">
                     <div class="col-6 col-md-3">
@@ -339,7 +339,6 @@
         let trashModalInstance = null;
         let chartInstance = null;
 
-        // 期間フィルター状態 (初期値: 全期間)
         let FILTER_START_DATE = "";
         let FILTER_END_DATE = "";
 
@@ -356,7 +355,6 @@
             });
         });
 
-        // 楽天証券 / iSPEED 直行
         function openRakuten(code) {
             if (!code) return;
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -401,31 +399,24 @@
             renderAll();
         }
 
-        // 📅 期間指定フィルターの判定ロジック
-        // 「保有期間（買付〜売却）が、指定した期間に少しでも重なっているか」
         function isTradeInSelectedPeriod(t) {
             if (!FILTER_START_DATE && !FILTER_END_DATE) return true;
-
-            const buy = t.buy_date; // YYYY-MM-DD
-            // 未決済の場合は本日まで保有中とみなす
+            const buy = t.buy_date;
             const sell = t.sell_date || new Date().toISOString().substring(0, 10);
 
-            // 売却日が指定開始日より前なら重なりなし
             if (FILTER_START_DATE && sell < FILTER_START_DATE) return false;
-            // 買付日が指定終了日より後なら重なりなし
             if (FILTER_END_DATE && buy > FILTER_END_DATE) return false;
 
             return true;
         }
 
-        // クイック期間ボタン操作
         function setQuickPeriod(type) {
             document.querySelectorAll(".btn-period").forEach(b => b.classList.remove("active", "btn-outline-primary"));
             document.querySelectorAll(".btn-period").forEach(b => b.classList.add("btn-outline-secondary"));
 
             const today = new Date();
             const y = today.getFullYear();
-            const m = today.getMonth(); // 0-11
+            const m = today.getMonth();
 
             const formatDate = (d) => {
                 const year = d.getFullYear();
@@ -476,7 +467,6 @@
             renderAll();
         }
 
-        // 描画更新（期間指定に連動）
         function renderAll() {
             const activeTrades = TRADES.filter(t => !t.is_deleted);
             const trashTrades = TRADES.filter(t => t.is_deleted);
@@ -485,14 +475,12 @@
             const openTrades = activeTrades.filter(t => !t.sell_date);
             const allClosedTrades = activeTrades.filter(t => t.sell_date);
 
-            // 期間でフィルタリングされた決済済み取引
             const periodClosedTrades = allClosedTrades.filter(isTradeInSelectedPeriod);
 
             document.getElementById("open-count").textContent = openTrades.length;
             document.getElementById("closed-count").textContent = periodClosedTrades.length;
             document.getElementById("closed-total-count").textContent = allClosedTrades.length;
 
-            // ラベル表示更新
             let periodText = "全期間";
             if (FILTER_START_DATE || FILTER_END_DATE) {
                 periodText = `${FILTER_START_DATE || '始'} 〜 ${FILTER_END_DATE || '今日'}`;
@@ -502,13 +490,11 @@
             renderOpenPositions(openTrades);
             renderClosedTrades(periodClosedTrades);
 
-            // 分析タブが開いていれば再計算
             if (document.getElementById('tab-analytics').classList.contains('active')) {
                 renderAnalytics(periodClosedTrades);
             }
         }
 
-        // 14営業日ルール対応の保有中ポジション描画
         function renderOpenPositions(list) {
             const tbody = document.getElementById("open-positions-tbody");
             tbody.innerHTML = "";
@@ -546,7 +532,6 @@
                 const isTrailed = slPrice >= t.buy_price;
                 const slBadge = isTrailed ? `<span class="badge bg-danger py-0" style="font-size:0.65rem;">🛡️確約</span>` : '';
 
-                // 14日期限アラート
                 let alertBadge = `<span class="badge badge-alert-normal py-1">⏳ ${holdBusinessDays} / 14日</span>`;
                 if (holdBusinessDays >= 14) alertBadge = `<span class="badge badge-alert-danger py-1">🚨 ${holdBusinessDays}日目 (時間切れ手仕舞い)</span>`;
                 else if (holdBusinessDays >= 11) alertBadge = `<span class="badge badge-alert-warning py-1">⚠️ ${holdBusinessDays}日目 (期限間近)</span>`;
@@ -600,7 +585,6 @@
             });
         }
 
-        // 決済済み取引の描画 (期間指定フィルタ済みのリスト)
         function renderClosedTrades(list) {
             const tbody = document.getElementById("closed-trades-tbody");
             tbody.innerHTML = "";
@@ -651,7 +635,6 @@
             });
         }
 
-        // 4. 分析ダッシュボード (期間指定に完全連動)
         function renderAnalytics(specifiedList) {
             const activeTrades = TRADES.filter(t => !t.is_deleted && t.sell_date);
             const closed = specifiedList || activeTrades.filter(isTradeInSelectedPeriod);
@@ -778,7 +761,6 @@
             document.getElementById("analysis-reason").innerHTML = buildTable(reasonGroups);
         }
 
-        // 5. 手動モーダル操作
         function openAddModal() {
             document.getElementById("form-trade-id").value = "";
             document.getElementById("tradeForm").reset();
@@ -885,7 +867,6 @@
             saveTradesToStorage();
         }
 
-        // 6. ゴミ箱
         function moveToTrash(id) {
             const target = TRADES.find(t => t.id === id);
             if (target && confirm(`【${target.code} ${target.name||''}】をゴミ箱に移動しますか？`)) {
@@ -927,7 +908,7 @@
             });
         }
 
-        // 7. 楽天証券CSVインポート & FIFO自動マッチング
+        // 7. 楽天証券CSVインポート & スマート自動マージ
         function setupDragAndDrop() {
             const dz = document.getElementById("csv-dropzone");
             dz.addEventListener("dragover", e => { e.preventDefault(); dz.style.background = "#d0e2ff"; });
@@ -1153,29 +1134,64 @@
                     });
                 });
 
-                const replace = confirm(`全 ${newTrades.length} 件の取引を解析しました！\n\n既存のデータを最新CSVで綺麗に【全件再構築】しますか？`);
-                if (replace) {
-                    TRADES = newTrades;
-                } else {
-                    newTrades.forEach(nt => {
-                        if (!TRADES.some(t => t.id === nt.id)) TRADES.push(nt);
-                    });
-                }
+                // ★ スマート自動マージ（編集メモ・トレール設定・手動追加の完全継承）
+                // 1. 手動登録された取引を取り出して温存
+                const manualTrades = TRADES.filter(t => t.id && t.id.startsWith("manual_"));
 
+                // 2. 既存のCSVデータから、ユーザーが追記・編集したメモやトレール値を抽出
+                const userEditsMap = new Map();
+                TRADES.filter(t => t.id && t.id.startsWith("csv_")).forEach(t => {
+                    const key = `${t.code}_${t.buy_date}_${Math.round(t.buy_price)}`;
+                    const hasCustomMemo = t.memo && !t.memo.startsWith("楽天証券CSV") && !t.memo.startsWith("※過去の売却");
+                    userEditsMap.set(key, {
+                        memo: hasCustomMemo ? t.memo : "",
+                        entry_state: (t.entry_state && t.entry_state !== "-") ? t.entry_state : "",
+                        target_sl: t.target_sl,
+                        target_tp: t.target_tp,
+                        exit_reason: (t.exit_reason && t.exit_reason !== "OPEN" && !t.exit_reason.startsWith("TP_") && !t.exit_reason.startsWith("SL_")) ? t.exit_reason : "",
+                        is_deleted: !!t.is_deleted,
+                        name: t.name
+                    });
+                });
+
+                // 3. 最新CSV解析データに既存の編集内容を自動継承
+                let inheritedMemoCount = 0;
+                newTrades.forEach(nt => {
+                    const key = `${nt.code}_${nt.buy_date}_${Math.round(nt.buy_price)}`;
+                    if (userEditsMap.has(key)) {
+                        const edit = userEditsMap.get(key);
+                        if (edit.memo) {
+                            nt.memo = edit.memo;
+                            inheritedMemoCount++;
+                        }
+                        if (edit.entry_state) nt.entry_state = edit.entry_state;
+                        if (edit.target_sl !== null && edit.target_sl !== undefined) nt.target_sl = edit.target_sl;
+                        if (edit.target_tp !== null && edit.target_tp !== undefined) nt.target_tp = edit.target_tp;
+                        if (edit.exit_reason) nt.exit_reason = edit.exit_reason;
+                        if (edit.is_deleted) nt.is_deleted = true;
+                        if (edit.name && !nt.name) nt.name = edit.name;
+                    }
+                });
+
+                // 4. 最新CSVデータと手動登録データを合体して保存
+                TRADES = [...newTrades, ...manualTrades];
                 saveTradesToStorage();
-                alert(`🎉 楽天証券CSVの相殺解析が完了しました！`);
+
+                let msg = `🎉 全期間CSVの同期が完了しました！\n・最新解析: ${newTrades.length}件\n・手動追加の維持: ${manualTrades.length}件`;
+                if (inheritedMemoCount > 0) {
+                    msg += `\n・編集メモ/トレール設定の引き継ぎ: ${inheritedMemoCount}件`;
+                }
+                alert(msg);
             } catch (err) {
                 alert("❌ 解析処理エラー: " + err.message);
             }
         }
 
-        // 8. データ同期機能 (安全マージ & 完全置換の選択可能)
         function exportData() {
             if (TRADES.length === 0) {
                 alert("保存する取引データがありません。");
                 return;
             }
-            // 全取引データ（保有中・決済済・ゴミ箱すべて）をJSON保存
             const dataStr = JSON.stringify(TRADES, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
@@ -1206,7 +1222,6 @@
                     );
 
                     if (!overwriteAll) {
-                        // 完全全置換復元
                         if (confirm("⚠️ 本当に現在の画面のデータをすべて消去し、バックアップファイルで全置換しますか？")) {
                             TRADES = imported;
                             saveTradesToStorage();
@@ -1215,14 +1230,12 @@
                         }
                     }
 
-                    // 安全マージ（画面側で追記したトレールやメモを空値で上書き消去しない安全ロジック）
                     let addedCount = 0, updatedCount = 0;
                     imported.forEach(imp => {
                         if (!imp.id) return;
                         const existIdx = TRADES.findIndex(t => t.id === imp.id);
                         if (existIdx !== -1) {
                             const exist = TRADES[existIdx];
-                            // ファイル側が空（null/空文字）の場合、画面側の既存値を優先保護
                             const merged = Object.assign({}, exist, imp);
                             if (!imp.memo && exist.memo) merged.memo = exist.memo;
                             if (imp.target_sl === null && exist.target_sl !== null) merged.target_sl = exist.target_sl;
@@ -1238,7 +1251,7 @@
                     });
 
                     saveTradesToStorage();
-                    alert(`✅ データ同期完了！\n・新規追加: ${addedCount}件\n・安全更新(メモ保護): ${updatedCount}件\n\n画面だけにあった未登録データも保持されています。`);
+                    alert(`✅ データ同期完了！\n・新規追加: ${addedCount}件\n・安全更新(メモ保護): ${updatedCount}件`);
                 } catch (err) {
                     alert("❌ データ読み込みエラー: " + err.message);
                 }
