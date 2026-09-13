@@ -1,0 +1,56 @@
+name: 毎日スクリーニング main7（刷新版）
+
+on:
+  schedule:
+    # 既存 main6 と同タイミング（平日 1日5回）
+    - cron: '17 8,10,12 * * 1-5'   # 17:17 / 19:17 / 21:17 JST
+    - cron: '17 19,21 * * 1-5'     # 04:17 / 06:17 JST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy requests yfinance openpyxl xlrd
+
+      - name: Cache price data
+        uses: actions/cache@v4
+        with:
+          path: Stock_app/data/price_cache
+          key: price-cache-${{ runner.os }}-${{ hashFiles('Stock_app/main7.py') }}
+          restore-keys: |
+            price-cache-${{ runner.os }}-
+
+      - name: Run main7 screener
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          python Stock_app/main7.py
+
+      - name: コミット＆プッシュ
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add Stock_app/docs/
+          if git diff --staged --quiet; then
+            echo "変更なし"
+          else
+            git commit -m "Update main7 screener data [skip ci]"
+            git pull --rebase origin main
+            git push origin main
+          fi

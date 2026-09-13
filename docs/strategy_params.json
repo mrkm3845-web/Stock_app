@@ -1,0 +1,39 @@
+{
+  "version": "2026-09-13",
+  "generated_at": "2026-09-13T00:00:00Z",
+  "source_backtest": null,
+  "price_tiers": [
+    { "id": "low",      "name": "低位 500〜1000円",  "min": 500,  "max": 1000,     "tp_pct": 0.12, "sl_pct": 0.05, "max_hold_days": 14, "atr_sl_mult": 2.0 },
+    { "id": "mid_low",  "name": "中低位 1000〜2000円", "min": 1000, "max": 2000,     "tp_pct": 0.12, "sl_pct": 0.05, "max_hold_days": 14, "atr_sl_mult": 2.0 },
+    { "id": "mid",      "name": "中位 2000〜3000円",  "min": 2000, "max": 3000,     "tp_pct": 0.12, "sl_pct": 0.05, "max_hold_days": 14, "atr_sl_mult": 2.0 },
+    { "id": "mid_high", "name": "中高位 3000〜6000円", "min": 3000, "max": 6000,     "tp_pct": 0.12, "sl_pct": 0.02, "max_hold_days": 14, "atr_sl_mult": 2.5 },
+    { "id": "high",     "name": "値がさ 6000円〜",     "min": 6000, "max": 99999999, "tp_pct": 0.12, "sl_pct": 0.02, "max_hold_days": 14, "atr_sl_mult": 2.5 }
+  ],
+  "signals": {
+    "gc_window": 3,
+    "avg_val_min_k": 30000,
+    "val_ratio_min": 1.2,
+    "trend_filter_sma200": true
+  },
+  "warnings": [
+    { "id": "overheat_low", "description": "低位株の出来高4倍超", "condition": "price <= 1000 and val_ratio >= 4.0", "action": "warn" },
+    { "id": "overheat_mid", "description": "中位株の出来高4倍超", "condition": "price > 2000 and price <= 3000 and val_ratio >= 4.0", "action": "warn" }
+  ],
+  "score_weights": {
+    "weekly_trend": 25,
+    "daily_gc": 20,
+    "val_ratio": 20,
+    "avg_val": 15,
+    "trend_sma200": 20
+  },
+  "ai": {
+    "enabled": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "stage1_pool_min": 20,
+    "stage1_pool_max": 40,
+    "weekly_top_picks": 5,
+    "monthly_budget_jpy": 1000,
+    "max_calls_per_run": 40
+  }
+}
