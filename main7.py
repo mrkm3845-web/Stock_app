@@ -411,6 +411,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--markets", nargs="+", default=["プライム", "スタンダード"])
     parser.add_argument("--max-stocks", type=int, default=None, help="テスト用に銘柄数を制限")
+    parser.add_argument("--ai", action="store_true", help="DeepSeek分析を実行する（AI専用実行でのみ指定）")
     args = parser.parse_args()
 
     params = load_strategy_params()
@@ -435,7 +436,7 @@ def main():
     date = get_target_date_str()
     ai_map = None
     ai_file = os.path.join(DOCS_DIR, f"ai_analysis_{date}.json")
-    if params.get("ai", {}).get("enabled"):
+    if args.ai and params.get("ai", {}).get("enabled"):
         if os.path.exists(ai_file):
             try:
                 with open(ai_file, "r", encoding="utf-8") as f:
