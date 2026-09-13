@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>main7 スクリーナー（刷新版・AI分析付き）</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; font-size: 0.88rem; padding-bottom: 60px; }
+        .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
+        .table-container { overflow-x: auto; max-height: 65vh; }
+        table th { background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; font-size: 0.78rem; }
+        table td { vertical-align: middle; white-space: nowrap; text-align: center; }
+        .verdict-recommend { background-color: #d3f9d8; color: #2b8a3e; font-weight: bold; }
+        .verdict-neutral { background-color: #e9ecef; color: #495057; font-weight: bold; }
+        .verdict-avoid { background-color: #ffe3e3; color: #c92a2a; font-weight: bold; }
+        .verdict-technical { background-color: #fff3bf; color: #d9480f; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-3 px-md-4">
+        <div class="card p-3 bg-white">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h1 class="h5 mb-0 text-primary fw-bold">main7 スクリーナー（刷新版・AI分析付き）</h1>
+                    <small class="text-muted">Stage1 技術スコア → Stage2 DeepSeek 戦略提言</small>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="index.html" class="btn btn-outline-secondary btn-sm fw-bold">main6 スクリーナー</a>
+                    <a href="journal.html" class="btn btn-outline-primary btn-sm fw-bold">取引記録</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- おすすめ銘柄 -->
+        <div class="card p-3 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-bold text-dark">🔥 おすすめ銘柄（週 3〜5 銘柄・AI戦略提言付き）</span>
+                <span class="text-muted small" id="rec-meta"></span>
+            </div>
+            <div class="table-container">
+                <table class="table table-hover table-striped table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>コード</th><th>社名</th><th>業種</th><th>株価</th><th>スコア</th>
+                            <th>AI判定</th><th>利確</th><th>損切</th><th>保有</th><th>AIコメント</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rec-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 全候補一覧 -->
+        <div class="card p-3 bg-white">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                <span class="fw-bold text-dark">全候補一覧（Stage1 技術スコア順）</span>
+                <div class="d-flex gap-2 align-items-center">
+                    <span class="small">最低スコア:</span>
+                    <input type="number" id="min-score" class="form-control form-control-sm" style="width:90px;" value="0" step="5" oninput="renderAll()">
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="table table-hover table-striped table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>コード</th><th>社名</th><th>業種</th><th>株価</th><th>スコア</th>
+                            <th>週足↑</th><th>GC</th><th>増加率</th><th>5日代金(千円)</th><th>価格帯</th><th>警告</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadJSON(path) {
+            const res = await fetch(path);
+            if (!res.ok) throw new Error(path + " not found");
+            return await res.json();
+        }
+
+        async function init() {
+            try {
+                const rec = await loadJSON("recommendations.json");
+                renderRecs(rec);
+            } catch (e) {
+                document.getElementById("rec-body").innerHTML =
+                    '<tr><td colspan="10" class="p-3 text-muted">おすすめデータがまだありません（main7 実行後に生成されます）</td></tr>';
+            }
+            try {
+                const all = await loadJSON("history7/latest.json");
+                renderAll(all);
+            } catch (e) {
+                document.getElementById("all-body").innerHTML =
+                    '<tr><td colspan="11" class="p-3 text-muted">候補データがまだありません</td></tr>';
+            }
+        }
+
+        function verdictBadge(v) {
+            const map = {
+                recommend: "verdict-recommend",
+                neutral: "verdict-neutral",
+                avoid: "verdict-avoid",
+                technical_only: "verdict-technical",
+            };
+            const label = {
+                recommend: "推奨", neutral: "中立", avoid: "回避", technical_only: "技術のみ",
+            }[v] || v;
+            return `<span class="badge ${map[v] || "verdict-technical"}">${label}</span>`;
+        }
+
+        function renderRecs(rec) {
+            document.getElementById("rec-meta").textContent =
+                `更新: ${rec.generated_at || "-"} / 対象日: ${rec.date || "-"}`;
+            const body = document.getElementById("rec-body");
+            const picks = rec.picks || [];
+            if (picks.length === 0) {
+                body.innerHTML = '<tr><td colspan="10" class="p-3 text-muted">おすすめ銘柄はありません</td></tr>';
+                return;
+            }
+            body.innerHTML = picks.map(p => {
+                const adv = p.advice || {};
+                const fund = p.fundamentals || {};
+                const comment = [adv.reason, adv.risk, fund.per ? `PER ${fund.per}` : ""]
+                    .filter(Boolean).join(" / ");
+                return `<tr>
+                    <td>${p.code}</td>
+                    <td class="fw-bold text-start">${p.name}</td>
+                    <td>${p.sector}</td>
+                    <td>¥${(p.price || 0).toLocaleString()}</td>
+                    <td>${p.score}</td>
+                    <td>${verdictBadge(p.verdict)}</td>
+                    <td>${p.tp_price ? "¥" + p.tp_price.toLocaleString() : "-"}</td>
+                    <td>${p.sl_price ? "¥" + p.sl_price.toLocaleString() : "-"}</td>
+                    <td>${p.max_hold_days || "-"}日</td>
+                    <td class="text-start small">${comment || "-"}</td>
+                </tr>`;
+            }).join("");
+        }
+
+        let ALL = [];
+        function renderAll(data) {
+            if (Array.isArray(data)) ALL = data;
+            const min = parseFloat(document.getElementById("min-score").value) || 0;
+            const rows = ALL.filter(s => (s.score || 0) >= min)
+                .sort((a, b) => (b.score || 0) - (a.score || 0));
+            const body = document.getElementById("all-body");
+            if (rows.length === 0) {
+                body.innerHTML = '<tr><td colspan="11" class="p-3 text-muted">条件に一致する銘柄はありません</td></tr>';
+                return;
+            }
+            body.innerHTML = rows.map(s => `<tr>
+                <td>${s.code}</td>
+                <td class="fw-bold text-start">${s.name}</td>
+                <td>${s.sector}</td>
+                <td>¥${(s.price || 0).toLocaleString()}</td>
+                <td>${s.score}</td>
+                <td>${s.weekly_trend_up ? "◯" : "-"}</td>
+                <td>${s.gc_days === null ? "-" : s.gc_days + "日前"}</td>
+                <td>${s.val_ratio_5d}倍</td>
+                <td>${s.avg_val_5d}</td>
+                <td>${s.tier}</td>
+                <td>${(s.warnings || []).join(", ") || "-"}</td>
+            </tr>`).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", init);
+    </script>
+</body>
+</html>
