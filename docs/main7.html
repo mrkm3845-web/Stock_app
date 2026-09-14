@@ -102,10 +102,19 @@
 
         async function init() {
             aiModal = new bootstrap.Modal(document.getElementById("aiModal"));
+            let rec = null;
             try {
-                const rec = await loadJSON("recommendations.json");
-                renderRecs(rec);
+                rec = await loadJSON("recommendations.json");
             } catch (e) {
+                try {
+                    rec = await loadJSON("recommendations_technical.json");
+                } catch (e2) {
+                    rec = null;
+                }
+            }
+            if (rec) {
+                renderRecs(rec);
+            } else {
                 document.getElementById("rec-body").innerHTML =
                     '<tr><td colspan="7" class="p-3 text-muted">おすすめデータがまだありません（main7 実行後に生成されます）</td></tr>';
             }

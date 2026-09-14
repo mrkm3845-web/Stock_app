@@ -2,8 +2,8 @@ name: 毎朝 AI 戦略分析（main7 DeepSeek）
 
 on:
   schedule:
-    # 翌朝 06:17 JST（前日大引けデータ確定後）＝ UTC 21:17
-    - cron: '17 21 * * 1-5'
+    # 当日夜 20:17 JST（大引け後・データ確定後）＝ UTC 11:17
+    - cron: '17 11 * * 1-5'
   workflow_dispatch:
 
 permissions:

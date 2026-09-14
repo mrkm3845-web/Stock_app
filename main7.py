@@ -36,6 +36,7 @@ PRICE_CACHE = os.path.join(DATA_DIR, "price_cache")
 DOCS_DIR = os.path.join(BASE_DIR, "docs")
 HISTORY7_DIR = os.path.join(DOCS_DIR, "history7")
 RECOMMENDATIONS_PATH = os.path.join(DOCS_DIR, "recommendations.json")
+TECHNICAL_REC_PATH = os.path.join(DOCS_DIR, "recommendations_technical.json")
 
 
 def get_target_date_str():
@@ -391,7 +392,7 @@ def build_recommendations(pool, fund_map, ai_map, params, date):
     }
 
 
-def write_outputs(all_results, recommendations, date):
+def write_outputs(all_results, recommendations, date, rec_path):
     os.makedirs(HISTORY7_DIR, exist_ok=True)
     serializable = []
     for r in all_results:
@@ -401,9 +402,9 @@ def write_outputs(all_results, recommendations, date):
     for fname in (f"{date}.json", "latest.json"):
         with open(os.path.join(HISTORY7_DIR, fname), "w", encoding="utf-8") as f:
             json.dump(serializable, f, ensure_ascii=False)
-    with open(RECOMMENDATIONS_PATH, "w", encoding="utf-8") as f:
+    with open(rec_path, "w", encoding="utf-8") as f:
         json.dump(recommendations, f, ensure_ascii=False)
-    print(f">> 出力完了: {HISTORY7_DIR}/{date}.json, {RECOMMENDATIONS_PATH}")
+    print(f">> 出力完了: {HISTORY7_DIR}/{date}.json, {rec_path}")
 
 
 # ---------------------------------------------------------------- main
@@ -452,7 +453,8 @@ def main():
                 print(f">> 当日のAI分析結果を保存: {ai_file}")
 
     recommendations = build_recommendations(pool, fund_map, ai_map, params, date)
-    write_outputs(results, recommendations, date)
+    rec_path = RECOMMENDATIONS_PATH if args.ai else TECHNICAL_REC_PATH
+    write_outputs(results, recommendations, date, rec_path)
 
     print(">> スクリーニング（main7）完了")
     for p in recommendations["picks"]:
