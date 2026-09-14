@@ -11,10 +11,13 @@
         .table-container { overflow-x: auto; max-height: 65vh; }
         table th { background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; font-size: 0.78rem; }
         table td { vertical-align: middle; white-space: nowrap; text-align: center; }
+        .clickable { cursor: pointer; }
         .verdict-recommend { background-color: #d3f9d8; color: #2b8a3e; font-weight: bold; }
         .verdict-neutral { background-color: #e9ecef; color: #495057; font-weight: bold; }
         .verdict-avoid { background-color: #ffe3e3; color: #c92a2a; font-weight: bold; }
         .verdict-technical { background-color: #fff3bf; color: #d9480f; font-weight: bold; }
+        .ai-section { border: 1px solid #dee2e6; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+        .ai-section h6 { font-size: 0.82rem; font-weight: bold; margin-bottom: 6px; }
     </style>
 </head>
 <body>
@@ -42,8 +45,7 @@
                 <table class="table table-hover table-striped table-sm mb-0">
                     <thead>
                         <tr>
-                            <th>コード</th><th>社名</th><th>業種</th><th>株価</th><th>スコア</th>
-                            <th>AI判定</th><th>利確</th><th>損切</th><th>保有</th><th>AIコメント</th>
+                            <th>コード</th><th>社名</th><th>業種</th><th>株価</th><th>スコア</th><th>AI判定</th><th>AI分析</th>
                         </tr>
                     </thead>
                     <tbody id="rec-body"></tbody>
@@ -74,7 +76,24 @@
         </div>
     </div>
 
+    <!-- AI分析モーダル -->
+    <div class="modal fade" id="aiModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white py-2">
+                    <h6 class="modal-title" id="ai-title">AI戦略分析</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="ai-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let PICKS = [];
+        let aiModal = null;
+
         async function loadJSON(path) {
             const res = await fetch(path);
             if (!res.ok) throw new Error(path + " not found");
@@ -82,12 +101,13 @@
         }
 
         async function init() {
+            aiModal = new bootstrap.Modal(document.getElementById("aiModal"));
             try {
                 const rec = await loadJSON("recommendations.json");
                 renderRecs(rec);
             } catch (e) {
                 document.getElementById("rec-body").innerHTML =
-                    '<tr><td colspan="10" class="p-3 text-muted">おすすめデータがまだありません（main7 実行後に生成されます）</td></tr>';
+                    '<tr><td colspan="7" class="p-3 text-muted">おすすめデータがまだありません（main7 実行後に生成されます）</td></tr>';
             }
             try {
                 const all = await loadJSON("history7/latest.json");
@@ -100,10 +120,8 @@
 
         function verdictBadge(v) {
             const map = {
-                recommend: "verdict-recommend",
-                neutral: "verdict-neutral",
-                avoid: "verdict-avoid",
-                technical_only: "verdict-technical",
+                recommend: "verdict-recommend", neutral: "verdict-neutral",
+                avoid: "verdict-avoid", technical_only: "verdict-technical",
             };
             const label = {
                 recommend: "推奨", neutral: "中立", avoid: "回避", technical_only: "技術のみ",
@@ -114,30 +132,85 @@
         function renderRecs(rec) {
             document.getElementById("rec-meta").textContent =
                 `更新: ${rec.generated_at || "-"} / 対象日: ${rec.date || "-"}`;
+            PICKS = rec.picks || [];
             const body = document.getElementById("rec-body");
-            const picks = rec.picks || [];
-            if (picks.length === 0) {
-                body.innerHTML = '<tr><td colspan="10" class="p-3 text-muted">おすすめ銘柄はありません</td></tr>';
+            if (PICKS.length === 0) {
+                body.innerHTML = '<tr><td colspan="7" class="p-3 text-muted">おすすめ銘柄はありません</td></tr>';
                 return;
             }
-            body.innerHTML = picks.map(p => {
-                const adv = p.advice || {};
-                const fund = p.fundamentals || {};
-                const comment = [adv.reason, adv.risk, fund.per ? `PER ${fund.per}` : ""]
-                    .filter(Boolean).join(" / ");
-                return `<tr>
-                    <td>${p.code}</td>
-                    <td class="fw-bold text-start">${p.name}</td>
-                    <td>${p.sector}</td>
-                    <td>¥${(p.price || 0).toLocaleString()}</td>
-                    <td>${p.score}</td>
-                    <td>${verdictBadge(p.verdict)}</td>
-                    <td>${p.tp_price ? "¥" + p.tp_price.toLocaleString() : "-"}</td>
-                    <td>${p.sl_price ? "¥" + p.sl_price.toLocaleString() : "-"}</td>
-                    <td>${p.max_hold_days || "-"}日</td>
-                    <td class="text-start small">${comment || "-"}</td>
-                </tr>`;
-            }).join("");
+            body.innerHTML = PICKS.map(p => `<tr class="clickable" onclick="openAI('${p.code}')">
+                <td>${p.code}</td>
+                <td class="fw-bold text-start">${p.name}</td>
+                <td>${p.sector}</td>
+                <td>¥${(p.price || 0).toLocaleString()}</td>
+                <td>${p.score}</td>
+                <td>${verdictBadge(p.verdict)}</td>
+                <td><button class="btn btn-outline-primary btn-sm py-0 px-2" onclick="event.stopPropagation(); openAI('${p.code}')">見る</button></td>
+            </tr>`).join("");
+        }
+
+        function openAI(code) {
+            const p = PICKS.find(x => x.code === code);
+            if (!p) return;
+            const adv = p.advice || {};
+            const fund = p.fundamentals || {};
+
+            const verdictLabel = { recommend: "推奨", neutral: "中立", avoid: "回避", technical_only: "技術スコアのみ" }[p.verdict] || p.verdict;
+
+            document.getElementById("ai-title").innerHTML = `${p.code} ${p.name} ${verdictBadge(p.verdict)}`;
+
+            const fundRows = [
+                ["PER", fund.per != null ? fund.per + "倍" : "-"],
+                ["PBR", fund.pbr != null ? fund.pbr + "倍" : "-"],
+                ["ROE", fund.roe != null ? fund.roe + "%" : "-"],
+                ["営業利益率", fund.op_margin != null ? fund.op_margin + "%" : "-"],
+                ["配当利回り", fund.div_yield != null ? fund.div_yield + "%" : "-"],
+            ].map(([k, v]) => `<div class="col-4 col-md-3"><small class="text-muted">${k}</small><div class="fw-bold">${v}</div></div>`).join("");
+
+            document.getElementById("ai-body").innerHTML = `
+                <div class="ai-section">
+                    <h6 class="text-primary">基本情報</h6>
+                    <div class="row g-2">
+                        <div class="col-4 col-md-3"><small class="text-muted">業種</small><div class="fw-bold">${p.sector}</div></div>
+                        <div class="col-4 col-md-3"><small class="text-muted">株価</small><div class="fw-bold">¥${(p.price || 0).toLocaleString()}</div></div>
+                        <div class="col-4 col-md-3"><small class="text-muted">スコア</small><div class="fw-bold">${p.score}</div></div>
+                        <div class="col-4 col-md-3"><small class="text-muted">価格帯</small><div class="fw-bold">${p.tier || "-"}</div></div>
+                    </div>
+                </div>
+
+                <div class="ai-section">
+                    <h6 class="text-success">AI 戦略提言（${verdictLabel}）</h6>
+                    <div class="mb-2"><small class="text-muted">根拠</small><div>${escapeHtml(adv.reason || "-")}</div></div>
+                    <div class="row g-2">
+                        <div class="col-6"><small class="text-muted">エントリータイミング</small><div class="fw-bold">${escapeHtml(adv.entry_timing || "-")}</div></div>
+                        <div class="col-3"><small class="text-muted">サポート</small><div class="fw-bold">${adv.support != null ? "¥" + Number(adv.support).toLocaleString() : "-"}</div></div>
+                        <div class="col-3"><small class="text-muted">レジスタンス</small><div class="fw-bold">${adv.resistance != null ? "¥" + Number(adv.resistance).toLocaleString() : "-"}</div></div>
+                    </div>
+                    <div class="mt-2"><small class="text-muted">リスク注意</small><div>${escapeHtml(adv.risk || "-")}</div></div>
+                </div>
+
+                <div class="ai-section">
+                    <h6 class="text-danger">売買計画</h6>
+                    <div class="row g-2 text-center">
+                        <div class="col-4"><small class="text-muted">利確目標</small><div class="fw-bold text-danger">${p.tp_price ? "¥" + p.tp_price.toLocaleString() : "-"}</div></div>
+                        <div class="col-4"><small class="text-muted">損切ライン</small><div class="fw-bold text-primary">${p.sl_price ? "¥" + p.sl_price.toLocaleString() : "-"}</div></div>
+                        <div class="col-4"><small class="text-muted">最長保有</small><div class="fw-bold">${p.max_hold_days || "-"}営業日</div></div>
+                    </div>
+                    <div class="mt-2"><small class="text-muted">警告</small><div>${(p.warnings || []).join(", ") || "なし"}</div></div>
+                </div>
+
+                <div class="ai-section">
+                    <h6 class="text-secondary">ファンダメンタル（未検証層・参考）</h6>
+                    <div class="row g-2">${fundRows}</div>
+                </div>
+            `;
+            aiModal.show();
+        }
+
+        function escapeHtml(s) {
+            return String(s)
+                .split("<").join("<")
+                .split(">").join(">");
         }
 
         let ALL = [];
