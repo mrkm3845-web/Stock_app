@@ -37,6 +37,7 @@ DOCS_DIR = os.path.join(BASE_DIR, "docs")
 HISTORY7_DIR = os.path.join(DOCS_DIR, "history7")
 RECOMMENDATIONS_PATH = os.path.join(DOCS_DIR, "recommendations.json")
 TECHNICAL_REC_PATH = os.path.join(DOCS_DIR, "recommendations_technical.json")
+AI_LATEST_PATH = os.path.join(DOCS_DIR, "ai_strategy_latest.json")
 
 
 def get_target_date_str():
@@ -181,6 +182,8 @@ def scan_stage1(stock_list, params):
             )
             excluded = w_down
 
+            ctx = F.compute_stock_context(df, feat, weekly)
+
             feats[code] = {"feat": feat, "weekly_trend_up": weekly["trend_up"]}
 
             results.append({
@@ -199,6 +202,7 @@ def scan_stage1(stock_list, params):
                 "sma25": int(round(float(feat["sma25"][-1]))) if not np.isnan(feat["sma25"][-1]) else None,
                 "atr14": round(float(feat["atr14"][-1]), 1) if not np.isnan(feat["atr14"][-1]) else None,
                 "warnings": [w["id"] for w in warnings],
+                "ctx": ctx,
                 "excluded": excluded,
             })
         except Exception:
@@ -292,8 +296,35 @@ def normalize_fund(info, price):
 
 
 # ---------------------------------------------------------------- Stage2 (DeepSeek)
-def call_deepseek(pool, params):
-    """DeepSeek に構造化データを渡し、戦略提言 JSON を返す。"""
+def _build_ai_prompt(pool, fund_map):
+    lines = []
+    for r in pool:
+        ctx = r.get("ctx") or {}
+        fund = fund_map.get(r["code"]) or {}
+        parts = [
+            f"{r['code']} {r['name']}",
+            f"市場:{r['market']} 業種:{r['sector']}",
+            f"株価:{ctx.get('price', r['price'])}円 スコア:{r['score']}",
+            f"GC:{r['gc_days'] if r['gc_days'] is not None else 'なし'}日前",
+            f"5日平均代金:{r['avg_val_5d']}千円 増加率:{r['val_ratio_5d']}倍",
+            f"ATR14:{r['atr14']}円",
+            f"支持20日:{ctx.get('support_20d')} 抵抗20日:{ctx.get('resistance_20d')}",
+            f"上髭ATR比:{ctx.get('upper_shadow_atr')} 下髭:{ctx.get('lower_shadow_atr')} レンジ位置:{ctx.get('range_position')}",
+            f"週足↑:{ctx.get('weekly_trend_up')} 月足↑:{ctx.get('monthly_trend_up')}",
+            f"5日:{ctx.get('ret_5d_pct')}% 20日:{ctx.get('ret_20d_pct')}%",
+            f"SMA5/25/200:{ctx.get('sma5')}/{ctx.get('sma25')}/{ctx.get('sma200')}",
+        ]
+        if fund:
+            parts.append(
+                f"PER:{fund.get('per')}倍 PBR:{fund.get('pbr')}倍 ROE:{fund.get('roe')}% "
+                f"営利:{fund.get('op_margin')}% 配当:{fund.get('div_yield')}%"
+            )
+        lines.append(" | ".join(str(x) for x in parts))
+    return "\n".join(lines)
+
+
+def call_deepseek(pool, fund_map, params):
+    """DeepSeek に構造化データを渡し、全体分析＋銘柄別戦略 JSON を返す。"""
     key = os.environ.get("DEEPSEEK_API_KEY")
     ai = params.get("ai", {})
     if not key:
@@ -302,21 +333,18 @@ def call_deepseek(pool, params):
     url = "https://api.deepseek.com/chat/completions"
     headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
-    lines = []
-    for r in pool[: ai.get("max_calls_per_run", 40)]:
-        lines.append(
-            f"{r['code']} {r['name']} | 市場:{r['market']} 業種:{r['sector']} 株価:{r['price']}円 | "
-            f"スコア:{r['score']} | GC:{r['gc_days']}日前 | 5日平均代金:{r['avg_val_5d']}千円 | "
-            f"増加率:{r['val_ratio_5d']}倍 | ATR14:{r['atr14']}"
-        )
-    user = "\n".join(lines)
+    user = _build_ai_prompt(pool[: ai.get("max_calls_per_run", 40)], fund_map)
 
     system = (
-        "あなたは日本株スイングトレードのプロ。以下の候補銘柄それぞれについて、"
-        "与えられた数値のみから戦略提言をJSON配列で返してください。"
-        "各要素: {\"code\":..., \"verdict\":\"recommend\"|\"neutral\"|\"avoid\", "
-        "\"reason\":\"根拠\", \"entry_timing\":\"...\", \"support\":数値, \"resistance\":数値, \"risk\":\"...\"}。"
-        "画像は使用しない。最終判断は人間が行う前提。"
+        "あなたは日本株スイングトレードのプロ。以下の候補銘柄すべてを、上昇期待・リスク・流動性・テクニカル・"
+        "ファンダメンタルの観点で1位から順位づけし、上位3〜5銘柄をおすすめに選んでください。"
+        "回答は必ず以下のJSONのみを返してください（Markdownやコードフェンスなし）:"
+        '{"overall":"市場・テーマの総評（2〜3文）",'
+        '"stocks":[{"code":"...","rank":1,"verdict":"recommend|neutral|avoid",'
+        '"reason":"おすすめ理由","news_note":"直近の材料・ニュース（AIの知識ベースに基づく。必ず『要確認』と付記）",'
+        '"entry_strategy":"押し目狙い|上昇追い|様子見 など","entry_price":数値,"support":数値,"resistance":数値,'
+        '"tp_price":数値,"sl_price":数値,"trailing_plan":"トレーリング計画の説明"}]}'
+        "全候補銘柄を stocks 配列に含めてください。画像は使用しない。数値は与えられたデータに基づく。最終判断は人間が行う前提。"
     )
     payload = {
         "model": ai.get("model", "deepseek-chat"),
@@ -339,35 +367,76 @@ def _extract_json(text):
         text = text.strip("`")
         if text.startswith("json"):
             text = text[4:]
+    start = text.find("{")
+    end = text.rfind("}")
+    if start >= 0 and end > start:
+        try:
+            return json.loads(text[start:end + 1])
+        except Exception:
+            pass
     start = text.find("[")
     end = text.rfind("]")
     if start >= 0 and end > start:
-        return json.loads(text[start:end + 1])
+        try:
+            return json.loads(text[start:end + 1])
+        except Exception:
+            pass
     return None
 
 
 # ---------------------------------------------------------------- 出力
+def _to_num(v):
+    if v is None or v == "":
+        return None
+    try:
+        f = float(v)
+        return int(round(f)) if float(f).is_integer() else round(f, 2)
+    except (TypeError, ValueError):
+        return v
+
+
+def _ai_rank(item):
+    try:
+        return int(item.get("rank"))
+    except (TypeError, ValueError):
+        return None
+
+
 def build_recommendations(pool, fund_map, ai_map, params, date):
     picks = []
     ai = params.get("ai", {})
     top_n = ai.get("weekly_top_picks", 5)
 
-    rank = []
-    for r in pool:
-        verdict = None
-        if ai_map:
-            item = next((x for x in ai_map if x.get("code") == r["code"]), None)
-            verdict = item.get("verdict") if item else None
-        adj = {"recommend": 2, "neutral": 0, "avoid": -2}.get(verdict, 0)
-        rank.append((r["score"] + adj, r, verdict, ai_map and next((x for x in ai_map if x.get("code") == r["code"]), None)))
+    overall = None
+    ai_stocks = []
+    if isinstance(ai_map, dict):
+        overall = ai_map.get("overall")
+        ai_stocks = ai_map.get("stocks") or []
+    ai_by_code = {s.get("code"): s for s in ai_stocks if s.get("code")}
 
-    rank.sort(key=lambda x: -x[0])
-    for combined, r, verdict, advice in rank[:top_n]:
+    def sort_key(r):
+        rank = _ai_rank(ai_by_code.get(r["code"])) if ai_by_code.get(r["code"]) else None
+        if rank is not None:
+            return (0, rank, -r["score"])
+        return (1, -r["score"])
+
+    ordered = sorted(pool, key=sort_key)
+
+    for r in ordered[:top_n]:
+        item = ai_by_code.get(r["code"]) or {}
         tier = F.tier_for_price(r["price"], params["price_tiers"]) or {}
-        sl_price = None
-        if r["atr14"]:
-            sl_price = int(round(r["price"] - tier.get("atr_sl_mult", 2.0) * r["atr14"]))
-        tp_price = int(round(r["price"] * (1 + tier.get("tp_pct", 0.12))))
+        ctx = r.get("ctx") or {}
+
+        tp_price = _to_num(item.get("tp_price"))
+        if tp_price is None:
+            tp_price = int(round(r["price"] * (1 + tier.get("tp_pct", 0.12))))
+        sl_price = _to_num(item.get("sl_price"))
+        if sl_price is None:
+            if r["atr14"]:
+                sl_price = int(round(r["price"] - tier.get("atr_sl_mult", 2.0) * r["atr14"]))
+
+        verdict = item.get("verdict") or "technical_only"
+
         picks.append({
             "code": r["code"],
             "name": r["name"],
@@ -375,12 +444,23 @@ def build_recommendations(pool, fund_map, ai_map, params, date):
             "price": r["price"],
             "score": r["score"],
             "tier": r["tier"],
-            "verdict": verdict or "technical_only",
-            "advice": advice,
+            "verdict": verdict,
+            "rank": _ai_rank(item),
+            "advice": item or None,
             "fundamentals": fund_map.get(r["code"]),
+            "entry_strategy": item.get("entry_strategy"),
+            "entry_price": _to_num(item.get("entry_price")),
+            "support": _to_num(item.get("support")) if item.get("support") is not None else ctx.get("support_20d"),
+            "resistance": _to_num(item.get("resistance")) if item.get("resistance") is not None else ctx.get("resistance_20d"),
             "tp_price": tp_price,
             "sl_price": sl_price,
+            "trailing_plan": item.get("trailing_plan"),
+            "news_note": item.get("news_note"),
             "max_hold_days": tier.get("max_hold_days", 14),
+            "gc_days": r["gc_days"],
+            "val_ratio_5d": r["val_ratio_5d"],
+            "avg_val_5d": r["avg_val_5d"],
+            "atr14": r["atr14"],
             "warnings": r["warnings"],
         })
 
@@ -388,8 +468,33 @@ def build_recommendations(pool, fund_map, ai_map, params, date):
         "generated_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "date": date,
         "version": params.get("version"),
+        "overall": overall,
         "picks": picks,
     }
+
+
+def update_ai_latest(ai_map, date):
+    """銘柄ごとの最新AI戦略インデックスを更新する（日をまたいで参照可能にする）。"""
+    if not isinstance(ai_map, dict):
+        return
+    stocks = ai_map.get("stocks") or []
+    if not stocks:
+        return
+    latest = {}
+    if os.path.exists(AI_LATEST_PATH):
+        try:
+            with open(AI_LATEST_PATH, "r", encoding="utf-8") as f:
+                latest = json.load(f)
+        except Exception:
+            latest = {}
+    now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    for s in stocks:
+        code = s.get("code")
+        if code:
+            latest[code] = {**s, "date": date, "updated_at": now}
+    with open(AI_LATEST_PATH, "w", encoding="utf-8") as f:
+        json.dump(latest, f, ensure_ascii=False, indent=2)
+    print(f">> 最新AI戦略インデックスを更新: {AI_LATEST_PATH}（{len(latest)} 銘柄）")
 
 
 def write_outputs(all_results, recommendations, date, rec_path):
@@ -446,11 +551,12 @@ def main():
             except Exception:
                 ai_map = None
         else:
-            ai_map = call_deepseek(pool, params)
+            ai_map = call_deepseek(pool, fund_map, params)
             if ai_map:
                 with open(ai_file, "w", encoding="utf-8") as f:
                     json.dump(ai_map, f, ensure_ascii=False)
                 print(f">> 当日のAI分析結果を保存: {ai_file}")
+                update_ai_latest(ai_map, date)
 
     recommendations = build_recommendations(pool, fund_map, ai_map, params, date)
     rec_path = RECOMMENDATIONS_PATH if args.ai else TECHNICAL_REC_PATH
@@ -458,7 +564,7 @@ def main():
 
     print(">> スクリーニング（main7）完了")
     for p in recommendations["picks"]:
-        print(f"  - {p['code']} {p['name']} score={p['score']} verdict={p['verdict']} tp={p['tp_price']} sl={p['sl_price']}")
+        print(f"  - {p['code']} {p['name']} rank={p.get('rank')} verdict={p['verdict']} tp={p['tp_price']} sl={p['sl_price']}")
 
 
 if __name__ == "__main__":

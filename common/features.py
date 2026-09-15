@@ -210,3 +210,59 @@ def _eval_condition(cond, env):
         if not matched:
             return False
     return all(results)
+
+
+def compute_stock_context(df, feat=None, weekly=None):
+    """AI に渡す銘柄別スカラー情報（画像なしで分かる範囲のローソク足由来特徴量）。"""
+    if feat is None:
+        feat = compute_daily_features(df)
+    if weekly is None:
+        weekly = compute_weekly_features(df)
+
+    c = df["Close"].values.astype(float)
+    o = df["Open"].values.astype(float)
+    h = df["High"].values.astype(float)
+    l = df["Low"].values.astype(float)
+
+    price = float(c[-1])
+    high20 = float(np.max(h[-20:])) if len(h) >= 20 else float(np.max(h))
+    low20 = float(np.min(l[-20:])) if len(l) >= 20 else float(np.min(l))
+
+    atr = feat["atr14"][-1]
+    atr = float(atr) if not np.isnan(atr) and atr > 0 else max(price * 0.02, 1.0)
+
+    body_top = max(float(o[-1]), float(c[-1]))
+    body_bottom = min(float(o[-1]), float(c[-1]))
+    upper_shadow = (float(h[-1]) - body_top) / atr
+    lower_shadow = (body_bottom - float(l[-1])) / atr
+    range_pos = (price - low20) / (high20 - low20) if high20 > low20 else 0.5
+
+    monthly = df.resample("M").agg({"Close": "last"}).dropna()
+    monthly_trend_up = False
+    if len(monthly) >= 6:
+        m_close = monthly["Close"].values.astype(float)
+        m_ma6 = float(np.mean(m_close[-6:]))
+        monthly_trend_up = bool(m_close[-1] > m_ma6)
+
+    ret5 = (price / c[-6] - 1.0) * 100 if len(c) >= 6 else 0.0
+    ret20 = (price / c[-21] - 1.0) * 100 if len(c) >= 21 else 0.0
+
+    return {
+        "price": round(price, 1),
+        "sma5": round(float(feat["sma5"][-1]), 1) if not np.isnan(feat["sma5"][-1]) else None,
+        "sma25": round(float(feat["sma25"][-1]), 1) if not np.isnan(feat["sma25"][-1]) else None,
+        "sma200": round(float(feat["sma200"][-1]), 1) if not np.isnan(feat["sma200"][-1]) else None,
+        "support_20d": round(low20, 1),
+        "resistance_20d": round(high20, 1),
+        "upper_shadow_atr": round(upper_shadow, 2),
+        "lower_shadow_atr": round(lower_shadow, 2),
+        "range_position": round(range_pos, 2),
+        "weekly_trend_up": bool(weekly["trend_up"]),
+        "monthly_trend_up": monthly_trend_up,
+        "ret_5d_pct": round(ret5, 2),
+        "ret_20d_pct": round(ret20, 2),
+        "gc_days": int(feat["gc_days"][-1]) if int(feat["gc_days"][-1]) < 900 else None,
+        "val_ratio_5d": round(float(feat["val_ratio_5d"][-1]), 2),
+        "avg_val_5d": int(round(float(feat["avg_val_5d"][-1]))),
+        "atr14": round(atr, 1),
+    }
