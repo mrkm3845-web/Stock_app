@@ -547,6 +547,7 @@ def main():
     parser.add_argument("--markets", nargs="+", default=["プライム", "スタンダード"])
     parser.add_argument("--max-stocks", type=int, default=None, help="テスト用に銘柄数を制限")
     parser.add_argument("--ai", action="store_true", help="DeepSeek分析を実行する（AI専用実行でのみ指定）")
+    parser.add_argument("--force-ai", action="store_true", help="既存の当日AI分析を無視して再実行・上書きする")
     args = parser.parse_args()
 
     params = load_strategy_params()
@@ -573,7 +574,7 @@ def main():
     news_map = {}
     ai_file = os.path.join(DOCS_DIR, f"ai_analysis_{date}.json")
     if args.ai and params.get("ai", {}).get("enabled"):
-        if os.path.exists(ai_file):
+        if os.path.exists(ai_file) and not args.force_ai:
             try:
                 with open(ai_file, "r", encoding="utf-8") as f:
                     ai_map = json.load(f)

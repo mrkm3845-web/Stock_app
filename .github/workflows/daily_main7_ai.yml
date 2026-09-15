@@ -5,6 +5,12 @@ on:
     # 当日夜 20:17 JST（大引け後・データ確定後）＝ UTC 11:17
     - cron: '17 11 * * 1-5'
   workflow_dispatch:
+    inputs:
+      force:
+        description: '既存の当日AI分析を上書きする'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -39,7 +45,11 @@ jobs:
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         run: |
-          python main7.py --ai
+          if [ "${{ inputs.force }}" = "true" ]; then
+            python main7.py --ai --force-ai
+          else
+            python main7.py --ai
+          fi
 
       - name: コミット＆プッシュ
         run: |
