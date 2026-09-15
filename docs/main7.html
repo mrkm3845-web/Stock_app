@@ -121,13 +121,17 @@
             try {
                 rec = await loadJSON("recommendations.json");
             } catch (e) {
+                rec = null;
+            }
+            if (!rec || !rec.picks || rec.picks.length === 0) {
                 try {
-                    rec = await loadJSON("recommendations_technical.json");
+                    const tech = await loadJSON("recommendations_technical.json");
+                    if (tech && tech.picks && tech.picks.length > 0) rec = tech;
                 } catch (e2) {
-                    rec = null;
+                    // 技術版も無ければ rec はそのまま
                 }
             }
-            if (rec) {
+            if (rec && rec.picks && rec.picks.length > 0) {
                 renderRecs(rec);
             } else {
                 document.getElementById("rec-body").innerHTML =
