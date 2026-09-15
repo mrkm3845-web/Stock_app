@@ -32,7 +32,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/price_cache
-          key: price-cache-${{ runner.os }}-${{ hashFiles('main7.py') }}
+          key: price-cache-${{ runner.os }}
           restore-keys: |
             price-cache-${{ runner.os }}-
 

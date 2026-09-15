@@ -367,10 +367,11 @@ def call_deepseek(pool, fund_map, news_map, params):
         "ファンダメンタルの観点で1位から順位づけし、上位3〜5銘柄をおすすめに選んでください。"
         "回答は必ず以下のJSONのみを返してください（Markdownやコードフェンスなし）:"
         '{"overall":"市場・テーマの総評（2〜3文）",'
-        '"stocks":[{"code":"...","rank":1,"verdict":"recommend|neutral|avoid",'
-        '"reason":"おすすめ理由","news_note":"直近の材料・ニュース（AIの知識ベースに基づく。必ず『要確認』と付記）",'
-        '"entry_strategy":"押し目狙い|上昇追い|様子見 など","entry_price":数値,"support":数値,"resistance":数値,'
+        '"stocks":[{"code":"候補一覧に記載の実際の銘柄コード文字列","rank":1,"verdict":"recommend",'
+        '"reason":"おすすめ理由","news_note":"与えたニュース見出しに基づく材料",'
+        '"entry_strategy":"押し目狙い","entry_price":数値,"support":数値,"resistance":数値,'
         '"tp_price":数値,"sl_price":数値,"trailing_plan":"トレーリング計画の説明"}]}'
+        "code は必ず候補一覧に記載された実際のコードをそのままコピーし、「...」や省略形は使わないでください。"
         "news_note は与えたニュース見出しに基づいて記述し、見出しが無い銘柄は『要確認』と付記してください。"
         "全候補銘柄を stocks 配列に含めてください。画像は使用しない。数値は与えられたデータに基づく。最終判断は人間が行う前提。"
     )
@@ -440,7 +441,8 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date):
     if isinstance(ai_map, dict):
         overall = ai_map.get("overall")
         ai_stocks = ai_map.get("stocks") or []
-    ai_by_code = {s.get("code"): s for s in ai_stocks if s.get("code")}
+    pool_codes = {r["code"] for r in pool}
+    ai_by_code = {s.get("code"): s for s in ai_stocks if s.get("code") in pool_codes}
 
     def sort_key(r):
         rank = _ai_rank(ai_by_code.get(r["code"])) if ai_by_code.get(r["code"]) else None
@@ -527,6 +529,9 @@ def update_ai_latest(ai_map, date):
 
 
 def write_outputs(all_results, recommendations, date, rec_path):
+    if not all_results:
+        print(">> ⚠️ 有効銘柄が0件のため、既存データを上書きしません（保存をスキップ）")
+        return
     os.makedirs(HISTORY7_DIR, exist_ok=True)
     serializable = []
     for r in all_results:
