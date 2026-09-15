@@ -295,8 +295,32 @@ def normalize_fund(info, price):
     }
 
 
+# ---------------------------------------------------------------- ニュース（プール分のみ・レート制限対策）
+def fetch_news_for_pool(pool):
+    """プール銘柄の直近ニュース見出しを yfinance から取得する。"""
+    news_map = {}
+    total = len(pool)
+    for i, r in enumerate(pool):
+        try:
+            t = yf.Ticker(f"{r['code']}.T")
+            items = t.news or []
+            headlines = []
+            for n in items[:5]:
+                title = n.get("title")
+                if title:
+                    headlines.append(title)
+            if headlines:
+                news_map[r["code"]] = headlines
+        except Exception:
+            pass
+        if i < total - 1:
+            time.sleep(0.25)  # レート制限対策
+    return news_map
+
+
 # ---------------------------------------------------------------- Stage2 (DeepSeek)
-def _build_ai_prompt(pool, fund_map):
+def _build_ai_prompt(pool, fund_map, news_map=None):
+    news_map = news_map or {}
     lines = []
     for r in pool:
         ctx = r.get("ctx") or {}
@@ -319,11 +343,14 @@ def _build_ai_prompt(pool, fund_map):
                 f"PER:{fund.get('per')}倍 PBR:{fund.get('pbr')}倍 ROE:{fund.get('roe')}% "
                 f"営利:{fund.get('op_margin')}% 配当:{fund.get('div_yield')}%"
             )
+        headlines = news_map.get(r["code"]) or []
+        if headlines:
+            parts.append("ニュース:" + " / ".join(headlines[:3]))
         lines.append(" | ".join(str(x) for x in parts))
     return "\n".join(lines)
 
 
-def call_deepseek(pool, fund_map, params):
+def call_deepseek(pool, fund_map, news_map, params):
     """DeepSeek に構造化データを渡し、全体分析＋銘柄別戦略 JSON を返す。"""
     key = os.environ.get("DEEPSEEK_API_KEY")
     ai = params.get("ai", {})
@@ -333,7 +360,7 @@ def call_deepseek(pool, fund_map, params):
     url = "https://api.deepseek.com/chat/completions"
     headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
-    user = _build_ai_prompt(pool[: ai.get("max_calls_per_run", 40)], fund_map)
+    user = _build_ai_prompt(pool[: ai.get("max_calls_per_run", 40)], fund_map, news_map)
 
     system = (
         "あなたは日本株スイングトレードのプロ。以下の候補銘柄すべてを、上昇期待・リスク・流動性・テクニカル・"
@@ -344,6 +371,7 @@ def call_deepseek(pool, fund_map, params):
         '"reason":"おすすめ理由","news_note":"直近の材料・ニュース（AIの知識ベースに基づく。必ず『要確認』と付記）",'
         '"entry_strategy":"押し目狙い|上昇追い|様子見 など","entry_price":数値,"support":数値,"resistance":数値,'
         '"tp_price":数値,"sl_price":数値,"trailing_plan":"トレーリング計画の説明"}]}'
+        "news_note は与えたニュース見出しに基づいて記述し、見出しが無い銘柄は『要確認』と付記してください。"
         "全候補銘柄を stocks 配列に含めてください。画像は使用しない。数値は与えられたデータに基づく。最終判断は人間が行う前提。"
     )
     payload = {
@@ -402,7 +430,7 @@ def _ai_rank(item):
         return None
 
 
-def build_recommendations(pool, fund_map, ai_map, params, date):
+def build_recommendations(pool, fund_map, ai_map, news_map, params, date):
     picks = []
     ai = params.get("ai", {})
     top_n = ai.get("weekly_top_picks", 5)
@@ -456,6 +484,7 @@ def build_recommendations(pool, fund_map, ai_map, params, date):
             "sl_price": sl_price,
             "trailing_plan": item.get("trailing_plan"),
             "news_note": item.get("news_note"),
+            "news_headlines": news_map.get(r["code"]) or [],
             "max_hold_days": tier.get("max_hold_days", 14),
             "gc_days": r["gc_days"],
             "val_ratio_5d": r["val_ratio_5d"],
@@ -541,6 +570,7 @@ def main():
 
     date = get_target_date_str()
     ai_map = None
+    news_map = {}
     ai_file = os.path.join(DOCS_DIR, f"ai_analysis_{date}.json")
     if args.ai and params.get("ai", {}).get("enabled"):
         if os.path.exists(ai_file):
@@ -551,14 +581,15 @@ def main():
             except Exception:
                 ai_map = None
         else:
-            ai_map = call_deepseek(pool, fund_map, params)
+            news_map = fetch_news_for_pool(pool)
+            ai_map = call_deepseek(pool, fund_map, news_map, params)
             if ai_map:
                 with open(ai_file, "w", encoding="utf-8") as f:
                     json.dump(ai_map, f, ensure_ascii=False)
                 print(f">> 当日のAI分析結果を保存: {ai_file}")
                 update_ai_latest(ai_map, date)
 
-    recommendations = build_recommendations(pool, fund_map, ai_map, params, date)
+    recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date)
     rec_path = RECOMMENDATIONS_PATH if args.ai else TECHNICAL_REC_PATH
     write_outputs(results, recommendations, date, rec_path)
 
