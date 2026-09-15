@@ -3,6 +3,8 @@
 > 本ドキュメントは、重複・矛盾していた旧版を整理し直した統合版です。
 > バックテスト側の詳細戦略は [`back_tester/BACKTEST_STRATEGY_PLAN.md`](../back_tester/BACKTEST_STRATEGY_PLAN.md) を参照してください。
 > 本計画の実装優先順位は、ワークスペースのtodoリストと同期しています。
+>
+> ⚠️ **この文書は設計方針です。実装により一部内容が古くなっています。最新の実装状況・残タスクは [`PROJECT_STATUS.md`](PROJECT_STATUS.md) を参照してください。**
 
 ---
 
