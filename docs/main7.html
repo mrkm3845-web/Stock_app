@@ -117,31 +117,21 @@
 
         async function init() {
             aiModal = new bootstrap.Modal(document.getElementById("aiModal"));
-
-            const pickValid = (r) => r && r.picks && r.picks.length > 0;
-
-            let aiRec = null;
-            let techRec = null;
-            try {
-                aiRec = await loadJSON("recommendations.json");
-            } catch (e) {
-                aiRec = null;
-            }
-            try {
-                techRec = await loadJSON("recommendations_technical.json");
-            } catch (e) {
-                techRec = null;
-            }
-
-            // 最新の取引日データを優先表示する（同日ならAI版を優先）
             let rec = null;
-            if (pickValid(aiRec) && pickValid(techRec)) {
-                rec = (String(aiRec.date || "") >= String(techRec.date || "")) ? aiRec : techRec;
-            } else {
-                rec = pickValid(aiRec) ? aiRec : (pickValid(techRec) ? techRec : null);
+            try {
+                rec = await loadJSON("recommendations.json");
+            } catch (e) {
+                rec = null;
             }
-
-            if (pickValid(rec)) {
+            if (!rec || !rec.picks || rec.picks.length === 0) {
+                try {
+                    const tech = await loadJSON("recommendations_technical.json");
+                    if (tech && tech.picks && tech.picks.length > 0) rec = tech;
+                } catch (e2) {
+                    // 技術版も無ければ rec はそのまま
+                }
+            }
+            if (rec && rec.picks && rec.picks.length > 0) {
                 renderRecs(rec);
             } else {
                 document.getElementById("rec-body").innerHTML =
