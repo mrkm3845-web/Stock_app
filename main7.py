@@ -19,7 +19,7 @@ import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import numpy as np
 import pandas as pd
@@ -41,8 +41,21 @@ AI_LATEST_PATH = os.path.join(DOCS_DIR, "ai_strategy_latest.json")
 AI_ANALYSIS_DIR = os.path.join(DOCS_DIR, "ai_analysis")
 
 
+JST = timezone(timedelta(hours=9))
+
+
+def _jst_now():
+    return datetime.now(JST)
+
+
 def get_target_date_str():
-    now = datetime.now()
+    """実行日付（トレーディングデー）を日本時間基準で返す。
+
+    日本時間 15:30〜翌朝9:00 に取得したデータは、すべてその日のデータとして扱う。
+    JST 9:00 より前は「前営業日」、9:00 以降は「当日」を返す。
+    GitHub Actions の実行環境は UTC のため、timezone を明示する。
+    """
+    now = _jst_now()
     if now.hour < 9:
         return (now - timedelta(days=1)).strftime("%Y-%m-%d")
     return now.strftime("%Y-%m-%d")
@@ -93,7 +106,7 @@ def fetch_jpx_stock_list(markets):
 # ---------------------------------------------------------------- 価格データ（増分キャッシュ）
 def download_ohlcv_batch(codes, stock_dfs):
     print(f">> {len(codes)} 銘柄の日足を一括取得中...")
-    start_date = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
+    start_date = (_jst_now() - timedelta(days=90)).strftime("%Y-%m-%d")
     batch_size = 100
     downloaded = 0
     for i in range(0, len(codes), batch_size):
@@ -122,7 +135,7 @@ def download_ohlcv_batch(codes, stock_dfs):
 def fetch_ohlcv_all(codes):
     """価格データをキャッシュ付きで取得。1日1回だけ全更新、残りはキャッシュ。"""
     os.makedirs(PRICE_CACHE, exist_ok=True)
-    today = datetime.now().strftime("%Y-%m-%d")
+    today = get_target_date_str()
     stamp = os.path.join(PRICE_CACHE, "_updated.txt")
     last_update = ""
     if os.path.exists(stamp):
@@ -526,7 +539,7 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date):
         })
 
     return {
-        "generated_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"),
         "date": date,
         "version": params.get("version"),
         "overall": overall,
@@ -548,7 +561,7 @@ def update_ai_latest(ai_map, date):
                 latest = json.load(f)
         except Exception:
             latest = {}
-    now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    now = _jst_now().strftime("%Y-%m-%dT%H:%M:%S")
     for s in stocks:
         code = s.get("code")
         if code:
