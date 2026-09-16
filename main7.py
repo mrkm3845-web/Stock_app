@@ -38,6 +38,7 @@ HISTORY7_DIR = os.path.join(DOCS_DIR, "history7")
 RECOMMENDATIONS_PATH = os.path.join(DOCS_DIR, "recommendations.json")
 TECHNICAL_REC_PATH = os.path.join(DOCS_DIR, "recommendations_technical.json")
 AI_LATEST_PATH = os.path.join(DOCS_DIR, "ai_strategy_latest.json")
+AI_ANALYSIS_DIR = os.path.join(DOCS_DIR, "ai_analysis")
 
 
 def get_target_date_str():
@@ -94,6 +95,7 @@ def download_ohlcv_batch(codes, stock_dfs):
     print(f">> {len(codes)} 銘柄の日足を一括取得中...")
     start_date = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
     batch_size = 100
+    downloaded = 0
     for i in range(0, len(codes), batch_size):
         batch = codes[i:i + batch_size]
         tickers = [f"{c}.T" for c in batch]
@@ -108,10 +110,13 @@ def download_ohlcv_batch(codes, stock_dfs):
                             df.index = pd.to_datetime(df.index).tz_localize(None)
                             df.to_csv(os.path.join(PRICE_CACHE, f"{c}.csv"))
                             stock_dfs[c] = df
+                            downloaded += 1
                 except Exception:
                     pass
         except Exception as e:
             print(f"Batch download error: {e}")
+    print(f">> 一括取得完了: {downloaded} 銘柄")
+    return downloaded
 
 
 def fetch_ohlcv_all(codes):
@@ -139,11 +144,18 @@ def fetch_ohlcv_all(codes):
             except Exception:
                 pass
 
-    if last_update != today:
-        print(f">> 価格キャッシュを更新します（前回更新: {last_update or 'なし'}）")
-        download_ohlcv_batch(codes, stock_dfs)
-        with open(stamp, "w", encoding="utf-8") as f:
-            f.write(today)
+    # 「今日更新済み」と書いてあっても実データが無い/極端に少ない場合は再取得する。
+    # これにより、前回のダウンロード失敗でスタンプだけが進んでしまう「毒キャッシュ」を回復できる。
+    min_expected = max(10, int(len(codes) * 0.5))
+    if last_update != today or len(stock_dfs) < min_expected:
+        print(f">> 価格キャッシュを更新します（前回更新: {last_update or 'なし'} / 既存 {len(stock_dfs)} 銘柄）")
+        downloaded = download_ohlcv_batch(codes, stock_dfs)
+        if downloaded > 0:
+            with open(stamp, "w", encoding="utf-8") as f:
+                f.write(today)
+            print(f">> 価格キャッシュ更新完了: {downloaded} 銘柄取得")
+        else:
+            print(">> ⚠️ 日足ダウンロードが0件のため、更新スタンプは書き込みません（次回再取得されます）")
     else:
         print(f">> 本日分の価格キャッシュを使用します（{len(stock_dfs)} 銘柄）")
 
@@ -413,6 +425,24 @@ def _extract_json(text):
     return None
 
 
+def sanitize_ai_map(ai_map, pool):
+    """DeepSeek応答からプレースホルダ（"..."等）を排除し、候補プールに実在するコードだけ残す。
+
+    無効な応答・0件の場合は None を返して技術スコアへフォールバックする。
+    """
+    if not isinstance(ai_map, dict):
+        return None
+    pool_codes = {r["code"] for r in pool}
+    stocks = ai_map.get("stocks") or []
+    valid = [s for s in stocks if isinstance(s, dict) and s.get("code") in pool_codes]
+    if not valid:
+        return None
+    overall = ai_map.get("overall")
+    if not overall or str(overall).strip() in ("", "..."):
+        overall = None
+    return {"overall": overall, "stocks": valid}
+
+
 # ---------------------------------------------------------------- 出力
 def _to_num(v):
     if v is None or v == "":
@@ -541,9 +571,13 @@ def write_outputs(all_results, recommendations, date, rec_path):
     for fname in (f"{date}.json", "latest.json"):
         with open(os.path.join(HISTORY7_DIR, fname), "w", encoding="utf-8") as f:
             json.dump(serializable, f, ensure_ascii=False)
-    with open(rec_path, "w", encoding="utf-8") as f:
-        json.dump(recommendations, f, ensure_ascii=False)
-    print(f">> 出力完了: {HISTORY7_DIR}/{date}.json, {rec_path}")
+
+    if recommendations.get("picks"):
+        with open(rec_path, "w", encoding="utf-8") as f:
+            json.dump(recommendations, f, ensure_ascii=False)
+        print(f">> 出力完了: {HISTORY7_DIR}/{date}.json, {rec_path}")
+    else:
+        print(f">> 出力完了: {HISTORY7_DIR}/{date}.json（おすすめ0件のため {rec_path} は上書きしません）")
 
 
 # ---------------------------------------------------------------- main
@@ -577,23 +611,32 @@ def main():
     date = get_target_date_str()
     ai_map = None
     news_map = {}
-    ai_file = os.path.join(DOCS_DIR, f"ai_analysis_{date}.json")
+    ai_file = os.path.join(AI_ANALYSIS_DIR, f"{date}.json")
     if args.ai and params.get("ai", {}).get("enabled"):
         if os.path.exists(ai_file) and not args.force_ai:
             try:
                 with open(ai_file, "r", encoding="utf-8") as f:
                     ai_map = json.load(f)
-                print(f">> 当日のAI分析キャッシュを再利用: {ai_file}")
+                ai_map = sanitize_ai_map(ai_map, pool)
+                if ai_map:
+                    print(f">> 当日のAI分析キャッシュを再利用: {ai_file}")
+                else:
+                    print(f">> 当日のAI分析キャッシュが無効のため再取得します: {ai_file}")
             except Exception:
                 ai_map = None
-        else:
+
+        if ai_map is None:
             news_map = fetch_news_for_pool(pool)
             ai_map = call_deepseek(pool, fund_map, news_map, params)
+            ai_map = sanitize_ai_map(ai_map, pool)
             if ai_map:
+                os.makedirs(AI_ANALYSIS_DIR, exist_ok=True)
                 with open(ai_file, "w", encoding="utf-8") as f:
                     json.dump(ai_map, f, ensure_ascii=False)
                 print(f">> 当日のAI分析結果を保存: {ai_file}")
                 update_ai_latest(ai_map, date)
+            else:
+                print(">> ⚠️ AI応答が無効（プレースホルダ等）のため技術スコアでフォールバックします")
 
     recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date)
     rec_path = RECOMMENDATIONS_PATH if args.ai else TECHNICAL_REC_PATH

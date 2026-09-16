@@ -26,7 +26,7 @@
   - ファンダメンタルはプール分のみ取得。
   - Stage2 DeepSeek: プール全銘柄を1位から順位づけし、`overall`＋銘柄別 `rank/verdict/reason/news_note/entry_strategy/entry_price/support/resistance/tp/sl/trailing_plan` をJSONで返す。
   - ニュース: yfinance `.news` で見出し取得（AI実行時のみ・プール分のみ・0.25秒間隔）。
-  - 出力: `docs/history7/{date}.json`・`latest.json`、`recommendations.json`（AI）／`recommendations_technical.json`（技術）、`ai_analysis_{date}.json`、`ai_strategy_latest.json`。
+  - 出力: `docs/history7/{date}.json`・`latest.json`、`recommendations.json`（AI）／`recommendations_technical.json`（技術）、`ai_analysis/{date}.json`、`ai_strategy_latest.json`。
   - フラグ: `--ai`（AI実行）、`--force-ai`（手動で強制上書き）。
 - **フロント**:
   - [`docs/main7.html`](docs/main7.html): AI総評・おすすめ表（順位/エントリー/利確/損切）・銘柄モーダル（詳細戦略）・プロンプトコピー。
