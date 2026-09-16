@@ -117,21 +117,31 @@
 
         async function init() {
             aiModal = new bootstrap.Modal(document.getElementById("aiModal"));
-            let rec = null;
+
+            const pickValid = (r) => r && r.picks && r.picks.length > 0;
+
+            let aiRec = null;
+            let techRec = null;
             try {
-                rec = await loadJSON("recommendations.json");
+                aiRec = await loadJSON("recommendations.json");
             } catch (e) {
-                rec = null;
+                aiRec = null;
             }
-            if (!rec || !rec.picks || rec.picks.length === 0) {
-                try {
-                    const tech = await loadJSON("recommendations_technical.json");
-                    if (tech && tech.picks && tech.picks.length > 0) rec = tech;
-                } catch (e2) {
-                    // 技術版も無ければ rec はそのまま
-                }
+            try {
+                techRec = await loadJSON("recommendations_technical.json");
+            } catch (e) {
+                techRec = null;
             }
-            if (rec && rec.picks && rec.picks.length > 0) {
+
+            // 最新の取引日データを優先表示する（同日ならAI版を優先）
+            let rec = null;
+            if (pickValid(aiRec) && pickValid(techRec)) {
+                rec = (String(aiRec.date || "") >= String(techRec.date || "")) ? aiRec : techRec;
+            } else {
+                rec = pickValid(aiRec) ? aiRec : (pickValid(techRec) ? techRec : null);
+            }
+
+            if (pickValid(rec)) {
                 renderRecs(rec);
             } else {
                 document.getElementById("rec-body").innerHTML =
