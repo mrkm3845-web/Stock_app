@@ -183,6 +183,7 @@ def scan_stage1(stock_list, params):
 
     results = []
     feats = {}
+    errors = []
     for code, df in ohlcv.items():
         try:
             s_info = stock_map.get(code)
@@ -230,9 +231,14 @@ def scan_stage1(stock_list, params):
                 "ctx": ctx,
                 "excluded": excluded,
             })
-        except Exception:
+        except Exception as e:
+            errors.append((code, type(e).__name__, str(e)))
             continue
 
+    if errors:
+        print(f">> ⚠️ Stage1 で {len(errors)} 銘柄がエラー（先頭5件を表示）:")
+        for code, err_type, err_msg in errors[:5]:
+            print(f"   - {code}: {err_type}: {err_msg}")
     print(f">> Stage1 有効銘柄: {len(results)} 件")
     return results, feats
 

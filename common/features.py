@@ -237,7 +237,11 @@ def compute_stock_context(df, feat=None, weekly=None):
     lower_shadow = (body_bottom - float(l[-1])) / atr
     range_pos = (price - low20) / (high20 - low20) if high20 > low20 else 0.5
 
-    monthly = df.resample("M").agg({"Close": "last"}).dropna()
+    try:
+        monthly = df.resample("ME").agg({"Close": "last"}).dropna()
+    except ValueError:
+        # pandas 2.1以前は "ME" が存在しないため旧エイリアスへフォールバック
+        monthly = df.resample("M").agg({"Close": "last"}).dropna()
     monthly_trend_up = False
     if len(monthly) >= 6:
         m_close = monthly["Close"].values.astype(float)
