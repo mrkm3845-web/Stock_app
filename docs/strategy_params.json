@@ -28,8 +28,8 @@
   },
   "ai": {
     "enabled": true,
-    "provider": "deepseek",
-    "model": "deepseek-chat",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
     "stage1_pool_min": 20,
     "stage1_pool_max": 40,
     "weekly_top_picks": 5,

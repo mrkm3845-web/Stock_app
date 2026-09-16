@@ -381,19 +381,8 @@ def _build_ai_prompt(pool, fund_map, news_map=None):
     return "\n".join(lines)
 
 
-def call_deepseek(pool, fund_map, news_map, params):
-    """DeepSeek に構造化データを渡し、全体分析＋銘柄別戦略 JSON を返す。"""
-    key = os.environ.get("DEEPSEEK_API_KEY")
-    ai = params.get("ai", {})
-    if not key:
-        return None
-
-    url = "https://api.deepseek.com/chat/completions"
-    headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
-
-    user = _build_ai_prompt(pool[: ai.get("max_calls_per_run", 40)], fund_map, news_map)
-
-    system = (
+def _ai_system_prompt():
+    return (
         "あなたは日本株スイングトレードのプロ。以下の候補銘柄すべてを、上昇期待・リスク・流動性・テクニカル・"
         "ファンダメンタルの観点で1位から順位づけし、上位3〜5銘柄をおすすめに選んでください。"
         "回答は必ず以下のJSONのみを返してください（Markdownやコードフェンスなし）:"
@@ -406,6 +395,15 @@ def call_deepseek(pool, fund_map, news_map, params):
         "news_note は与えたニュース見出しに基づいて記述し、見出しが無い銘柄は『要確認』と付記してください。"
         "全候補銘柄を stocks 配列に含めてください。画像は使用しない。数値は与えられたデータに基づく。最終判断は人間が行う前提。"
     )
+
+
+def _call_deepseek(user, system, params):
+    key = os.environ.get("DEEPSEEK_API_KEY")
+    ai = params.get("ai", {})
+    if not key:
+        return None
+    url = "https://api.deepseek.com/chat/completions"
+    headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
     payload = {
         "model": ai.get("model", "deepseek-chat"),
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
@@ -419,6 +417,39 @@ def call_deepseek(pool, fund_map, news_map, params):
     except Exception as e:
         print(f">> DeepSeek呼び出し失敗（技術スコアでフォールバック）: {e}")
         return None
+
+
+def _call_gemini(user, system, params):
+    key = os.environ.get("GEMINI_API_KEY")
+    ai = params.get("ai", {})
+    if not key:
+        return None
+    model = ai.get("model", "gemini-2.5-flash")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    payload = {
+        "system_instruction": {"parts": [{"text": system}]},
+        "contents": [{"role": "user", "parts": [{"text": user}]}],
+        "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
+    }
+    try:
+        resp = requests.post(url, params={"key": key}, json=payload, timeout=120)
+        resp.raise_for_status()
+        data = resp.json()
+        text = data["candidates"][0]["content"]["parts"][0]["text"]
+        return _extract_json(text)
+    except Exception as e:
+        print(f">> Gemini呼び出し失敗（技術スコアでフォールバック）: {e}")
+        return None
+
+
+def call_ai(pool, fund_map, news_map, params):
+    """プロバイダ設定に応じてAIを呼び、全体分析＋銘柄別戦略JSONを返す。"""
+    ai = params.get("ai", {})
+    user = _build_ai_prompt(pool[: ai.get("max_calls_per_run", 40)], fund_map, news_map)
+    system = _ai_system_prompt()
+    if ai.get("provider", "deepseek") == "gemini":
+        return _call_gemini(user, system, params)
+    return _call_deepseek(user, system, params)
 
 
 def _extract_json(text):
@@ -646,7 +677,7 @@ def main():
 
         if ai_map is None:
             news_map = fetch_news_for_pool(pool)
-            ai_map = call_deepseek(pool, fund_map, news_map, params)
+            ai_map = call_ai(pool, fund_map, news_map, params)
             ai_map = sanitize_ai_map(ai_map, pool)
             if ai_map:
                 os.makedirs(AI_ANALYSIS_DIR, exist_ok=True)

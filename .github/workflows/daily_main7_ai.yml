@@ -41,9 +41,9 @@ jobs:
           restore-keys: |
             price-cache-${{ runner.os }}-
 
-      - name: Run main7 screener with DeepSeek analysis
+      - name: Run main7 screener with AI analysis
         env:
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           if [ "${{ inputs.force }}" = "true" ]; then
             python main7.py --ai --force-ai

@@ -24,7 +24,7 @@
 - **新スクリーナー [`main7.py`](main7.py)**:
   - Stage1: OHLCVのみで総合スコア（週足25/GC20/増加率20/代金15/SMA200 20）。週足悪化は除外。適応プール20〜40銘柄。
   - ファンダメンタルはプール分のみ取得。
-  - Stage2 DeepSeek: プール全銘柄を1位から順位づけし、`overall`＋銘柄別 `rank/verdict/reason/news_note/entry_strategy/entry_price/support/resistance/tp/sl/trailing_plan` をJSONで返す。
+  - Stage2 AI: プール全銘柄を1位から順位づけし、`overall`＋銘柄別 `rank/verdict/reason/news_note/entry_strategy/entry_price/support/resistance/tp/sl/trailing_plan` をJSONで返す（Gemini / DeepSeek を `ai.provider` で切替）。
   - ニュース: yfinance `.news` で見出し取得（AI実行時のみ・プール分のみ・0.25秒間隔）。
   - 出力: `docs/history7/{date}.json`・`latest.json`、`recommendations.json`（AI）／`recommendations_technical.json`（技術）、`ai_analysis/{date}.json`、`ai_strategy_latest.json`。
   - フラグ: `--ai`（AI実行）、`--force-ai`（手動で強制上書き）。
@@ -36,7 +36,7 @@
   - [`daily_main7.yml`](.github/workflows/daily_main7.yml): 技術スクリーニング 平日1日5回。
   - [`daily_main7_ai.yml`](.github/workflows/daily_main7_ai.yml): **AI実行 20:17 JST**。手動実行時は `force` チェックで上書き可能。
   - [`daily_stock.yml`](.github/workflows/daily_stock.yml): main6（無変更のまま稼働）。
-- **DeepSeek**: 環境変数 `DEEPSEEK_API_KEY`（GitHub Secrets）で動作。APIキーはバックテスト側には不要。
+- **AI（Gemini）**: 環境変数 `GEMINI_API_KEY`（GitHub Secrets）で動作。プロバイダ/モデルは `strategy_params.json` の `ai` セクションで切替（既定 `gemini` / `gemini-2.5-flash`）。DeepSeek を使う場合は `DEEPSEEK_API_KEY`。
 
 ### back_tester 側
 - [`backtest_rolling_walkforward.py`](../back_tester/backtest_rolling_walkforward.py): ウォークフォワード（学習12ヶ月/検証3ヶ月/スライド3ヶ月、2022〜2024）。
