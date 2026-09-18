@@ -21,21 +21,21 @@
 - **共有パラメータ**: [`docs/strategy_params.json`](docs/strategy_params.json)（株価帯・シグナル閾値・警告・スコア重み・`ai` 設定。`ai.enabled=true`）。
 - **共通モジュール**: [`common/config.py`](common/config.py)、[`common/features.py`](common/features.py)
   - GC日数・5日平均代金・売買代金増加率・SMA・ATR14・週足/月足トレンド・支持/抵抗・上髭/下髭・レンジ位置・総合スコア・警告判定。
-- **新スクリーナー [`main7.py`](main7.py)**:
-  - Stage1: OHLCVのみで総合スコア（週足25/GC20/増加率20/代金15/SMA200 20）。週足悪化は除外。適応プール20〜40銘柄。
-  - ファンダメンタルはプール分のみ取得。
-  - Stage2 AI: プール全銘柄を1位から順位づけし、`overall`＋銘柄別 `rank/verdict/reason/news_note/entry_strategy/entry_price/support/resistance/tp/sl/trailing_plan` をJSONで返す（Gemini / DeepSeek を `ai.provider` で切替）。
-  - ニュース: yfinance `.news` で見出し取得（AI実行時のみ・プール分のみ・0.25秒間隔）。
-  - 出力: `docs/history7/{date}.json`・`latest.json`、`recommendations.json`（AI）／`recommendations_technical.json`（技術）、`ai_analysis/{date}.json`、`ai_strategy_latest.json`。
-  - フラグ: `--ai`（AI実行）、`--force-ai`（手動で強制上書き）。
+- **統合スクリーナー [`main8.py`](main8.py)**（main6 + main7 を一本化）:
+  - 全銘柄（プライム+スタンダード）を一括スキャンし、**ファンダメンタル網羅（main6）と技術スコア（main7）を同一レコードに統合**。
+  - 価格データは増分キャッシュ（`data/price_cache`）で **250日分**取得（SMA200・月足トレンドを機能させスコアを0〜100で計算）。
+  - Stage2 AI: 高スコア上位プール（〜40銘柄）を1位から順位づけし、`overall`＋銘柄別 `rank/verdict/reason/news_note/entry_strategy/entry_price/support/resistance/tp/sl/trailing_plan` をJSONで返す（Gemini / DeepSeek を `ai.provider` で切替）。
+  - ニュース: yfinance `.news` で見出し取得（AI実行時のみ・プール分のみ）。
+  - 出力: `docs/history/{date}.json`・`latest.json`・`meta.json`、`recommendations.json`（AI）／`recommendations_technical.json`（技術）、`ai_analysis/{date}.json`、`ai_strategy_latest.json`、`data/stocks.db`。
+  - フラグ: `--ai`（AI実行）、`--force-ai`（手動で強制上書き）、`--max-stocks`（テスト）。
 - **フロント**:
-  - [`docs/main7.html`](docs/main7.html): AI総評・おすすめ表（順位/エントリー/利確/損切）・銘柄モーダル（詳細戦略）・プロンプトコピー。
+  - [`docs/index.html`](docs/index.html): **統合スクリーナー**。デフォルトでスコア70以上絞り込み＋スコア順ソート（同点は増加率順）。銘柄モーダルにAI戦略（上位AI実行銘柄）を表示し、「最新AI実行」でGeminiへ最新データ+ニュース照会プロンプトを転送。
   - [`docs/journal.html`](docs/journal.html): 各取引行の「AI戦略」ボタンで最新AI戦略を表示。
-  - [`docs/index.html`](docs/index.html): main6表示（無変更）＋main7へのリンク追加。
+  - 旧 [`docs/main7.html`](docs/main7.html) と旧 [`docs/index.html`](docs/index_main6_backup.html) は退避。
 - **ワークフロー**:
-  - [`daily_main7.yml`](.github/workflows/daily_main7.yml): 技術スクリーニング 平日1日5回。
-  - [`daily_main7_ai.yml`](.github/workflows/daily_main7_ai.yml): **AI実行 20:17 JST**。手動実行時は `force` チェックで上書き可能。
-  - [`daily_stock.yml`](.github/workflows/daily_stock.yml): main6（無変更のまま稼働）。
+  - [`daily_main8.yml`](.github/workflows/daily_main8.yml): 技術スクリーニング 平日1日5回。
+  - [`daily_main8_ai.yml`](.github/workflows/daily_main8_ai.yml): **AI実行 20:17 JST**。手動実行時は `force` チェックで上書き可能。
+  - 旧 `daily_stock.yml` / `daily_main7*.yml` は `.disabled` で無効化。
 - **AI（Gemini）**: 環境変数 `GEMINI_API_KEY`（GitHub Secrets）で動作。プロバイダ/モデルは `strategy_params.json` の `ai` セクションで切替（既定 `gemini` / `gemini-2.5-flash`）。DeepSeek を使う場合は `DEEPSEEK_API_KEY`。
 
 ### back_tester 側
@@ -77,13 +77,13 @@
 
 ```bash
 # スクリーナー（技術のみ）
-uv run --no-project --python 3.11 python Stock_app/main7.py
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python Stock_app/main8.py
 
 # スクリーナー（AI分析）
-uv run --no-project --python 3.11 python Stock_app/main7.py --ai
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python Stock_app/main8.py --ai
 
 # スクリーナー（AIを強制再分析・上書き）
-uv run --no-project --python 3.11 python Stock_app/main7.py --ai --force-ai
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python Stock_app/main8.py --ai --force-ai
 
 # バックテスト
 uv run --no-project --python 3.11 python back_tester/backtest_rolling_walkforward.py
@@ -93,7 +93,6 @@ uv run --no-project --python 3.11 python back_tester/backtest_rolling_walkforwar
 
 ## 6. 主要な成果物・閲覧先
 
-- main7 ビューア: `https://mrkm3845-web.github.io/Stock_app/main7.html`
-- main6 ビューア: `https://mrkm3845-web.github.io/Stock_app/`（または `index.html`）
+- 統合ビューア: `https://mrkm3845-web.github.io/Stock_app/`（`index.html`）
 - AI戦略インデックス: [`docs/ai_strategy_latest.json`](docs/ai_strategy_latest.json)
 - バックテスト結果: [`back_tester/results/backtest_walkforward_report.md`](../back_tester/results/backtest_walkforward_report.md)
