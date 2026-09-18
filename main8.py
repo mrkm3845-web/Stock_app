@@ -817,83 +817,9 @@ def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook
                 text += f"{r['code']:<6} {sname:<8} +{r['discount_rate']}% {r['mix_index']:<5.2f} {r['div_yield']}%\n"
         return text + "```"
 
-    base_swing = df[
-        (df["per"] >= 4.0) &
-        (df["avg_val_5d"] >= 30000) &
-        (df["gc_days"].notna()) &
-        (df["gc_days"] <= 3)
-    ]
-
-    warn_df = base_swing[
-        ((base_swing["price"] <= 1000) & (base_swing["val_ratio_5d"] >= 4.0)) |
-        ((base_swing["price"] > 2000) & (base_swing["price"] <= 3000) & (base_swing["val_ratio_5d"] >= 4.0))
-    ].sort_values(by="val_ratio_5d", ascending=False)
-
-    rank_s_df = base_swing[
-        (base_swing["price"] >= 1000) & (base_swing["price"] <= 2000) &
-        (base_swing["gc_days"].isin([2, 3])) &
-        (base_swing["val_ratio_5d"] >= 2.0)
-    ].sort_values(by="val_ratio_5d", ascending=False)
-
-    rank_a_low_df = base_swing[
-        (base_swing["price"] >= 500) & (base_swing["price"] <= 1000) &
-        (base_swing["gc_days"] == 0) &
-        (base_swing["val_ratio_5d"] >= 1.5) & (base_swing["val_ratio_5d"] < 4.0)
-    ].sort_values(by="val_ratio_5d", ascending=False)
-
-    rank_a_mid_df = base_swing[
-        (base_swing["price"] > 2000) & (base_swing["price"] <= 3000) &
-        (base_swing["gc_days"].isin([2, 3])) &
-        (base_swing["val_ratio_5d"] >= 2.0) & (base_swing["val_ratio_5d"] < 4.0)
-    ].sort_values(by="val_ratio_5d", ascending=False)
-
-    def format_rank_table(sub_df, max_rows=4):
-        t = "```\n" + f"{'コード':<5} {'社名':<7} {'株価':<7} {'GC状態':<6} {'増加率'}\n" + "-" * 38 + "\n"
-        for _, r in sub_df.head(max_rows).iterrows():
-            sname = (r["name"][:5] + "..") if len(r["name"]) > 5 else r["name"]
-            gc_d = int(r["gc_days"])
-            gc_label = "本日GC" if gc_d == 0 else f"{gc_d}日前"
-            t += f"{r['code']:<6} {sname:<7} ¥{int(r['price']):<6} {gc_label:<6} {r['val_ratio_5d']}倍\n"
-        return t + "```"
-
-    swing_section = "\n**🚀 【実証スイング シグナル速報 (株価帯・ランク別)】**\n"
-    has_any_signal = False
-
-    if not rank_s_df.empty:
-        has_any_signal = True
-        swing_section += "▼ 🏆 **RANK S: 中低位トレンド (1,000~2,000円 / PF 1.79)**\n"
-        swing_section += "└ GC 2~3日目 × 出来高2.0倍↑ (押し目抜け確定)\n"
-        swing_section += format_rank_table(rank_s_df)
-
-    if not rank_a_mid_df.empty:
-        has_any_signal = True
-        swing_section += "▼ 🎯 **RANK A: 中位ブレイク (2,000~3,000円 / PF 1.59)**\n"
-        swing_section += "└ GC 2~3日目 × 出来高2.0~4.0倍 (大口集中)\n"
-        swing_section += format_rank_table(rank_a_mid_df)
-
-    if not rank_a_low_df.empty:
-        has_any_signal = True
-        swing_section += "▼ 🚀 **RANK A: 低位初動 (500~1,000円 / PF 1.26)**\n"
-        swing_section += "└ 当日GC × 出来高1.5~3.0倍 (手堅い初動・861件実証)\n"
-        swing_section += format_rank_table(rank_a_low_df)
-
-    if not has_any_signal:
-        swing_section += "▼ 本日は推奨ランクの厳選シグナルなし (静観推奨)\n"
-
-    if not warn_df.empty:
-        swing_section += f"\n▼ ⚠️ **【過熱イナゴ天井警戒】(高値掴み厳重注意・{len(warn_df)}件)**\n"
-        swing_section += "└ 出来高4倍超の低位・中位株 (未見PF 0.72~0.85へ急落・仕手天井リスク)\n```\n"
-        swing_section += f"{'コード':<5} {'社名':<7} {'株価':<7} {'増加率':<7} {'判定'}\n" + "-" * 38 + "\n"
-        for _, r in warn_df.head(4).iterrows():
-            sname = (r["name"][:5] + "..") if len(r["name"]) > 5 else r["name"]
-            judge = "低位仕手天井" if r["price"] <= 1000 else "中位過熱反落"
-            swing_section += f"{r['code']:<6} {sname:<7} ¥{int(r['price']):<6} {r['val_ratio_5d']:<6}倍 {judge}\n"
-        swing_section += "```"
-
     msg = f"📊 **【株式自動スクリーニング速報 (統合・高精度版)】** ({now_str})\n"
     msg += f"📅 対象営業日: **`{target_date}`** (総登録: {len(all_stocks)}社 / 新規: +{added_count} / 更新: {updated_count})\n"
     msg += make_value_section("プライム") + make_value_section("スタンダード")
-    msg += swing_section
     msg += "\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
 
     try:

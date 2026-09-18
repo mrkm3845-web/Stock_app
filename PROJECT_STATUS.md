@@ -39,11 +39,14 @@
 - **AI（Gemini）**: 環境変数 `GEMINI_API_KEY`（GitHub Secrets）で動作。プロバイダ/モデルは `strategy_params.json` の `ai` セクションで切替（既定 `gemini` / `gemini-2.5-flash`）。DeepSeek を使う場合は `DEEPSEEK_API_KEY`。
 
 ### back_tester 側
-- [`backtest_rolling_walkforward.py`](../back_tester/backtest_rolling_walkforward.py): ウォークフォワード（学習12ヶ月/検証3ヶ月/スライド3ヶ月、2022〜2024）。
-  - エグジット: 固定TP/SL vs ATRトレーリングの比較。
-  - リスク指標（最大DD・連敗・最大損失）＋ベンチマーク（等加重バイ&ホールド）。
-  - 出力: `results/backtest_walkforward_result.json`・`.csv`・`_report.md`、GitHub Step Summary。
-- [`run_walkforward.yml`](../back_tester/.github/workflows/run_walkforward.yml): **土曜 21:00 JST** に週次実行＋結果コミット。
+- [`backtest_rolling_walkforward.py`](../back_tester/backtest_rolling_walkforward.py): スコア式再現のローリングウォークフォワード（学習12ヶ月/検証3ヶ月/スライド3ヶ月、`walk_end` は前月末でローリング）。
+  - エントリー: スコア上位K銘柄を翌日寄りで約定（実運用 main8.py と同一スコア式）。
+  - エグジット: 固定TP/SL vs ATRトレーリングの比較＋**株価帯別エグジット最適化**。
+  - 指標: 資金制約（同時保有上限・固定比率）を加味した年率/最大DD/シャープ/PF。ベンチマークは TOPIX ETF（1306.T）。
+  - 出力: `results/backtest_walkforward_result.json`・`.csv`・`backtest_tier_exit.csv`・`_report.md`。
+- [`apply_optimal_params.py`](../back_tester/apply_optimal_params.py): 結果を**ガード付き**で `strategy_params.json` の `signals`・`price_tiers` に反映（最低件数/PF/ベンチマーク超え/DD上限/近傍安定性/前回比劣化なし）。
+- [`run_walkforward.yml`](../back_tester/.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST** に実行＋ガード反映＋結果コミット。
+- 旧スクリプト `backtest_scanner*.py` / `backtest_volume_deepdive.py` は上記に統合・削除済み。
 
 ---
 
@@ -59,7 +62,7 @@
 | 14 | ポジションサイジング・同時保有・業種集中上限・最大DD制御 | 未着手 |
 | 15 | バックテスト実行時間対策（段階探索・事前計算キャッシュ・ランナー選定） | 未着手 |
 | 16 | ジャーナルのエントリー時特徴量スナップショット＋サーバー側/JSON永続化 | 未着手（現在 localStorage） |
-| 17 | 再最適化ワークフロー（自動ガード付き strategy_params.json 更新） | **保留**（依頼により後回し） |
+| 17 | 再最適化ワークフロー（自動ガード付き strategy_params.json 更新） | 完了（signals/price_tiers、ガード付き、月次） |
 | 19 | AIコスト管理（月間予算ガード・トークン計測） | 一部実施（1日1回＋max_callsのみ） |
 
 ---
