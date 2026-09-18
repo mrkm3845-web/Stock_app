@@ -50,8 +50,8 @@ AI_ANALYSIS_DIR = os.path.join(DOCS_DIR, "ai_analysis")
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 
 JST = timezone(timedelta(hours=9))
-# SMA200 と月足トレンドを機能させるため 250 営業日分を取得する
-PRICE_DAYS = 250
+# SMA200（200営業日）を機能させるため、余裕を持って約400暦日（≈270営業日）を取得する
+PRICE_DAYS = 400
 
 
 def _jst_now():
@@ -185,8 +185,8 @@ def fetch_ohlcv_all(codes):
                 pass
 
     min_expected = max(10, int(len(codes) * 0.5))
-    # 過去キャッシュ（90日分）では SMA200 が計算できないため、十分な履歴が無ければ再取得する
-    has_long_history = any(len(df) >= 180 for df in stock_dfs.values())
+    # 過去キャッシュが短いと SMA200（200営業日）が計算できないため、十分な履歴が無ければ再取得する
+    has_long_history = any(len(df) >= 200 for df in stock_dfs.values())
     start_date = (_jst_now() - timedelta(days=PRICE_DAYS)).strftime("%Y-%m-%d")
     if last_update != today or len(stock_dfs) < min_expected or not has_long_history:
         print(f">> 価格キャッシュを更新します（前回更新: {last_update or 'なし'} / 既存 {len(stock_dfs)} 銘柄）")
