@@ -236,30 +236,45 @@ def fetch_single_fundamental(code):
         return code, None
 
 
-def _fundamentals_from_info(info, current_price):
-    eps = info.get("trailingEps")
-    bps = info.get("bookValue")
-    pe = info.get("trailingPE") or info.get("forwardPE")
-    pb = info.get("priceToBook")
-    roe = info.get("returnOnEquity")
-    op_margin = info.get("operatingMargins")
-    div_yield = info.get("dividendYield")
-    div_rate = info.get("dividendRate")
+def _as_float(v):
+    """yfinance はごく稀に文字列（"N/A" 等）を返すため、安全に float へ変換する。"""
+    if v is None or v == "":
+        return None
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    try:
+        s = str(v).replace(",", "").replace("%", "").strip()
+        return float(s)
+    except (TypeError, ValueError):
+        return None
 
-    if (not pe or pe <= 0) and (eps and eps > 0):
+
+def _fundamentals_from_info(info, current_price):
+    eps = _as_float(info.get("trailingEps"))
+    bps = _as_float(info.get("bookValue"))
+    pe = _as_float(info.get("trailingPE")) or _as_float(info.get("forwardPE"))
+    pb = _as_float(info.get("priceToBook"))
+    roe = _as_float(info.get("returnOnEquity"))
+    op_margin = _as_float(info.get("operatingMargins"))
+    div_yield = _as_float(info.get("dividendYield"))
+    div_rate = _as_float(info.get("dividendRate"))
+
+    if (pe is None or pe <= 0) and (eps is not None and eps > 0):
         pe = current_price / eps
-    if (not pb or pb <= 0) and (bps and bps > 0):
+    if (pb is None or pb <= 0) and (bps is not None and bps > 0):
         pb = current_price / bps
-    if (not eps or eps <= 0) and (pe and pe > 0):
+    if (eps is None or eps <= 0) and (pe is not None and pe > 0):
         eps = current_price / pe
-    if (not bps or bps <= 0) and (pb and pb > 0):
+    if (bps is None or bps <= 0) and (pb is not None and pb > 0):
         bps = current_price / pb
 
     roe_pct = (roe * 100) if (roe is not None and roe < 1.0) else (roe if roe else 0.0)
     op_margin_pct = (op_margin * 100) if (op_margin is not None and op_margin < 1.0) else (op_margin if op_margin else 0.0)
     if div_yield is not None:
         div_yield_pct = (div_yield * 100) if div_yield < 0.20 else (div_yield if div_yield <= 20.0 else 0.0)
-    elif div_rate and current_price > 0:
+    elif div_rate is not None and div_rate > 0 and current_price > 0:
         div_yield_pct = min(20.0, (div_rate / current_price) * 100)
     else:
         div_yield_pct = 0.0
