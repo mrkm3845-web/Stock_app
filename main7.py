@@ -424,10 +424,10 @@ def _call_gemini(user, system, params):
     ai = params.get("ai", {})
     if not key:
         return None
-    model = ai.get("model", "gemini-2.5-flash")
+    model = ai.get("model", "gemini-3.8-flash")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
     payload = {
-        "system_instruction": {"parts": [{"text": system}]},
+        "systemInstruction": {"parts": [{"text": system}]},
         "contents": [{"role": "user", "parts": [{"text": user}]}],
         "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
     }
