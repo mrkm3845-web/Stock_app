@@ -424,22 +424,38 @@ def _call_gemini(user, system, params):
     ai = params.get("ai", {})
     if not key:
         return None
-    model = ai.get("model", "gemini-3.8-flash")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-    payload = {
-        "systemInstruction": {"parts": [{"text": system}]},
-        "contents": [{"role": "user", "parts": [{"text": user}]}],
-        "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
-    }
-    try:
-        resp = requests.post(url, params={"key": key}, json=payload, timeout=120)
-        resp.raise_for_status()
-        data = resp.json()
-        text = data["candidates"][0]["content"]["parts"][0]["text"]
-        return _extract_json(text)
-    except Exception as e:
-        print(f">> Gemini呼び出し失敗（技術スコアでフォールバック）: {e}")
-        return None
+    models = [ai.get("model", "gemini-3.8-flash")]
+    for m in ("gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash"):
+        if m not in models:
+            models.append(m)
+    last_err = None
+    for model in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        payload = {
+            "systemInstruction": {"parts": [{"text": system}]},
+            "contents": [{"role": "user", "parts": [{"text": user}]}],
+            "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
+        }
+        for attempt in range(3):
+            try:
+                resp = requests.post(url, params={"key": key}, json=payload, timeout=120)
+                if resp.status_code in (429, 500, 502, 503, 504):
+                    last_err = f"{resp.status_code} {resp.reason} ({model})"
+                    time.sleep(min(2 ** attempt, 10))
+                    continue
+                resp.raise_for_status()
+                data = resp.json()
+                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                return _extract_json(text)
+            except requests.exceptions.HTTPError as e:
+                last_err = f"{e} ({model})"
+                break
+            except Exception as e:
+                last_err = f"{e} ({model})"
+                break
+        print(f">> Gemini {model} 失敗: {last_err} → 次のモデルへフォールバック")
+    print(f">> Gemini呼び出し失敗（技術スコアでフォールバック）: {last_err}")
+    return None
 
 
 def call_ai(pool, fund_map, news_map, params):
