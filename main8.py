@@ -258,6 +258,19 @@ def _as_float(v):
         return None
 
 
+def _earnings_from_info(info):
+    """yfinance info から次回決算日（推定）を JST 日付で返す。追加通信なしで使える。"""
+    ts = None
+    if info:
+        ts = info.get("earningsTimestampStart") or info.get("earningsTimestampEnd")
+    if not ts:
+        return None
+    try:
+        return (datetime.utcfromtimestamp(float(ts)) + timedelta(hours=9)).strftime("%Y-%m-%d")
+    except (TypeError, ValueError, OSError):
+        return None
+
+
 def _fundamentals_from_info(info, current_price):
     eps = _as_float(info.get("trailingEps"))
     bps = _as_float(info.get("bookValue"))
@@ -346,6 +359,7 @@ def scan_market_merged(stock_list, params):
             roe_pct = op_margin_pct = div_yield_pct = 0.0
             if info:
                 eps, bps, pe, pb, roe_pct, op_margin_pct, div_yield_pct = _fundamentals_from_info(info, price)
+            earnings_date = _earnings_from_info(info) if info else None
 
             if not (eps and bps and eps > 0 and bps > 0) and (code in cached_fund):
                 c_item = cached_fund[code]
@@ -399,6 +413,7 @@ def scan_market_merged(stock_list, params):
                 "weekly_trend_up": bool(weekly["trend_up"]),
                 "atr14": atr14,
                 "warnings": [w["id"] for w in warnings],
+                "earnings_date": earnings_date,
                 "ctx": ctx,
                 "excluded": w_down,
             })
@@ -844,35 +859,6 @@ def fetch_market_regime(sma_days=200):
         return None
 
 
-def fetch_earnings_for_pool(pool):
-    """AI候補プールの次回決算日を取得する（yfinance calendar・取得率をログ出力）。"""
-    out = {}
-    total = len(pool)
-    for i, r in enumerate(pool):
-        code = r["code"]
-        got = None
-        for attempt in range(2):
-            try:
-                cal = yf.Ticker(f"{code}.T").calendar
-                if cal:
-                    ed = cal.get("Earnings Date")
-                    if ed:
-                        ds = [d for d in ed if d is not None]
-                        if ds:
-                            d0 = min(ds)
-                            got = d0.strftime("%Y-%m-%d") if hasattr(d0, "strftime") else str(d0)
-                            break
-            except Exception:
-                pass
-            time.sleep(0.5)
-        if got:
-            out[code] = got
-        if i < total - 1:
-            time.sleep(0.2)
-    print(f">> 決算日を取得: {len(out)}/{total} 銘柄")
-    return out
-
-
 def _days_until(date_str, base_date_str):
     try:
         d = datetime.strptime(date_str, "%Y-%m-%d")
@@ -1079,7 +1065,8 @@ def main():
             else:
                 print(">> ⚠️ AI応答が無効（プレースホルダ等）のため技術スコアでフォールバックします")
 
-    earnings_map = fetch_earnings_for_pool(pool) if pool else {}
+    # 決算日はスキャン時に取得した info から抽出済み（追加通信なし）
+    earnings_map = {r["code"]: r["earnings_date"] for r in pool if r.get("earnings_date")}
     earnings_items = save_earnings_json(earnings_map, date)["items"] if earnings_map else {}
 
     recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime, earnings_items)
