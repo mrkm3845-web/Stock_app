@@ -78,11 +78,10 @@
     }
   ],
   "score_weights": {
-    "weekly_trend": 25,
-    "daily_gc": 20,
-    "val_ratio": 20,
-    "avg_val": 15,
-    "trend_sma200": 20
+    "pos_52w": 30,
+    "dist_sma200": 25,
+    "sma200_slope": 25,
+    "ret_120d": 20
   },
   "ai": {
     "enabled": true,

@@ -4,7 +4,8 @@ backtest_rolling_walkforward.py
 
 方針:
 - 共通特徴量 common/features.py を使い、スクリーナー（main8.py）と同一の
-  スコア式（週足トレンド / 日足GC / 売買代金増加率 / 5日平均代金 / SMA200）を再現して検証する。
+  スコア式（Phase 2: 52週高値位置 / 200日線乖離 / 200日線傾き / 120日リターンの
+  トレンド合成）を再現して検証する。
 - 期間を学習12ヶ月 / 検証3ヶ月 / スライド3ヶ月で区切る（walk_end は実行日の前月末＝ローリング）。
 - 毎営業日、スコア上位K銘柄を選び、翌日寄りでエントリー。
 - エグジットは「固定TP/SL」と「ATRトレーリング」を比較する。
@@ -61,10 +62,8 @@ CONFIG = {
 }
 
 SIGNAL_GRID = [
-    {"gc_window": 1, "val_ratio_min": 1.5, "avg_val_min_k": 30000},
+    # Phase 2 のトレンド合成スコアは閾値シグナルを使わない（出力互換のため既定値のみ保持）
     {"gc_window": 3, "val_ratio_min": 1.2, "avg_val_min_k": 30000},
-    {"gc_window": 3, "val_ratio_min": 1.5, "avg_val_min_k": 30000},
-    {"gc_window": 3, "val_ratio_min": 2.0, "avg_val_min_k": 30000},
 ]
 EXIT_MODES = ["fixed", "atr_trail"]
 
@@ -223,19 +222,19 @@ def weekly_trend_daily(df):
 
 
 def score_series(feat, weekly_up, sig, weights):
-    """compute_technical_score と同一式のスコアを全バー分ベクトル化して返す。"""
-    gc = feat["gc_days"]
-    vr = feat["val_ratio_5d"]
-    av = feat["avg_val_5d"]
-    sma200 = feat["sma200"]
-    close = feat["close"]
+    """compute_technical_score（Phase 2: トレンド合成）と同一式のベクトル化版。
 
-    score = np.zeros(len(close), dtype=float)
-    score += weights.get("weekly_trend", 0) * weekly_up.astype(float)
-    score += weights.get("daily_gc", 0) * ((gc >= 0) & (gc <= sig.get("gc_window", 3))).astype(float)
-    score += weights.get("val_ratio", 0) * np.minimum(1.0, np.where(vr > 0, vr / 3.0, 0.0)) * (vr >= sig.get("val_ratio_min", 1.2)).astype(float)
-    score += weights.get("avg_val", 0) * (av >= sig.get("avg_val_min_k", 30000)).astype(float)
-    score += weights.get("trend_sma200", 0) * ((~np.isnan(sma200)) & (close > sma200)).astype(float)
+    旧式（GC / 出来高増加率 / 週足）は Phase 1 の研究で逆効果のため廃止。
+    """
+    def clamp01(a):
+        a = np.asarray(a, dtype=float)
+        return np.clip(np.nan_to_num(a, nan=0.0), 0.0, 1.0)
+
+    score = np.zeros(len(feat["close"]), dtype=float)
+    score += weights.get("pos_52w", 30) * clamp01(feat["pos_52w"])
+    score += weights.get("dist_sma200", 25) * clamp01(np.asarray(feat["dist_sma200"], dtype=float) / 0.30)
+    score += weights.get("sma200_slope", 25) * clamp01(np.asarray(feat["sma200_slope"], dtype=float) / 0.10)
+    score += weights.get("ret_120d", 20) * clamp01(np.asarray(feat["ret_120d"], dtype=float) / 0.60)
     return score
 
 
@@ -976,7 +975,7 @@ def _build_report_markdown(result, valid):
         f"- **実行日時**: {result['generated_at']}",
         f"- **対象期間**: {cfg['walk_start']} 〜 {result['walk_end']}",
         f"- **分割**: 学習{cfg['train_months']}ヶ月 / 検証{cfg['test_months']}ヶ月 / スライド{cfg['step_months']}ヶ月（フォールド数 {result['folds']}）",
-        f"- **スコア式**: 週足{result['score_weights']['weekly_trend']} / 日足GC{result['score_weights']['daily_gc']} / 増加率{result['score_weights']['val_ratio']} / 代金{result['score_weights']['avg_val']} / SMA200 {result['score_weights']['trend_sma200']}",
+        f"- **スコア式（Phase 2 トレンド合成）**: {result.get('score_weights', {})}",
         f"- **選定**: スコア上位{cfg['top_k']}銘柄 / 翌日寄り / 同時保有上限{cfg['max_positions']}",
         f"- **ベンチマーク（{bench['ticker']} バイ&ホールド平均）**: {bench['test_avg_pct'] if bench['test_avg_pct'] is not None else 'N/A'}%",
         "",

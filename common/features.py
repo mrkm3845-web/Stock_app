@@ -75,6 +75,21 @@ def compute_daily_features(df):
     atr14 = pd.Series(tr).rolling(14).mean().values
     atr_pct = np.where(c > 0, atr14 / c, 0.0)
 
+    # トレンド系（スコア再設計用・Phase 1 の研究で有効と確認）
+    sma200_prev = pd.Series(sma200).shift(20).values
+    sma200_slope = np.where(
+        (~np.isnan(sma200_prev)) & (sma200_prev > 0), sma200 / sma200_prev - 1.0, np.nan
+    )
+    roll_max_52w = pd.Series(c).rolling(252, min_periods=1).max().values
+    pos_52w = np.where(roll_max_52w > 0, c / roll_max_52w, np.nan)
+    prev120 = pd.Series(c).shift(120).values
+    ret_120d = np.where(
+        (~np.isnan(prev120)) & (prev120 > 0), c / prev120 - 1.0, np.nan
+    )
+    dist_sma200 = np.where(
+        (~np.isnan(sma200)) & (sma200 > 0), c / sma200 - 1.0, np.nan
+    )
+
     return {
         "dates": dates,
         "open": o,
@@ -90,6 +105,10 @@ def compute_daily_features(df):
         "val_ratio_5d": val_ratio_5d,
         "atr14": atr14,
         "atr_pct": atr_pct,
+        "sma200_slope": sma200_slope,
+        "pos_52w": pos_52w,
+        "ret_120d": ret_120d,
+        "dist_sma200": dist_sma200,
     }
 
 
@@ -135,37 +154,42 @@ def tier_for_price(price, tiers):
     return tiers[-1] if tiers else None
 
 
-def compute_technical_score(feat, params, weekly_trend_up, relax=None):
-    """総合スコア（0〜100）。Stage1 は技術指標のみ。"""
-    sig = params.get("signals", {})
+def _clamp01(x):
+    """NaN/None を 0 とし、0〜1 に収める。"""
+    try:
+        xf = float(x)
+    except (TypeError, ValueError):
+        return 0.0
+    if not np.isfinite(xf):
+        return 0.0
+    return min(1.0, max(0.0, xf))
+
+
+def compute_technical_score(feat, params, weekly_trend_up=None, relax=None):
+    """総合スコア（0〜100）。Phase 2: トレンド系（持続的な上昇）で構成。
+
+    Phase 1 の研究（分位分析）で有効と確認された指標のみを使う。
+    - pos_52w      : 52週高値からの位置（高いほど上昇トレンド）
+    - dist_sma200  : 200日線からの乖離率（30%で満点）
+    - sma200_slope : 200日線の傾き（20営業日、10%で満点）
+    - ret_120d     : 120日リターン（60%で満点）
+
+    旧成分（daily_gc / val_ratio / weekly_trend）は研究で逆効果（分位スプレッドが
+    マイナス）と分かったため除外した。
+    """
     w = params.get("score_weights", {})
-    relax = relax or {}
 
-    gc_window = relax.get("gc_window", sig.get("gc_window", 3))
-    val_min = relax.get("val_ratio_min", sig.get("val_ratio_min", 1.2))
-    avg_min = relax.get("avg_val_min_k", sig.get("avg_val_min_k", 30000))
+    def _last(key):
+        arr = feat.get(key)
+        if arr is None or len(arr) == 0:
+            return 0.0
+        return arr[-1]
 
-    close = float(feat["close"][-1])
     score = 0.0
-
-    if weekly_trend_up:
-        score += w.get("weekly_trend", 25)
-
-    g = int(feat["gc_days"][-1])
-    if 0 <= g <= gc_window:
-        score += w.get("daily_gc", 20)
-
-    vr = float(feat["val_ratio_5d"][-1])
-    if vr >= val_min:
-        score += w.get("val_ratio", 20) * min(1.0, vr / 3.0)
-
-    av = float(feat["avg_val_5d"][-1])
-    if av >= avg_min:
-        score += w.get("avg_val", 15)
-
-    sma200 = feat["sma200"][-1]
-    if not np.isnan(sma200) and close > sma200:
-        score += w.get("trend_sma200", 20)
+    score += w.get("pos_52w", 30) * _clamp01(_last("pos_52w"))
+    score += w.get("dist_sma200", 25) * _clamp01(_last("dist_sma200") / 0.30)
+    score += w.get("sma200_slope", 25) * _clamp01(_last("sma200_slope") / 0.10)
+    score += w.get("ret_120d", 20) * _clamp01(_last("ret_120d") / 0.60)
 
     return round(float(score), 1)
 
