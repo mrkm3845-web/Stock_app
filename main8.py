@@ -516,8 +516,8 @@ def _call_gemini(user, system, params):
     ai = params.get("ai", {})
     if not key:
         return None
-    models = [ai.get("model", "gemini-3.1-pro-preview")]
-    for m in ("gemini-3.6-flash",):
+    models = [ai.get("model", "gemini-3.6-flash")]
+    for m in ("gemini-3.1-pro-preview",):
         if m not in models:
             models.append(m)
     last_err = None

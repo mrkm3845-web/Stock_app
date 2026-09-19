@@ -29,7 +29,7 @@
   "ai": {
     "enabled": true,
     "provider": "gemini",
-    "model": "gemini-3.1-pro-preview",
+    "model": "gemini-3.6-flash",
     "stage1_pool_min": 20,
     "stage1_pool_max": 40,
     "weekly_top_picks": 5,
