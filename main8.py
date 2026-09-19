@@ -50,6 +50,9 @@ RECOMMENDATIONS_PATH = os.path.join(DOCS_DIR, "recommendations.json")
 TECHNICAL_REC_PATH = os.path.join(DOCS_DIR, "recommendations_technical.json")
 AI_LATEST_PATH = os.path.join(DOCS_DIR, "ai_strategy_latest.json")
 AI_ANALYSIS_DIR = os.path.join(DOCS_DIR, "ai_analysis")
+EARNINGS_PATH = os.path.join(DOCS_DIR, "earnings.json")
+# 決算接近の警告とみなす日数（保有上限に合わせる）
+EARNINGS_HORIZON_DAYS = 14
 
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 
@@ -645,7 +648,7 @@ VERDICT_PRIORITY = {
 }
 
 
-def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime=None):
+def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime=None, earnings_map=None):
     picks = []
     ai = params.get("ai", {})
     top_n = ai.get("weekly_top_picks", 5)
@@ -674,20 +677,30 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
 
     ordered = sorted(pool, key=sort_key)
 
+    portfolio = params.get("portfolio", {})
+    risk_pct = portfolio.get("risk_per_trade_pct", 1.0)
+    ref_cap = portfolio.get("reference_capital_jpy", 1000000)
+    earnings_map = earnings_map or {}
+
     for r in ordered[:top_n]:
         item = ai_by_code.get(r["code"]) or {}
         tier = F.tier_for_price(r["price"], params["price_tiers"]) or {}
         ctx = r.get("ctx") or {}
+        atr_mult = tier.get("atr_sl_mult", 2.0)
 
-        tp_price = _to_num(item.get("tp_price"))
-        if tp_price is None:
-            tp_price = int(round(r["price"] * (1 + tier.get("tp_pct", 0.12))))
-        sl_price = _to_num(item.get("sl_price"))
-        if sl_price is None:
-            if r["atr14"]:
-                sl_price = int(round(r["price"] - tier.get("atr_sl_mult", 2.0) * r["atr14"]))
+        # エグジットは「ルール基本」: price_tiers（最適化済み係数）で算出。AI値は advice に参照保持。
+        tp_price = int(round(r["price"] * (1 + tier.get("tp_pct", 0.12))))
+        if r["atr14"]:
+            sl_price = int(round(r["price"] - atr_mult * r["atr14"]))
+        else:
+            sl_price = _to_num(item.get("sl_price"))
+
+        # リスクベースの推奨サイズ（参考資金 × リスク% ÷ 損切幅）
+        stop_dist = (r["price"] - sl_price) if (sl_price and r["price"] > sl_price) else None
+        suggested_qty = int((ref_cap * (risk_pct / 100.0)) // stop_dist) if stop_dist else None
 
         verdict = item.get("verdict") or "technical_only"
+        ed = earnings_map.get(r["code"]) or {}
 
         picks.append({
             "code": r["code"],
@@ -706,7 +719,14 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
             "resistance": _to_num(item.get("resistance")) if item.get("resistance") is not None else ctx.get("resistance_20d"),
             "tp_price": tp_price,
             "sl_price": sl_price,
-            "trailing_plan": item.get("trailing_plan"),
+            "ai_tp_price": _to_num(item.get("tp_price")),
+            "ai_sl_price": _to_num(item.get("sl_price")),
+            "atr_sl_mult": atr_mult,
+            "stop_distance": stop_dist,
+            "suggested_qty": suggested_qty,
+            "trailing_plan": item.get("trailing_plan") or f"ATR{atr_mult}倍のトレーリング（{atr_mult}×ATRを下値に切上げ）",
+            "earnings_date": ed.get("date") if isinstance(ed, dict) else ed,
+            "earnings_soon": bool(ed.get("soon")) if isinstance(ed, dict) else False,
             "news_note": item.get("news_note"),
             "news_headlines": news_map.get(r["code"]) or [],
             "max_hold_days": tier.get("max_hold_days", 14),
@@ -722,6 +742,11 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
         "date": date,
         "version": params.get("version"),
         "regime": regime,
+        "portfolio_guide": {
+            "max_positions": portfolio.get("max_positions", 5),
+            "risk_per_trade_pct": risk_pct,
+            "reference_capital_jpy": ref_cap,
+        },
         "overall": overall,
         "picks": picks,
     }
@@ -819,7 +844,58 @@ def fetch_market_regime(sma_days=200):
         return None
 
 
-def save_history_json(all_stocks, target_date, regime=None):
+def fetch_earnings_for_pool(pool):
+    """AI候補プールの次回決算日を取得する（yfinance calendar）。"""
+    out = {}
+    total = len(pool)
+    for i, r in enumerate(pool):
+        code = r["code"]
+        try:
+            cal = yf.Ticker(f"{code}.T").calendar
+            dates = []
+            if cal:
+                ed = cal.get("Earnings Date")
+                if ed:
+                    dates = [d for d in ed if d is not None]
+            if dates:
+                d0 = min(dates)
+                out[code] = d0.strftime("%Y-%m-%d") if hasattr(d0, "strftime") else str(d0)
+        except Exception:
+            pass
+        if i < total - 1:
+            time.sleep(0.2)
+    return out
+
+
+def _days_until(date_str, base_date_str):
+    try:
+        d = datetime.strptime(date_str, "%Y-%m-%d")
+        b = datetime.strptime(base_date_str, "%Y-%m-%d")
+        return (d - b).days
+    except Exception:
+        return None
+
+
+def save_earnings_json(earnings_map, target_date):
+    """決算接近の警告用データを docs/earnings.json に保存する。"""
+    items = {}
+    for code, edate in earnings_map.items():
+        du = _days_until(edate, target_date)
+        items[code] = {"date": edate, "days_until": du, "soon": bool(du is not None and 0 <= du <= EARNINGS_HORIZON_DAYS)}
+    data = {
+        "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "date": target_date,
+        "horizon_days": EARNINGS_HORIZON_DAYS,
+        "items": items,
+    }
+    with open(EARNINGS_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    soon = sum(1 for v in items.values() if v["soon"])
+    print(f">> 決算データを保存: {EARNINGS_PATH}（取得 {len(items)} 銘柄 / 接近 {soon} 銘柄）")
+    return data
+
+
+def save_history_json(all_stocks, target_date, regime=None, portfolio=None):
     os.makedirs(HISTORY_DIR, exist_ok=True)
 
     serializable = []
@@ -845,7 +921,7 @@ def save_history_json(all_stocks, target_date, regime=None):
     with open(dates_file, "w", encoding="utf-8") as f:
         json.dump(existing_dates, f, ensure_ascii=False)
 
-    meta = {"date": target_date, "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"), "regime": regime}
+    meta = {"date": target_date, "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"), "regime": regime, "portfolio": portfolio}
     with open(os.path.join(HISTORY_DIR, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False)
 
@@ -954,7 +1030,7 @@ def main():
     if regime:
         state = "risk-on" if regime["risk_on"] else "risk-off"
         print(f">> 地合い: {state} ({regime['ticker']} {regime['close']} vs SMA{regime['sma_days']} {regime['sma']})")
-    save_history_json(results, date, regime)
+    save_history_json(results, date, regime, params.get("portfolio"))
     if not args.no_discord:
         send_to_discord(results, added, updated, date, DISCORD_WEBHOOK_URL)
 
@@ -997,7 +1073,10 @@ def main():
             else:
                 print(">> ⚠️ AI応答が無効（プレースホルダ等）のため技術スコアでフォールバックします")
 
-    recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime)
+    earnings_map = fetch_earnings_for_pool(pool) if pool else {}
+    earnings_items = save_earnings_json(earnings_map, date)["items"] if earnings_map else {}
+
+    recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime, earnings_items)
     rec_path = RECOMMENDATIONS_PATH if args.ai else TECHNICAL_REC_PATH
     if recommendations.get("picks"):
         with open(rec_path, "w", encoding="utf-8") as f:

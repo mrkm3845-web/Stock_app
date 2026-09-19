@@ -340,6 +340,29 @@ def _is_risk_on(day):
     return _REGIME.get(np.datetime64(day, "D"), True)
 
 
+def build_breadth_regime(prepared, threshold=0.5):
+    """上昇銘柄比率（終値 > SMA200）が閾値以上の日を risk-on とする。"""
+    ds = []
+    as_ = []
+    for p in prepared.values():
+        sma = p["sma200"]
+        close = p["close"]
+        valid = (~np.isnan(sma)) & (sma > 0) & (close > 0)
+        if not valid.any():
+            continue
+        ds.append(np.asarray(p["dates"])[valid].astype("datetime64[D]"))
+        as_.append((close[valid] > sma[valid]).astype(float))
+    if not ds:
+        return None
+    D = np.concatenate(ds)
+    A = np.concatenate(as_)
+    ud, inv = np.unique(D, return_inverse=True)
+    totals = np.bincount(inv, minlength=len(ud))
+    above = np.bincount(inv, weights=A, minlength=len(ud))
+    ratio = above / np.where(totals > 0, totals, 1)
+    return {ud[i]: bool(ratio[i] >= threshold) for i in range(len(ud))}
+
+
 def select_topk_daily(longform, start_dt, end_dt, top_k):
     """各営業日（カレンダー日）ごとにスコア上位K銘柄を選ぶ。地合いフィルタON時はrisk-on日のみ。"""
     codes, dates, idx, score = longform
@@ -577,7 +600,7 @@ def selection_comparison(prepared, params, folds, exit_mode="fixed"):
 
 
 def regime_effect(prepared, params, folds, bench, exit_mode="fixed"):
-    """地合いフィルタの有無でスコア上位Kの成績（特に最大DD）を比較する。"""
+    """地合い指標の違い（なし / 指数MA / breadth）でスコア上位Kの成績を比較する。"""
     global _REGIME
     weights = params.get("score_weights", {})
     sig = params.get("signals", {})
@@ -592,12 +615,42 @@ def regime_effect(prepared, params, folds, bench, exit_mode="fixed"):
             all_test.extend(_run_sim_mode(prepared, params, exit_mode, longform, te_s, te_e, "top"))
         return calc_metrics(all_test)
 
-    _REGIME = build_regime(bench, CONFIG["regime_filter"]["sma_days"])
-    with_regime = run_top()
+    out = {}
     _REGIME = None
-    without_regime = run_top()
+    out["none"] = run_top()
+    idx_reg = build_regime(bench, CONFIG["regime_filter"]["sma_days"])
+    if idx_reg:
+        _REGIME = idx_reg
+        out["index_ma"] = run_top()
+    breadth_reg = build_breadth_regime(prepared, 0.5)
+    if breadth_reg:
+        _REGIME = breadth_reg
+        out["breadth_50"] = run_top()
     _REGIME = saved
-    return {"with_regime": with_regime, "without_regime": without_regime}
+    return out
+
+
+def position_sizing_effect(prepared, params, folds, exit_mode="fixed"):
+    """同時保有数の違いによる成績（特に最大DD）の比較。スコア上位K・地合いフィルタなしで測定。"""
+    global _REGIME
+    saved = _REGIME
+    _REGIME = None
+    weights = params.get("score_weights", {})
+    sig = params.get("signals", {})
+    longform = build_longform(prepared, sig, weights, CONFIG["walk_start"], CONFIG["walk_end"])
+    if longform is None:
+        _REGIME = saved
+        return None
+    all_test = []
+    for (_tr_s, _tr_e, te_s, te_e) in folds:
+        all_test.extend(_run_sim_mode(prepared, params, exit_mode, longform, te_s, te_e, "top"))
+    _REGIME = saved
+    out = {}
+    for mp in [3, 4, 5, 8]:
+        m = per_trade_stats(all_test)
+        m.update(portfolio_metrics(all_test, mp))
+        out[f"max_positions_{mp}"] = m
+    return out
 
 
 def weight_ablation(prepared, params, folds, n_quantiles=10, hold_days=5):
@@ -1113,13 +1166,19 @@ def _build_report_markdown(result, valid):
 
     re = result.get("regime_effect")
     if re:
-        w = re["with_regime"]
-        nf = re["without_regime"]
-        lines += ["", "## 地合いフィルタの効果（スコア上位K・fixed）", "",
-                  "| 条件 | 件数 | PF | 期待値 | 年率 | 最大DD |",
-                  "| --- | ---: | ---: | ---: | ---: | ---: |",
-                  f"| フィルタON | {w['trade_count']} | {w['pf']} | {w['ev_pct']:+0.2f}% | {w['annualized_return_pct']:+0.2f}% | {w['max_dd_pct']}% |",
-                  f"| フィルタOFF | {nf['trade_count']} | {nf['pf']} | {nf['ev_pct']:+0.2f}% | {nf['annualized_return_pct']:+0.2f}% | {nf['max_dd_pct']}% |"]
+        lines += ["", "## 地合い指標の比較（スコア上位K・fixed）", "",
+                  "| 地合い | 件数 | PF | 期待値 | 年率 | 最大DD |",
+                  "| --- | ---: | ---: | ---: | ---: | ---: |"]
+        for k, m in re.items():
+            lines.append(f"| {k} | {m['trade_count']} | {m['pf']} | {m['ev_pct']:+0.2f}% | {m['annualized_return_pct']:+0.2f}% | {m['max_dd_pct']}% |")
+
+    ps = result.get("position_sizing_effect")
+    if ps:
+        lines += ["", "## 同時保有数の比較（スコア上位K・fixed・地合いなし）", "",
+                  "| 同時保有 | 件数 | PF | 期待値 | 年率 | 最大DD |",
+                  "| --- | ---: | ---: | ---: | ---: | ---: |"]
+        for k, m in ps.items():
+            lines.append(f"| {k} | {m['trade_count']} | {m['pf']} | {m['ev_pct']:+0.2f}% | {m['annualized_return_pct']:+0.2f}% | {m['max_dd_pct']}% |")
 
     lines += [
         "",
@@ -1253,11 +1312,17 @@ def main():
     re = regime_effect(prepared, params, folds, bench, exit_mode="fixed")
     result["regime_effect"] = re
     if re:
-        w = re["with_regime"]
-        nf = re["without_regime"]
-        print("\n=== 地合いフィルタの効果（スコア上位K, fixed） ===")
-        print(f"  フィルタON : PF={w['pf']} EV={w['ev_pct']}% 年率={w['annualized_return_pct']}% DD={w['max_dd_pct']}% 件数={w['trade_count']}")
-        print(f"  フィルタOFF: PF={nf['pf']} EV={nf['ev_pct']}% 年率={nf['annualized_return_pct']}% DD={nf['max_dd_pct']}% 件数={nf['trade_count']}")
+        print("\n=== 地合い指標の比較（スコア上位K, fixed） ===")
+        for k, m in re.items():
+            print(f"  {k:12s}: PF={m['pf']} EV={m['ev_pct']}% 年率={m['annualized_return_pct']}% DD={m['max_dd_pct']}% 件数={m['trade_count']}")
+
+    ps = position_sizing_effect(prepared, params, folds, exit_mode="fixed")
+    result["position_sizing_effect"] = ps
+    if ps:
+        print("\n=== 同時保有数の比較（スコア上位K, fixed・地合いなし） ===")
+        for k, m in ps.items():
+            print(f"  {k:18s}: PF={m['pf']} EV={m['ev_pct']}% 年率={m['annualized_return_pct']}% DD={m['max_dd_pct']}% 件数={m['trade_count']}")
+
     # 以降の分析は地合いフィルタの設定を元に戻す
     _REGIME = build_regime(bench, CONFIG["regime_filter"]["sma_days"]) if CONFIG["regime_filter"]["enabled"] else None
 

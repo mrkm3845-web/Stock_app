@@ -309,24 +309,50 @@
         let AI_LATEST = {};
         let META = null;
         let currentDataDate = null;
+        let EARNINGS = {};
+        let PICKS = {};
         let scoreThreshold = 70;
 
         document.addEventListener("DOMContentLoaded", async () => {
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
-            await Promise.all([loadAILatest(), loadMeta()]);
+            await Promise.all([loadAILatest(), loadMeta(), loadEarnings(), loadPicks()]);
             renderRegime();
             await initDates();
         });
 
+        async function loadEarnings() {
+            try {
+                const res = await fetch('earnings.json');
+                const d = await res.json();
+                EARNINGS = d.items || {};
+            } catch (e) { EARNINGS = {}; }
+        }
+
+        async function loadPicks() {
+            try {
+                const res = await fetch('recommendations.json');
+                const d = await res.json();
+                PICKS = {};
+                (d.picks || []).forEach(p => { if (p && p.code) PICKS[p.code] = p; });
+            } catch (e) { PICKS = {}; }
+        }
+
         function renderRegime() {
             const el = document.getElementById('regime-badge');
             if (!el) return;
+            let html = '';
             const r = META && META.regime;
-            if (!r || typeof r.risk_on === 'undefined') { el.innerHTML = ''; return; }
-            const tip = `${r.ticker} ${r.close} vs SMA${r.sma_days} ${r.sma}`;
-            el.innerHTML = r.risk_on
-                ? `<span class="badge bg-success-subtle text-success border border-success" title="${tip}">地合い: risk-on</span>`
-                : `<span class="badge bg-danger-subtle text-danger border border-danger" title="${tip}">地合い: risk-off</span>`;
+            if (r && typeof r.risk_on !== 'undefined') {
+                const tip = `${r.ticker} ${r.close} vs SMA${r.sma_days} ${r.sma}`;
+                html += r.risk_on
+                    ? `<span class="badge bg-success-subtle text-success border border-success" title="${tip}">地合い: risk-on</span>`
+                    : `<span class="badge bg-danger-subtle text-danger border border-danger" title="${tip}">地合い: risk-off</span>`;
+            }
+            const pg = META && META.portfolio;
+            if (pg) {
+                html += ` <span class="badge bg-light text-secondary border" title="推奨ポートフォリオ（同時保有数・1取引あたりリスク）">推奨: 最大${pg.max_positions}銘柄 / 1取引リスク${pg.risk_per_trade_pct}%</span>`;
+            }
+            el.innerHTML = html;
         }
 
         function esc(s) {
@@ -794,6 +820,12 @@
                     aiBadge = `<span class="badge-ai ms-1" title="AI戦略分析済み (${ai.date})">⭐AI${r !== '' ? ' #' + r : ''}</span> ${verdictBadge(ai.verdict)}`;
                 }
 
+                let earnBadge = "";
+                const earn = EARNINGS[s.code];
+                if (earn && earn.soon) {
+                    earnBadge = `<span class="badge bg-warning text-dark ms-1" style="font-size:0.66rem;" title="決算接近: ${earn.date}（あと${earn.days_until}日）">⚠️決算接近</span>`;
+                }
+
                 const isPositiveDiscount = s.discount_rate > 0;
                 const discountClass = isPositiveDiscount ? "text-danger" : "text-primary";
                 const discountText = `${isPositiveDiscount ? '+' : ''}${s.discount_rate}%`;
@@ -814,6 +846,7 @@
                             <span class="company-name" onclick="showStockDetail('${s.code}')" title="${esc(s.name)}（タップで詳細・AI戦略）">${s.name}</span>
                             ${gcBadge}
                             ${aiBadge}
+                            ${earnBadge}
                             ${sig.badgeHtml}
                         </div>
                         <div class="stock-sub-info">
@@ -945,6 +978,8 @@
             currentStockForAI = s;
             const isMini = checkMini(s);
             const ai = AI_LATEST[s.code] || null;
+            const pick = PICKS[s.code] || null;
+            const earn = EARNINGS[s.code] || null;
 
             let gcStr = "なし (未発生)";
             if (s.gc_days !== null && typeof s.gc_days !== 'undefined') {
@@ -981,8 +1016,25 @@
                 `;
             }
 
-            const stopLoss = Math.round(p * (1.0 - slPct));
-            const takeProfit = Math.round(p * (1.0 + tpPct));
+            if (earn && earn.soon) {
+                alertBoxHtml += `
+                    <div class="p-2 mb-2 bg-warning-subtle border border-warning rounded text-dark fw-bold small">
+                        <i class="bi bi-calendar-event me-1"></i> 【決算接近】${earn.date}（あと${earn.days_until}日）
+                        <div class="fw-normal mt-1">保有期間中に決算発表を跨ぐ可能性があります。ギャップ（窓開け）リスクに注意。</div>
+                    </div>`;
+            }
+
+            const pg = META && META.portfolio;
+            const stopLoss = (pick && pick.sl_price) ? pick.sl_price : Math.round(p * (1.0 - slPct));
+            const takeProfit = (pick && pick.tp_price) ? pick.tp_price : Math.round(p * (1.0 + tpPct));
+            let sizeHtml = "";
+            if (pick && pick.suggested_qty && pg) {
+                sizeHtml = `<div class="strategy-box">
+                    <div class="fw-bold text-dark small mb-2"><i class="bi bi-cash-coin me-1 text-success"></i> 推奨ポジション（リスクベース）</div>
+                    <div class="strategy-item">推奨株数: <strong>${Number(pick.suggested_qty).toLocaleString()}株</strong>（参考資金 ¥${Number(pg.reference_capital_jpy).toLocaleString()}・1取引リスク ${pg.risk_per_trade_pct}%）</div>
+                    <div class="strategy-desc">└ 損切幅 ¥${pick.stop_distance} × 株数 ≒ 許容損失額（損切が広い銘柄ほど少株数）</div>
+                </div>`;
+            }
 
             // AI戦略セクション
             let aiSectionHtml = "";
@@ -1030,6 +1082,8 @@
                 </div>
 
                 ${aiSectionHtml}
+
+                ${sizeHtml}
 
                 <div class="strategy-box">
                     <div class="fw-bold text-dark small mb-2">

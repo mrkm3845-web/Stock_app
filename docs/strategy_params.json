@@ -83,6 +83,11 @@
     "sma200_slope": 25,
     "ret_120d": 20
   },
+  "portfolio": {
+    "max_positions": 5,
+    "risk_per_trade_pct": 1.0,
+    "reference_capital_jpy": 1000000
+  },
   "ai": {
     "enabled": true,
     "provider": "gemini",
