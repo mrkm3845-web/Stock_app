@@ -635,6 +635,16 @@ def _ai_rank(item):
         return None
 
 
+# AI判定の優先度（小さいほど上位）。未知のverdictやAIなしは9（最下位）。
+VERDICT_PRIORITY = {
+    "recommend": 0,   # 推奨（買い）
+    "watch": 1,       # 様子見
+    "hold": 2,        # 保有継続
+    "avoid": 3,       # 回避
+    "sell": 3,
+}
+
+
 def build_recommendations(pool, fund_map, ai_map, news_map, params, date):
     picks = []
     ai = params.get("ai", {})
@@ -649,10 +659,18 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date):
     ai_by_code = {s.get("code"): s for s in ai_stocks if s.get("code") in pool_codes}
 
     def sort_key(r):
-        rank = _ai_rank(ai_by_code.get(r["code"])) if ai_by_code.get(r["code"]) else None
-        if rank is not None:
-            return (0, rank, -r["score"])
-        return (1, -r["score"])
+        item = ai_by_code.get(r["code"])
+        verdict = item.get("verdict") if item else None
+        v_pri = VERDICT_PRIORITY.get(verdict, 9)
+        rank = _ai_rank(item) if item else None
+        rank_val = rank if rank is not None else 10 ** 9
+        return (
+            v_pri,
+            rank_val,
+            -r["score"],
+            -r.get("val_ratio_5d", 0),
+            -r.get("avg_val_5d", 0),
+        )
 
     ordered = sorted(pool, key=sort_key)
 
