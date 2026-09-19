@@ -60,7 +60,10 @@ CONFIG = {
     "quantile_n": 10,          # 分位分析の分位数（スコアの選定エッジ検証用）
     "quantile_hold_days": 5,   # 分位分析の将来リターン保有日数（TP/SLなし）
     "regime_filter": {         # 地合いフィルタ（ベンチマークが長期線より上=risk-onの日のみ選定）
-        "enabled": True,
+        # 検証の結果、単純な市場レジーム（1306.T vs SMA200）ではDDが改善せず、年率が低下
+        # （ON: 年率4.45%/DD37.1% vs OFF: 年率16.24%/DD35.1%）。既定OFF。
+        # 効果測定は結果JSONの regime_effect を参照（毎回自動計測）。
+        "enabled": False,
         "sma_days": 200,
     },
 }
