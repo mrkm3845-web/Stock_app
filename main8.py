@@ -545,7 +545,10 @@ def _call_gemini(user, system, params):
                 resp.raise_for_status()
                 data = resp.json()
                 text = data["candidates"][0]["content"]["parts"][0]["text"]
-                return _extract_json(text)
+                parsed = _extract_json(text)
+                if parsed is None:
+                    print(f">> Gemini {model} は200 OKだがJSON解析失敗（応答先頭）: {text[:400]}")
+                return parsed
             except requests.exceptions.HTTPError as e:
                 last_err = f"{e} ({model}): {e.response.text[:200] if e.response is not None else ''}"
                 break
@@ -592,15 +595,26 @@ def _extract_json(text):
 def sanitize_ai_map(ai_map, pool):
     if not isinstance(ai_map, dict):
         return None
-    pool_codes = {r["code"] for r in pool}
+    pool_codes = {str(r["code"]) for r in pool}
     stocks = ai_map.get("stocks") or []
-    valid = [s for s in stocks if isinstance(s, dict) and s.get("code") in pool_codes]
-    if not valid:
+    normalized = []
+    for s in stocks:
+        if not isinstance(s, dict):
+            continue
+        code = s.get("code")
+        if code is None:
+            continue
+        code = str(code).strip()
+        if code in pool_codes:
+            s["code"] = code
+            normalized.append(s)
+    if not normalized:
+        print(f">> AI応答のstocksが無効（返却={len(stocks)}件, 有効=0件）: {stocks[:2]}")
         return None
     overall = ai_map.get("overall")
     if not overall or str(overall).strip() in ("", "..."):
         overall = None
-    return {"overall": overall, "stocks": valid}
+    return {"overall": overall, "stocks": normalized}
 
 
 # ---------------------------------------------------------------- 出力
