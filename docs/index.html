@@ -219,7 +219,8 @@
                 <div class="col-6 col-md-2">
                     <div class="filter-label">並び替え順 (ソート)</div>
                     <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="applyFilters()">
-                        <option value="score_desc" selected>総合スコア (高い順) ⭐</option>
+                        <option value="ai_order" selected>AI推奨順 (推奨→様子見→順位) 🤖</option>
+                        <option value="score_desc">総合スコア (高い順) ⭐</option>
                         <option value="valratio_desc">売買代金増加率 (急増順 🚀)</option>
                         <option value="gc_asc">GC発生順 (最新初動順)</option>
                         <option value="discount_desc">割安度(%) (降順)</option>
@@ -451,6 +452,19 @@
             return '<span class="badge ' + (map[v] || "verdict-watch") + '">' + label + '</span>';
         }
 
+        const AI_VERDICT_ORDER = { recommend: 0, watch: 1, hold: 2, avoid: 3, sell: 3 };
+        function aiVerdictPriority(code) {
+            const ai = AI_LATEST[code];
+            if (!ai || !ai.verdict) return 9;
+            const p = AI_VERDICT_ORDER[ai.verdict];
+            return p !== undefined ? p : 9;
+        }
+        function aiRankOf(code) {
+            const ai = AI_LATEST[code];
+            if (!ai || ai.rank === null || ai.rank === undefined) return 1e9;
+            return Number(ai.rank);
+        }
+
         // 銘柄のシグナル＆警告判定ロジック (厳密判定)
         function evaluateSignal(s) {
             const p = s.price;
@@ -534,7 +548,7 @@
         function applyScoreMode() {
             currentSmartPreset = 'none';
             updatePresetButtonsUI();
-            document.getElementById("sort-by").value = "score_desc";
+            document.getElementById("sort-by").value = "ai_order";
             scoreThreshold = 70;
             updateScoreButtonsUI();
             applyFilters();
@@ -687,6 +701,19 @@
             });
 
             filtered.sort((a, b) => {
+                if (sortBy === "ai_order") {
+                    const va = aiVerdictPriority(a.code);
+                    const vb = aiVerdictPriority(b.code);
+                    if (va !== vb) return va - vb;
+                    const ra = aiRankOf(a.code);
+                    const rb = aiRankOf(b.code);
+                    if (ra !== rb) return ra - rb;
+                    const sa = scoreOf(a), sb = scoreOf(b);
+                    if (sb !== sa) return sb - sa;
+                    const vra = (a.val_ratio_5d !== null && typeof a.val_ratio_5d !== 'undefined') ? a.val_ratio_5d : 0;
+                    const vrb = (b.val_ratio_5d !== null && typeof b.val_ratio_5d !== 'undefined') ? b.val_ratio_5d : 0;
+                    return vrb - vra;
+                }
                 if (sortBy === "score_desc") {
                     const sa = scoreOf(a), sb = scoreOf(b);
                     if (sb !== sa) return sb - sa;
@@ -875,7 +902,7 @@
             document.getElementById("filter-discount").value = "";
             document.getElementById("filter-roe").value = "";
             document.getElementById("filter-div").value = "";
-            document.getElementById("sort-by").value = "score_desc";
+            document.getElementById("sort-by").value = "ai_order";
             document.getElementById("quick-search").value = "";
             scoreThreshold = 70;
             updateScoreButtonsUI();
