@@ -8,10 +8,10 @@
 
 ## 1. リポジトリ構成（重要）
 
-- **2つの独立したGitリポジトリ**がある（単一リポジトリではない）:
-  - `Stock_app`（スクリーナー本体・フロント・AI）
-  - `back_tester`（バックテスト）
-- 共通モジュール `common/` と `strategy_params.json` は**両リポジトリに複製**して自己完結させている（当面手動同期）。将来は共有パッケージ化 or 統合を検討。
+- **単一リポジトリ（`Stock_app`）に統合済み**。バックテストは [`back_tester/`](back_tester/) 配下にある。
+- 共通モジュール `common/` と `strategy_params.json`（`docs/`）は**リポジトリ直下で単一管理**（複製なし）。
+- バックテストの結果（`price_tiers` / `signals`）は、ガード通過時に **`docs/strategy_params.json` へ自動反映**され、スクリーナーが次回実行で自動的に読む（手動同期は不要）。
+- 旧 `back_tester` リポジトリは**当面バックアップとして残置**（検証後にアーカイブ予定）。
 
 ---
 
@@ -35,6 +35,7 @@
 - **ワークフロー**:
   - [`daily_main8.yml`](.github/workflows/daily_main8.yml): 技術スクリーニング 平日1日5回。
   - [`daily_main8_ai.yml`](.github/workflows/daily_main8_ai.yml): **AI実行 20:17 JST**。手動実行時は `force` チェックで上書き可能。
+  - [`run_walkforward.yml`](.github/workflows/run_walkforward.yml): **バックテスト 毎月 第1土曜 21:00 JST**。結果をガード付きで `docs/strategy_params.json` へ自動反映。
   - 旧 `daily_stock.yml` / `daily_main7*.yml` は `.disabled` で無効化。
 - **AI（Gemini）**: 環境変数 `GEMINI_API_KEY`（GitHub Secrets）で動作。プロバイダ/モデルは `strategy_params.json` の `ai` セクションで切替（既定 `gemini` / `gemini-2.5-flash`）。DeepSeek を使う場合は `DEEPSEEK_API_KEY`。
 
@@ -49,7 +50,14 @@
 - [`run_walkforward.yml`](../back_tester/.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST** に実行＋ガード反映＋結果コミット。
 - 旧スクリプト `backtest_scanner*.py` / `backtest_volume_deepdive.py` は上記に統合・削除済み。
 
-> ⚠️ **現状の検証上の注意**: 直近のウォークフォワード（2022-01〜2026-08）では最良条件でも OOS PF ≈ 1.0 で、ベンチマーク（TOPIX ETF）に劣後しており、**選定エッジは未確認**。`quantile_analysis` / `selection_comparison` でエッジ有無を確認してから、スコア・重み・エグジットの改善に進む方針。
+> ⚠️ **現状の検証上の注意**: 直近のウォークフォワード（2022-01〜2026-08）では最良条件でも OOS PF ≈ 1.0 で、ベンチマーク（TOPIX ETF）に劣後しており、**現行スコアの選定エッジは未確認**。
+>
+> **Phase 0/1 の診断結果（2026-09-19）**:
+> - 現行スコアは「上位ほど上がる」関係を示せず、上位選択はランダムより劣後。成分では「200日線より上」以外の寄与が小さく、**出来高急増・GC直後・週足上昇は逆効果**（分位スプレッドがマイナス）。
+> - 候補シグナル研究 [`back_tester/results/research_signals.json`](back_tester/results/research_signals.json) では、**200日線の傾き（+0.41%, Spearman 0.95）**・**200日線からの乖離（+0.27%, 0.79）**・**52週高値位置（+0.26%, 0.48）** が有力。**トレンド系（持続的な上昇）が有効**で、短期のGC・出来高急増は平均回帰により不利。
+> - 次段階: これらのトレンド系指標を相対化（横断順位化）してスコアを再設計し、分位分析で再検証する。
+>
+> なお、株価帯エグジット（`price_tiers`）はガード通過分（`mid_low` / `mid`）が `docs/strategy_params.json` に**自動反映済み**。
 
 ---
 
