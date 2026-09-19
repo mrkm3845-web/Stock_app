@@ -512,8 +512,8 @@ def _call_gemini(user, system, params):
     ai = params.get("ai", {})
     if not key:
         return None
-    models = [ai.get("model", "gemini-3.8-flash")]
-    for m in ("gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash"):
+    models = [ai.get("model", "gemini-2.5-pro")]
+    for m in ("gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"):
         if m not in models:
             models.append(m)
     last_err = None
@@ -528,7 +528,7 @@ def _call_gemini(user, system, params):
             try:
                 resp = requests.post(url, params={"key": key}, json=payload, timeout=120)
                 if resp.status_code in (429, 500, 502, 503, 504):
-                    last_err = f"{resp.status_code} {resp.reason} ({model})"
+                    last_err = f"{resp.status_code} {resp.reason} ({model}): {resp.text[:200]}"
                     time.sleep(min(2 ** attempt, 10))
                     continue
                 resp.raise_for_status()
@@ -536,7 +536,7 @@ def _call_gemini(user, system, params):
                 text = data["candidates"][0]["content"]["parts"][0]["text"]
                 return _extract_json(text)
             except requests.exceptions.HTTPError as e:
-                last_err = f"{e} ({model})"
+                last_err = f"{e} ({model}): {e.response.text[:200] if e.response is not None else ''}"
                 break
             except Exception as e:
                 last_err = f"{e} ({model})"

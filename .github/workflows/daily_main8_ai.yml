@@ -63,6 +63,11 @@ jobs:
             echo "変更なし"
           else
             git commit -m "Update main8 AI analysis [skip ci]"
-            git pull --rebase origin main
+            git pull --rebase -X theirs origin main || {
+              echo "競合が発生したため、ローカル生成データを優先して解決します"
+              git checkout --theirs data/stocks.db || true
+              git add data/stocks.db || true
+              GIT_EDITOR=true git rebase --continue
+            }
             git push origin main
           fi
