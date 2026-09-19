@@ -59,6 +59,10 @@ CONFIG = {
     "benchmark_ticker": "1306.T",  # TOPIX ETF
     "quantile_n": 10,          # 分位分析の分位数（スコアの選定エッジ検証用）
     "quantile_hold_days": 5,   # 分位分析の将来リターン保有日数（TP/SLなし）
+    "regime_filter": {         # 地合いフィルタ（ベンチマークが長期線より上=risk-onの日のみ選定）
+        "enabled": True,
+        "sma_days": 200,
+    },
 }
 
 SIGNAL_GRID = [
@@ -309,8 +313,32 @@ def build_longform(prepared, sig, weights, start_dt, end_dt):
     )
 
 
+# 地合いフィルタ（ベンチマークの長期線より上＝risk-onの日のみ選定）
+_REGIME = None  # dict {np.datetime64[D]: bool} or None
+
+
+def build_regime(bench, sma_days=200):
+    """ベンチマーク終値が長期線（SMA）より上か（risk-on）の日次判定を返す。"""
+    if bench is None or len(bench) < 2:
+        return None
+    s = bench.iloc[:, 0] if isinstance(bench, pd.DataFrame) else bench
+    s = s.dropna()
+    if len(s) < sma_days:
+        return None
+    sma = s.rolling(sma_days).mean()
+    on = s > sma
+    return {np.datetime64(ts, "D"): bool(v) for ts, v in on.items()}
+
+
+def _is_risk_on(day):
+    """地合いフィルタON時、その日が risk-on か（未定義日は True 扱い）。"""
+    if _REGIME is None:
+        return True
+    return _REGIME.get(np.datetime64(day, "D"), True)
+
+
 def select_topk_daily(longform, start_dt, end_dt, top_k):
-    """各営業日（カレンダー日）ごとにスコア上位K銘柄を選ぶ。"""
+    """各営業日（カレンダー日）ごとにスコア上位K銘柄を選ぶ。地合いフィルタON時はrisk-on日のみ。"""
     codes, dates, idx, score = longform
     ts = np.datetime64(start_dt)
     te = np.datetime64(end_dt)
@@ -334,6 +362,9 @@ def select_topk_daily(longform, start_dt, end_dt, top_k):
         k = j
         while k < n and d[k] == d[j]:
             k += 1
+        if not _is_risk_on(d[j]):
+            j = k
+            continue
         cnt = min(top_k, k - j)
         for t in range(cnt):
             picked.append((c[j + t], int(i[j + t])))
@@ -537,6 +568,30 @@ def selection_comparison(prepared, params, folds, exit_mode="fixed"):
             all_test.extend(_run_sim_mode(prepared, params, exit_mode, longform, te_s, te_e, mode))
         out[mode] = {"train": calc_metrics(all_train), "test": calc_metrics(all_test)}
     return out
+
+
+def regime_effect(prepared, params, folds, bench, exit_mode="fixed"):
+    """地合いフィルタの有無でスコア上位Kの成績（特に最大DD）を比較する。"""
+    global _REGIME
+    weights = params.get("score_weights", {})
+    sig = params.get("signals", {})
+    longform = build_longform(prepared, sig, weights, CONFIG["walk_start"], CONFIG["walk_end"])
+    if longform is None:
+        return None
+    saved = _REGIME
+
+    def run_top():
+        all_test = []
+        for (_tr_s, _tr_e, te_s, te_e) in folds:
+            all_test.extend(_run_sim_mode(prepared, params, exit_mode, longform, te_s, te_e, "top"))
+        return calc_metrics(all_test)
+
+    _REGIME = build_regime(bench, CONFIG["regime_filter"]["sma_days"])
+    with_regime = run_top()
+    _REGIME = None
+    without_regime = run_top()
+    _REGIME = saved
+    return {"with_regime": with_regime, "without_regime": without_regime}
 
 
 def weight_ablation(prepared, params, folds, n_quantiles=10, hold_days=5):
@@ -1050,6 +1105,16 @@ def _build_report_markdown(result, valid):
         for t in worst:
             lines.append(f"| {t['code']} | {t['return_pct']}% | {t['reason']} | {t['entry_date']} → {t['exit_date']} |")
 
+    re = result.get("regime_effect")
+    if re:
+        w = re["with_regime"]
+        nf = re["without_regime"]
+        lines += ["", "## 地合いフィルタの効果（スコア上位K・fixed）", "",
+                  "| 条件 | 件数 | PF | 期待値 | 年率 | 最大DD |",
+                  "| --- | ---: | ---: | ---: | ---: | ---: |",
+                  f"| フィルタON | {w['trade_count']} | {w['pf']} | {w['ev_pct']:+0.2f}% | {w['annualized_return_pct']:+0.2f}% | {w['max_dd_pct']}% |",
+                  f"| フィルタOFF | {nf['trade_count']} | {nf['pf']} | {nf['ev_pct']:+0.2f}% | {nf['annualized_return_pct']:+0.2f}% | {nf['max_dd_pct']}% |"]
+
     lines += [
         "",
         "## 注意（バイアス）",
@@ -1086,6 +1151,17 @@ def main():
     folds = make_folds(CONFIG)
     bench = download_benchmark(CONFIG["benchmark_ticker"], CONFIG["walk_start"], CONFIG["walk_end"])
     print(f">> ウォークフォワード: {len(folds)} フォールド × {len(SIGNAL_GRID) * len(EXIT_MODES)} 条件 / 対象 {len(prepared)} 銘柄")
+
+    global _REGIME
+    if CONFIG["regime_filter"]["enabled"]:
+        _REGIME = build_regime(bench, CONFIG["regime_filter"]["sma_days"])
+        if _REGIME:
+            on_cnt = sum(1 for v in _REGIME.values() if v)
+            print(f">> 地合いフィルタ: ON（{CONFIG['regime_filter']['sma_days']}日線 / risk-on {on_cnt}/{len(_REGIME)}日）")
+        else:
+            print(">> 地合いフィルタ: ベンチマーク不足のため無効")
+    else:
+        _REGIME = None
 
     combos = list(itertools.product(SIGNAL_GRID, EXIT_MODES))
     combo_results = []
@@ -1167,6 +1243,17 @@ def main():
     result["selection_comparison"] = sc
     result["weight_ablation"] = wa
     result["atr_trail_worst_trades"] = worst
+
+    re = regime_effect(prepared, params, folds, bench, exit_mode="fixed")
+    result["regime_effect"] = re
+    if re:
+        w = re["with_regime"]
+        nf = re["without_regime"]
+        print("\n=== 地合いフィルタの効果（スコア上位K, fixed） ===")
+        print(f"  フィルタON : PF={w['pf']} EV={w['ev_pct']}% 年率={w['annualized_return_pct']}% DD={w['max_dd_pct']}% 件数={w['trade_count']}")
+        print(f"  フィルタOFF: PF={nf['pf']} EV={nf['ev_pct']}% 年率={nf['annualized_return_pct']}% DD={nf['max_dd_pct']}% 件数={nf['trade_count']}")
+    # 以降の分析は地合いフィルタの設定を元に戻す
+    _REGIME = build_regime(bench, CONFIG["regime_filter"]["sma_days"]) if CONFIG["regime_filter"]["enabled"] else None
 
     if qa:
         print(f"\n=== スコア分位分析（将来リターン, ホールド{qh}日） ===")

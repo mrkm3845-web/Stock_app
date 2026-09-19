@@ -68,7 +68,7 @@
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
                     <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-sliders"></i> 割安優良株＆スイング 統合スクリーナー</h1>
-                    <small class="text-muted">登録総数: <span id="total-count">-</span> 件 ／ スコア順 + AI戦略分析</small>
+                    <small class="text-muted">登録総数: <span id="total-count">-</span> 件 ／ スコア順 + AI戦略分析 <span id="regime-badge"></span></small>
                 </div>
                 <div class="d-flex flex-wrap gap-2 align-items-center ms-auto">
                     <a href="journal.html" class="btn btn-outline-primary btn-sm fw-bold">
@@ -314,8 +314,20 @@
         document.addEventListener("DOMContentLoaded", async () => {
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
             await Promise.all([loadAILatest(), loadMeta()]);
+            renderRegime();
             await initDates();
         });
+
+        function renderRegime() {
+            const el = document.getElementById('regime-badge');
+            if (!el) return;
+            const r = META && META.regime;
+            if (!r || typeof r.risk_on === 'undefined') { el.innerHTML = ''; return; }
+            const tip = `${r.ticker} ${r.close} vs SMA${r.sma_days} ${r.sma}`;
+            el.innerHTML = r.risk_on
+                ? `<span class="badge bg-success-subtle text-success border border-success" title="${tip}">地合い: risk-on</span>`
+                : `<span class="badge bg-danger-subtle text-danger border border-danger" title="${tip}">地合い: risk-off</span>`;
+        }
 
         function esc(s) {
             if (s === null || s === undefined) return "";

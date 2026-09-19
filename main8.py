@@ -645,7 +645,7 @@ VERDICT_PRIORITY = {
 }
 
 
-def build_recommendations(pool, fund_map, ai_map, news_map, params, date):
+def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime=None):
     picks = []
     ai = params.get("ai", {})
     top_n = ai.get("weekly_top_picks", 5)
@@ -721,6 +721,7 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date):
         "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"),
         "date": date,
         "version": params.get("version"),
+        "regime": regime,
         "overall": overall,
         "picks": picks,
     }
@@ -793,7 +794,32 @@ def save_to_sqlite(all_stocks, target_date):
     print(f">> SQLite DB ({DB_PATH}) に [{target_date}] 分 {len(all_stocks)} 件保存しました。")
 
 
-def save_history_json(all_stocks, target_date):
+def fetch_market_regime(sma_days=200):
+    """地合い判定: TOPIX ETF(1306.T) が長期線より上か（risk-on/off）。"""
+    try:
+        df = yf.download("1306.T", period="2y", auto_adjust=True, progress=False)
+        if df is None or len(df) < sma_days:
+            return None
+        close = df["Close"]
+        if isinstance(close, pd.DataFrame):
+            close = close.iloc[:, 0]
+        close = close.dropna()
+        if len(close) < sma_days:
+            return None
+        sma = close.rolling(sma_days).mean()
+        return {
+            "ticker": "1306.T",
+            "close": round(float(close.iloc[-1]), 1),
+            "sma": round(float(sma.iloc[-1]), 1),
+            "sma_days": sma_days,
+            "risk_on": bool(close.iloc[-1] > sma.iloc[-1]),
+        }
+    except Exception as e:
+        print(f">> 地合い判定の取得失敗: {e}")
+        return None
+
+
+def save_history_json(all_stocks, target_date, regime=None):
     os.makedirs(HISTORY_DIR, exist_ok=True)
 
     serializable = []
@@ -819,7 +845,7 @@ def save_history_json(all_stocks, target_date):
     with open(dates_file, "w", encoding="utf-8") as f:
         json.dump(existing_dates, f, ensure_ascii=False)
 
-    meta = {"date": target_date, "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S")}
+    meta = {"date": target_date, "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"), "regime": regime}
     with open(os.path.join(HISTORY_DIR, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False)
 
@@ -924,7 +950,11 @@ def main():
     print(f">> 【{date}】全件スキャン: {len(results)} 件 (新規 +{added}, 更新 {updated})")
 
     save_to_sqlite(results, date)
-    save_history_json(results, date)
+    regime = fetch_market_regime()
+    if regime:
+        state = "risk-on" if regime["risk_on"] else "risk-off"
+        print(f">> 地合い: {state} ({regime['ticker']} {regime['close']} vs SMA{regime['sma_days']} {regime['sma']})")
+    save_history_json(results, date, regime)
     if not args.no_discord:
         send_to_discord(results, added, updated, date, DISCORD_WEBHOOK_URL)
 
@@ -967,7 +997,7 @@ def main():
             else:
                 print(">> ⚠️ AI応答が無効（プレースホルダ等）のため技術スコアでフォールバックします")
 
-    recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date)
+    recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime)
     rec_path = RECOMMENDATIONS_PATH if args.ai else TECHNICAL_REC_PATH
     if recommendations.get("picks"):
         with open(rec_path, "w", encoding="utf-8") as f:
