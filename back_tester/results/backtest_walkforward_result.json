@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-19T15:59:47",
-  "run_id": "20260919155947",
+  "generated_at": "2026-09-19T16:05:33",
+  "run_id": "20260919160533",
   "version": "2026-09-19",
   "walk_end": "2026-08-31",
   "config": {
@@ -372,80 +372,80 @@
   "selection_comparison": {
     "top": {
       "train": {
-        "trade_count": 15385,
-        "win_rate": 26.82,
-        "ev_pct": 0.09,
-        "pf": 1.03,
+        "trade_count": 13935,
+        "win_rate": 25.74,
+        "ev_pct": -0.09,
+        "pf": 0.97,
         "consec_losses": 48,
         "max_loss_pct": -7.28,
-        "total_return_pct": 287.18,
-        "annualized_return_pct": 46.41,
-        "max_dd_pct": 51.05,
-        "sharpe": 0.94
+        "total_return_pct": 137.37,
+        "annualized_return_pct": 27.57,
+        "max_dd_pct": 55.52,
+        "sharpe": 0.73
       },
       "test": {
-        "trade_count": 4185,
-        "win_rate": 25.76,
-        "ev_pct": 0.11,
-        "pf": 1.04,
+        "trade_count": 3875,
+        "win_rate": 24.88,
+        "ev_pct": -0.02,
+        "pf": 0.99,
         "consec_losses": 48,
         "max_loss_pct": -7.28,
-        "total_return_pct": 69.21,
-        "annualized_return_pct": 16.24,
-        "max_dd_pct": 35.09,
-        "sharpe": 0.61
+        "total_return_pct": 16.43,
+        "annualized_return_pct": 4.45,
+        "max_dd_pct": 37.13,
+        "sharpe": 0.31
       }
     },
     "random": {
       "train": {
-        "trade_count": 15385,
-        "win_rate": 38.83,
-        "ev_pct": 0.23,
-        "pf": 1.13,
-        "consec_losses": 82,
+        "trade_count": 13935,
+        "win_rate": 37.9,
+        "ev_pct": 0.11,
+        "pf": 1.06,
+        "consec_losses": 80,
         "max_loss_pct": -7.28,
-        "total_return_pct": -1.49,
-        "annualized_return_pct": -0.42,
-        "max_dd_pct": 21.75,
-        "sharpe": 0.04
+        "total_return_pct": 2.98,
+        "annualized_return_pct": 0.82,
+        "max_dd_pct": 17.29,
+        "sharpe": 0.13
       },
       "test": {
-        "trade_count": 4185,
-        "win_rate": 37.99,
-        "ev_pct": 0.25,
-        "pf": 1.14,
-        "consec_losses": 45,
+        "trade_count": 3875,
+        "win_rate": 37.32,
+        "ev_pct": 0.15,
+        "pf": 1.08,
+        "consec_losses": 46,
         "max_loss_pct": -7.28,
-        "total_return_pct": -0.92,
-        "annualized_return_pct": -0.26,
-        "max_dd_pct": 21.2,
-        "sharpe": 0.05
+        "total_return_pct": -34.17,
+        "annualized_return_pct": -11.23,
+        "max_dd_pct": 39.19,
+        "sharpe": -0.89
       }
     },
     "bottom": {
       "train": {
-        "trade_count": 15385,
-        "win_rate": 25.97,
-        "ev_pct": -0.19,
-        "pf": 0.92,
+        "trade_count": 13935,
+        "win_rate": 24.92,
+        "ev_pct": -0.32,
+        "pf": 0.87,
         "consec_losses": 86,
         "max_loss_pct": -7.28,
-        "total_return_pct": -67.89,
-        "annualized_return_pct": -27.15,
-        "max_dd_pct": 77.2,
-        "sharpe": -0.63
+        "total_return_pct": -83.02,
+        "annualized_return_pct": -39.01,
+        "max_dd_pct": 83.02,
+        "sharpe": -1.3
       },
       "test": {
-        "trade_count": 4185,
-        "win_rate": 25.07,
-        "ev_pct": -0.29,
-        "pf": 0.88,
+        "trade_count": 3875,
+        "win_rate": 23.9,
+        "ev_pct": -0.43,
+        "pf": 0.83,
         "consec_losses": 119,
         "max_loss_pct": -7.28,
-        "total_return_pct": -28.23,
-        "annualized_return_pct": -9.07,
-        "max_dd_pct": 61.44,
-        "sharpe": -0.26
+        "total_return_pct": -25.96,
+        "annualized_return_pct": -8.25,
+        "max_dd_pct": 61.56,
+        "sharpe": -0.25
       }
     }
   },
@@ -494,32 +494,32 @@
       "exit_date": "2025-09-16"
     },
     {
-      "code": "5721",
-      "return_pct": -38.24,
-      "reason": "SL_gap",
-      "entry_date": "2025-04-01",
-      "exit_date": "2025-04-07"
-    },
-    {
       "code": "9399",
       "return_pct": -38.23,
       "reason": "SL_trail",
       "entry_date": "2024-08-19",
       "exit_date": "2024-08-23"
+    },
+    {
+      "code": "9399",
+      "return_pct": -37.97,
+      "reason": "SL_trail",
+      "entry_date": "2024-08-20",
+      "exit_date": "2024-08-23"
     }
   ],
   "regime_effect": {
     "with_regime": {
-      "trade_count": 4185,
-      "win_rate": 25.76,
-      "ev_pct": 0.11,
-      "pf": 1.04,
+      "trade_count": 3875,
+      "win_rate": 24.88,
+      "ev_pct": -0.02,
+      "pf": 0.99,
       "consec_losses": 48,
       "max_loss_pct": -7.28,
-      "total_return_pct": 69.21,
-      "annualized_return_pct": 16.24,
-      "max_dd_pct": 35.09,
-      "sharpe": 0.61
+      "total_return_pct": 16.43,
+      "annualized_return_pct": 4.45,
+      "max_dd_pct": 37.13,
+      "sharpe": 0.31
     },
     "without_regime": {
       "trade_count": 4185,
