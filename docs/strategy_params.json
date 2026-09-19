@@ -4,8 +4,8 @@
   "source_backtest": null,
   "price_tiers": [
     { "id": "low",      "name": "低位 500〜1000円",  "min": 500,  "max": 1000,     "tp_pct": 0.12, "sl_pct": 0.05, "max_hold_days": 14, "atr_sl_mult": 2.0 },
-    { "id": "mid_low",  "name": "中低位 1000〜2000円", "min": 1000, "max": 2000,     "tp_pct": 0.12, "sl_pct": 0.05, "max_hold_days": 14, "atr_sl_mult": 2.0 },
-    { "id": "mid",      "name": "中位 2000〜3000円",  "min": 2000, "max": 3000,     "tp_pct": 0.12, "sl_pct": 0.05, "max_hold_days": 14, "atr_sl_mult": 2.0 },
+    { "id": "mid_low",  "name": "中低位 1000〜2000円", "min": 1000, "max": 2000,     "tp_pct": 0.15, "sl_pct": 0.03, "max_hold_days": 7,  "atr_sl_mult": 3.0 },
+    { "id": "mid",      "name": "中位 2000〜3000円",  "min": 2000, "max": 3000,     "tp_pct": 0.15, "sl_pct": 0.05, "max_hold_days": 20, "atr_sl_mult": 2.0 },
     { "id": "mid_high", "name": "中高位 3000〜6000円", "min": 3000, "max": 6000,     "tp_pct": 0.12, "sl_pct": 0.02, "max_hold_days": 14, "atr_sl_mult": 2.5 },
     { "id": "high",     "name": "値がさ 6000円〜",     "min": 6000, "max": 99999999, "tp_pct": 0.12, "sl_pct": 0.02, "max_hold_days": 14, "atr_sl_mult": 2.5 }
   ],

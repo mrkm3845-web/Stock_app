@@ -1,0 +1,75 @@
+name: Run Walkforward Backtest
+
+on:
+  schedule:
+    # 月次（第1土曜 21:00 JST ＝ UTC 12:00）＝ 土曜のうち日付が 1〜7 の日
+    - cron: '0 12 1-7 * 6'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy requests yfinance openpyxl xlrd
+
+      - name: Cache stock data
+        uses: actions/cache@v4
+        with:
+          path: back_tester/data/backtest_cache
+          key: backtest-cache-${{ runner.os }}-${{ hashFiles('back_tester/backtest_rolling_walkforward.py') }}
+          restore-keys: |
+            backtest-cache-${{ runner.os }}-
+
+      - name: Run walkforward backtest
+        run: |
+          python back_tester/backtest_rolling_walkforward.py
+
+      - name: Apply optimal params (guarded)
+        run: |
+          python back_tester/apply_optimal_params.py
+
+      - name: Run signal research (Phase 1・候補シグナル研究)
+        if: always()
+        run: |
+          python back_tester/research_signals.py
+
+      - name: Upload backtest results (JSON / CSV / Markdown)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backtest-walkforward-result
+          path: back_tester/results/
+
+      - name: 結果をコミット＆プッシュ
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add back_tester/results/ docs/strategy_params.json
+          if git diff --staged --quiet; then
+            echo "変更なし"
+          else
+            git commit -m "Update walkforward backtest report [skip ci]"
+            git pull --rebase -X theirs origin main || {
+              echo "競合が発生したため、ローカル生成データを優先して解決します"
+              GIT_EDITOR=true git rebase --continue
+            }
+            git push origin main
+          fi

@@ -1,0 +1,53 @@
+{
+  "applied_at": "2026-09-19T13:28:35",
+  "run_id": "20260919132736",
+  "tiers": {
+    "run_id": "20260919132736",
+    "items": [
+      {
+        "tier": "mid_low",
+        "exit_mode": "atr_trail",
+        "params": {
+          "tp_pct": 0.15,
+          "sl_pct": 0.03,
+          "atr_sl_mult": 3.0,
+          "max_hold_days": 7
+        },
+        "test": {
+          "trade_count": 1227,
+          "win_rate": 48.25,
+          "ev_pct": 0.4,
+          "pf": 1.16,
+          "consec_losses": 17,
+          "max_loss_pct": -36.31,
+          "total_return_pct": 53.75,
+          "annualized_return_pct": 13.2,
+          "max_dd_pct": 25.28,
+          "sharpe": 0.6
+        }
+      },
+      {
+        "tier": "mid",
+        "exit_mode": "atr_trail",
+        "params": {
+          "tp_pct": 0.15,
+          "sl_pct": 0.05,
+          "atr_sl_mult": 2.0,
+          "max_hold_days": 20
+        },
+        "test": {
+          "trade_count": 605,
+          "win_rate": 37.69,
+          "ev_pct": 0.49,
+          "pf": 1.16,
+          "consec_losses": 20,
+          "max_loss_pct": -29.19,
+          "total_return_pct": 35.03,
+          "annualized_return_pct": 8.93,
+          "max_dd_pct": 25.24,
+          "sharpe": 0.57
+        }
+      }
+    ]
+  }
+}
