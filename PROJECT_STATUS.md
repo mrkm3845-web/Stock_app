@@ -43,10 +43,13 @@
   - エントリー: スコア上位K銘柄を翌日寄りで約定（実運用 main8.py と同一スコア式）。
   - エグジット: 固定TP/SL vs ATRトレーリングの比較＋**株価帯別エグジット最適化**。
   - 指標: 資金制約（同時保有上限・固定比率）を加味した年率/最大DD/シャープ/PF。ベンチマークは TOPIX ETF（1306.T）。
-  - 出力: `results/backtest_walkforward_result.json`・`.csv`・`backtest_tier_exit.csv`・`_report.md`。
+  - **選定エッジ検証（Phase 0）**: スコア分位分析・上位vsランダムvs下位比較・重み寄与分解（leave-one-out）・ATRトレーリングのテール監査。
+  - 出力: `results/backtest_walkforward_result.json`（`quantile_analysis` / `selection_comparison` / `weight_ablation` を含む）・`.csv`・`backtest_tier_exit.csv`・`_report.md`。
 - [`apply_optimal_params.py`](../back_tester/apply_optimal_params.py): 結果を**ガード付き**で `strategy_params.json` の `signals`・`price_tiers` に反映（最低件数/PF/ベンチマーク超え/DD上限/近傍安定性/前回比劣化なし）。
 - [`run_walkforward.yml`](../back_tester/.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST** に実行＋ガード反映＋結果コミット。
 - 旧スクリプト `backtest_scanner*.py` / `backtest_volume_deepdive.py` は上記に統合・削除済み。
+
+> ⚠️ **現状の検証上の注意**: 直近のウォークフォワード（2022-01〜2026-08）では最良条件でも OOS PF ≈ 1.0 で、ベンチマーク（TOPIX ETF）に劣後しており、**選定エッジは未確認**。`quantile_analysis` / `selection_comparison` でエッジ有無を確認してから、スコア・重み・エグジットの改善に進む方針。
 
 ---
 
