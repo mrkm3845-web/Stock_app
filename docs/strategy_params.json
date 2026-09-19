@@ -1,9 +1,9 @@
 {
   "version": "2026-09-19",
-  "generated_at": "2026-09-19T13:44:06",
+  "generated_at": "2026-09-19T15:49:44",
   "source_backtest": {
-    "run_id": "20260919134248",
-    "generated_at": "2026-09-19T13:42:48"
+    "run_id": "20260919154843",
+    "generated_at": "2026-09-19T15:48:43"
   },
   "price_tiers": [
     {
@@ -32,9 +32,9 @@
       "min": 2000,
       "max": 3000,
       "tp_pct": 0.15,
-      "sl_pct": 0.05,
+      "sl_pct": 0.02,
       "max_hold_days": 20,
-      "atr_sl_mult": 2.0
+      "atr_sl_mult": 2.5
     },
     {
       "id": "mid_high",
