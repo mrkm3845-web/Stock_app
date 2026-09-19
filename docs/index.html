@@ -1014,32 +1014,11 @@
             `;
             document.getElementById("modalMiniInfo").innerHTML = isMini ? `<i class="bi bi-check-circle-fill me-1 text-danger"></i> かぶミニ®(単元未満株 1株) 対応銘柄` : `<i class="bi bi-info-circle me-1"></i> 単元株(100株) 取引`;
 
-            updateAIButtonState();
-
             modalInstance.show();
-        }
-
-        function updateAIButtonState() {
-            const btn = document.getElementById("modalAIBtn");
-            const fresh = isDataFresh();
-            btn.disabled = !fresh;
-            if (fresh) {
-                btn.title = "最新データでAI分析を実行（Geminiへ転送）";
-                btn.classList.remove("btn-outline-secondary", "text-muted");
-                btn.classList.add("btn-outline-primary");
-            } else {
-                btn.title = "銘柄データが最新でないためAI実行できません";
-                btn.classList.remove("btn-outline-primary");
-                btn.classList.add("btn-outline-secondary", "text-muted");
-            }
         }
 
         function runLatestAI() {
             if (!currentStockForAI) return;
-            if (!isDataFresh()) {
-                alert("銘柄データが最新でないためAI実行できません。\n（最新データ取得後に再実行してください）");
-                return;
-            }
             const s = currentStockForAI;
             const gcText = s.gc_days === 0 ? "本日GC形成" : (s.gc_days !== null && typeof s.gc_days !== 'undefined' ? `${s.gc_days}日前にGC形成` : "GCなし");
             const valRatioText = (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? `${s.val_ratio_5d}倍` : "通常";
