@@ -1,13 +1,61 @@
 {
-  "version": "2026-09-13",
-  "generated_at": "2026-09-13T00:00:00Z",
-  "source_backtest": null,
+  "version": "2026-09-19",
+  "generated_at": "2026-09-19T13:44:06",
+  "source_backtest": {
+    "run_id": "20260919134248",
+    "generated_at": "2026-09-19T13:42:48"
+  },
   "price_tiers": [
-    { "id": "low",      "name": "低位 500〜1000円",  "min": 500,  "max": 1000,     "tp_pct": 0.12, "sl_pct": 0.05, "max_hold_days": 14, "atr_sl_mult": 2.0 },
-    { "id": "mid_low",  "name": "中低位 1000〜2000円", "min": 1000, "max": 2000,     "tp_pct": 0.15, "sl_pct": 0.03, "max_hold_days": 7,  "atr_sl_mult": 3.0 },
-    { "id": "mid",      "name": "中位 2000〜3000円",  "min": 2000, "max": 3000,     "tp_pct": 0.15, "sl_pct": 0.05, "max_hold_days": 20, "atr_sl_mult": 2.0 },
-    { "id": "mid_high", "name": "中高位 3000〜6000円", "min": 3000, "max": 6000,     "tp_pct": 0.12, "sl_pct": 0.02, "max_hold_days": 14, "atr_sl_mult": 2.5 },
-    { "id": "high",     "name": "値がさ 6000円〜",     "min": 6000, "max": 99999999, "tp_pct": 0.12, "sl_pct": 0.02, "max_hold_days": 14, "atr_sl_mult": 2.5 }
+    {
+      "id": "low",
+      "name": "低位 500〜1000円",
+      "min": 500,
+      "max": 1000,
+      "tp_pct": 0.12,
+      "sl_pct": 0.05,
+      "max_hold_days": 14,
+      "atr_sl_mult": 2.0
+    },
+    {
+      "id": "mid_low",
+      "name": "中低位 1000〜2000円",
+      "min": 1000,
+      "max": 2000,
+      "tp_pct": 0.15,
+      "sl_pct": 0.07,
+      "max_hold_days": 7,
+      "atr_sl_mult": 3.0
+    },
+    {
+      "id": "mid",
+      "name": "中位 2000〜3000円",
+      "min": 2000,
+      "max": 3000,
+      "tp_pct": 0.15,
+      "sl_pct": 0.05,
+      "max_hold_days": 20,
+      "atr_sl_mult": 2.0
+    },
+    {
+      "id": "mid_high",
+      "name": "中高位 3000〜6000円",
+      "min": 3000,
+      "max": 6000,
+      "tp_pct": 0.12,
+      "sl_pct": 0.02,
+      "max_hold_days": 14,
+      "atr_sl_mult": 2.5
+    },
+    {
+      "id": "high",
+      "name": "値がさ 6000円〜",
+      "min": 6000,
+      "max": 99999999,
+      "tp_pct": 0.12,
+      "sl_pct": 0.02,
+      "max_hold_days": 14,
+      "atr_sl_mult": 2.5
+    }
   ],
   "signals": {
     "gc_window": 3,
@@ -16,8 +64,18 @@
     "trend_filter_sma200": true
   },
   "warnings": [
-    { "id": "overheat_low", "description": "低位株の出来高4倍超", "condition": "price <= 1000 and val_ratio >= 4.0", "action": "warn" },
-    { "id": "overheat_mid", "description": "中位株の出来高4倍超", "condition": "price > 2000 and price <= 3000 and val_ratio >= 4.0", "action": "warn" }
+    {
+      "id": "overheat_low",
+      "description": "低位株の出来高4倍超",
+      "condition": "price <= 1000 and val_ratio >= 4.0",
+      "action": "warn"
+    },
+    {
+      "id": "overheat_mid",
+      "description": "中位株の出来高4倍超",
+      "condition": "price > 2000 and price <= 3000 and val_ratio >= 4.0",
+      "action": "warn"
+    }
   ],
   "score_weights": {
     "weekly_trend": 25,
