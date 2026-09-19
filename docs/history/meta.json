@@ -1,1 +1,1 @@
-{"date": "2026-09-19", "generated_at": "2026-09-19T12:54:35"}
+{"date": "2026-09-19", "generated_at": "2026-09-20T01:53:01", "regime": {"ticker": "1306.T", "close": 426.3, "sma": 390.6, "sma_days": 200, "risk_on": true}, "portfolio": {"max_positions": 5, "risk_per_trade_pct": 1.0, "reference_capital_jpy": 1000000}}
