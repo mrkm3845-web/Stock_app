@@ -305,6 +305,7 @@
         let currentSmartPreset = 'none';
         let AI_LATEST = {};
         let META = null;
+        let currentDataDate = null;
         let scoreThreshold = 70;
 
         document.addEventListener("DOMContentLoaded", async () => {
@@ -410,6 +411,7 @@
                 const url = dateStr === 'latest' ? 'history/latest.json' : `history/${dateStr}.json`;
                 const res = await fetch(url);
                 STOCKS = await res.json();
+                currentDataDate = (dateStr === 'latest') ? (META ? META.date : null) : dateStr;
                 document.getElementById("total-count").textContent = STOCKS.length;
                 updateSectorOptions();
                 applyScoreMode();
@@ -453,14 +455,19 @@
         }
 
         const AI_VERDICT_ORDER = { recommend: 0, watch: 1, hold: 2, avoid: 3, sell: 3 };
-        function aiVerdictPriority(code) {
+        function currentAI(code) {
             const ai = AI_LATEST[code];
+            if (!ai || !currentDataDate) return null;
+            return ai.date === currentDataDate ? ai : null;
+        }
+        function aiVerdictPriority(code) {
+            const ai = currentAI(code);
             if (!ai || !ai.verdict) return 9;
             const p = AI_VERDICT_ORDER[ai.verdict];
             return p !== undefined ? p : 9;
         }
         function aiRankOf(code) {
-            const ai = AI_LATEST[code];
+            const ai = currentAI(code);
             if (!ai || ai.rank === null || ai.rank === undefined) return 1e9;
             return Number(ai.rank);
         }
@@ -766,7 +773,7 @@
                 const sig = evaluateSignal(s);
 
                 let aiBadge = "";
-                const ai = AI_LATEST[s.code];
+                const ai = currentAI(s.code);
                 if (ai) {
                     const r = (ai.rank !== null && ai.rank !== undefined) ? ai.rank : '';
                     aiBadge = `<span class="badge-ai ms-1" title="AI戦略分析済み (${ai.date})">⭐AI${r !== '' ? ' #' + r : ''}</span> ${verdictBadge(ai.verdict)}`;
