@@ -532,6 +532,9 @@ def _select_daily(longform, start_dt, end_dt, top_k, mode="top", seed=42):
         k = j
         while k < n and d[k] == d[j]:
             k += 1
+        if not _is_risk_on(d[j]):
+            j = k
+            continue
         cnt = min(top_k, k - j)
         for t in range(cnt):
             picked.append((c[j + t], int(i[j + t])))
