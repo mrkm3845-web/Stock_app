@@ -18,6 +18,7 @@ main7（技術スコア + AI戦略提言）を統合した単一エントリポ�
 import argparse
 import io
 import json
+import logging
 import math
 import os
 import re
@@ -31,6 +32,9 @@ import numpy as np
 import pandas as pd
 import requests
 import yfinance as yf
+
+# yfinance 内部の Yahoo Finance 401/429（レート制限等）は想定内のため、ログを抑制してノイズを防ぐ
+logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common.config import load_strategy_params  # noqa: E402
@@ -524,12 +528,19 @@ def _call_gemini(user, system, params):
             "contents": [{"role": "user", "parts": [{"text": user}]}],
             "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
         }
-        for attempt in range(3):
+        for attempt in range(5):
             try:
                 resp = requests.post(url, params={"key": key}, json=payload, timeout=120)
-                if resp.status_code in (429, 500, 502, 503, 504):
+                if resp.status_code in (500, 502, 503, 504):
                     last_err = f"{resp.status_code} {resp.reason} ({model}): {resp.text[:200]}"
-                    time.sleep(min(2 ** attempt, 10))
+                    time.sleep(min(2 ** attempt, 20))
+                    continue
+                if resp.status_code == 429:
+                    last_err = f"{resp.status_code} {resp.reason} ({model}): {resp.text[:200]}"
+                    if "quota" in resp.text.lower():
+                        print(f">> Gemini {model} は課金クォータ超過のためスキップします")
+                        break
+                    time.sleep(min(2 ** attempt, 20))
                     continue
                 resp.raise_for_status()
                 data = resp.json()
