@@ -845,25 +845,31 @@ def fetch_market_regime(sma_days=200):
 
 
 def fetch_earnings_for_pool(pool):
-    """AI候補プールの次回決算日を取得する（yfinance calendar）。"""
+    """AI候補プールの次回決算日を取得する（yfinance calendar・取得率をログ出力）。"""
     out = {}
     total = len(pool)
     for i, r in enumerate(pool):
         code = r["code"]
-        try:
-            cal = yf.Ticker(f"{code}.T").calendar
-            dates = []
-            if cal:
-                ed = cal.get("Earnings Date")
-                if ed:
-                    dates = [d for d in ed if d is not None]
-            if dates:
-                d0 = min(dates)
-                out[code] = d0.strftime("%Y-%m-%d") if hasattr(d0, "strftime") else str(d0)
-        except Exception:
-            pass
+        got = None
+        for attempt in range(2):
+            try:
+                cal = yf.Ticker(f"{code}.T").calendar
+                if cal:
+                    ed = cal.get("Earnings Date")
+                    if ed:
+                        ds = [d for d in ed if d is not None]
+                        if ds:
+                            d0 = min(ds)
+                            got = d0.strftime("%Y-%m-%d") if hasattr(d0, "strftime") else str(d0)
+                            break
+            except Exception:
+                pass
+            time.sleep(0.5)
+        if got:
+            out[code] = got
         if i < total - 1:
             time.sleep(0.2)
+    print(f">> 決算日を取得: {len(out)}/{total} 銘柄")
     return out
 
 
