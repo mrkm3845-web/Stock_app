@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-19T16:11:21",
-  "run_id": "20260919161121",
+  "generated_at": "2026-09-19T16:48:54",
+  "run_id": "20260919164854",
   "version": "2026-09-19",
   "walk_end": "2026-08-31",
   "config": {
@@ -509,7 +509,19 @@
     }
   ],
   "regime_effect": {
-    "with_regime": {
+    "none": {
+      "trade_count": 4185,
+      "win_rate": 25.76,
+      "ev_pct": 0.11,
+      "pf": 1.04,
+      "consec_losses": 48,
+      "max_loss_pct": -7.28,
+      "total_return_pct": 69.21,
+      "annualized_return_pct": 16.24,
+      "max_dd_pct": 35.09,
+      "sharpe": 0.61
+    },
+    "index_ma": {
       "trade_count": 3875,
       "win_rate": 24.88,
       "ev_pct": -0.02,
@@ -521,7 +533,45 @@
       "max_dd_pct": 37.13,
       "sharpe": 0.31
     },
-    "without_regime": {
+    "breadth_50": {
+      "trade_count": 3390,
+      "win_rate": 24.34,
+      "ev_pct": -0.05,
+      "pf": 0.98,
+      "consec_losses": 48,
+      "max_loss_pct": -7.28,
+      "total_return_pct": 4.92,
+      "annualized_return_pct": 1.39,
+      "max_dd_pct": 44.76,
+      "sharpe": 0.22
+    }
+  },
+  "position_sizing_effect": {
+    "max_positions_3": {
+      "trade_count": 4185,
+      "win_rate": 25.76,
+      "ev_pct": 0.11,
+      "pf": 1.04,
+      "consec_losses": 48,
+      "max_loss_pct": -7.28,
+      "total_return_pct": 102.55,
+      "annualized_return_pct": 22.37,
+      "max_dd_pct": 45.74,
+      "sharpe": 0.69
+    },
+    "max_positions_4": {
+      "trade_count": 4185,
+      "win_rate": 25.76,
+      "ev_pct": 0.11,
+      "pf": 1.04,
+      "consec_losses": 48,
+      "max_loss_pct": -7.28,
+      "total_return_pct": 205.16,
+      "annualized_return_pct": 37.59,
+      "max_dd_pct": 31.94,
+      "sharpe": 1.04
+    },
+    "max_positions_5": {
       "trade_count": 4185,
       "win_rate": 25.76,
       "ev_pct": 0.11,
@@ -532,6 +582,18 @@
       "annualized_return_pct": 16.24,
       "max_dd_pct": 35.09,
       "sharpe": 0.61
+    },
+    "max_positions_8": {
+      "trade_count": 4185,
+      "win_rate": 25.76,
+      "ev_pct": 0.11,
+      "pf": 1.04,
+      "consec_losses": 48,
+      "max_loss_pct": -7.28,
+      "total_return_pct": 7.1,
+      "annualized_return_pct": 1.98,
+      "max_dd_pct": 48.52,
+      "sharpe": 0.21
     }
   }
 }
