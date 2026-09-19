@@ -440,6 +440,7 @@
         }
 
         function verdictBadge(v) {
+            if (!v) return "";
             const map = {
                 recommend: "verdict-recommend", neutral: "verdict-neutral",
                 avoid: "verdict-avoid", watch: "verdict-watch",
@@ -741,7 +742,7 @@
                 const ai = AI_LATEST[s.code];
                 if (ai) {
                     const r = (ai.rank !== null && ai.rank !== undefined) ? ai.rank : '';
-                    aiBadge = `<span class="badge-ai ms-1" title="AI戦略分析済み (${ai.date})">⭐AI${r !== '' ? ' #' + r : ''}</span>`;
+                    aiBadge = `<span class="badge-ai ms-1" title="AI戦略分析済み (${ai.date})">⭐AI${r !== '' ? ' #' + r : ''}</span> ${verdictBadge(ai.verdict)}`;
                 }
 
                 const isPositiveDiscount = s.discount_rate > 0;
