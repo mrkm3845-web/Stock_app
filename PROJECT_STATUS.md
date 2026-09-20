@@ -1,119 +1,218 @@
 # プロジェクト現状ステータス（最新）
 
 > このファイルが「いま何が実装済みで、何が残っているか」の最新情報源です。
-> 設計方針は [`Stock_app/IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md) と [`back_tester/BACKTEST_STRATEGY_PLAN.md`](../back_tester/BACKTEST_STRATEGY_PLAN.md) を参照。
-> 新しいセッションを始める際は、このファイル＋設計書2本を読めば全体像を把握できます。
+> 新しいセッションは **このファイル＋[`back_tester/README.md`](back_tester/README.md)** を読めば全体像を把握できます。
+> 設計の背景は [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md) を参照（※実装が進み一部古い）。
+> コミュニケーションは **日本語のみ**（[`AGENTS.md`](AGENTS.md)）。
 
 ---
 
-## 1. リポジトリ構成（重要）
+## 0. 30秒サマリ
 
-- **単一リポジトリ（`Stock_app`）に統合済み**。バックテストは [`back_tester/`](back_tester/) 配下にある。
-- 共通モジュール `common/` と `strategy_params.json`（`docs/`）は**リポジトリ直下で単一管理**（複製なし）。
-- バックテストの結果（`price_tiers` / `signals`）は、ガード通過時に **`docs/strategy_params.json` へ自動反映**され、スクリーナーが次回実行で自動的に読む（手動同期は不要）。
-- 旧 `back_tester` リポジトリは**当面バックアップとして残置**（検証後にアーカイブ予定）。
-
----
-
-## 2. 実装済み（完了）
-
-### Stock_app 側
-- **共有パラメータ**: [`docs/strategy_params.json`](docs/strategy_params.json)（株価帯・シグナル閾値・警告・スコア重み・`ai` 設定。`ai.enabled=true`）。
-- **共通モジュール**: [`common/config.py`](common/config.py)、[`common/features.py`](common/features.py)
-  - GC日数・5日平均代金・売買代金増加率・SMA・ATR14・週足/月足トレンド・支持/抵抗・上髭/下髭・レンジ位置・総合スコア・警告判定。
-- **統合スクリーナー [`main8.py`](main8.py)**（main6 + main7 を一本化）:
-  - 全銘柄（プライム+スタンダード）を一括スキャンし、**ファンダメンタル網羅（main6）と技術スコア（main7）を同一レコードに統合**。
-  - 価格データは増分キャッシュ（`data/price_cache`）で **250日分**取得（SMA200・月足トレンドを機能させスコアを0〜100で計算）。
-  - Stage2 AI: 高スコア上位プール（〜40銘柄）を1位から順位づけし、`overall`＋銘柄別 `rank/verdict/reason/news_note/entry_strategy/entry_price/support/resistance/tp/sl/trailing_plan` をJSONで返す（Gemini / DeepSeek を `ai.provider` で切替）。
-  - ニュース: yfinance `.news` で見出し取得（AI実行時のみ・プール分のみ）。
-  - 出力: `docs/history/{date}.json`・`latest.json`・`meta.json`、`recommendations.json`（AI）／`recommendations_technical.json`（技術）、`ai_analysis/{date}.json`、`ai_strategy_latest.json`、`data/stocks.db`。
-  - フラグ: `--ai`（AI実行）、`--force-ai`（手動で強制上書き）、`--max-stocks`（テスト）。
-- **フロント**:
-  - [`docs/index.html`](docs/index.html): **統合スクリーナー**。デフォルトでスコア70以上絞り込み＋スコア順ソート（同点は増加率順）。銘柄モーダルにAI戦略（上位AI実行銘柄）を表示し、「最新AI実行」でGeminiへ最新データ+ニュース照会プロンプトを転送。
-  - [`docs/journal.html`](docs/journal.html): 各取引行の「AI戦略」ボタンで最新AI戦略を表示。
-  - 旧 [`docs/main7.html`](docs/main7.html) と旧 [`docs/index.html`](docs/index_main6_backup.html) は退避。
-- **ワークフロー**:
-  - [`daily_main8.yml`](.github/workflows/daily_main8.yml): 技術スクリーニング 平日1日5回。
-  - [`daily_main8_ai.yml`](.github/workflows/daily_main8_ai.yml): **AI実行 20:17 JST**。手動実行時は `force` チェックで上書き可能。
-  - [`run_walkforward.yml`](.github/workflows/run_walkforward.yml): **バックテスト 毎月 第1土曜 21:00 JST**。結果をガード付きで `docs/strategy_params.json` へ自動反映。
-  - 旧 `daily_stock.yml` / `daily_main7*.yml` は `.disabled` で無効化。
-- **AI（Gemini）**: 環境変数 `GEMINI_API_KEY`（GitHub Secrets）で動作。プロバイダ/モデルは `strategy_params.json` の `ai` セクションで切替（既定 `gemini` / `gemini-2.5-flash`）。DeepSeek を使う場合は `DEEPSEEK_API_KEY`。
-
-### back_tester 側
-- [`backtest_rolling_walkforward.py`](../back_tester/backtest_rolling_walkforward.py): スコア式再現のローリングウォークフォワード（学習12ヶ月/検証3ヶ月/スライド3ヶ月、`walk_end` は前月末でローリング）。
-  - エントリー: スコア上位K銘柄を翌日寄りで約定（実運用 main8.py と同一スコア式）。
-  - エグジット: 固定TP/SL vs ATRトレーリングの比較＋**株価帯別エグジット最適化**。
-  - 指標: 資金制約（同時保有上限・固定比率）を加味した年率/最大DD/シャープ/PF。ベンチマークは TOPIX ETF（1306.T）。
-  - **選定エッジ検証（Phase 0）**: スコア分位分析・上位vsランダムvs下位比較・重み寄与分解（leave-one-out）・ATRトレーリングのテール監査。
-  - 出力: `results/backtest_walkforward_result.json`（`quantile_analysis` / `selection_comparison` / `weight_ablation` を含む）・`.csv`・`backtest_tier_exit.csv`・`_report.md`。
-- [`apply_optimal_params.py`](../back_tester/apply_optimal_params.py): 結果を**ガード付き**で `strategy_params.json` の `signals`・`price_tiers` に反映（最低件数/PF/ベンチマーク超え/DD上限/近傍安定性/前回比劣化なし）。
-- [`run_walkforward.yml`](../back_tester/.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST** に実行＋ガード反映＋結果コミット。
-- 旧スクリプト `backtest_scanner*.py` / `backtest_volume_deepdive.py` は上記に統合・削除済み。
-
-> ⚠️ **スコア再設計（Phase 2・2026-09-19 完了）**:
-> - Phase 1 の研究で有効と確認した**トレンド系指標**（52週高値位置 / 200日線乖離 / 200日線傾き / 120日リターン）でスコアを再構成。逆効果だった GC直後・出来高急増・週足上昇を除外した。
-> - 再検証の結果、分位スプレッドは **+0.025% → +0.347%**、Spearman は **0.24 → 0.92** に改善。**上位分位がプラス（+0.16%）／下位分位がマイナス（-0.19%）** となり、スコアが順位付けとして機能するようになった。
-> - 最良条件は OOS **PF ≥ 1.15・期待値プラス・年率 +32.8%**（ベンチマーク +5.92%）。ただし最大DDが大きく、ガード（DD・近傍安定性）により `signals` は据え置き。
-> - 株価帯エグジットは、ガード通過分（`mid`）が `docs/strategy_params.json` へ**自動反映済み**。
-> - **残課題**: 最大DDの低減（レジームフィルタ・現金待機）、ランダム選択に対する優位性の明確化、エグジット（ATR/トレール）の再設計。
->
-> 経緯（Phase 0/1）: 旧スコアは「上位ほど上がる」関係を示せず、上位選択がランダムに劣後。成分では「200日線より上」以外の寄与が小さく、出来高急増・GC直後・週足上昇は逆効果（分位スプレッドがマイナス）だった。研究結果は [`back_tester/results/research_signals.json`](back_tester/results/research_signals.json)。
->
-> ⚠️ **資金配分・地合い・エグジット（2026-09-20）**:
-> - **同時保有数の検証**: スコア上位K・地合いなしで `max_positions` を比較。本期間は **4銘柄が最良**（年率 +37.6% / DD 31.9%。3: DD 45.7%、5: 年率 +16.2% / DD 35.1%、8: 年率 +2.0% / DD 48.5%）。ただし単一経路のため、**既定ガイドは 5 のまま**（`docs/strategy_params.json` の `portfolio`）。
-> - **地合いフィルタは不採用**: 「指数 vs 200日線」も「breadth（上昇銘柄比率）」も、年率を下げDDを悪化させた。既定OFFとし、`regime_effect` で毎回自動計測。
-> - **決算接近の警告（計画1）**: スキャン時の `.info` から次回決算日を抽出（追加通信なし）。`docs/earnings.json` とおすすめに `earnings_date`/`earnings_soon` を出力し、一覧・モーダルで警告表示。※yfinance の決算日は一部古く、未来日が取れた場合のみ警告。
-> - **エグジットはルール基本（計画4）**: おすすめの利確/損切は `price_tiers`（最適化係数）で算出し、AI値は `advice` に参照保持。ATR倍率も提示。
-> - **資金配分ガイド＆推奨株数（計画2）**: `portfolio_guide`（同時保有上限・1取引リスク%）を出力。おすすめ各銘柄に**リスクベースの推奨株数**（参考資金 × リスク% ÷ 損切幅）を付与。
+- 日本株スクリーナー（プライム+スタンダード 約3,100銘柄）。全銘柄をスキャン → **スコア上位40を AI（Gemini）が順位付け** → 「推奨/様子見」を提示。
+- **スコアは Phase 2 の「トレンド合成」**（52週高値位置・200日線乖離・200日線傾き・120日リターン）。
+- バックテストは**同一リポジトリ内の [`back_tester/`](back_tester/)**。**毎月 第1土曜にガード付きで `docs/strategy_params.json` へ自動反映**。
+- フロントは GitHub Pages（[`docs/index.html`](docs/index.html) / [`docs/journal.html`](docs/journal.html)）。
+- ワークフローは3本（技術スクリーニング / AI分析 / バックテスト）。
 
 ---
 
-## 3. 未完了タスク（残り）
+## 1. リポジトリ構成
 
-| # | 内容 | 状態 |
-| --- | --- | --- |
-| 5 | 株価帯定義を全スクリプト・UI・Discordで統一 | 未着手 |
-| 6 | main6/index.html 側のハードコード閾値の strategy_params.json 一本化 | 未着手（main6は旧式のまま） |
-| 10 | バックテストに業種・相場レジームのセグメントを追加 | 未着手 |
-| 12 | トレンドフィルタ・相対力の追加（ATR/トレールは済み） | 一部実施 |
-| 13 | スリッページ感度・サバイバーシップ注記・決算日除外（ベンチマークは済み） | 一部実施 |
-| 14 | ポジションサイジング・同時保有・業種集中上限・最大DD制御 | 未着手 |
-| 15 | バックテスト実行時間対策（段階探索・事前計算キャッシュ・ランナー選定） | 未着手 |
-| 16 | ジャーナルのエントリー時特徴量スナップショット＋サーバー側/JSON永続化 | 未着手（現在 localStorage） |
-| 17 | 再最適化ワークフロー（自動ガード付き strategy_params.json 更新） | 完了（signals/price_tiers、ガード付き、月次） |
-| 19 | AIコスト管理（月間予算ガード・トークン計測） | 一部実施（1日1回＋max_callsのみ） |
+- **単一リポジトリ（`Stock_app`）**。バックテストは [`back_tester/`](back_tester/) 配下。
+- 旧 `back_tester` リポジトリ（別リポジトリ）は **GitHub 上でアーカイブ済み**（読み取り専用・履歴のバックアップ）。
+- `common/`（`config.py` / `features.py`）と `docs/strategy_params.json` は**リポジトリ直下で単一管理**（複製なし）。
+- `main.py`〜`main7.py` は旧版（退避）。**現行は [`main8.py`](main8.py)**。
 
----
-
-## 4. 既知の制約・注意
-
-- **画像入力なし**: AIはチャート画像を見ない。ローソク足の特徴はOHLC由来の数値（上髭/下髭/支持抵抗など）で近似。
-- **ライブニュース**: yfinance `.news`（Yahoo由来）で取得。日本株・小型株は網羅度が低く、無ければ「要確認」表記。有料ニュースAPIへの差し替え余地あり。
-- **DeepSeek は Web検索不可**（純LLM）。最新ニュースは自前取得して渡す方式。
-- **Python 実行**: ローカルは `uv run --no-project --python 3.11 python <file>` で実行（システムPython未導入）。
-
----
-
-## 5. 実行方法（クイック）
-
-```bash
-# スクリーナー（技術のみ）
-uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python Stock_app/main8.py
-
-# スクリーナー（AI分析）
-uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python Stock_app/main8.py --ai
-
-# スクリーナー（AIを強制再分析・上書き）
-uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python Stock_app/main8.py --ai --force-ai
-
-# バックテスト
-uv run --no-project --python 3.11 python back_tester/backtest_rolling_walkforward.py
+```
+Stock_app/
+├── main8.py                      # 現行スクリーナー（Stage1 スコア + Stage2 AI）
+├── common/{config.py,features.py}# 共通（特徴量・スコア・パラメータ読込）
+├── docs/                         # GitHub Pages 兼 出力
+│   ├── index.html / journal.html # フロント
+│   ├── strategy_params.json      # 単一情報源（バックテストが自動更新）
+│   ├── history/                  # 日次データ（{date}.json / latest.json / meta.json / dates.json）
+│   ├── recommendations.json      # AIおすすめ / recommendations_technical.json（技術のみ）
+│   ├── ai_analysis/{date}.json   # AI応答キャッシュ / ai_strategy_latest.json（銘柄別最新）
+│   └── earnings.json             # 決算接近の警告データ
+├── data/{stocks.db,price_cache}  # DB・価格キャッシュ
+├── back_tester/                  # バックテスト（下記 7章）
+│   ├── backtest_rolling_walkforward.py
+│   ├── apply_optimal_params.py
+│   ├── research_signals.py
+│   └── results/
+└── .github/workflows/            # daily_main8 / daily_main8_ai / run_walkforward
 ```
 
 ---
 
-## 6. 主要な成果物・閲覧先
+## 2. データの流れ
 
-- 統合ビューア: `https://mrkm3845-web.github.io/Stock_app/`（`index.html`）
-- AI戦略インデックス: [`docs/ai_strategy_latest.json`](docs/ai_strategy_latest.json)
-- バックテスト結果: [`back_tester/results/backtest_walkforward_report.md`](../back_tester/results/backtest_walkforward_report.md)
+```mermaid
+flowchart LR
+  JPX[JPX銘柄リスト] --> SCAN[main8.py Stage1: スコア]
+  SCAN --> POOL[スコア上位40]
+  POOL --> AI[Gemini Stage2: 順位付け]
+  AI --> REC[docs/recommendations.json]
+  SCAN --> HIST[docs/history/*.json]
+  BT[back_tester 月次] -->|ガード付き| params[docs/strategy_params.json]
+  params --> SCAN
+  REC --> UI[index.html / journal.html]
+  HIST --> UI
+```
+
+- **Stage1（無料・ローカル）**: 全銘柄の技術スコアを計算し、上位40を候補プールに。
+- **Stage2（Gemini）**: プールを構造化データ＋ニュースで順位付け（`recommend`/`watch` 等）。画像は使わない。
+- **バックテスト（月次）**: スコア／エグジットを検証し、ガード通過分を `docs/strategy_params.json` へ自動反映。
+
+---
+
+## 3. スコア（最重要）
+
+**Phase 2: トレンド合成スコア（0〜100）** — [`common/features.py`](common/features.py) の `compute_technical_score`。
+
+| 成分 | 重み | 変換 |
+| :--- | ---: | :--- |
+| `pos_52w`（52週高値からの位置 = 終値/252日高値） | 30 | そのまま 0〜1 |
+| `dist_sma200`（200日線からの乖離 = 終値/SMA200 − 1） | 25 | ÷0.30 して 0〜1 |
+| `sma200_slope`（200日線の20営業日変化率） | 25 | ÷0.10 して 0〜1 |
+| `ret_120d`（120日リターン） | 20 | ÷0.60 して 0〜1 |
+
+- 各成分は 0〜1 にクランプして加算（NaN/負は0）。**トレンド系のみ・相対化なしの絶対スコア**。
+- **旧成分（日足GC・出来高増加率・週足トレンド）は Phase 1 の研究で逆効果のため廃止**。
+
+**経緯（Phase 0/1/2）**
+- Phase 0: 旧スコアは「上位ほど上がる」関係を示せず、上位選択がランダムに劣後。成分では「200日線より上」以外の寄与が小さく、出来高急増・GC直後・週足上昇は**分位スプレッドがマイナス（逆効果）**。
+- Phase 1: 候補指標を分位分析（[`research_signals.py`](back_tester/research_signals.py)）。**200日線の傾き・乖離・52週高値位置・120日リターン**が有力。
+- Phase 2: 上記でスコアを再構成。**分位スプレッド +0.025% → +0.347%**、**Spearman 0.24 → 0.92**、上位分位 +0.16% / 下位分位 −0.19%。
+
+---
+
+## 4. スクリーナー（[`main8.py`](main8.py)）
+
+- 全銘柄を一括スキャン。価格は増分キャッシュ（`data/price_cache`、**約400暦日**取得）。ファンダ（PER/PBR/ROE/配当）は yfinance `.info` から。
+- 候補プール = スコア上位 `stage1_pool_max`（40）。
+- **おすすめの並び**（`build_recommendations`）: **判定優先度 → AI順位 → スコア → 出来高増加率 → 流動性**。
+  - 判定優先度: `recommend`(0) → `watch`(1) → `hold`(2) → その他 → AIなし(9)。
+- **エグジットは「ルール基本」**: 利確 = 価格×(1+`price_tiers.tp_pct`)、損切 = 価格 − `price_tiers.atr_sl_mult`×ATR14。**AIの tp/sl は `advice` に参照保持**（表示上はルール優先）。
+- **リスクベースの推奨株数**: `参考資金 × risk% ÷ 損切幅`（`portfolio` セクション）。
+- **決算接近の警告**: スキャン時の `.info` から次回決算日を抽出（`earningsTimestampStart`、追加通信なし）→ `docs/earnings.json` とおすすめに `earnings_date`/`earnings_soon`。
+- **地合い**: `1306.T`（TOPIX ETF）が200日線より上か（risk-on/off）を `meta.json.regime` に出力（**表示のみ・選定フィルタはOFF**）。
+- フラグ: `--ai`（AI実行）/ `--force-ai`（当日キャッシュを無視して再実行）/ `--no-discord` / `--max-stocks`。
+
+---
+
+## 5. フロント
+
+- [`docs/index.html`](docs/index.html): 統合スクリーナー。
+  - 一覧バッジ: `⭐AI #順位`＋**推奨/様子見**（同日のAI分析のみ表示）／**⚠️決算接近**。
+  - ヘッダ: **地合い risk-on/off** と **推奨ポートフォリオ（最大N銘柄・1取引リスク%）**。
+  - デフォルト並び替え: **AI推奨順**（推奨→様子見→順位）。他にスコア順など。
+  - 銘柄モーダル: 銘柄詳細＋AI戦略＋**ルール基本の利確/損切**＋**推奨株数**＋決算警告。「最新AI実行」ボタンは**常時有効**（プロンプトをコピーしてGeminiへ）。
+- [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示（旧「AI戦略」ボタンは廃止）。一覧に推奨/様子見バッジ。
+- 旧 `main7.html` / `index_main6_backup.html` は退避。
+
+---
+
+## 6. AI（Gemini）
+
+- 環境変数 `GEMINI_API_KEY`（GitHub Secrets）。`ai.provider` / `ai.model` で切替。
+- **既定モデル: `gemini-3.6-flash`**（フォールバック: `gemini-3.1-pro-preview`）。
+- リトライ: 5xx は最大5回（指数バックオフ）、**課金クォータ 429 は即スキップ**。
+- 応答の `code` を文字列正規化して候補プールと突合（`sanitize_ai_map`）。
+- yfinance の 401/429（想定内）はログ抑制（`logging.getLogger("yfinance")`）。
+- 出力: `ai_analysis/{date}.json`（生キャッシュ）＋ `ai_strategy_latest.json`（銘柄別最新）。
+
+---
+
+## 7. バックテスト & 自動反映（[`back_tester/`](back_tester/)）
+
+- [`backtest_rolling_walkforward.py`](back_tester/backtest_rolling_walkforward.py): スクリーナーと**同一スコア式**のウォークフォワード（学習12ヶ月/検証3ヶ月/スライド3ヶ月）。
+  - エントリー: スコア上位K（既定5）を翌日寄り。エグジット: 固定TP/SL vs ATRトレーリング。**株価帯別に最適化**。
+  - **選定エッジ検証**: `quantile_analysis` / `selection_comparison`（上位vsランダムvs下位）/ `weight_ablation`（leave-one-out）/ `atr_trail_worst_trades`（テール監査）/ `regime_effect`（地合い無し・指数MA・breadth）/ `position_sizing_effect`（同時保有数 3/4/5/8）。
+  - 出力: `results/backtest_walkforward_result.json`（上記キー含む）・`.csv`・`backtest_tier_exit.csv`・`_report.md`。
+- [`research_signals.py`](back_tester/research_signals.py): 候補指標（13種）の分位スプレッド研究 → `results/research_signals.json/.csv`。
+- [`apply_optimal_params.py`](back_tester/apply_optimal_params.py): 結果を**ガード付き**で `docs/strategy_params.json` の `signals`・`price_tiers` に反映。
+  - ガード: 最低100件 / OOS PF≧1.15 / 期待値>0 / 年率>ベンチマーク / DD≦50% / （signals）近傍安定性 / 前回比劣化なし。
+- [`run_walkforward.yml`](.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST**。バックテスト→ガード反映→`docs/strategy_params.json` と `results/` をコミット（**手動同期不要**）。
+
+### 直近の検証所見（2022-01〜2026-08）
+- 新スコア: 分位スプレッド **+0.347%** / Spearman **0.92**（上位分位 +0.16% / 下位分位 −0.19%）。
+- 選定比較: 上位 PF 1.04 / 年率 +16.2% / DD 35.1%、ランダム PF 1.14、下位 PF 0.88（**上位>下位は明確、PFではランダムと同等**）。
+- **同時保有数**: 本期間は **4銘柄が最良**（年率 +37.6% / DD 31.9%）。ただし単一経路のため**既定ガイドは5のまま**。
+- **地合いフィルタは不採用**: 指数MA・breadth いずれも年率を下げDDを悪化。既定OFF、`regime_effect` で毎回計測。
+
+---
+
+## 8. 主要パラメータ（[`docs/strategy_params.json`](docs/strategy_params.json)）
+
+- `score_weights`: `{pos_52w:30, dist_sma200:25, sma200_slope:25, ret_120d:20}`
+- `price_tiers`: 価格帯ごとの `tp_pct` / `sl_pct` / `max_hold_days` / `atr_sl_mult`（バックテストが自動更新）
+- `portfolio`: `{max_positions:5, risk_per_trade_pct:1.0, reference_capital_jpy:1000000}`
+- `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
+- `warnings`: 低位/中位の出来高4倍超の警告
+- `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, weekly_top_picks:5, ...}`
+
+---
+
+## 9. 出力ファイル
+
+- `docs/history/{date}.json` / `latest.json`: 全銘柄レコード（スコア付き）。
+- `docs/history/meta.json`: `{date, generated_at, regime, portfolio}`。
+- `docs/recommendations.json`（AI時）/ `recommendations_technical.json`（技術のみ）: `{regime, portfolio_guide, picks[]}`。
+  - `picks[]`: `code,name,price,score,verdict,rank,tp_price,sl_price,ai_tp_price,ai_sl_price,atr_sl_mult,stop_distance,suggested_qty,trailing_plan,earnings_date,earnings_soon,...`
+- `docs/earnings.json`: `{date, horizon_days:14, items:{code:{date,days_until,soon}}}`。
+- `docs/ai_analysis/{date}.json` / `ai_strategy_latest.json`。
+- `data/stocks.db`（ファンダ・履歴キャッシュ）。
+
+---
+
+## 10. 実行方法（クイック）
+
+```bash
+# スクリーナー（技術のみ）
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python main8.py
+
+# スクリーナー（AI分析）
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python main8.py --ai
+
+# AIを強制再分析
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python main8.py --ai --force-ai
+
+# バックテスト
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python back_tester/backtest_rolling_walkforward.py
+```
+
+- ワークフロー実行時は、**どのワークフローを実行するか宣言してから**実行する（`AGENTS.md`）。
+- ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）。
+
+---
+
+## 11. 残タスク・既知の制約
+
+**残タスク**
+- エグジット係数（ATR損切・トレーリング・部分利確）の区分別最適化の拡張。
+- 同時保有数の頑健性検証（単一経路依存の解消）。
+- スコアのランダム対比での優位性向上（現状はリターンで勝ち・PFは同等）。
+- 業種・相場レジームのセグメント検証、決算日除外の検証。
+- ジャーナルのサーバー側永続化＋エントリー時特徴量スナップショット（現状 localStorage）。
+
+**既知の制約**
+- **画像入力なし**: AIはチャート画像を見ない（OHLC由来の数値で近似）。
+- **決算日データ**: yfinance 由来で一部古い。**未来の決算日が取れた場合のみ**警告。
+- **ライブニュース**: yfinance `.news`。日本株・小型株は網羅度が低く「要確認」が多い。
+- **サバイバーシップバイアス / 多重検定**: バックテスト結果はやや楽に出る／偶然の好成績に注意。ガードで緩和。
+- **プリセットは未検証**: index.html の「3大実証厳選」等の PF 値は削除済みの旧バックテスト由来（UI上「⚠未検証」表示）。
+- **ポートフォリオ指標は実現損益ベース**（保有时価評価なし）。
+- **Python**: ローカルは `uv run --no-project --python 3.11 ...`（システムPython未導入）。
+
+---
+
+## 12. 主要な変更履歴（概要）
+
+- 単一リポジトリ統合（back_tester を Stock_app へ）。旧リポジトリはアーカイブ。
+- Gemini モデル名修正（`gemini-3.6-flash`）＋リトライ／クォータ対応。応答コード正規化。
+- 一覧の AI 順位・判定バッジ、日付整合、AI推奨順ソート。
+- スコア再設計（Phase 0→1→2、トレンド合成）。
+- 資金配分ガイド・推奨株数、決算接近の警告、ルール基本エグジット、地合い表示。
+- バックテストに選定エッジ検証・地合い比較・同時保有数比較を追加し、自動反映を単一リポジトリで実現。

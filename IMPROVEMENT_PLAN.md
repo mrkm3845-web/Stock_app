@@ -1,10 +1,12 @@
-# Stock_app 改善計画（クリーン版）
+# Stock_app 改善計画（設計方針・背景）
+
+> ⚠️ **この文書は「設計の背景・方針」の記録です。実装が進み内容の多くが古くなっています。**
+> **最新の実装状況・仕様・残タスクは [`PROJECT_STATUS.md`](PROJECT_STATUS.md) を参照してください。**
+> 当時の課題認識と設計方針の記録として残します（`main6.py`/`main7.py` 等の旧ファイル名が含まれますが、**現行は [`main8.py`](main8.py)**）。
+> バックテストの現行仕様は [`back_tester/README.md`](back_tester/README.md)。
 
 > 本ドキュメントは、重複・矛盾していた旧版を整理し直した統合版です。
-> バックテスト側の詳細戦略は [`back_tester/BACKTEST_STRATEGY_PLAN.md`](../back_tester/BACKTEST_STRATEGY_PLAN.md) を参照してください。
 > 本計画の実装優先順位は、ワークスペースのtodoリストと同期しています。
->
-> ⚠️ **この文書は設計方針です。実装により一部内容が古くなっています。最新の実装状況・残タスクは [`PROJECT_STATUS.md`](PROJECT_STATUS.md) を参照してください。**
 
 ---
 
