@@ -85,6 +85,7 @@
   },
   "portfolio": {
     "max_positions": 5,
+    "max_per_sector": 2,
     "risk_per_trade_pct": 1.0,
     "reference_capital_jpy": 1000000
   },

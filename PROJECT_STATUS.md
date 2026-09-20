@@ -105,11 +105,11 @@ flowchart LR
 ## 5. フロント
 
 - [`docs/index.html`](docs/index.html): 統合スクリーナー。
-  - 一覧バッジ: `⭐AI #順位`＋**推奨/様子見**（同日のAI分析のみ表示）／**⚠️決算接近**。
+  - 一覧バッジ: `⭐AI #順位`＋**判定（推奨/中立/様子見/注意/回避）を銘柄ごとの最新AIで as-of 表示）**／**⚠️決算接近**。`excluded` 銘柄は非表示。
   - ヘッダ: **地合い risk-on/off** と **推奨ポートフォリオ（最大N銘柄・1取引リスク%）**。
-  - デフォルト並び替え: **AI推奨順**（推奨→様子見→順位）。他にスコア順など。
-  - 銘柄モーダル: 銘柄詳細＋AI戦略＋**ルール基本の利確/損切**＋**推奨株数**＋決算警告。「最新AI実行」ボタンは**常時有効**（プロンプトをコピーしてGeminiへ）。
-- [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示（旧「AI戦略」ボタンは廃止）。一覧に推奨/様子見バッジ。
+  - デフォルト並び替え: **AI推奨順**（推奨→様子見→中立→保有→注意→回避→順位）。他にスコア順など。
+  - 銘柄モーダル: 銘柄詳細＋**価格帯別ルールの利確/損切（ATR損切）**＋**推奨株数**＋決算警告。AI戦略は**参考情報（売買指示には未採用）**と明示。「最新AI実行」ボタンは**常時有効**（プロンプトをコピーしてGeminiへ）。
+- [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示。`strategy_params` / `recommendations` / `meta` を読み、利確/損切・推奨株数を index と統一。OCO既定値とCSV取込も価格帯別ルールで算出。
 - 旧 `main7.html` / `index_main6_backup.html` は退避。
 
 ---
@@ -120,6 +120,8 @@ flowchart LR
 - **既定モデル: `gemini-3.6-flash`**（フォールバック: `gemini-3.1-pro-preview`）。
 - リトライ: 5xx は最大5回（指数バックオフ）、**課金クォータ 429 は即スキップ**。
 - 応答の `code` を文字列正規化して候補プールと突合（`sanitize_ai_map`）。
+- `verdict` は `recommend/watch/neutral/caution/avoid` に限定（プロンプトで明示）。main8・フロント双方で同じ優先順位に正規化。
+- AI入力には `過熱警戒（warnings）` `決算（接近時はあとN日）` `グレアム理論株価/割安度` `価格帯` を含む。
 - yfinance の 401/429（想定内）はログ抑制（`logging.getLogger("yfinance")`）。
 - 出力: `ai_analysis/{date}.json`（生キャッシュ）＋ `ai_strategy_latest.json`（銘柄別最新）。
 
@@ -131,7 +133,7 @@ flowchart LR
   - エントリー: スコア上位K（既定5）を翌日寄り。エグジット: 固定TP/SL vs ATRトレーリング。**株価帯別に最適化**。
   - **選定エッジ検証**: `quantile_analysis` / `selection_comparison`（上位vsランダムvs下位）/ `weight_ablation`（leave-one-out）/ `atr_trail_worst_trades`（テール監査）/ `regime_effect`（地合い無し・指数MA・breadth）/ `position_sizing_effect`（同時保有数 3/4/5/8）。
   - 出力: `results/backtest_walkforward_result.json`（上記キー含む）・`.csv`・`backtest_tier_exit.csv`・`_report.md`。
-- [`research_signals.py`](back_tester/research_signals.py): 候補指標（13種）の分位スプレッド研究 → `results/research_signals.json/.csv`。
+- [`research_signals.py`](back_tester/research_signals.py): 候補指標（14種・業種相対強度 `sector_rs_20d` 含む）の分位スプレッド研究 → `results/research_signals.json/.csv`。
 - [`apply_optimal_params.py`](back_tester/apply_optimal_params.py): 結果を**ガード付き**で `docs/strategy_params.json` の `signals`・`price_tiers` に反映。
   - ガード: 最低100件 / OOS PF≧1.15 / 期待値>0 / 年率>ベンチマーク / DD≦50% / （signals）近傍安定性 / 前回比劣化なし。
 - [`run_walkforward.yml`](.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST**。バックテスト→ガード反映→`docs/strategy_params.json` と `results/` をコミット（**手動同期不要**）。
@@ -148,7 +150,7 @@ flowchart LR
 
 - `score_weights`: `{pos_52w:30, dist_sma200:25, sma200_slope:25, ret_120d:20}`
 - `price_tiers`: 価格帯ごとの `tp_pct` / `sl_pct` / `max_hold_days` / `atr_sl_mult`（バックテストが自動更新）
-- `portfolio`: `{max_positions:5, risk_per_trade_pct:1.0, reference_capital_jpy:1000000}`
+- `portfolio`: `{max_positions:5, max_per_sector:2, risk_per_trade_pct:1.0, reference_capital_jpy:1000000}`（`max_per_sector` は同一業種の同時採用上限）
 - `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
 - `warnings`: 低位/中位の出来高4倍超の警告
 - `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, weekly_top_picks:5, ...}`

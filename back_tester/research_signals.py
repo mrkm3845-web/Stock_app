@@ -57,6 +57,48 @@ def _gc_recent(p):
     return np.where((gc >= 0) & (gc <= 3), 1.0, 0.0)
 
 
+def _sector_relative(prepared, sector_map, base_values):
+    """各営業日・各業種の平均からの超過（業種相対強度）を {code: 配列} で返す。
+
+    base_values は {code: 配列}（正の値が強いほど良い指標を想定）。
+    """
+    buckets = {}
+    for code, p in prepared.items():
+        sector = sector_map.get(code)
+        base = base_values.get(code)
+        if sector is None or base is None:
+            continue
+        dates = p["dates"]
+        elig = p["eligible"]
+        for i in range(len(dates)):
+            if not elig[i]:
+                continue
+            v = base[i]
+            if v is None or not np.isfinite(v):
+                continue
+            buckets.setdefault((dates[i], sector), []).append(float(v))
+    means = {k: float(np.mean(v)) for k, v in buckets.items()}
+
+    out = {}
+    for code, p in prepared.items():
+        dates = p["dates"]
+        arr = np.full(len(dates), np.nan)
+        sector = sector_map.get(code)
+        base = base_values.get(code)
+        if sector is not None and base is not None:
+            for i in range(len(dates)):
+                if not p["eligible"][i]:
+                    continue
+                v = base[i]
+                if v is None or not np.isfinite(v):
+                    continue
+                m = means.get((dates[i], sector))
+                if m is not None:
+                    arr[i] = float(v) - m
+        out[code] = arr
+    return out
+
+
 def build_candidates(params):
     sig = params.get("signals", {})
     weights = params.get("score_weights", {})
@@ -172,6 +214,15 @@ def main():
     # 指標値を1度だけ計算して再利用
     sig_values = {name: {code: np.asarray(fn(p), dtype=float) for code, p in prepared.items()}
                   for name, fn in candidates.items()}
+
+    # 業種相対強度（同業種平均からの20日リターン超過）を候補に追加。
+    # 採用可否は本スクリプトの分位分析（上位−下位スプレッド）で判断する。
+    sector_map = {s["コード"]: s.get("33業種区分") for s in stock_list}
+    if any(sector_map.values()):
+        rs_name = "sector_rs_20d(業種相対20日)"
+        base_ret20 = {code: _pct_change(p["close"], 20) for code, p in prepared.items()}
+        sig_values[rs_name] = _sector_relative(prepared, sector_map, base_ret20)
+        candidates[rs_name] = None
 
     results = []
     for name, _fn in candidates.items():

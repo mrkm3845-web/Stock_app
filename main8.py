@@ -460,8 +460,10 @@ def fetch_news_for_pool(pool):
 
 
 # ---------------------------------------------------------------- Stage2 (Gemini / DeepSeek)
-def _build_ai_prompt(pool, fund_map, news_map=None):
+def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None):
     news_map = news_map or {}
+    warn_desc = {w.get("id"): w.get("description") for w in (params or {}).get("warnings", [])}
+    base_date = base_date or _jst_now().strftime("%Y-%m-%d")
     lines = []
     for r in pool:
         ctx = r.get("ctx") or {}
@@ -469,7 +471,8 @@ def _build_ai_prompt(pool, fund_map, news_map=None):
         parts = [
             f"{r['code']} {r['name']}",
             f"市場:{r['market']} 業種:{r['sector']}",
-            f"株価:{ctx.get('price', r['price'])}円 スコア:{r['score']}",
+            f"株価:{ctx.get('price', r['price'])}円 スコア:{r['score']} 価格帯:{r.get('tier') or '-'}",
+            f"グレアム理論株価:{r.get('graham_price')}円 割安度:{r.get('discount_rate')}%",
             f"GC:{r['gc_days'] if r['gc_days'] is not None else 'なし'}日前",
             f"5日平均代金:{r['avg_val_5d']}千円 増加率:{r['val_ratio_5d']}倍",
             f"ATR14:{r['atr14']}円",
@@ -484,6 +487,17 @@ def _build_ai_prompt(pool, fund_map, news_map=None):
                 f"PER:{fund.get('per')}倍 PBR:{fund.get('pbr')}倍 ROE:{fund.get('roe')}% "
                 f"営利:{fund.get('op_margin')}% 配当:{fund.get('div_yield')}%"
             )
+        warn_ids = r.get("warnings") or []
+        if warn_ids:
+            labels = [str(warn_desc.get(w) or w) for w in warn_ids]
+            parts.append("過熱警戒:" + " / ".join(labels))
+        ed = r.get("earnings_date")
+        if ed:
+            d = _days_until(ed, base_date)
+            if d is not None and 0 <= d <= EARNINGS_HORIZON_DAYS:
+                parts.append(f"決算:{ed}(あと{d}日・接近)")
+            else:
+                parts.append(f"決算:{ed}")
         headlines = news_map.get(r["code"]) or []
         if headlines:
             parts.append("ニュース:" + " / ".join(headlines[:3]))
@@ -501,6 +515,7 @@ def _ai_system_prompt():
         '"reason":"おすすめ理由","news_note":"その銘柄の直近の材料・ニュース（与えたニュース見出しや一般知識から判断。不明なら要確認）",'
         '"entry_strategy":"押し目狙い","entry_price":数値,"support":数値,"resistance":数値,'
         '"tp_price":数値,"sl_price":数値,"trailing_plan":"トレーリング計画の説明"}]}'
+        "verdict は recommend（推奨）/ watch（様子見）/ neutral（中立）/ caution（注意）/ avoid（回避）のいずれか1つだけを使ってください。"
         "code は必ず候補一覧に記載された実際のコードをそのままコピーし、「...」や省略形は使わないでください。"
         "news_note は直近の決算・ニュース・材料を具体的に記述し、見出しや確度が無い銘柄は『要確認』と付記してください。"
         "全候補銘柄を stocks 配列に含めてください。画像は使用しない。数値は与えられたデータに基づく。最終判断は人間が行う前提。"
@@ -578,9 +593,9 @@ def _call_gemini(user, system, params):
     return None
 
 
-def call_ai(pool, fund_map, news_map, params):
+def call_ai(pool, fund_map, news_map, params, base_date=None):
     ai = params.get("ai", {})
-    user = _build_ai_prompt(pool[: ai.get("max_calls_per_run", 40)], fund_map, news_map)
+    user = _build_ai_prompt(pool[: ai.get("max_calls_per_run", 40)], fund_map, news_map, params, base_date)
     system = _ai_system_prompt()
     if ai.get("provider", "deepseek") == "gemini":
         return _call_gemini(user, system, params)
@@ -653,13 +668,41 @@ def _ai_rank(item):
         return None
 
 
+def _fmt_yen(v):
+    try:
+        return f"¥{int(round(float(v))):,}"
+    except (TypeError, ValueError):
+        return "-"
+
+
+def _truncate_text(text, limit):
+    if not text:
+        return ""
+    text = str(text).replace("\n", " ").strip()
+    return text if len(text) <= limit else text[: limit - 1] + "…"
+
+
 # AI判定の優先度（小さいほど上位）。未知のverdictやAIなしは9（最下位）。
 VERDICT_PRIORITY = {
     "recommend": 0,   # 推奨（買い）
     "watch": 1,       # 様子見
-    "hold": 2,        # 保有継続
-    "avoid": 3,       # 回避
-    "sell": 3,
+    "neutral": 2,     # 中立
+    "hold": 3,        # 保有継続
+    "caution": 4,     # 注意
+    "avoid": 5,       # 回避
+    "sell": 5,
+}
+
+# Discord通知で使う判定ラベル
+VERDICT_LABELS = {
+    "recommend": "🎯推奨",
+    "watch": "👀様子見",
+    "neutral": "⚪中立",
+    "hold": "📌保有継続",
+    "caution": "⚠️注意",
+    "avoid": "⚠️回避",
+    "sell": "⚠️売却",
+    "technical_only": "📈スコア順",
 }
 
 
@@ -695,9 +738,23 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
     portfolio = params.get("portfolio", {})
     risk_pct = portfolio.get("risk_per_trade_pct", 1.0)
     ref_cap = portfolio.get("reference_capital_jpy", 1000000)
+    max_per_sector = portfolio.get("max_per_sector")
     earnings_map = earnings_map or {}
 
-    for r in ordered[:top_n]:
+    # 業種集中の上限（max_per_sector）を守りつつ、順位の高い銘柄から採用する
+    selected = []
+    sector_counts = {}
+    for r in ordered:
+        if len(selected) >= top_n:
+            break
+        sec = r.get("sector") or "その他"
+        if max_per_sector and sector_counts.get(sec, 0) >= max_per_sector:
+            continue
+        selected.append(r)
+        if max_per_sector:
+            sector_counts[sec] = sector_counts.get(sec, 0) + 1
+
+    for r in selected:
         item = ai_by_code.get(r["code"]) or {}
         tier = F.tier_for_price(r["price"], params["price_tiers"]) or {}
         ctx = r.get("ctx") or {}
@@ -759,6 +816,7 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
         "regime": regime,
         "portfolio_guide": {
             "max_positions": portfolio.get("max_positions", 5),
+            "max_per_sector": max_per_sector,
             "risk_per_trade_pct": risk_pct,
             "reference_capital_jpy": ref_cap,
         },
@@ -920,44 +978,62 @@ def save_history_json(all_stocks, target_date, regime=None, portfolio=None):
     print(f">> 日別JSON (docs/history/{target_date}.json) と meta.json を保存しました。")
 
 
-def send_to_discord(all_stocks, added_count, updated_count, target_date, webhook_url):
-    if not webhook_url or not all_stocks:
+def send_recommendations_to_discord(recommendations, added_count, updated_count, target_date, webhook_url, is_ai=False):
+    """スコア（技術）または AI 順位で並んだ推薦ランキングを Discord へ通知する。"""
+    if not webhook_url:
         return
     now_str = _jst_now().strftime("%Y-%m-%d %H:%M")
-    df = pd.DataFrame(all_stocks)
+    picks = (recommendations or {}).get("picks") or []
+    if not picks:
+        return
 
-    if added_count == 0 and updated_count == 0:
-        msg = f"☕ **【株価データ変更なし】** ({now_str})\n対象日: `{target_date}` ➔ 本日の更新はすでに完了済み、または市場データ更新待ちです。\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
+    # 通常実行でデータ更新が無い場合は、順位も変わらないため簡潔な通知に留める（AI実行時は毎回通知）。
+    if not is_ai and added_count == 0 and updated_count == 0:
+        msg = (
+            f"☕ **【株価データ変更なし】** ({now_str})\n"
+            f"対象日: `{target_date}` ➔ 本日の更新はすでに完了済み、または市場データ更新待ちです。\n"
+            "👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
+        )
         try:
             requests.post(webhook_url, json={"content": msg}, timeout=10)
         except Exception:
             pass
         return
 
-    valid_df = df[(df["roe"] >= 7.0) & (df["op_margin"] >= 6.0)].sort_values(by="mix_index", ascending=True)
+    regime = (recommendations or {}).get("regime") or {}
+    state = "risk-on" if regime.get("risk_on") else ("risk-off" if regime else "-")
+    title = "📊 **【AI推薦ランキング（スコア＋AI戦略）】**" if is_ai else "📊 **【スコア推薦ランキング】**"
+    msg = f"{title} ({now_str})\n"
+    msg += f"📅 対象営業日: **`{target_date}`** (新規: +{added_count} / 更新: {updated_count} / 地合い: {state})\n"
+    overall = (recommendations or {}).get("overall")
+    if overall:
+        msg += f"🤖 総評: {_truncate_text(overall, 180)}\n"
 
-    def make_value_section(market_name):
-        m_df = valid_df[valid_df["market"] == market_name]
-        ultra = m_df[m_df["mix_index"] < 5.625]
-        strict = m_df[(m_df["mix_index"] >= 5.625) & (m_df["mix_index"] < 11.25)]
-        text = f"\n**【{market_name}市場】** (計 {len(m_df)} 件合致)\n```\n"
-        text += f"{'コード':<5} {'社名':<8} {'割安度':<6} {'係数':<5} {'利回り'}\n" + "-" * 38 + "\n"
-        if not ultra.empty:
-            text += "▼ 🔥 超・割安 (係数 < 5.625)\n"
-            for _, r in ultra.head(3).iterrows():
-                sname = (r["name"][:6] + "..") if len(r["name"]) > 6 else r["name"]
-                text += f"{r['code']:<6} {sname:<8} +{r['discount_rate']}% {r['mix_index']:<5.2f} {r['div_yield']}%\n"
-        if not strict.empty:
-            text += "▼ 🎯 厳選割安 (係数 < 11.25)\n"
-            for _, r in strict.head(3).iterrows():
-                sname = (r["name"][:6] + "..") if len(r["name"]) > 6 else r["name"]
-                text += f"{r['code']:<6} {sname:<8} +{r['discount_rate']}% {r['mix_index']:<5.2f} {r['div_yield']}%\n"
-        return text + "```"
+    for i, p in enumerate(picks, start=1):
+        advice = p.get("advice") or {}
+        rank = p.get("rank")
+        rank_label = f"{rank}位" if rank is not None else f"{i}位"
+        verdict = VERDICT_LABELS.get(p.get("verdict"), p.get("verdict") or "-")
+        msg += (
+            f"\n**{rank_label} `{p.get('code')}` {_truncate_text(p.get('name'), 12)}** "
+            f"{verdict} (score {p.get('score')})\n"
+        )
+        line = f"　株価 {_fmt_yen(p.get('price'))}"
+        if p.get("entry_price") is not None:
+            line += f" → エントリー {_fmt_yen(p.get('entry_price'))}"
+        line += f" / 利確 {_fmt_yen(p.get('tp_price'))} / 損切 {_fmt_yen(p.get('sl_price'))}"
+        if p.get("suggested_qty"):
+            line += f" / 推奨 {int(p['suggested_qty'])}株"
+        msg += line + "\n"
+        reason = advice.get("reason") or p.get("news_note")
+        if reason:
+            msg += f"　{_truncate_text(reason, 90)}\n"
+        if p.get("earnings_soon"):
+            msg += f"　⚠️ 決算接近 ({p.get('earnings_date')})\n"
 
-    msg = f"📊 **【株式自動スクリーニング速報 (統合・高精度版)】** ({now_str})\n"
-    msg += f"📅 対象営業日: **`{target_date}`** (総登録: {len(all_stocks)}社 / 新規: +{added_count} / 更新: {updated_count})\n"
-    msg += make_value_section("プライム") + make_value_section("スタンダード")
     msg += "\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
+    if len(msg) > 1900:
+        msg = msg[:1890] + "\n…（省略）"
 
     try:
         requests.post(webhook_url, json={"content": msg}, timeout=10)
@@ -1023,8 +1099,6 @@ def main():
         state = "risk-on" if regime["risk_on"] else "risk-off"
         print(f">> 地合い: {state} ({regime['ticker']} {regime['close']} vs SMA{regime['sma_days']} {regime['sma']})")
     save_history_json(results, date, regime, params.get("portfolio"))
-    if not args.no_discord:
-        send_to_discord(results, added, updated, date, DISCORD_WEBHOOK_URL)
 
     # ---- AI ステージ ----
     pool = build_pool(results, params)
@@ -1054,7 +1128,7 @@ def main():
 
         if ai_map is None:
             news_map = fetch_news_for_pool(pool)
-            ai_map = call_ai(pool, fund_map, news_map, params)
+            ai_map = call_ai(pool, fund_map, news_map, params, date)
             ai_map = sanitize_ai_map(ai_map, pool)
             if ai_map:
                 os.makedirs(AI_ANALYSIS_DIR, exist_ok=True)
@@ -1065,8 +1139,8 @@ def main():
             else:
                 print(">> ⚠️ AI応答が無効（プレースホルダ等）のため技術スコアでフォールバックします")
 
-    # 決算日はスキャン時に取得した info から抽出済み（追加通信なし）
-    earnings_map = {r["code"]: r["earnings_date"] for r in pool if r.get("earnings_date")}
+    # 決算日はスキャン時に取得した info から抽出済み（追加通信なし）。プール限定でなく全銘柄を対象にする。
+    earnings_map = {r["code"]: r["earnings_date"] for r in results if r.get("earnings_date")}
     earnings_items = save_earnings_json(earnings_map, date)["items"] if earnings_map else {}
 
     recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime, earnings_items)
@@ -1075,6 +1149,10 @@ def main():
         with open(rec_path, "w", encoding="utf-8") as f:
             json.dump(recommendations, f, ensure_ascii=False)
         print(f">> おすすめ出力: {rec_path}")
+
+    if not args.no_discord:
+        is_ai = bool(args.ai and params.get("ai", {}).get("enabled") and ai_map)
+        send_recommendations_to_discord(recommendations, added, updated, date, DISCORD_WEBHOOK_URL, is_ai)
 
     print(">> スクリーニング（main8）完了")
     for p in recommendations["picks"]:

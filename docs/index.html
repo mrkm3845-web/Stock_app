@@ -311,11 +311,12 @@
         let currentDataDate = null;
         let EARNINGS = {};
         let PICKS = {};
+        let PARAMS = null;
         let scoreThreshold = 70;
 
         document.addEventListener("DOMContentLoaded", async () => {
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
-            await Promise.all([loadAILatest(), loadMeta(), loadEarnings(), loadPicks()]);
+            await Promise.all([loadAILatest(), loadMeta(), loadEarnings(), loadPicks(), loadParams()]);
             renderRegime();
             await initDates();
         });
@@ -335,6 +336,19 @@
                 PICKS = {};
                 (d.picks || []).forEach(p => { if (p && p.code) PICKS[p.code] = p; });
             } catch (e) { PICKS = {}; }
+        }
+
+        async function loadParams() {
+            try {
+                const res = await fetch('strategy_params.json');
+                PARAMS = await res.json();
+            } catch (e) { PARAMS = null; }
+        }
+
+        function tierForPrice(price) {
+            const tiers = (PARAMS && PARAMS.price_tiers) || [];
+            for (const t of tiers) { if (price >= t.min && price < t.max) return t; }
+            return tiers.length ? tiers[tiers.length - 1] : null;
         }
 
         function renderRegime() {
@@ -494,19 +508,20 @@
             if (!v) return "";
             const map = {
                 recommend: "verdict-recommend", neutral: "verdict-neutral",
-                avoid: "verdict-avoid", watch: "verdict-watch",
+                hold: "verdict-neutral", avoid: "verdict-avoid",
+                caution: "verdict-avoid", watch: "verdict-watch",
             };
             const label = {
-                recommend: "推奨", neutral: "中立", avoid: "回避", watch: "様子見",
+                recommend: "推奨", neutral: "中立", hold: "保有",
+                caution: "注意", avoid: "回避", watch: "様子見",
             }[v] || v;
             return '<span class="badge ' + (map[v] || "verdict-watch") + '">' + label + '</span>';
         }
 
-        const AI_VERDICT_ORDER = { recommend: 0, watch: 1, hold: 2, avoid: 3, sell: 3 };
+        const AI_VERDICT_ORDER = { recommend: 0, watch: 1, neutral: 2, hold: 3, caution: 4, avoid: 5, sell: 5 };
+        // 銘柄ごとの最新AI判定を返す（当日データが無くても直近の判定を as-of 日付付きで表示する）
         function currentAI(code) {
-            const ai = AI_LATEST[code];
-            if (!ai || !currentDataDate) return null;
-            return ai.date === currentDataDate ? ai : null;
+            return AI_LATEST[code] || null;
         }
         function aiVerdictPriority(code) {
             const ai = currentAI(code);
@@ -710,6 +725,7 @@
             const sortBy = document.getElementById("sort-by").value;
 
             let filtered = STOCKS.filter(s => {
+                if (s.excluded) return false;  // 週足トレンド下向き等の除外銘柄は表示しない
                 const isMini = checkMini(s);
                 if (market !== "ALL" && s.market !== market) return false;
                 if (kabumini === "ONLY" && !isMini) return false;
@@ -1001,10 +1017,8 @@
 
             const p = s.price;
             const sig = evaluateSignal(s);
-
-            let tpPct = 0.12;
-            let slPct = p > 3000 ? 0.02 : 0.05;
-            let maxHoldDays = 14;
+            const tier = tierForPrice(p);
+            const maxHoldDays = (pick && pick.max_hold_days) || (tier && tier.max_hold_days) || 14;
 
             let alertBoxHtml = "";
             if (sig.isWarning) {
@@ -1032,8 +1046,15 @@
             }
 
             const pg = META && META.portfolio;
-            const stopLoss = (pick && pick.sl_price) ? pick.sl_price : Math.round(p * (1.0 - slPct));
-            const takeProfit = (pick && pick.tp_price) ? pick.tp_price : Math.round(p * (1.0 + tpPct));
+            const atrMult = (pick && pick.atr_sl_mult) || (tier && tier.atr_sl_mult) || 2.0;
+            const tierTpPct = (tier && tier.tp_pct) || 0.12;
+            const tierSlPct = (tier && tier.sl_pct) || 0.05;
+            const takeProfit = (pick && pick.tp_price) ? pick.tp_price : Math.round(p * (1.0 + tierTpPct));
+            const stopLoss = (pick && pick.sl_price) ? pick.sl_price
+                : (s.atr14 ? Math.round(p - atrMult * s.atr14) : Math.round(p * (1.0 - tierSlPct)));
+            const slPctVal = p > 0 ? Math.abs((p - stopLoss) / p) : 0;
+            const tpPctVal = p > 0 ? Math.abs((takeProfit - p) / p) : 0;
+            const rrVal = (p - stopLoss) > 0 ? (takeProfit - p) / (p - stopLoss) : null;
             let sizeHtml = "";
             if (pick && pick.suggested_qty && pg) {
                 sizeHtml = `<div class="strategy-box">
@@ -1052,6 +1073,7 @@
                             <i class="bi bi-stars me-1"></i> AI戦略分析（${esc(ai.date || '-')} 更新 / 順位 ${ai.rank !== null && ai.rank !== undefined ? ai.rank : '-'}）
                             ${verdictBadge(ai.verdict)}
                         </div>
+                        <div class="strategy-desc">※ AIの水準は参考情報です。実際の売買指示は下記「スイング売買戦略（価格帯別ルール）」を使用。</div>
                         <div class="strategy-item"><small class="text-muted">根拠</small><div>${esc(ai.reason || '-')}</div></div>
                         <div class="strategy-item"><small class="text-muted">直近の材料・ニュース</small><div>${esc(ai.news_note || '-')}</div></div>
                         <div class="row g-1 text-center mt-1 mb-2">
@@ -1094,23 +1116,23 @@
 
                 <div class="strategy-box">
                     <div class="fw-bold text-dark small mb-2">
-                        <i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略 (14日実証最適化):
+                        <i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略（価格帯別ルール${pick ? '・推奨' : ''}）:
                     </div>
 
                     <div class="strategy-item text-danger fw-bold">
-                        <i class="bi bi-shield-x me-1"></i> 損切りライン: ¥${stopLoss.toLocaleString()} (-${(slPct*100).toFixed(1)}%)
+                        <i class="bi bi-shield-x me-1"></i> 損切りライン: ¥${stopLoss.toLocaleString()} (-${(slPctVal*100).toFixed(1)}%)
                     </div>
-                    <div class="strategy-desc">└ 【逆指値】実証検証で無駄なロスカットを抑えた最適ストップ値</div>
+                    <div class="strategy-desc">└ 【逆指値】価格帯別のATR${atrMult}倍。無駄なロスカットを抑えたストップ値</div>
 
                     <div class="strategy-item text-primary fw-bold">
-                        <i class="bi bi-trophy me-1"></i> 利確ターゲット: ¥${takeProfit.toLocaleString()} (+${(tpPct*100).toFixed(1)}%)
+                        <i class="bi bi-trophy me-1"></i> 利確ターゲット: ¥${takeProfit.toLocaleString()} (+${(tpPctVal*100).toFixed(1)}%)
                     </div>
-                    <div class="strategy-desc">└ 【利食い】勢いがあるうちに確実に手仕舞う設定 (リスクリワード比 1:2.4)</div>
+                    <div class="strategy-desc">└ 【利食い】価格帯別の目標${rrVal !== null ? ` (リスクリワード比 1:${rrVal.toFixed(1)})` : ''}</div>
 
                     <div class="strategy-item text-secondary fw-bold">
-                        <i class="bi bi-clock-history me-1"></i> 最適保有期間: ${maxHoldDays}営業日 (約3週間)
+                        <i class="bi bi-clock-history me-1"></i> 最適保有期間: ${maxHoldDays}営業日
                     </div>
-                    <div class="strategy-desc">└ 【手仕舞い】14営業日経過時点で目標未達の場合は終値で手仕舞い推奨</div>
+                    <div class="strategy-desc">└ 【手仕舞い】${maxHoldDays}営業日経過時点で目標未達の場合は終値で手仕舞い推奨</div>
                 </div>
 
                 <div class="row g-2">
@@ -1143,9 +1165,6 @@
 ・グレアム理論株価: ${s.graham_price}円 (割安度: ${s.discount_rate}%)
 ・ファンダメンタルズ: PER ${s.per}倍 / PBR ${s.pbr}倍 / ROE ${s.roe}% / 営業利益率 ${s.op_margin}% / 配当利回り ${s.div_yield}%
 ・テクニカル/出来高: ${gcText} / 出来高増加率: ${valRatioText} / 5日平均売買代金: ${s.avg_val_5d || '-'}千円 / ATR14: ${s.atr14 || '-'}円${ai && ai.reason ? `\n・前回AI判定: ${ai.verdict}（根拠: ${ai.reason}）` : ''}
-
-【最適化バックテスト済みの売買ルール】
-・利確目標: +12% / 損切ライン: -${s.price > 3000 ? 2 : 5}% / 最大保有期限: 14営業日
 
 【回答してほしい内容】
 1. 直近の材料・ニュース・決算等のリスク要因
