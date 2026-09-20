@@ -1,6 +1,6 @@
 # Stock_app — 日本株スクリーナー（スコア + AI分析 + バックテスト）
 
-日本株（プライム／スタンダード 約3,100銘柄）を毎日スキャンし、**技術スコアで候補を絞り、AI（Gemini）が順位付け**して「推奨／様子見」を提示するスクリーナーです。バックテストによる検証と、`docs/strategy_params.json` への**ガード付き自動反映**までを単一リポジトリで行います。
+日本株（プライム／スタンダード 約3,100銘柄）を毎日スキャンし、**技術スコアで候補を絞り、AI（Gemini）が順位付け**して判定（推奨／様子見／中立／注意／回避）を提示するスクリーナーです。バックテストによる検証と、`docs/strategy_params.json` への**ガード付き自動反映**までを単一リポジトリで行います。
 
 - ビューア: `https://mrkm3845-web.github.io/Stock_app/`
 - **まず読む**: [`PROJECT_STATUS.md`](PROJECT_STATUS.md)（いま何が実装済みか）＋ [`back_tester/README.md`](back_tester/README.md)（検証の仕組み）
@@ -16,7 +16,7 @@
 | [`common/`](common/) | 共通モジュール（特徴量・スコア・パラメータ読込） |
 | [`docs/`](docs/) | フロント（`index.html` / `journal.html`）と出力JSON・`strategy_params.json` |
 | [`back_tester/`](back_tester/) | ローリングウォークフォワード検証・シグナル研究・自動反映 |
-| [`.github/workflows/`](.github/workflows/) | 技術スクリーニング（平日5回）／AI分析（20:17 JST）／バックテスト（月次） |
+| [`.github/workflows/`](.github/workflows/) | 技術スクリーニング（平日5回）／AI分析（20:17 JST）／バックテスト（月次）／Discord通知（AI実行時） |
 
 ---
 
