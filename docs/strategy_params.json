@@ -95,7 +95,7 @@
     "model": "gemini-3.6-flash",
     "stage1_pool_min": 20,
     "stage1_pool_max": 40,
-    "weekly_top_picks": 5,
+    "max_picks": 5,
     "monthly_budget_jpy": 1000,
     "max_calls_per_run": 40
   }

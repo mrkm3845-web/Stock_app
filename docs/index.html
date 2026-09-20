@@ -87,6 +87,9 @@
             </div>
         </div>
 
+        <!-- AI推奨アラート -->
+        <div id="rec-alert" class="mb-0"></div>
+
         <!-- スコア絞り込み + 実証プリセットボタン -->
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -319,8 +322,20 @@
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
             await Promise.all([loadAILatest(), loadMeta(), loadEarnings(), loadPicks(), loadParams()]);
             renderRegime();
+            renderRecAlert();
             await initDates();
         });
+
+        function renderRecAlert() {
+            const el = document.getElementById('rec-alert');
+            if (!el) return;
+            if (Object.keys(PICKS).length === 0) {
+                el.innerHTML = `<div class="alert alert-secondary py-2 mb-2 small fw-bold" role="alert">
+                    <i class="bi bi-robot me-1"></i> 本日のAI推奨（recommend）はありません（様子見）。</div>`;
+            } else {
+                el.innerHTML = '';
+            }
+        }
 
         async function loadEarnings() {
             try {

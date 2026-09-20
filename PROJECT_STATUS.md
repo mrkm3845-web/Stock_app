@@ -94,12 +94,14 @@ flowchart LR
 - 候補プール = スコア上位 `stage1_pool_max`（40）。
 - **おすすめの並び**（`build_recommendations`）: **判定優先度 → AI順位 → スコア → 出来高増加率 → 流動性**。
   - 判定優先度: `recommend`(0) → `watch`(1) → `neutral`(2) → `hold`(3) → `caution`(4) → `avoid`/`sell`(5) → AIなし(9)。
+  - **AI実行時は `verdict=recommend` のみを「推奨」として採用**。件数は無理に埋めず**0件もあり得る**（上限 `ai.max_picks`、旧キー `weekly_top_picks` も後方互換）。
+  - **技術実行（AIなし）**はスコア上位を技術候補として `recommendations_technical.json` に出力（`verdict=technical_only`）。
   - **業種集中の上限**: `portfolio.max_per_sector`（既定2）を守り、同一業種は最大2銘柄まで採用。
 - **エグジットは「ルール基本」**: 利確 = 価格×(1+`price_tiers.tp_pct`)、損切 = 価格 − `price_tiers.atr_sl_mult`×ATR14。**AIの tp/sl は `advice` に参照保持**（表示上はルール優先）。
 - **リスクベースの推奨株数**: `参考資金 × risk% ÷ 損切幅`（`portfolio` セクション）。
 - **決算接近の警告**: スキャン時の `.info` から次回決算日を抽出（`earningsTimestampStart`、追加通信なし）→ `docs/earnings.json` とおすすめに `earnings_date`/`earnings_soon`。
 - **地合い**: `1306.T`（TOPIX ETF）が200日線より上か（risk-on/off）を `meta.json.regime` に出力（**表示のみ・選定フィルタはOFF**）。
-- **Discord通知**: 推薦ランキングを送信（AI実行時はAI順位＋総評、通常実行時はスコア順）。利確/損切は価格帯別ルール値。
+- **Discord通知**: AI実行時は「AI推奨（本日）」として `recommend` のみを送信。**0件の日は「本日はAI推奨はありません（様子見）＋総評」**を送信。通常実行時は「技術スコア ランキング」。利確/損切は価格帯別ルール値。
   - 送信先は環境変数 `DISCORD_WEBHOOK_URL`。**`daily_main8.yml`（通常）は同変数を設定していないため、実際に通知されるのは AI実行（`daily_main8_ai.yml`）のみ**。通常回はデータ更新が無ければ「株価データ変更なし」通知になる。
 - フラグ: `--ai`（AI実行）/ `--force-ai`（当日キャッシュを無視して再実行）/ `--no-discord` / `--max-stocks`。
 
@@ -109,6 +111,7 @@ flowchart LR
 
 - [`docs/index.html`](docs/index.html): 統合スクリーナー。
   - 一覧バッジ: **最新AI実行日**の銘柄は `⭐AI #順位`、**過去バッチ**の銘柄は `⭐AI MM-DD`（順位なし・薄表示の参考）＋判定（推奨/様子見/中立/注意/回避）。`excluded` 銘柄は非表示。※rankは回ごとの順位のため日付をまたいで混在させない。
+  - **推奨0件バナー**: `recommendations.json` が空のとき「本日のAI推奨（recommend）はありません」を表示。
   - ヘッダ: **地合い risk-on/off** と **推奨ポートフォリオ（最大N銘柄・1取引リスク%）**。
   - デフォルト並び替え: **AI推奨順**（推奨→様子見→中立→保有→注意→回避→順位）。他にスコア順など。
   - 銘柄モーダル: 銘柄詳細＋**価格帯別ルールの利確/損切（ATR損切）**＋**推奨株数**＋決算警告。AI戦略は**参考情報（売買指示には未採用）**と明示。「最新AI実行」ボタンは**常時有効**（プロンプトをコピーしてGeminiへ）。
@@ -157,7 +160,7 @@ flowchart LR
 - `portfolio`: `{max_positions:5, max_per_sector:2, risk_per_trade_pct:1.0, reference_capital_jpy:1000000}`（`max_per_sector` は同一業種の同時採用上限）
 - `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
 - `warnings`: 低位/中位の出来高4倍超の警告
-- `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, weekly_top_picks:5, ...}`（`stage1_pool_min` は定義のみで**未使用**）
+- `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, max_picks:5, ...}`（`max_picks`＝表示する推奨の最大件数。旧 `weekly_top_picks` は後方互換で読む。`stage1_pool_min` は定義のみで**未使用**）
 
 ---
 

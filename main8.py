@@ -505,10 +505,11 @@ def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None)
     return "\n".join(lines)
 
 
-def _ai_system_prompt():
+def _ai_system_prompt(max_picks=5):
     return (
         "あなたは日本株スイングトレードのプロ。以下の候補銘柄すべてを、上昇期待・リスク・流動性・テクニカル・"
-        "ファンダメンタルの観点で1位から順位づけし、上位3〜5銘柄をおすすめに選んでください。"
+        "ファンダメンタルの観点で1位から順位づけしてください。"
+        f"verdict=recommend は本当に買い推奨できる銘柄だけに付け、件数を無理に埋めないでください（該当が無ければ0件で構いません。上限{max_picks}件）。"
         "回答は必ず以下のJSONのみを返してください（Markdownやコードフェンスなし）:"
         '{"overall":"市場・テーマの総評（2〜3文）",'
         '"stocks":[{"code":"候補一覧に記載の実際の銘柄コード文字列","rank":1,"verdict":"recommend",'
@@ -595,8 +596,9 @@ def _call_gemini(user, system, params):
 
 def call_ai(pool, fund_map, news_map, params, base_date=None):
     ai = params.get("ai", {})
+    max_picks = ai.get("max_picks", ai.get("weekly_top_picks", 5))
     user = _build_ai_prompt(pool[: ai.get("max_calls_per_run", 40)], fund_map, news_map, params, base_date)
-    system = _ai_system_prompt()
+    system = _ai_system_prompt(max_picks)
     if ai.get("provider", "deepseek") == "gemini":
         return _call_gemini(user, system, params)
     return _call_deepseek(user, system, params)
@@ -709,7 +711,8 @@ VERDICT_LABELS = {
 def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime=None, earnings_map=None):
     picks = []
     ai = params.get("ai", {})
-    top_n = ai.get("weekly_top_picks", 5)
+    # 表示する推奨の最大件数（旧キー weekly_top_picks も後方互換で読む）
+    limit = ai.get("max_picks", ai.get("weekly_top_picks", 5))
 
     overall = None
     ai_stocks = []
@@ -741,11 +744,18 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
     max_per_sector = portfolio.get("max_per_sector")
     earnings_map = earnings_map or {}
 
+    # AI実行時は verdict=recommend のみを「推奨」として採用する（件数は無理に埋めない）。
+    # AIなし（技術実行）はスコア上位を技術候補として扱う。
+    if ai_by_code:
+        candidates = [r for r in ordered if (ai_by_code.get(r["code"]) or {}).get("verdict") == "recommend"]
+    else:
+        candidates = ordered
+
     # 業種集中の上限（max_per_sector）を守りつつ、順位の高い銘柄から採用する
     selected = []
     sector_counts = {}
-    for r in ordered:
-        if len(selected) >= top_n:
+    for r in candidates:
+        if len(selected) >= limit:
             break
         sec = r.get("sector") or "その他"
         if max_per_sector and sector_counts.get(sec, 0) >= max_per_sector:
@@ -983,8 +993,29 @@ def send_recommendations_to_discord(recommendations, added_count, updated_count,
     if not webhook_url:
         return
     now_str = _jst_now().strftime("%Y-%m-%d %H:%M")
-    picks = (recommendations or {}).get("picks") or []
+    rec = recommendations or {}
+    picks = rec.get("picks") or []
+    regime = rec.get("regime") or {}
+    state = "risk-on" if regime.get("risk_on") else ("risk-off" if regime else "-")
+    overall = rec.get("overall")
+    web = "👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
+
+    def _post(content):
+        try:
+            requests.post(webhook_url, json={"content": content}, timeout=10)
+        except Exception:
+            pass
+
+    # AI実行で推奨0件の日は「本日は推奨なし」を明示して通知する
     if not picks:
+        if is_ai:
+            msg = f"📊 **【AI推奨（本日）】** ({now_str})\n"
+            msg += f"📅 対象営業日: **`{target_date}`** (地合い: {state})\n"
+            msg += "🤖 本日はAI推奨（recommend）はありません（様子見）。\n"
+            if overall:
+                msg += f"総評: {_truncate_text(overall, 220)}\n"
+            msg += f"\n{web}"
+            _post(msg)
         return
 
     # 通常実行でデータ更新が無い場合は、順位も変わらないため簡潔な通知に留める（AI実行時は毎回通知）。
@@ -992,20 +1023,13 @@ def send_recommendations_to_discord(recommendations, added_count, updated_count,
         msg = (
             f"☕ **【株価データ変更なし】** ({now_str})\n"
             f"対象日: `{target_date}` ➔ 本日の更新はすでに完了済み、または市場データ更新待ちです。\n"
-            "👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
+            f"{web}"
         )
-        try:
-            requests.post(webhook_url, json={"content": msg}, timeout=10)
-        except Exception:
-            pass
+        _post(msg)
         return
-
-    regime = (recommendations or {}).get("regime") or {}
-    state = "risk-on" if regime.get("risk_on") else ("risk-off" if regime else "-")
-    title = "📊 **【AI推薦ランキング（スコア＋AI戦略）】**" if is_ai else "📊 **【スコア推薦ランキング】**"
+    title = "📊 **【AI推奨（本日）】**" if is_ai else "📊 **【技術スコア ランキング】**"
     msg = f"{title} ({now_str})\n"
     msg += f"📅 対象営業日: **`{target_date}`** (新規: +{added_count} / 更新: {updated_count} / 地合い: {state})\n"
-    overall = (recommendations or {}).get("overall")
     if overall:
         msg += f"🤖 総評: {_truncate_text(overall, 180)}\n"
 
@@ -1031,14 +1055,10 @@ def send_recommendations_to_discord(recommendations, added_count, updated_count,
         if p.get("earnings_soon"):
             msg += f"　⚠️ 決算接近 ({p.get('earnings_date')})\n"
 
-    msg += "\n👉 Webスクリーナー: https://mrkm3845-web.github.io/Stock_app/"
+    msg += f"\n{web}"
     if len(msg) > 1900:
         msg = msg[:1890] + "\n…（省略）"
-
-    try:
-        requests.post(webhook_url, json={"content": msg}, timeout=10)
-    except Exception:
-        pass
+    _post(msg)
 
 
 def _diff_counts(target_date, new_batch):
@@ -1145,10 +1165,10 @@ def main():
 
     recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime, earnings_items)
     rec_path = RECOMMENDATIONS_PATH if args.ai else TECHNICAL_REC_PATH
-    if recommendations.get("picks"):
-        with open(rec_path, "w", encoding="utf-8") as f:
-            json.dump(recommendations, f, ensure_ascii=False)
-        print(f">> おすすめ出力: {rec_path}")
+    # 推奨0件でも書き出し、前回の推奨が残らないようにする
+    with open(rec_path, "w", encoding="utf-8") as f:
+        json.dump(recommendations, f, ensure_ascii=False)
+    print(f">> おすすめ出力: {rec_path}（{len(recommendations.get('picks') or [])} 件）")
 
     if not args.no_discord:
         is_ai = bool(args.ai and params.get("ai", {}).get("enabled") and ai_map)

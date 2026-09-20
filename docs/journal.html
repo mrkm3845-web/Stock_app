@@ -102,6 +102,9 @@
             </div>
         </div>
 
+        <!-- AI推奨アラート -->
+        <div id="rec-alert" class="mb-0"></div>
+
         <div class="tab-content" id="mainTabContent">
             <!-- タブ 1: 取引一覧 & ポジション管理 -->
             <div class="tab-pane fade show active" id="tab-positions" role="tabpanel">
@@ -394,6 +397,7 @@
             await Promise.all([loadAIStrategies(), loadParams(), loadPicks(), loadMeta()]);
             await loadLatestPrices();
             renderAll();
+            renderRecAlert();
             setupDragAndDrop();
 
             document.getElementById('tab-analytics-btn').addEventListener('shown.bs.tab', () => {
@@ -441,6 +445,17 @@
         function isCurrentAIBatch(code) {
             const ai = AI_STRATEGY_MAP[code];
             return !!(ai && LATEST_AI_DATE && ai.date === LATEST_AI_DATE);
+        }
+
+        function renderRecAlert() {
+            const el = document.getElementById('rec-alert');
+            if (!el) return;
+            if (Object.keys(J_PICKS).length === 0) {
+                el.innerHTML = `<div class="alert alert-secondary py-2 mb-2 small fw-bold" role="alert">
+                    <i class="bi bi-robot me-1"></i> 本日のAI推奨（recommend）はありません（様子見）。</div>`;
+            } else {
+                el.innerHTML = '';
+            }
         }
 
         async function loadParams() {
