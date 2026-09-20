@@ -307,6 +307,7 @@
         let currentStockForAI = null;
         let currentSmartPreset = 'none';
         let AI_LATEST = {};
+        let LATEST_AI_DATE = null;  // 最新のAI実行日（rankは回ごとの順位のため、日付で区別する）
         let META = null;
         let currentDataDate = null;
         let EARNINGS = {};
@@ -420,8 +421,11 @@
             try {
                 const res = await fetch('ai_strategy_latest.json');
                 AI_LATEST = await res.json();
+                const dates = Object.values(AI_LATEST).map(a => a && a.date).filter(Boolean).sort();
+                LATEST_AI_DATE = dates.length ? dates[dates.length - 1] : null;
             } catch (e) {
                 AI_LATEST = {};
+                LATEST_AI_DATE = null;
             }
         }
 
@@ -519,19 +523,28 @@
         }
 
         const AI_VERDICT_ORDER = { recommend: 0, watch: 1, neutral: 2, hold: 3, caution: 4, avoid: 5, sell: 5 };
-        // 銘柄ごとの最新AI判定を返す（当日データが無くても直近の判定を as-of 日付付きで表示する）
+        // 銘柄ごとの最新AI判定を返す（as-of 日付付きで表示する）
         function currentAI(code) {
             return AI_LATEST[code] || null;
         }
-        function aiVerdictPriority(code) {
-            const ai = currentAI(code);
-            if (!ai || !ai.verdict) return 9;
-            const p = AI_VERDICT_ORDER[ai.verdict];
-            return p !== undefined ? p : 9;
+        // その銘柄のAIが最新バッチ（最新実行日）のものかどうか
+        function isCurrentAIBatch(code) {
+            const ai = AI_LATEST[code];
+            return !!(ai && LATEST_AI_DATE && ai.date === LATEST_AI_DATE);
         }
+        // 並び順: 最新バッチ（0〜9）→ 過去バッチ（100〜109）→ AIなし（1000）
+        function aiVerdictPriority(code) {
+            const ai = AI_LATEST[code];
+            if (!ai || !ai.verdict) return 1000;
+            const p = AI_VERDICT_ORDER[ai.verdict];
+            const pv = p !== undefined ? p : 9;
+            return (LATEST_AI_DATE && ai.date === LATEST_AI_DATE) ? pv : (100 + pv);
+        }
+        // 過去バッチの順位は最新バッチの順位と混ぜず、順位なし扱いにする
         function aiRankOf(code) {
-            const ai = currentAI(code);
+            const ai = AI_LATEST[code];
             if (!ai || ai.rank === null || ai.rank === undefined) return 1e9;
+            if (LATEST_AI_DATE && ai.date !== LATEST_AI_DATE) return 1e9;
             return Number(ai.rank);
         }
 
@@ -839,8 +852,14 @@
                 let aiBadge = "";
                 const ai = currentAI(s.code);
                 if (ai) {
-                    const r = (ai.rank !== null && ai.rank !== undefined) ? ai.rank : '';
-                    aiBadge = `<span class="badge-ai ms-1" title="AI戦略分析済み (${ai.date})">⭐AI${r !== '' ? ' #' + r : ''}</span> ${verdictBadge(ai.verdict)}`;
+                    const isCur = (LATEST_AI_DATE && ai.date === LATEST_AI_DATE);
+                    const r = (isCur && ai.rank !== null && ai.rank !== undefined) ? ai.rank : '';
+                    const label = isCur
+                        ? `⭐AI${r !== '' ? ' #' + r : ''}`
+                        : `⭐AI ${ai.date ? ai.date.slice(5) : ''}`;
+                    const styleAttr = isCur ? '' : ' style="opacity:.6;"';
+                    const tip = isCur ? `AI戦略分析 (${ai.date})` : `AI戦略分析 (${ai.date})・最新バッチ外の参考`;
+                    aiBadge = `<span class="badge-ai ms-1"${styleAttr} title="${tip}">${label}</span> ${verdictBadge(ai.verdict)}`;
                 }
 
                 let earnBadge = "";
@@ -1070,7 +1089,7 @@
                 aiSectionHtml = `
                     <div class="strategy-box ai">
                         <div class="fw-bold text-warning small mb-2">
-                            <i class="bi bi-stars me-1"></i> AI戦略分析（${esc(ai.date || '-')} 更新 / 順位 ${ai.rank !== null && ai.rank !== undefined ? ai.rank : '-'}）
+                            <i class="bi bi-stars me-1"></i> AI戦略分析（${esc(ai.date || '-')} 更新${isCurrentAIBatch(s.code) ? ` / 順位 ${ai.rank !== null && ai.rank !== undefined ? ai.rank : '-'}` : '・最新バッチ外（参考）'}）
                             ${verdictBadge(ai.verdict)}
                         </div>
                         <div class="strategy-desc">※ AIの水準は参考情報です。実際の売買指示は下記「スイング売買戦略（価格帯別ルール）」を使用。</div>
