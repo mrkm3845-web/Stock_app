@@ -1,11 +1,31 @@
 {
-  "generated_at": "2026-09-20T20:39:51",
+  "generated_at": "2026-09-20T20:45:55",
   "date": "2026-09-20",
   "horizon_days": 14,
   "items": {
+    "2122": {
+      "date": "2025-08-12",
+      "days_until": -404,
+      "soon": false
+    },
+    "2124": {
+      "date": "2026-11-13",
+      "days_until": 54,
+      "soon": false
+    },
+    "2127": {
+      "date": "2026-10-30",
+      "days_until": 40,
+      "soon": false
+    },
     "212A": {
       "date": "2025-06-13",
       "days_until": -464,
+      "soon": false
+    },
+    "2130": {
+      "date": "2025-07-29",
+      "days_until": -418,
       "soon": false
     },
     "2136": {
@@ -2251,6 +2271,71 @@
     "3431": {
       "date": "2025-08-05",
       "days_until": -411,
+      "soon": false
+    },
+    "3433": {
+      "date": "2026-11-05",
+      "days_until": 46,
+      "soon": false
+    },
+    "3434": {
+      "date": "2025-08-06",
+      "days_until": -410,
+      "soon": false
+    },
+    "3435": {
+      "date": "2025-05-13",
+      "days_until": -495,
+      "soon": false
+    },
+    "3436": {
+      "date": "2026-11-11",
+      "days_until": 52,
+      "soon": false
+    },
+    "3437": {
+      "date": "2025-05-15",
+      "days_until": -493,
+      "soon": false
+    },
+    "3439": {
+      "date": "2025-05-07",
+      "days_until": -501,
+      "soon": false
+    },
+    "343A": {
+      "date": "2025-05-15",
+      "days_until": -493,
+      "soon": false
+    },
+    "3440": {
+      "date": "2025-07-10",
+      "days_until": -437,
+      "soon": false
+    },
+    "3441": {
+      "date": "2025-06-13",
+      "days_until": -464,
+      "soon": false
+    },
+    "3443": {
+      "date": "2025-08-07",
+      "days_until": -409,
+      "soon": false
+    },
+    "3444": {
+      "date": "2025-06-13",
+      "days_until": -464,
+      "soon": false
+    },
+    "3445": {
+      "date": "2025-08-07",
+      "days_until": -409,
+      "soon": false
+    },
+    "3446": {
+      "date": "2025-05-12",
+      "days_until": -496,
       "soon": false
     }
   }
