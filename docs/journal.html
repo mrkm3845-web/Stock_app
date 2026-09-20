@@ -440,6 +440,13 @@
             return "¥" + Number(v).toLocaleString();
         }
 
+        function pctFrom(base, v) {
+            if (!base || v === null || v === undefined || base <= 0) return "";
+            const p = (Number(v) - Number(base)) / Number(base) * 100;
+            if (!isFinite(p)) return "";
+            return ` (${p >= 0 ? '+' : ''}${p.toFixed(1)}%)`;
+        }
+
         function scoreOf(s) {
             return (s.score !== null && typeof s.score !== 'undefined') ? s.score : 0;
         }
@@ -510,8 +517,8 @@
                         <div class="row g-1 text-center mt-1 mb-2">
                             <div class="col-3"><small class="text-muted">エントリー</small><div class="fw-bold">${yen(ai.entry_price)}</div></div>
                             <div class="col-3"><small class="text-muted">サポート</small><div class="fw-bold">${yen(ai.support)}</div></div>
-                            <div class="col-3"><small class="text-muted">利確</small><div class="fw-bold text-danger">${yen(ai.tp_price)}</div></div>
-                            <div class="col-3"><small class="text-muted">損切</small><div class="fw-bold text-primary">${yen(ai.sl_price)}</div></div>
+                            <div class="col-3"><small class="text-muted">利確</small><div class="fw-bold text-danger">${yen(ai.tp_price)}<small class="text-muted">${pctFrom(ai.entry_price, ai.tp_price)}</small></div></div>
+                            <div class="col-3"><small class="text-muted">損切</small><div class="fw-bold text-primary">${yen(ai.sl_price)}<small class="text-muted">${pctFrom(ai.entry_price, ai.sl_price)}</small></div></div>
                         </div>
                         <div class="strategy-item"><small class="text-muted">トレーリング計画</small><div>${esc(ai.trailing_plan || '-')}</div></div>
                     </div>`;
@@ -561,8 +568,8 @@
                     <div class="row g-1 text-center mt-1 mb-2">
                         <div class="col-3"><small class="text-muted">エントリー</small><div class="fw-bold">${yen(ai.entry_price)}</div></div>
                         <div class="col-3"><small class="text-muted">サポート</small><div class="fw-bold">${yen(ai.support)}</div></div>
-                        <div class="col-3"><small class="text-muted">利確</small><div class="fw-bold text-danger">${yen(ai.tp_price)}</div></div>
-                        <div class="col-3"><small class="text-muted">損切</small><div class="fw-bold text-primary">${yen(ai.sl_price)}</div></div>
+                        <div class="col-3"><small class="text-muted">利確</small><div class="fw-bold text-danger">${yen(ai.tp_price)}<small class="text-muted">${pctFrom(ai.entry_price, ai.tp_price)}</small></div></div>
+                        <div class="col-3"><small class="text-muted">損切</small><div class="fw-bold text-primary">${yen(ai.sl_price)}<small class="text-muted">${pctFrom(ai.entry_price, ai.sl_price)}</small></div></div>
                     </div>
                     <div class="strategy-item"><small class="text-muted">エントリー戦略</small><div>${esc(ai.entry_strategy || '-')}</div></div>
                     <div class="strategy-item"><small class="text-muted">トレーリング計画</small><div>${esc(ai.trailing_plan || '-')}</div></div>
