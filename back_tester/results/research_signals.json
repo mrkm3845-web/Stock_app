@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-19T16:52:03",
+  "generated_at": "2026-09-20T11:25:39",
   "walk_end": "2026-08-31",
   "n_quantiles": 10,
   "hold_days": 5,
@@ -681,6 +681,74 @@
           "count": 114652,
           "mean_pct": -0.115,
           "hit_rate": 45.78
+        }
+      ]
+    },
+    {
+      "signal": "sector_rs_20d(業種相対20日)",
+      "top_bottom_spread_pct": -0.162,
+      "spearman": -0.139,
+      "positive_fold_ratio": 0.286,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 115423,
+          "mean_pct": 0.053,
+          "hit_rate": 47.63
+        },
+        {
+          "quantile": 1,
+          "count": 114968,
+          "mean_pct": 0.08,
+          "hit_rate": 48.62
+        },
+        {
+          "quantile": 2,
+          "count": 115044,
+          "mean_pct": 0.096,
+          "hit_rate": 48.98
+        },
+        {
+          "quantile": 3,
+          "count": 114973,
+          "mean_pct": 0.057,
+          "hit_rate": 48.75
+        },
+        {
+          "quantile": 4,
+          "count": 114886,
+          "mean_pct": 0.071,
+          "hit_rate": 49.29
+        },
+        {
+          "quantile": 5,
+          "count": 115145,
+          "mean_pct": 0.046,
+          "hit_rate": 49.11
+        },
+        {
+          "quantile": 6,
+          "count": 115045,
+          "mean_pct": 0.095,
+          "hit_rate": 49.22
+        },
+        {
+          "quantile": 7,
+          "count": 114972,
+          "mean_pct": 0.084,
+          "hit_rate": 49.06
+        },
+        {
+          "quantile": 8,
+          "count": 115040,
+          "mean_pct": 0.079,
+          "hit_rate": 48.32
+        },
+        {
+          "quantile": 9,
+          "count": 114649,
+          "mean_pct": -0.109,
+          "hit_rate": 45.52
         }
       ]
     },
