@@ -142,7 +142,7 @@ flowchart LR
   - **選定エッジ検証**: `quantile_analysis` / `selection_comparison` / `weight_ablation` / `atr_trail_worst_trades` / `regime_effect` / `position_sizing_effect` / **`entry_style_comparison`（成行 vs 押し目指値・高値掴み回避の検証）**。
   - 出力: `results/backtest_walkforward_result.json`（上記キー含む）・`.csv`・`backtest_tier_exit.csv`・`_report.md`。
 - [`research_signals.py`](back_tester/research_signals.py): 候補指標（トレンド系＋**過熱系 `ret_5d` / `dist_sma5` / `rsi14` / `gap_pct` / `run_up_days`**・業種相対強度 `sector_rs_20d`）の分位スプレッド研究 → `results/research_signals.json/.csv`。
-- [`apply_optimal_params.py`](back_tester/apply_optimal_params.py): 結果を**ガード付き**で `docs/strategy_params.json` の `signals`・`price_tiers`・**`entry_guard`（押し目深さ/待機日数）** に反映。
+- [`apply_optimal_params.py`](back_tester/apply_optimal_params.py): 結果を**ガード付き**で `docs/strategy_params.json` の `signals`・`price_tiers`・**`entry_guard`（過熱度別の押し目深さ/待機日数）** に反映。
   - ガード: 最低100件 / OOS PF≧1.15 / 期待値>0 / 年率>ベンチマーク / DD≦50% / （signals）近傍安定性 / 前回比劣化なし。
 - [`run_walkforward.yml`](.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST**。バックテスト→ガード反映→`docs/strategy_params.json` と `results/` をコミット（**手動同期不要**）。
 
@@ -162,7 +162,7 @@ flowchart LR
 - `portfolio`: `{max_positions:5, max_per_sector:2, risk_per_trade_pct:1.0, reference_capital_jpy:1000000}`（`max_per_sector` は同一業種の同時採用上限）
 - `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
-- `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`・`probe_qty_factor`）。`pullback_atr_shallow`/`pullback_wait_days` はバックテストの成行比較で更新されうる。
+- `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`（moderate用）・`probe_wait_days`（high=strong+extreme用）・`probe_qty_factor`）。押し目深さ/待機日数はバックテストの成行比較で**過熱度別に**更新されうる。
 - `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, max_picks:5, ...}`（`max_picks`＝表示する推奨の最大件数。旧 `weekly_top_picks` は後方互換で読む。`stage1_pool_min` は定義のみで**未使用**）
 
 ---

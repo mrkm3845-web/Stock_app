@@ -735,33 +735,46 @@ def entry_style_comparison(prepared, params, folds, exit_mode="fixed"):
                   "train": best[4], "test": best[5]}
 
     best_a, best_w = best[2], best[3]
+    groups = ("low", "moderate", "high")  # high = strong + extreme
+
+    def group_of(lv):
+        return "high" if lv in ("strong", "extreme") else lv
+
+    g_train = {g: [] for g in groups}
+    g_test = {g: [] for g in groups}
+    for code, sig_i, mv in picks_train:
+        try:
+            g_train[group_of(_overheat_level(prepared[code], sig_i, params))].append((code, sig_i, mv))
+        except Exception:
+            pass
+    for code, sig_i, mv in picks_test:
+        try:
+            g_test[group_of(_overheat_level(prepared[code], sig_i, params))].append((code, sig_i, mv))
+        except Exception:
+            pass
+
     by_overheat = {}
-    for label, cond in (("low", lambda lv: lv == "low"),
-                        ("heated", lambda lv: lv in ("moderate", "strong", "extreme"))):
-        sel = []
-        for code, sig_i, mv in picks_test:
-            try:
-                lv = _overheat_level(prepared[code], sig_i, params)
-            except Exception:
-                continue
-            if cond(lv):
-                sel.append((code, sig_i, mv))
-        if not sel:
+    for g in groups:
+        if not g_test[g]:
             continue
-        mt = []
-        for code, sig_i, mv in sel:
-            t = simulate_trade(prepared[code], params, code, sig_i, exit_mode, mv)
-            if t is not None:
-                mt.append(t)
-        lt = []
-        for code, sig_i, mv in sel:
-            t = simulate_trade_limit(prepared[code], params, code, sig_i, exit_mode, mv, best_a, best_w)
-            if t is not None:
-                lt.append(t)
-        by_overheat[label] = {
-            "picks": len(sel),
-            "market": calc_metrics(mt),
-            "limit": calc_metrics(lt),
+        mkt_test = run_market(g_test[g])
+        sub_grid = {}
+        gbest = None
+        for a in ENTRY_STYLE_ATR_MULTS:
+            for w in ENTRY_STYLE_WAIT_DAYS:
+                key = f"limit_{a}atr_{w}d"
+                tr_m = run_limit(g_train[g], a, w)
+                te_m = run_limit(g_test[g], a, w)
+                sub_grid[key] = {"train": tr_m, "test": te_m}
+                score = (tr_m["pf"], tr_m["ev_pct"])  # 学習期間で選択
+                if gbest is None or score > gbest[0]:
+                    gbest = (score, key, a, w, tr_m, te_m)
+        by_overheat[g] = {
+            "picks": len(g_test[g]),
+            "market": mkt_test,
+            "best_limit": {"key": gbest[1], "atr_mult": gbest[2], "wait_days": gbest[3],
+                           "train": gbest[4], "test": gbest[5]},
+            "limit_grid": sub_grid,
         }
 
     return {
@@ -1370,14 +1383,17 @@ def _build_report_markdown(result, valid):
                   f"{bt['win_rate']}% | {bt['pf']} | {bt['ev_pct']:+0.2f}% | {bt['annualized_return_pct']:+0.2f}% | {bt['max_dd_pct']}% |"]
         boh = esc.get("by_overheat") or {}
         if boh:
-            lines += ["", "| 過熱度 | 選定数 | 成行PF | 成行EV | 押し目PF | 押し目EV |",
-                      "| --- | ---: | ---: | ---: | ---: | ---: |"]
+            lines += ["", "| 過熱度 | 選定数 | 成行PF | 成行EV | 押し目設定 | 押し目PF | 押し目EV | 約定率 |",
+                      "| --- | ---: | ---: | ---: | --- | ---: | ---: | ---: |"]
             for label, d in boh.items():
-                lm, ll = d["market"], d["limit"]
-                lines.append(f"| {label} | {d['picks']} | {lm['pf']} | {lm['ev_pct']:+0.2f}% | {ll['pf']} | {ll['ev_pct']:+0.2f}% |")
+                lm = d["market"]
+                bl = d["best_limit"]
+                ll = bl["test"]
+                lines.append(f"| {label} | {d['picks']} | {lm['pf']} | {lm['ev_pct']:+0.2f}% | "
+                             f"{bl['atr_mult']}ATR/{bl['wait_days']}日 | {ll['pf']} | {ll['ev_pct']:+0.2f}% | {ll['fill_rate']} |")
         lines += ["",
                   "※ 押し目指値はシグナル日終値から N×ATR 下に買い指値を置き、待機日数内に到達しなければ見送り。",
-                  "※ 「heated」= 過熱度 moderate/strong/extreme（main8 の entry_guard と同じ判定）。"]
+                  "※ 過熱度は low / moderate / high（high = strong + extreme）。押し目設定は学習期間で選択し検証期間で評価。"]
 
     lines += [
         "",
@@ -1561,9 +1577,12 @@ def main():
               f"EV={bt['ev_pct']}% 勝率={bt['win_rate']}% 約定率={bt['fill_rate']} "
               f"年率={bt['annualized_return_pct']}% DD={bt['max_dd_pct']}%")
         for label, d in esc.get("by_overheat", {}).items():
-            lm, ll = d["market"], d["limit"]
-            print(f"  [{label}] market: n={lm['trade_count']} PF={lm['pf']} EV={lm['ev_pct']}% / "
-                  f"limit: n={ll['trade_count']} PF={ll['pf']} EV={ll['ev_pct']}%")
+            lm = d["market"]
+            bl = d["best_limit"]
+            ll = bl["test"]
+            print(f"  [{label}] n={d['picks']} market: PF={lm['pf']} EV={lm['ev_pct']}% / "
+                  f"limit {bl['atr_mult']}ATR/{bl['wait_days']}d: n={ll['trade_count']} PF={ll['pf']} "
+                  f"EV={ll['ev_pct']}% 約定率={ll['fill_rate']}")
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     json_path = os.path.join(OUTPUT_DIR, "backtest_walkforward_result.json")

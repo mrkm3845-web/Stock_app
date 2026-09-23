@@ -54,7 +54,7 @@
 - **テール監査（`atr_trail_worst_trades`）**: ATRトレーリングの最悪取引を列挙し、ギャップダウン等の大きな単発損失の原因を確認する。
 - **地合い指標の比較（`regime_effect`）**: なし / 指数MA（1306.T vs SMA200） / breadth（上昇銘柄比率）でスコア上位Kの成績を比較。本期間はいずれのフィルタも改善せず（既定OFF）。
 - **同時保有数の比較（`position_sizing_effect`）**: `max_positions` 3/4/5/8 の年率・最大DDを比較し、資金配分ガイドの根拠にする。
-- **成行 vs 押し目指値（`entry_style_comparison`）**: スコア上位Kの選定に対し「翌日成行」と「シグナル日終値から N×ATR 下の買い指値（待機 M 日、未到達なら見送り）」の OOS 成績を比較。指値の深さ・待機日数は**学習期間で選択し検証期間で評価**する。過熱度（low / heated）別にも集計し、**高値掴み回避の効果**を測る。
+- **成行 vs 押し目指値（`entry_style_comparison`）**: スコア上位Kの選定に対し「翌日成行」と「シグナル日終値から N×ATR 下の買い指値（待機 M 日、未到達なら見送り）」の OOS 成績を比較。指値の深さ・待機日数は**学習期間で選択し検証期間で評価**する。さらに**過熱度（low / moderate / high）別**にグリッドを計算し、高値掴み回避の効果を区分ごとに測る。
 
 ---
 
@@ -101,7 +101,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 | :--- | :--- |
 | `signals` | スコア閾値（gc_window / val_ratio_min / avg_val_min_k）。※Phase 2 のトレンド合成スコアでは未使用（出力互換のため保持） |
 | `price_tiers` | 株価帯ごとの tp_pct / sl_pct / atr_sl_mult / max_hold_days。株価帯別最適化の OOS 最良条件 |
-| `entry_guard` | 押し目エントリーの深さ `pullback_atr_shallow` と待機 `pullback_wait_days`。`entry_style_comparison` で**押し目が成行より OOS 改善**した場合のみ反映 |
+| `entry_guard` | 押し目エントリーの深さ・待機日数を**過熱度別**に反映。moderate→`pullback_atr_shallow`/`pullback_wait_days`、high(strong+extreme)→`pullback_atr_deep`/`probe_wait_days`。`entry_style_comparison` で各区分が成行より OOS 改善した場合のみ |
 
 **ガード条件**（各対象ごとに独立判定）:
 - 最低取引数（100件）以上
@@ -110,7 +110,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - OOS 年率リターン > ベンチマーク（TOPIX ETF）
 - OOS 最大DD ≦ 50%
 - （signals のみ）近傍安定性: 同エグジットでプラス条件が2つ以上
-- （entry_guard のみ）約定率 ≧ 0.2 / 成行比で PF・期待値が改善 / 過熱銘柄で成行以上
+- （entry_guard のみ・区分ごと）約定率 ≧ 0.2 / 成行比で PF・期待値が改善
 - 前回反映済みより有意に劣化していない（`results/applied_state.json` と比較）
 
 不通過の対象は更新されず、結果レポートのみコミットされます。安全側の挙動です。

@@ -193,59 +193,73 @@ def evaluate_tiers(result, params, prev_state):
 
 
 def evaluate_entry_guard(result, params, prev_state):
-    """成行 vs 押し目指値の比較結果から entry_guard を更新するか判定する。
+    """成行 vs 押し目指値の比較結果から entry_guard（過熱度別）を更新するか判定する。
 
-    高値掴み回避（押し目待ち）が成行より OOS で改善し、十分なサンプルがある場合のみ反映。
+    - moderate（25日線乖離18〜30%等）: `pullback_atr_shallow` / `pullback_wait_days`
+    - high（strong + extreme）: `pullback_atr_deep` / `probe_wait_days`
+    各区分で、押し目が成行より OOS 改善し十分なサンプルがある場合のみ反映する。
     """
     esc = result.get("entry_style_comparison")
     if not esc:
         return False, None, None
-    mk = esc.get("market") or {}
-    bl = esc.get("best_limit") or {}
-    bt = bl.get("test") or {}
+    by = esc.get("by_overheat") or {}
 
-    checks = []
-    checks.append(("押し目: 取引数 >= {}".format(MIN_TRADES), (bt.get("trade_count") or 0) >= MIN_TRADES))
-    checks.append(("押し目: 約定率 >= 0.2", (bt.get("fill_rate") or 0) >= 0.2))
-    checks.append(("押し目: OOS PF >= {}".format(MIN_PF), (bt.get("pf") or 0) >= MIN_PF))
-    checks.append(("押し目: 期待値 > 0", (bt.get("ev_pct") or -9.0) > MIN_EV_PCT))
-    checks.append(("成行比: PF改善 ({} >= {})".format(bt.get("pf"), mk.get("pf")),
-                   (bt.get("pf") or 0) >= (mk.get("pf") or 0)))
-    checks.append(("成行比: 期待値改善 ({} >= {})".format(bt.get("ev_pct"), mk.get("ev_pct")),
-                   (bt.get("ev_pct") or -9.0) >= (mk.get("ev_pct") or 0.0)))
-
-    heated = (esc.get("by_overheat") or {}).get("heated")
-    if heated and (heated.get("limit") or {}).get("trade_count", 0) > 0:
-        lm, ll = heated.get("market") or {}, heated.get("limit") or {}
-        checks.append(("過熱銘柄: 押し目が成行以上 (EV {} >= {})".format(ll.get("ev_pct"), lm.get("ev_pct")),
-                       (ll.get("ev_pct") or -9.0) >= (lm.get("ev_pct") or 0.0)))
-
-    last_note = ""
+    prev_items = {}
     if prev_state and prev_state.get("entry_guard"):
-        prev_wait = (prev_state["entry_guard"].get("best_limit") or {}).get("test") or {}
-        prev_pf = prev_wait.get("pf", 0.0)
-        checks.append(("前回比劣化なし (今回 {:.2f} >= 前回 {:.2f})".format(bt.get("pf") or 0, prev_pf),
-                       (bt.get("pf") or 0) >= prev_pf - DEGRADATION_TOLERANCE_PF))
-        last_note = f"（前回反映 PF: {prev_pf}）"
+        for it in (prev_state["entry_guard"].get("items") or []):
+            prev_items[it.get("group")] = it
 
-    _summary("## 反映判定: entry_guard（高値掴み防止・押し目エントリー）")
-    ok = _emit(checks)
-    if not ok:
+    def group_checks(g, label):
+        bl = g.get("best_limit") or {}
+        bt = bl.get("test") or {}
+        mk = g.get("market") or {}
+        checks = [
+            ("{}: 取引数 >= {}".format(label, MIN_TRADES), (bt.get("trade_count") or 0) >= MIN_TRADES),
+            ("{}: 約定率 >= 0.2".format(label), (bt.get("fill_rate") or 0) >= 0.2),
+            ("{}: OOS PF >= {}".format(label, MIN_PF), (bt.get("pf") or 0) >= MIN_PF),
+            ("{}: 期待値 > 0".format(label), (bt.get("ev_pct") or -9.0) > MIN_EV_PCT),
+            ("{}: 成行比 PF改善 ({} >= {})".format(label, bt.get("pf"), mk.get("pf")),
+             (bt.get("pf") or 0) >= (mk.get("pf") or 0)),
+            ("{}: 成行比 EV改善 ({} >= {})".format(label, bt.get("ev_pct"), mk.get("ev_pct")),
+             (bt.get("ev_pct") or -9.0) >= (mk.get("ev_pct") or 0.0)),
+        ]
+        prev = prev_items.get(label)
+        if prev:
+            prev_pf = (prev.get("test") or {}).get("pf", 0.0)
+            checks.append(("{}: 前回比劣化なし (今回 {:.2f} >= 前回 {:.2f})".format(label, bt.get("pf") or 0, prev_pf),
+                           (bt.get("pf") or 0) >= prev_pf - DEGRADATION_TOLERANCE_PF))
+        return bl, bt, mk, checks
+
+    eg = dict(params.get("entry_guard", {}))
+    applied = []
+    _summary("## 反映判定: entry_guard（高値掴み防止・過熱度別）")
+    for label, keys in (("moderate", ("pullback_atr_shallow", "pullback_wait_days")),
+                        ("high", ("pullback_atr_deep", "probe_wait_days"))):
+        g = by.get(label)
+        if not g:
+            print(f"[SKIP] {label}: サンプル無し")
+            continue
+        bl, bt, mk, checks = group_checks(g, label)
+        if _emit(checks):
+            eg[keys[0]] = float(bl["atr_mult"])
+            eg[keys[1]] = int(bl["wait_days"])
+            applied.append({"group": label, "key": bl["key"],
+                            "params": {keys[0]: eg[keys[0]], keys[1]: eg[keys[1]]},
+                            "test": bt, "market": mk})
+            print(f"[PASS] {label}: {keys[0]}={eg[keys[0]]}, {keys[1]}={eg[keys[1]]}")
+        else:
+            print(f"[FAIL] {label}: ガード不通過のため既存値を維持。")
+
+    if not applied:
         _summary("**entry_guard: ガード不通過 → 更新しない。**")
         print("[FAIL] entry_guard は更新しません。")
         return False, None, None
 
-    eg = dict(params.get("entry_guard", {}))
-    eg["pullback_atr_shallow"] = float(bl["atr_mult"])
-    eg["pullback_wait_days"] = int(bl["wait_days"])
-    if float(eg.get("pullback_atr_deep", 1.0)) < eg["pullback_atr_shallow"]:
+    if float(eg.get("pullback_atr_deep", 1.0)) < float(eg.get("pullback_atr_shallow", 0.5)):
         eg["pullback_atr_deep"] = eg["pullback_atr_shallow"]
 
-    meta = {"best_limit": bl, "market": mk, "note": last_note}
-    _summary("**entry_guard: ガード通過 → 更新。**")
-    print("[PASS] entry_guard を更新: pullback_atr_shallow={}, pullback_wait_days={} {}".format(
-        eg["pullback_atr_shallow"], eg["pullback_wait_days"], last_note))
-    return True, eg, meta
+    _summary("**entry_guard: ガード通過 → 更新（{}区分）。**".format(len(applied)))
+    return True, eg, {"items": applied}
 
 
 def main():

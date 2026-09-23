@@ -124,6 +124,7 @@
     "pullback_atr_shallow": 1.5,
     "pullback_atr_deep": 1.5,
     "pullback_wait_days": 3,
+    "probe_wait_days": 3,
     "probe_qty_factor": 0.5
   },
   "score_weights": {

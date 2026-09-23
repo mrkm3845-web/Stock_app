@@ -403,15 +403,19 @@ def compute_entry_plan(ctx, params):
     if level == "low":
         entry_type = "breakout_chase"
         entry_price = price
+        wait_days = int(eg.get("pullback_wait_days", 5))
     elif level == "moderate":
         entry_type = "pullback_wait"
         entry_price = zone_high
+        wait_days = int(eg.get("pullback_wait_days", 5))
     elif level == "strong":
         entry_type = "probe_only"
         entry_price = zone_low
+        wait_days = int(eg.get("probe_wait_days", eg.get("pullback_wait_days", 5)))
     else:
         entry_type = "wait"
         entry_price = zone_low
+        wait_days = int(eg.get("probe_wait_days", eg.get("pullback_wait_days", 5)))
 
     # 押し目待ちの下値は 25 日線より深追いしない（トレンド破壊を避ける）
     if sma25 and entry_type in ("pullback_wait", "probe_only", "wait"):
@@ -425,5 +429,5 @@ def compute_entry_plan(ctx, params):
         "entry_price": int(round(entry_price)) if entry_price else None,
         "entry_zone_low": int(round(zone_low)) if zone_low else None,
         "entry_zone_high": int(round(zone_high)) if zone_high else None,
-        "wait_days": int(eg.get("pullback_wait_days", 5)),
+        "wait_days": wait_days,
     }
