@@ -341,9 +341,9 @@ def scan_market_merged(stock_list, params):
 
             val_ratio = round(float(feat["val_ratio_5d"][-1]), 2)
             tier = F.tier_for_price(price, params["price_tiers"])
-            warnings = F.evaluate_warnings(price, val_ratio, params)
-            score = F.compute_technical_score(feat, params, weekly["trend_up"])
             ctx = F.compute_stock_context(df, feat, weekly)
+            warnings = F.evaluate_warnings(price, val_ratio, params, ctx)
+            score = F.compute_technical_score(feat, params, weekly["trend_up"])
 
             w_down = bool(
                 len(weekly["close"]) >= 13
@@ -467,6 +467,7 @@ def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None)
     lines = []
     for r in pool:
         ctx = r.get("ctx") or {}
+        plan = F.compute_entry_plan(ctx, params)
         fund = fund_map.get(r["code"]) or {}
         parts = [
             f"{r['code']} {r['name']}",
@@ -475,12 +476,15 @@ def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None)
             f"グレアム理論株価:{r.get('graham_price')}円 割安度:{r.get('discount_rate')}%",
             f"GC:{r['gc_days'] if r['gc_days'] is not None else 'なし'}日前",
             f"5日平均代金:{r['avg_val_5d']}千円 増加率:{r['val_ratio_5d']}倍",
-            f"ATR14:{r['atr14']}円",
+            f"ATR14:{r['atr14']}円(ATR比:{ctx.get('atr_pct')}%)",
             f"支持20日:{ctx.get('support_20d')} 抵抗20日:{ctx.get('resistance_20d')}",
             f"上髭ATR比:{ctx.get('upper_shadow_atr')} 下髭:{ctx.get('lower_shadow_atr')} レンジ位置:{ctx.get('range_position')}",
             f"週足↑:{ctx.get('weekly_trend_up')} 月足↑:{ctx.get('monthly_trend_up')}",
             f"5日:{ctx.get('ret_5d_pct')}% 20日:{ctx.get('ret_20d_pct')}%",
             f"SMA5/25/200:{ctx.get('sma5')}/{ctx.get('sma25')}/{ctx.get('sma200')}",
+            f"25日乖離:{ctx.get('dist_sma25_pct')}% 5日乖離:{ctx.get('dist_sma5_pct')}%",
+            f"RSI14:{ctx.get('rsi14')} 連騰:{ctx.get('run_up_days')}日 寄付ギャップ:{ctx.get('gap_pct')}%",
+            f"過熱度:{plan['overheat_level']} ルール推奨入口:{plan['suggested_entry_type']} 押し目候補:{plan['entry_zone_low']}〜{plan['entry_zone_high']}円",
         ]
         if fund:
             parts.append(
@@ -510,9 +514,20 @@ def _ai_system_prompt(max_picks=5):
         "あなたは日本株スイングトレードのプロ。以下の候補銘柄すべてを、上昇期待・リスク・流動性・テクニカル・"
         "ファンダメンタルの観点で1位から順位づけしてください。"
         f"verdict=recommend は本当に買い推奨できる銘柄だけに付け、件数を無理に埋めないでください（該当が無ければ0件で構いません。上限{max_picks}件）。"
+        "【最重要】イナゴ買いによる高値掴みの防止を最優先してください。"
+        "短期急騰・移動平均からの大きな乖離・RSI高値・窓開け・上ヒゲ拒否などの過熱サインがある銘柄では、"
+        "現在値での成行追いかけ（breakout_chase）を推奨せず、押し目（pullback_wait）や打診（probe_only）に切り替えるか、"
+        "見送り（wait）にしてください。ただしトレンドと上昇余地が強く、過熱が軽度なら追いかけ（breakout_chase）を許容します。"
+        "entry_type は次から1つだけ選んでください: "
+        "breakout_chase（上昇余地あり・追いかけ可）/ pullback_wait（移動平均・サポート近辺の押し目待ち）/ "
+        "probe_only（過熱強・小口の打診のみ）/ wait（見送り・様子見）。"
+        "breakout_chase / pullback_wait / probe_only は verdict=recommend を使ってよく、wait は watch / caution にしてください。"
+        "entry_price は entry_type に応じた具体値（追いかけ=現値〜直近高値、押し目待ち=5日線や直近サポート近辺）を必ず数値で示し、"
+        "pullback_wait では「何円まで待つか」を明記してください。"
         "回答は必ず以下のJSONのみを返してください（Markdownやコードフェンスなし）:"
         '{"overall":"市場・テーマの総評（2〜3文）",'
         '"stocks":[{"code":"候補一覧に記載の実際の銘柄コード文字列","rank":1,"verdict":"recommend",'
+        '"entry_type":"breakout_chase",'
         '"reason":"おすすめ理由","news_note":"その銘柄の直近の材料・ニュース（与えたニュース見出しや一般知識から判断。不明なら要確認）",'
         '"entry_strategy":"押し目狙い","entry_price":数値,"support":数値,"resistance":数値,'
         '"tp_price":数値,"sl_price":数値,"trailing_plan":"トレーリング計画の説明"}]}'
@@ -707,6 +722,39 @@ VERDICT_LABELS = {
     "technical_only": "📈スコア順",
 }
 
+# エントリー方式（高値掴み防止）のラベル
+ENTRY_TYPE_LABELS = {
+    "breakout_chase": "🚀追いかけ",
+    "pullback_wait": "🎣押し目待ち",
+    "probe_only": "🔍打診のみ",
+    "wait": "⏸見送り",
+}
+# 過熱度のラベル
+OVERHEAT_LABELS = {
+    "low": "低",
+    "moderate": "中",
+    "strong": "強",
+    "extreme": "極",
+}
+
+
+def _normalize_entry_type(v):
+    """AIのentry_type（自由文含む）を正規の4区分へ寄せる。未知はNone。"""
+    if not v:
+        return None
+    s = str(v).strip().lower()
+    if s in F.ENTRY_TYPES:
+        return s
+    if any(k in s for k in ("押し目", "pullback", "待ち")):
+        return "pullback_wait"
+    if any(k in s for k in ("追い", "chase", "breakout", "成行", "上抜")):
+        return "breakout_chase"
+    if any(k in s for k in ("打診", "probe", "小口")):
+        return "probe_only"
+    if any(k in s for k in ("見送", "wait", "様子")):
+        return "wait"
+    return None
+
 
 def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime=None, earnings_map=None):
     picks = []
@@ -742,6 +790,7 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
     risk_pct = portfolio.get("risk_per_trade_pct", 1.0)
     ref_cap = portfolio.get("reference_capital_jpy", 1000000)
     max_per_sector = portfolio.get("max_per_sector")
+    eg = params.get("entry_guard", {})
     earnings_map = earnings_map or {}
 
     # AI実行時は verdict=recommend のみを「推奨」として採用する（件数は無理に埋めない）。
@@ -770,6 +819,18 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
         ctx = r.get("ctx") or {}
         atr_mult = tier.get("atr_sl_mult", 2.0)
 
+        # 高値掴み防止: 過熱度からエントリー方式を決定（AI優先、欠落時はルール）
+        plan = F.compute_entry_plan(ctx, params)
+        entry_type = _normalize_entry_type(item.get("entry_type")) or plan["suggested_entry_type"]
+        downgraded = False
+        if entry_type == "breakout_chase" and plan["overheat_level"] in ("strong", "extreme"):
+            # 強い過熱下での成行追いかけは打診へ格下げ（イナゴ買い防止の安全網）
+            entry_type = "probe_only"
+            downgraded = True
+        entry_price = _to_num(item.get("entry_price"))
+        if downgraded or entry_price is None:
+            entry_price = plan["entry_price"]
+
         # エグジットは「ルール基本」: price_tiers（最適化済み係数）で算出。AI値は advice に参照保持。
         tp_price = int(round(r["price"] * (1 + tier.get("tp_pct", 0.12))))
         if r["atr14"]:
@@ -777,9 +838,11 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
         else:
             sl_price = _to_num(item.get("sl_price"))
 
-        # リスクベースの推奨サイズ（参考資金 × リスク% ÷ 損切幅）
+        # リスクベースの推奨サイズ（参考資金 × リスク% ÷ 損切幅）。打診は小口に縮小。
         stop_dist = (r["price"] - sl_price) if (sl_price and r["price"] > sl_price) else None
-        suggested_qty = int((ref_cap * (risk_pct / 100.0)) // stop_dist) if stop_dist else None
+        base_qty = int((ref_cap * (risk_pct / 100.0)) // stop_dist) if stop_dist else None
+        qty_factor = eg.get("probe_qty_factor", 0.5) if entry_type == "probe_only" else 1.0
+        suggested_qty = int(base_qty * qty_factor) if base_qty else None
 
         verdict = item.get("verdict") or "technical_only"
         ed = earnings_map.get(r["code"]) or {}
@@ -795,8 +858,23 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
             "rank": _ai_rank(item),
             "advice": item or None,
             "fundamentals": fund_map.get(r["code"]),
+            "entry_type": entry_type,
+            "entry_type_label": ENTRY_TYPE_LABELS.get(entry_type, entry_type),
+            "entry_zone_low": plan["entry_zone_low"],
+            "entry_zone_high": plan["entry_zone_high"],
+            "entry_wait_days": plan.get("wait_days"),
+            "overheat_level": plan["overheat_level"],
+            "overheat_label": OVERHEAT_LABELS.get(plan["overheat_level"], plan["overheat_level"]),
+            "overheat_flags": plan["overheat_flags"],
+            "rsi14": ctx.get("rsi14"),
+            "dist_sma5_pct": ctx.get("dist_sma5_pct"),
+            "dist_sma25_pct": ctx.get("dist_sma25_pct"),
+            "pos_52w": ctx.get("pos_52w"),
+            "run_up_days": ctx.get("run_up_days"),
+            "gap_pct": ctx.get("gap_pct"),
+            "atr_pct": ctx.get("atr_pct"),
             "entry_strategy": item.get("entry_strategy"),
-            "entry_price": _to_num(item.get("entry_price")),
+            "entry_price": entry_price,
             "support": _to_num(item.get("support")) if item.get("support") is not None else ctx.get("support_20d"),
             "resistance": _to_num(item.get("resistance")) if item.get("resistance") is not None else ctx.get("resistance_20d"),
             "tp_price": tp_price,
@@ -1038,13 +1116,26 @@ def send_recommendations_to_discord(recommendations, added_count, updated_count,
         rank = p.get("rank")
         rank_label = f"{rank}位" if rank is not None else f"{i}位"
         verdict = VERDICT_LABELS.get(p.get("verdict"), p.get("verdict") or "-")
+        et = p.get("entry_type_label") or ENTRY_TYPE_LABELS.get(p.get("entry_type"), "")
+        header = f"{verdict} (score {p.get('score')})"
+        if et:
+            header += f" / {et}"
+        if p.get("overheat_level") and p.get("overheat_level") != "low":
+            header += f" / 過熱:{p.get('overheat_label')}"
         msg += (
             f"\n**{rank_label} `{p.get('code')}` {_truncate_text(p.get('name'), 12)}** "
-            f"{verdict} (score {p.get('score')})\n"
+            f"{header}\n"
         )
         line = f"　株価 {_fmt_yen(p.get('price'))}"
         if p.get("entry_price") is not None:
-            line += f" → エントリー {_fmt_yen(p.get('entry_price'))}"
+            if p.get("entry_type") == "pullback_wait":
+                line += f" → 押し目 {_fmt_yen(p.get('entry_price'))} 待ち"
+            elif p.get("entry_type") == "probe_only":
+                line += f" → 打診 {_fmt_yen(p.get('entry_price'))}"
+            elif p.get("entry_type") == "wait":
+                line += f" → 様子見（押し目 {_fmt_yen(p.get('entry_price'))}）"
+            else:
+                line += f" → エントリー {_fmt_yen(p.get('entry_price'))}"
         line += f" / 利確 {_fmt_yen(p.get('tp_price'))} / 損切 {_fmt_yen(p.get('sl_price'))}"
         if p.get("suggested_qty"):
             line += f" / 推奨 {int(p['suggested_qty'])}株"
@@ -1176,7 +1267,7 @@ def main():
 
     print(">> スクリーニング（main8）完了")
     for p in recommendations["picks"]:
-        print(f"  - {p['code']} {p['name']} score={p['score']} rank={p.get('rank')} verdict={p['verdict']} tp={p['tp_price']} sl={p['sl_price']}")
+        print(f"  - {p['code']} {p['name']} score={p['score']} rank={p.get('rank')} verdict={p['verdict']} entry={p.get('entry_type')} tp={p['tp_price']} sl={p['sl_price']}")
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ apply_optimal_params.py
 反映対象:
 - `signals`（スコア式の閾値: gc_window / val_ratio_min / avg_val_min_k）
 - `price_tiers`（株価帯ごとの tp_pct / sl_pct / atr_sl_mult / max_hold_days）
+- `entry_guard`（押し目エントリー: pullback_atr_shallow / pullback_wait_days。成行より改善した場合のみ）
 
 ガード条件（各対象ごとにすべて満たす場合のみ反映）:
 - テスト取引数が最低件数以上
@@ -191,6 +192,62 @@ def evaluate_tiers(result, params, prev_state):
     return False, None, None
 
 
+def evaluate_entry_guard(result, params, prev_state):
+    """成行 vs 押し目指値の比較結果から entry_guard を更新するか判定する。
+
+    高値掴み回避（押し目待ち）が成行より OOS で改善し、十分なサンプルがある場合のみ反映。
+    """
+    esc = result.get("entry_style_comparison")
+    if not esc:
+        return False, None, None
+    mk = esc.get("market") or {}
+    bl = esc.get("best_limit") or {}
+    bt = bl.get("test") or {}
+
+    checks = []
+    checks.append(("押し目: 取引数 >= {}".format(MIN_TRADES), (bt.get("trade_count") or 0) >= MIN_TRADES))
+    checks.append(("押し目: 約定率 >= 0.2", (bt.get("fill_rate") or 0) >= 0.2))
+    checks.append(("押し目: OOS PF >= {}".format(MIN_PF), (bt.get("pf") or 0) >= MIN_PF))
+    checks.append(("押し目: 期待値 > 0", (bt.get("ev_pct") or -9.0) > MIN_EV_PCT))
+    checks.append(("成行比: PF改善 ({} >= {})".format(bt.get("pf"), mk.get("pf")),
+                   (bt.get("pf") or 0) >= (mk.get("pf") or 0)))
+    checks.append(("成行比: 期待値改善 ({} >= {})".format(bt.get("ev_pct"), mk.get("ev_pct")),
+                   (bt.get("ev_pct") or -9.0) >= (mk.get("ev_pct") or 0.0)))
+
+    heated = (esc.get("by_overheat") or {}).get("heated")
+    if heated and (heated.get("limit") or {}).get("trade_count", 0) > 0:
+        lm, ll = heated.get("market") or {}, heated.get("limit") or {}
+        checks.append(("過熱銘柄: 押し目が成行以上 (EV {} >= {})".format(ll.get("ev_pct"), lm.get("ev_pct")),
+                       (ll.get("ev_pct") or -9.0) >= (lm.get("ev_pct") or 0.0)))
+
+    last_note = ""
+    if prev_state and prev_state.get("entry_guard"):
+        prev_wait = (prev_state["entry_guard"].get("best_limit") or {}).get("test") or {}
+        prev_pf = prev_wait.get("pf", 0.0)
+        checks.append(("前回比劣化なし (今回 {:.2f} >= 前回 {:.2f})".format(bt.get("pf") or 0, prev_pf),
+                       (bt.get("pf") or 0) >= prev_pf - DEGRADATION_TOLERANCE_PF))
+        last_note = f"（前回反映 PF: {prev_pf}）"
+
+    _summary("## 反映判定: entry_guard（高値掴み防止・押し目エントリー）")
+    ok = _emit(checks)
+    if not ok:
+        _summary("**entry_guard: ガード不通過 → 更新しない。**")
+        print("[FAIL] entry_guard は更新しません。")
+        return False, None, None
+
+    eg = dict(params.get("entry_guard", {}))
+    eg["pullback_atr_shallow"] = float(bl["atr_mult"])
+    eg["pullback_wait_days"] = int(bl["wait_days"])
+    if float(eg.get("pullback_atr_deep", 1.0)) < eg["pullback_atr_shallow"]:
+        eg["pullback_atr_deep"] = eg["pullback_atr_shallow"]
+
+    meta = {"best_limit": bl, "market": mk, "note": last_note}
+    _summary("**entry_guard: ガード通過 → 更新。**")
+    print("[PASS] entry_guard を更新: pullback_atr_shallow={}, pullback_wait_days={} {}".format(
+        eg["pullback_atr_shallow"], eg["pullback_wait_days"], last_note))
+    return True, eg, meta
+
+
 def main():
     result_path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_RESULT_PATH
     params_path = sys.argv[2] if len(sys.argv) > 2 else PARAMS_PATH
@@ -214,6 +271,11 @@ def main():
     tier_ok, tiers, tier_meta = evaluate_tiers(result, params, prev_state)
     if tier_ok:
         params["price_tiers"] = tiers
+        changed = True
+
+    eg_ok, entry_guard, eg_meta = evaluate_entry_guard(result, params, prev_state)
+    if eg_ok:
+        params["entry_guard"] = entry_guard
         changed = True
 
     if not changed:
@@ -240,6 +302,8 @@ def main():
         state["signals"] = {**sig_meta, "run_id": result.get("run_id")}
     if tier_ok:
         state["tiers"] = {"run_id": result.get("run_id"), "items": tier_meta["items"]}
+    if eg_ok:
+        state["entry_guard"] = {"run_id": result.get("run_id"), **eg_meta}
     os.makedirs(os.path.dirname(STATE_PATH), exist_ok=True)
     with open(STATE_PATH, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)

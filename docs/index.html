@@ -537,6 +537,25 @@
             return '<span class="badge ' + (map[v] || "verdict-watch") + '">' + label + '</span>';
         }
 
+        // エントリー方式（高値掴み防止）と過熱度
+        const ENTRY_TYPE_LABELS = {
+            breakout_chase: "🚀追いかけ",
+            pullback_wait: "🎣押し目待ち",
+            probe_only: "🔍打診のみ",
+            wait: "⏸見送り",
+        };
+        const OVERHEAT_LABELS = { low: "低", moderate: "中", strong: "強", extreme: "極" };
+        function entryTypeBadge(t) {
+            if (!t) return "";
+            const cls = {
+                breakout_chase: "verdict-recommend",
+                pullback_wait: "verdict-watch",
+                probe_only: "verdict-neutral",
+                wait: "verdict-avoid",
+            }[t] || "verdict-watch";
+            return '<span class="badge ' + cls + '">' + (ENTRY_TYPE_LABELS[t] || t) + '</span>';
+        }
+
         const AI_VERDICT_ORDER = { recommend: 0, watch: 1, neutral: 2, hold: 3, caution: 4, avoid: 5, sell: 5 };
         // 銘柄ごとの最新AI判定を返す（as-of 日付付きで表示する）
         function currentAI(code) {
@@ -877,6 +896,12 @@
                     aiBadge = `<span class="badge-ai ms-1"${styleAttr} title="${tip}">${label}</span> ${verdictBadge(ai.verdict)}`;
                 }
 
+                let entryBadge = "";
+                const pickEntry = PICKS[s.code];
+                if (pickEntry && pickEntry.entry_type && pickEntry.entry_type !== "breakout_chase") {
+                    entryBadge = entryTypeBadge(pickEntry.entry_type);
+                }
+
                 let earnBadge = "";
                 const earn = EARNINGS[s.code];
                 if (earn && earn.soon) {
@@ -903,6 +928,7 @@
                             <span class="company-name" onclick="showStockDetail('${s.code}')" title="${esc(s.name)}（タップで詳細・AI戦略）">${s.name}</span>
                             ${gcBadge}
                             ${aiBadge}
+                            ${entryBadge}
                             ${earnBadge}
                             ${sig.badgeHtml}
                         </div>
@@ -1122,6 +1148,29 @@
                 `;
             }
 
+            // エントリー判定（高値掴み防止）
+            let entryPlanHtml = "";
+            const etype = (pick && pick.entry_type) || null;
+            if (etype) {
+                const oh = OVERHEAT_LABELS[pick.overheat_level] || '-';
+                const flags = (pick.overheat_flags || []).join(' / ');
+                const zone = (pick.entry_zone_low && pick.entry_zone_high)
+                    ? `¥${Number(pick.entry_zone_low).toLocaleString()} 〜 ¥${Number(pick.entry_zone_high).toLocaleString()}` : '-';
+                const tip = {
+                    breakout_chase: "過熱は軽度。上昇余地を確認のうえ追いかけ可。",
+                    pullback_wait: "移動平均・サポート近辺の押し目まで待つ。現値での成行は高値掴みに注意。",
+                    probe_only: "過熱が強い。小口の打診に留め、押し目で分割エントリー。",
+                    wait: "過熱が極めて強く見送り推奨。押し目形成後に再評価。",
+                }[etype] || '';
+                entryPlanHtml = `
+                    <div class="strategy-box">
+                        <div class="fw-bold text-dark small mb-2"><i class="bi bi-signpost-split me-1 text-warning"></i> エントリー判定（高値掴み防止）</div>
+                        <div class="strategy-item"><small class="text-muted">方式</small><div>${entryTypeBadge(etype)} <span class="text-muted small">過熱度: ${oh}${flags ? '（' + esc(flags) + '）' : ''}</span></div></div>
+                        <div class="strategy-item"><small class="text-muted">押し目候補ゾーン</small><div>${zone}${pick.entry_price ? ` <span class="text-muted small">（目安入口 ¥${Number(pick.entry_price).toLocaleString()}）</span>` : ''}${(pick.entry_wait_days && etype !== 'breakout_chase') ? ` <span class="text-muted small">／約${pick.entry_wait_days}日以内に未到達なら見送り</span>` : ''}</div></div>
+                        <div class="strategy-desc">└ ${esc(tip)}</div>
+                    </div>`;
+            }
+
             document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${esc(s.name)} ${sig.badgeHtml}`;
             document.getElementById("modalBody").innerHTML = `
                 ${alertBoxHtml}
@@ -1142,9 +1191,16 @@
                         <div class="col-4"><small class="text-muted" style="font-size:0.7rem;">5日平均売買代金</small><div class="fw-bold" style="font-size:0.8rem;">${avgValStr}</div></div>
                         <div class="col-4"><small class="text-muted" style="font-size:0.7rem;">出来高増加率</small><div class="fw-bold text-primary" style="font-size:0.8rem;">${valRatioStr}</div></div>
                     </div>
+                    <div class="text-muted mt-1" style="font-size:0.72rem;">
+                        RSI14: ${pick && pick.rsi14 != null ? pick.rsi14 : (s.ctx && s.ctx.rsi14 != null ? s.ctx.rsi14 : '-')} /
+                        25日線乖離: ${pick && pick.dist_sma25_pct != null ? pick.dist_sma25_pct : (s.ctx && s.ctx.dist_sma25_pct != null ? s.ctx.dist_sma25_pct : '-')}% /
+                        連騰: ${pick && pick.run_up_days != null ? pick.run_up_days : (s.ctx && s.ctx.run_up_days != null ? s.ctx.run_up_days : '-')}日
+                    </div>
                 </div>
 
                 ${aiSectionHtml}
+
+                ${entryPlanHtml}
 
                 ${sizeHtml}
 
@@ -1189,23 +1245,31 @@
             const gcText = s.gc_days === 0 ? "本日GC形成" : (s.gc_days !== null && typeof s.gc_days !== 'undefined' ? `${s.gc_days}日前にGC形成` : "GCなし");
             const valRatioText = (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? `${s.val_ratio_5d}倍` : "通常";
             const ai = AI_LATEST[s.code] || null;
+            const ctxm = s.ctx || {};
+            const pick = PICKS[s.code] || null;
+            const techExtra = `25日線乖離: ${ctxm.dist_sma25_pct != null ? ctxm.dist_sma25_pct + '%' : '-'} / 5日乖離: ${ctxm.dist_sma5_pct != null ? ctxm.dist_sma5_pct + '%' : '-'} / RSI14: ${ctxm.rsi14 != null ? ctxm.rsi14 : '-'} / 5日リターン: ${ctxm.ret_5d_pct != null ? ctxm.ret_5d_pct + '%' : '-'} / 連騰: ${ctxm.run_up_days != null ? ctxm.run_up_days + '日' : '-'} / 寄付ギャップ: ${ctxm.gap_pct != null ? ctxm.gap_pct + '%' : '-'}`;
+            const entryHint = (pick && pick.entry_type)
+                ? `\n・現在のエントリー判定: ${pick.entry_type_label || pick.entry_type}（過熱度: ${OVERHEAT_LABELS[pick.overheat_level] || '-'}${pick.entry_zone_low ? '、押し目候補 ' + pick.entry_zone_low + '〜' + pick.entry_zone_high + '円' : ''}）`
+                : '';
 
             const prompt = `以下の日本株について、スイングトレード（保有期間最大14営業日）の戦略を最新データで分析してください。
-特に【直近の材料・ニュース・決算等のリスク要因】を、可能な範囲で具体的に教えてください。
+特に【直近の材料・ニュース・決算等のリスク要因】と【高値掴み（イナゴ買い）の回避】を最優先で具体的に教えてください。
 
 【銘柄情報】
 ・コード/社名: ${s.code} ${s.name} (${s.market} / ${s.sector})
 ・現在株価: ${s.price}円 / 総合スコア: ${scoreOf(s)}
 ・グレアム理論株価: ${s.graham_price}円 (割安度: ${s.discount_rate}%)
-・ファンダメンタルズ: PER ${s.per}倍 / PBR ${s.pbr}倍 / ROE ${s.roe}% / 営業利益率 ${s.op_margin}% / 配当利回り ${s.div_yield}%
-・テクニカル/出来高: ${gcText} / 出来高増加率: ${valRatioText} / 5日平均売買代金: ${s.avg_val_5d || '-'}千円 / ATR14: ${s.atr14 || '-'}円${ai && ai.reason ? `\n・前回AI判定: ${ai.verdict}（根拠: ${ai.reason}）` : ''}
+・ファンダメンタルズ: PER ${s.per}倍 / PBR ${s.pbr}倍 / ROE ${s.roe}% / 営業利益率 ${s.op_margin}% / 配当利回り: ${s.div_yield}%
+・テクニカル/出来高: ${gcText} / 出来高増加率: ${valRatioText} / 5日平均売買代金: ${s.avg_val_5d || '-'}千円 / ATR14: ${s.atr14 || '-'}円
+・過熱指標: ${techExtra}${entryHint}${ai && ai.reason ? `\n・前回AI判定: ${ai.verdict}（根拠: ${ai.reason}）` : ''}
 
 【回答してほしい内容】
 1. 直近の材料・ニュース・決算等のリスク要因
 2. チャート・急増出来高の需給面から見たエントリータイミングの妥当性
-3. 直近のサポート・レジスタンスライン
-4. 理想の利確目標・損切ライン・トレーリング計画
-5. 14営業日以内の達成可能性と注意すべきリスク要因`;
+3. 高値掴みを避けるためのエントリー方式の判定（追いかけ／押し目待ち／打診のみ／見送り）と、押し目待ちなら待つ価格
+4. 直近のサポート・レジスタンスライン
+5. 理想の利確目標・損切ライン・トレーリング計画
+6. 14営業日以内の達成可能性と注意すべきリスク要因`;
 
             navigator.clipboard.writeText(prompt).then(() => {
                 alert("📋 AI分析用プロンプト（最新データ + ニュース照会）をコピーしました！\n開いたGeminiの入力欄に貼り付けて送信してください。");

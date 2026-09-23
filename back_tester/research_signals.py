@@ -18,6 +18,9 @@ research_signals.py
 注意:
 - サバイバーシップバイアスあり（現在上場銘柄のみ）。
 - ファンダメンタル（PER/PBR等）は先読みになるため対象外（価格・出来高のみ）。
+- 過熱系（RSI14・5日線/25日線乖離・5日リターン・寄付ギャップ・連騰日数）は
+  「値が高いほど将来リターンが低い」ならスプレッドがマイナスになる。
+  これは高値掴み回避（押し目待ち）の根拠になる（マイナスほど過熱の逆効果が強い）。
 """
 
 import json
@@ -55,6 +58,25 @@ def _roll(a, n, how):
 def _gc_recent(p):
     gc = np.asarray(p["gc_days"], dtype=float)
     return np.where((gc >= 0) & (gc <= 3), 1.0, 0.0)
+
+
+def _gap_pct(open_, close):
+    """寄付ギャップ（当日寄値 / 前日終値 − 1）。窓開け急騰の過熱度。"""
+    o = np.asarray(open_, dtype=float)
+    prev = pd.Series(np.asarray(close, dtype=float)).shift(1).values
+    prev = np.asarray(prev, dtype=float)
+    return np.where(prev > 0, o / prev - 1.0, np.nan)
+
+
+def _run_up_days(close):
+    """連騰日数（直近終値ベースで何日連続して前日比プラスか）。"""
+    c = np.asarray(close, dtype=float)
+    out = np.zeros(len(c), dtype=float)
+    run = 0
+    for i in range(1, len(c)):
+        run = run + 1 if c[i] > c[i - 1] else 0
+        out[i] = run
+    return out
 
 
 def _sector_relative(prepared, sector_map, base_values):
@@ -107,8 +129,13 @@ def build_candidates(params):
         "ret_20d(20日リターン)": lambda p: _pct_change(p["close"], 20),
         "ret_60d(60日リターン)": lambda p: _pct_change(p["close"], 60),
         "ret_120d(120日リターン)": lambda p: _pct_change(p["close"], 120),
+        "ret_5d(5日リターン)": lambda p: _pct_change(p["close"], 5),
+        "dist_sma5(5日線乖離)": lambda p: _ratio(p["close"], p["sma5"]) - 1.0,
         "dist_sma25(25日線乖離)": lambda p: _ratio(p["close"], p["sma25"]) - 1.0,
         "dist_sma200(200日線乖離)": lambda p: _ratio(p["close"], p["sma200"]) - 1.0,
+        "rsi14(RSI14)": lambda p: np.asarray(p["rsi14"], dtype=float),
+        "gap_pct(寄付ギャップ)": lambda p: _gap_pct(p["open"], p["close"]),
+        "run_up_days(連騰日数)": lambda p: _run_up_days(p["close"]),
         "sma200_slope(200日線傾き)": lambda p: _pct_change(p["sma200"], 20),
         "pos_52w(52週高値位置)": lambda p: _ratio(p["close"], _roll(p["close"], 252, "max")),
         "atr_pct(ボラティリティ)": lambda p: _ratio(p["atr14"], p["close"]),

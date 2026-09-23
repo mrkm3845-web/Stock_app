@@ -75,8 +75,57 @@
       "description": "中位株の出来高4倍超",
       "condition": "price > 2000 and price <= 3000 and val_ratio >= 4.0",
       "action": "warn"
+    },
+    {
+      "id": "overheat_sma25",
+      "description": "25日線乖離+25%超（短期過熱）",
+      "condition": "dist_sma25_pct >= 25.0",
+      "action": "warn"
+    },
+    {
+      "id": "overheat_rsi",
+      "description": "RSI14が80以上（買われ過ぎ）",
+      "condition": "rsi14 >= 80.0",
+      "action": "warn"
+    },
+    {
+      "id": "overheat_ret5",
+      "description": "5日で+25%超の急騰",
+      "condition": "ret_5d_pct >= 25.0",
+      "action": "warn"
+    },
+    {
+      "id": "overheat_gap",
+      "description": "寄付ギャップ+8%超（窓開け急騰）",
+      "condition": "gap_pct >= 8.0",
+      "action": "warn"
+    },
+    {
+      "id": "reject_upper_shadow",
+      "description": "上ヒゲがATRの1.5倍超（高値圏で上値拒否）",
+      "condition": "upper_shadow_atr >= 1.5",
+      "action": "warn"
+    },
+    {
+      "id": "blowoff_combo",
+      "description": "25日線乖離+40%超かつRSI80以上（総合過熱）",
+      "condition": "dist_sma25_pct >= 40.0 and rsi14 >= 80.0",
+      "action": "warn"
     }
   ],
+  "entry_guard": {
+    "dist_sma25_moderate": 18.0,
+    "dist_sma25_strong": 30.0,
+    "dist_sma25_extreme": 45.0,
+    "rsi_watch": 75.0,
+    "rsi_hot": 80.0,
+    "ret5_watch": 20.0,
+    "ret5_hot": 30.0,
+    "pullback_atr_shallow": 0.5,
+    "pullback_atr_deep": 1.0,
+    "pullback_wait_days": 5,
+    "probe_qty_factor": 0.5
+  },
   "score_weights": {
     "pos_52w": 30,
     "dist_sma200": 25,

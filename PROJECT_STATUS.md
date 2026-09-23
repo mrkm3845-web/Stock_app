@@ -98,7 +98,8 @@ flowchart LR
   - **技術実行（AIなし）**はスコア上位を技術候補として `recommendations_technical.json` に出力（`verdict=technical_only`）。
   - **業種集中の上限**: `portfolio.max_per_sector`（既定2）を守り、同一業種は最大2銘柄まで採用。
 - **エグジットは「ルール基本」**: 利確 = 価格×(1+`price_tiers.tp_pct`)、損切 = 価格 − `price_tiers.atr_sl_mult`×ATR14。**AIの tp/sl は `advice` に参照保持**（表示上はルール優先）。
-- **リスクベースの推奨株数**: `参考資金 × risk% ÷ 損切幅`（`portfolio` セクション）。
+- **高値掴み防止（エントリー判定）**: 25日線乖離・RSI14・5日リターン・寄付ギャップ・上ヒゲ等から過熱度（低/中/強/極）を算出し、`entry_type`（`breakout_chase`/`pullback_wait`/`probe_only`/`wait`）を決定。**上昇銘柄を除外せず、押し目ゾーン（5日線・ATR押し）を提示**して入口を調整する。AIが強気でも過熱が強い時の成行追いかけは `probe_only` へ自動格下げ（ルール安全網）。`pullback_wait` も `recommend` のまま推奨に残し、`entry_type` で区別する。
+- **リスクベースの推奨株数**: `参考資金 × risk% ÷ 損切幅`（`portfolio` セクション）。`probe_only` は `entry_guard.probe_qty_factor` で小口に縮小。
 - **決算接近の警告**: スキャン時の `.info` から次回決算日を抽出（`earningsTimestampStart`、追加通信なし）→ `docs/earnings.json` とおすすめに `earnings_date`/`earnings_soon`。
 - **地合い**: `1306.T`（TOPIX ETF）が200日線より上か（risk-on/off）を `meta.json.regime` に出力（**表示のみ・選定フィルタはOFF**）。
 - **Discord通知**: AI実行時は「AI推奨（本日）」として `recommend` のみを送信。**0件の日は「本日はAI推奨はありません（様子見）＋総評」**を送信。通常実行時は「技術スコア ランキング」。利確/損切は価格帯別ルール値。
@@ -127,7 +128,8 @@ flowchart LR
 - リトライ: 5xx は最大5回（指数バックオフ）、**課金クォータ 429 は即スキップ**。
 - 応答の `code` を文字列正規化して候補プールと突合（`sanitize_ai_map`）。
 - `verdict` は `recommend/watch/neutral/caution/avoid` に限定（プロンプトで明示）。main8・フロント双方で同じ優先順位に正規化。
-- AI入力には `過熱警戒（warnings）` `決算（接近時はあとN日）` `グレアム理論株価/割安度` `価格帯` を含む。
+- AI入力には `過熱警戒（warnings）` `決算（接近時はあとN日）` `グレアム理論株価/割安度` `価格帯` に加え、**`25日/5日乖離率` `RSI14` `連騰日数` `寄付ギャップ` `ATR%` `ルール推奨入口` `押し目候補ゾーン`** を含む。
+- AI出力には `entry_type`（`breakout_chase`/`pullback_wait`/`probe_only`/`wait`）を含め、**高値掴み（イナゴ買い）防止を最優先**するよう明示。`breakout_chase`/`pullback_wait`/`probe_only` は `recommend`、`wait` は `watch`/`caution` を指示。
 - yfinance の 401/429（想定内）はログ抑制（`logging.getLogger("yfinance")`）。
 - 出力: `ai_analysis/{date}.json`（生キャッシュ）＋ `ai_strategy_latest.json`（銘柄別最新）。
 
@@ -137,10 +139,10 @@ flowchart LR
 
 - [`backtest_rolling_walkforward.py`](back_tester/backtest_rolling_walkforward.py): スクリーナーと**同一スコア式**のウォークフォワード（学習12ヶ月/検証3ヶ月/スライド3ヶ月）。
   - エントリー: スコア上位K（既定5）を翌日寄り。エグジット: 固定TP/SL vs ATRトレーリング。**株価帯別に最適化**。
-  - **選定エッジ検証**: `quantile_analysis` / `selection_comparison`（上位vsランダムvs下位）/ `weight_ablation`（leave-one-out）/ `atr_trail_worst_trades`（テール監査）/ `regime_effect`（地合い無し・指数MA・breadth）/ `position_sizing_effect`（同時保有数 3/4/5/8）。
+  - **選定エッジ検証**: `quantile_analysis` / `selection_comparison` / `weight_ablation` / `atr_trail_worst_trades` / `regime_effect` / `position_sizing_effect` / **`entry_style_comparison`（成行 vs 押し目指値・高値掴み回避の検証）**。
   - 出力: `results/backtest_walkforward_result.json`（上記キー含む）・`.csv`・`backtest_tier_exit.csv`・`_report.md`。
-- [`research_signals.py`](back_tester/research_signals.py): 候補指標（14種・業種相対強度 `sector_rs_20d` 含む）の分位スプレッド研究 → `results/research_signals.json/.csv`。
-- [`apply_optimal_params.py`](back_tester/apply_optimal_params.py): 結果を**ガード付き**で `docs/strategy_params.json` の `signals`・`price_tiers` に反映。
+- [`research_signals.py`](back_tester/research_signals.py): 候補指標（トレンド系＋**過熱系 `ret_5d` / `dist_sma5` / `rsi14` / `gap_pct` / `run_up_days`**・業種相対強度 `sector_rs_20d`）の分位スプレッド研究 → `results/research_signals.json/.csv`。
+- [`apply_optimal_params.py`](back_tester/apply_optimal_params.py): 結果を**ガード付き**で `docs/strategy_params.json` の `signals`・`price_tiers`・**`entry_guard`（押し目深さ/待機日数）** に反映。
   - ガード: 最低100件 / OOS PF≧1.15 / 期待値>0 / 年率>ベンチマーク / DD≦50% / （signals）近傍安定性 / 前回比劣化なし。
 - [`run_walkforward.yml`](.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST**。バックテスト→ガード反映→`docs/strategy_params.json` と `results/` をコミット（**手動同期不要**）。
 
@@ -159,7 +161,8 @@ flowchart LR
 - `price_tiers`: 価格帯ごとの `tp_pct` / `sl_pct` / `max_hold_days` / `atr_sl_mult`（バックテストが自動更新）
 - `portfolio`: `{max_positions:5, max_per_sector:2, risk_per_trade_pct:1.0, reference_capital_jpy:1000000}`（`max_per_sector` は同一業種の同時採用上限）
 - `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
-- `warnings`: 低位/中位の出来高4倍超の警告
+- `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
+- `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`・`probe_qty_factor`）。`pullback_atr_shallow`/`pullback_wait_days` はバックテストの成行比較で更新されうる。
 - `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, max_picks:5, ...}`（`max_picks`＝表示する推奨の最大件数。旧 `weekly_top_picks` は後方互換で読む。`stage1_pool_min` は定義のみで**未使用**）
 
 ---
@@ -169,7 +172,7 @@ flowchart LR
 - `docs/history/{date}.json` / `latest.json`: 全銘柄レコード（スコア付き）。
 - `docs/history/meta.json`: `{date, generated_at, regime, portfolio}`。
 - `docs/recommendations.json`（AI時）/ `recommendations_technical.json`（技術のみ）: `{regime, portfolio_guide, picks[]}`。
-  - `picks[]`: `code,name,price,score,verdict,rank,tp_price,sl_price,ai_tp_price,ai_sl_price,atr_sl_mult,stop_distance,suggested_qty,trailing_plan,earnings_date,earnings_soon,...`
+  - `picks[]`: `code,name,price,score,verdict,rank,tp_price,sl_price,ai_tp_price,ai_sl_price,atr_sl_mult,stop_distance,suggested_qty,trailing_plan,earnings_date,earnings_soon,entry_type,entry_type_label,entry_zone_low,entry_zone_high,overheat_level,overheat_flags,rsi14,dist_sma5_pct,dist_sma25_pct,pos_52w,run_up_days,gap_pct,atr_pct,...`
 - `docs/earnings.json`: `{date, horizon_days:14, items:{code:{date,days_until,soon}}}`。
 - `docs/ai_analysis/{date}.json` / `ai_strategy_latest.json`。
 - `data/stocks.db`（ファンダ・履歴キャッシュ）。
@@ -200,6 +203,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 ## 11. 残タスク・既知の制約
 
 **残タスク**
+- **過熱指標（25日乖離・RSI・5日リターン・ギャップ）と押し目エントリーのバックテスト検証の実行**: 分析コード（`research_signals.py` の過熱系指標、`backtest_rolling_walkforward.py` の `entry_style_comparison`、`apply_optimal_params.py` の `entry_guard` 反映）は実装済み。**次は実際にウォークフォワードを回して OOS 結果を取得し、`entry_guard` の暫定閾値を更新する**（実行は月次 `run_walkforward.yml` or ローカル全件）。
 - エグジット係数（ATR損切・トレーリング・部分利確）の区分別最適化の拡張。
 - 同時保有数の頑健性検証（単一経路依存の解消）。
 - スコアのランダム対比での優位性向上（現状はリターンで勝ち・PFは同等）。

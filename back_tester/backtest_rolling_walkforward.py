@@ -88,6 +88,10 @@ TIER_EXIT_GRID = {
 }
 TIER_EXIT_MIN_TRADES_TEST = 100
 
+# 成行 vs 押し目指値 の比較グリッド（高値掴み回避の検証）
+ENTRY_STYLE_ATR_MULTS = [0.5, 1.0, 1.5]
+ENTRY_STYLE_WAIT_DAYS = [3, 5, 10]
+
 
 # --------------------------------------------------------------------------- データ取得
 def fetch_jpx_stock_list(markets):
@@ -597,6 +601,178 @@ def selection_comparison(prepared, params, folds, exit_mode="fixed"):
             all_test.extend(_run_sim_mode(prepared, params, exit_mode, longform, te_s, te_e, mode))
         out[mode] = {"train": calc_metrics(all_train), "test": calc_metrics(all_test)}
     return out
+
+
+def _overheat_level(p, i, params):
+    """シグナル日 i 時点の過熱度（low/moderate/strong/extreme）を main8 と同じ式で返す。"""
+    close = float(p["close"][i])
+    sma25 = p["sma25"][i]
+    atr = p["atr14"][i]
+    rsi = p["rsi14"][i] if "rsi14" in p else np.nan
+    ret5 = None
+    if i >= 5 and p["close"][i - 5] > 0:
+        ret5 = (close / float(p["close"][i - 5]) - 1.0) * 100
+    ctx = {
+        "price": close,
+        "sma5": float(p["sma5"][i]) if not np.isnan(p["sma5"][i]) else None,
+        "sma25": float(sma25) if not np.isnan(sma25) else None,
+        "atr14": float(atr) if not np.isnan(atr) else 0.0,
+        "dist_sma25_pct": (close / float(sma25) - 1.0) * 100 if (not np.isnan(sma25) and sma25 > 0) else None,
+        "rsi14": float(rsi) if not np.isnan(rsi) else None,
+        "ret_5d_pct": ret5,
+    }
+    return F.compute_entry_plan(ctx, params)["overheat_level"]
+
+
+def simulate_trade_limit(p, params, code, sig_i, exit_mode, max_valid, atr_mult, wait_days):
+    """押し目指値エントリーの取引をシミュレートする（高値掴み回避の検証用）。
+
+    シグナル日の終値から atr_mult×ATR 下に買い指値を置き、wait_days 営業日以内に
+    安値が指値へ到達すれば約定（寄りが指値より下なら寄りで有利約定）。未到達なら
+    「見送り」（=取引なし）。約定後のエグジットは成行と同一ロジック。
+    """
+    n = len(p["close"])
+    start_i = sig_i + 1
+    if start_i > max_valid or start_i >= n:
+        return None
+    sig_close = float(p["close"][sig_i])
+    atr_sig = p["atr14"][sig_i]
+    if np.isnan(atr_sig) or atr_sig <= 0:
+        atr_sig = sig_close * 0.05
+    limit = sig_close - atr_mult * atr_sig
+    if limit <= 0:
+        return None
+    lows, opens = p["low"], p["open"]
+    last_wait = min(start_i + wait_days - 1, max_valid, n - 1)
+    fill_i = None
+    raw_entry = None
+    for h in range(start_i, last_wait + 1):
+        if lows[h] <= limit:
+            fill_i = h
+            raw_entry = min(float(opens[h]), limit)
+            break
+    if fill_i is None or raw_entry is None or raw_entry <= 0:
+        return None
+
+    tier = F.tier_for_price(raw_entry, params["price_tiers"]) or {}
+    max_hold = int(tier.get("max_hold_days", 14))
+    if exit_mode == "fixed":
+        ret, reason, exit_dt = exit_fixed(
+            p, fill_i, raw_entry,
+            float(tier.get("tp_pct", 0.12)), float(tier.get("sl_pct", 0.05)), max_hold,
+        )
+    else:
+        ret, reason, exit_dt = exit_trail(p, fill_i, raw_entry, float(tier.get("atr_sl_mult", 2.0)), max_hold)
+    return {"code": code, "return": ret, "reason": reason,
+            "entry_date": p["dates"][fill_i], "exit_date": exit_dt}
+
+
+def entry_style_comparison(prepared, params, folds, exit_mode="fixed"):
+    """「翌日成行」vs「押し目指値」の OOS 成績を比較し、高値掴み回避の効果を測る。
+
+    指値の深さ/待機日数は学習期間(train)で選び、検証期間(test)で評価する（ウォークフォワード）。
+    """
+    weights = params.get("score_weights", {})
+    sig = params.get("signals", {})
+    longform = build_longform(prepared, sig, weights, CONFIG["walk_start"], CONFIG["walk_end"])
+    if longform is None:
+        return None
+
+    picks_train, picks_test = [], []
+    for (tr_s, tr_e, te_s, te_e) in folds:
+        tr_te = np.datetime64(tr_e)
+        for code, sig_i in _select_daily(longform, tr_s, tr_e, CONFIG["top_k"], mode="top"):
+            p = prepared.get(code)
+            if p is None:
+                continue
+            mv = int(np.searchsorted(p["dates"], tr_te, side="right") - 1)
+            picks_train.append((code, int(sig_i), mv))
+        te_te = np.datetime64(te_e)
+        for code, sig_i in _select_daily(longform, te_s, te_e, CONFIG["top_k"], mode="top"):
+            p = prepared.get(code)
+            if p is None:
+                continue
+            mv = int(np.searchsorted(p["dates"], te_te, side="right") - 1)
+            picks_test.append((code, int(sig_i), mv))
+    if not picks_test:
+        return None
+
+    def run_market(picks):
+        trades = []
+        for code, sig_i, mv in picks:
+            t = simulate_trade(prepared[code], params, code, sig_i, exit_mode, mv)
+            if t is not None:
+                trades.append(t)
+        m = calc_metrics(trades)
+        m["fill_rate"] = round(len(trades) / len(picks), 3) if picks else 0.0
+        return m
+
+    def run_limit(picks, atr_mult, wait_days):
+        trades = []
+        for code, sig_i, mv in picks:
+            t = simulate_trade_limit(prepared[code], params, code, sig_i, exit_mode, mv, atr_mult, wait_days)
+            if t is not None:
+                trades.append(t)
+        m = calc_metrics(trades)
+        m["fill_rate"] = round(len(trades) / len(picks), 3) if picks else 0.0
+        return m
+
+    market_train = run_market(picks_train)
+    market_test = run_market(picks_test)
+
+    grid = {}
+    best = None
+    for a in ENTRY_STYLE_ATR_MULTS:
+        for w in ENTRY_STYLE_WAIT_DAYS:
+            key = f"limit_{a}atr_{w}d"
+            tr_m = run_limit(picks_train, a, w)
+            te_m = run_limit(picks_test, a, w)
+            grid[key] = {"train": tr_m, "test": te_m}
+            score = (tr_m["pf"], tr_m["ev_pct"])  # 学習期間で選択
+            if best is None or score > best[0]:
+                best = (score, key, a, w, tr_m, te_m)
+    best_limit = {"key": best[1], "atr_mult": best[2], "wait_days": best[3],
+                  "train": best[4], "test": best[5]}
+
+    best_a, best_w = best[2], best[3]
+    by_overheat = {}
+    for label, cond in (("low", lambda lv: lv == "low"),
+                        ("heated", lambda lv: lv in ("moderate", "strong", "extreme"))):
+        sel = []
+        for code, sig_i, mv in picks_test:
+            try:
+                lv = _overheat_level(prepared[code], sig_i, params)
+            except Exception:
+                continue
+            if cond(lv):
+                sel.append((code, sig_i, mv))
+        if not sel:
+            continue
+        mt = []
+        for code, sig_i, mv in sel:
+            t = simulate_trade(prepared[code], params, code, sig_i, exit_mode, mv)
+            if t is not None:
+                mt.append(t)
+        lt = []
+        for code, sig_i, mv in sel:
+            t = simulate_trade_limit(prepared[code], params, code, sig_i, exit_mode, mv, best_a, best_w)
+            if t is not None:
+                lt.append(t)
+        by_overheat[label] = {
+            "picks": len(sel),
+            "market": calc_metrics(mt),
+            "limit": calc_metrics(lt),
+        }
+
+    return {
+        "exit_mode": exit_mode,
+        "picks": len(picks_test),
+        "market": market_test,
+        "market_train": market_train,
+        "best_limit": best_limit,
+        "limit_grid": grid,
+        "by_overheat": by_overheat,
+    }
 
 
 def regime_effect(prepared, params, folds, bench, exit_mode="fixed"):
@@ -1180,6 +1356,29 @@ def _build_report_markdown(result, valid):
         for k, m in ps.items():
             lines.append(f"| {k} | {m['trade_count']} | {m['pf']} | {m['ev_pct']:+0.2f}% | {m['annualized_return_pct']:+0.2f}% | {m['max_dd_pct']}% |")
 
+    esc = result.get("entry_style_comparison")
+    if esc:
+        mk = esc["market"]
+        bl = esc["best_limit"]
+        bt = bl["test"]
+        lines += ["", "## 成行 vs 押し目指値（高値掴み回避の検証・OOS・fixed）", "",
+                  "| エントリー | 件数 | 約定率 | 勝率 | PF | 期待値 | 年率 | 最大DD |",
+                  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+                  f"| 翌日成行 | {mk['trade_count']} | {mk['fill_rate']} | {mk['win_rate']}% | {mk['pf']} | "
+                  f"{mk['ev_pct']:+0.2f}% | {mk['annualized_return_pct']:+0.2f}% | {mk['max_dd_pct']}% |",
+                  f"| 押し目 {bl['atr_mult']}ATR / {bl['wait_days']}日待ち | {bt['trade_count']} | {bt['fill_rate']} | "
+                  f"{bt['win_rate']}% | {bt['pf']} | {bt['ev_pct']:+0.2f}% | {bt['annualized_return_pct']:+0.2f}% | {bt['max_dd_pct']}% |"]
+        boh = esc.get("by_overheat") or {}
+        if boh:
+            lines += ["", "| 過熱度 | 選定数 | 成行PF | 成行EV | 押し目PF | 押し目EV |",
+                      "| --- | ---: | ---: | ---: | ---: | ---: |"]
+            for label, d in boh.items():
+                lm, ll = d["market"], d["limit"]
+                lines.append(f"| {label} | {d['picks']} | {lm['pf']} | {lm['ev_pct']:+0.2f}% | {ll['pf']} | {ll['ev_pct']:+0.2f}% |")
+        lines += ["",
+                  "※ 押し目指値はシグナル日終値から N×ATR 下に買い指値を置き、待機日数内に到達しなければ見送り。",
+                  "※ 「heated」= 過熱度 moderate/strong/extreme（main8 の entry_guard と同じ判定）。"]
+
     lines += [
         "",
         "## 注意（バイアス）",
@@ -1303,11 +1502,13 @@ def main():
     sc = selection_comparison(prepared, params, folds, exit_mode="fixed")
     wa = weight_ablation(prepared, params, folds, n_quantiles=qn, hold_days=qh)
     worst = audit_worst_trades(prepared, params, folds, exit_mode="atr_trail", n=5)
+    esc = entry_style_comparison(prepared, params, folds, exit_mode="fixed")
 
     result["quantile_analysis"] = qa
     result["selection_comparison"] = sc
     result["weight_ablation"] = wa
     result["atr_trail_worst_trades"] = worst
+    result["entry_style_comparison"] = esc
 
     re = regime_effect(prepared, params, folds, bench, exit_mode="fixed")
     result["regime_effect"] = re
@@ -1349,6 +1550,20 @@ def main():
         print("\n=== atr_trail 最悪取引（テール監査） ===")
         for t in worst:
             print(f"  {t['code']} {t['return_pct']}% ({t['reason']}) {t['entry_date']} -> {t['exit_date']}")
+    if esc:
+        print("\n=== 成行 vs 押し目指値（高値掴み回避の検証, fixed） ===")
+        mk = esc["market"]
+        print(f"  成行           : n={mk['trade_count']} PF={mk['pf']} EV={mk['ev_pct']}% "
+              f"勝率={mk['win_rate']}% 年率={mk['annualized_return_pct']}% DD={mk['max_dd_pct']}%")
+        bl = esc["best_limit"]
+        bt = bl["test"]
+        print(f"  押し目 {bl['atr_mult']}ATR/{bl['wait_days']}日: n={bt['trade_count']} PF={bt['pf']} "
+              f"EV={bt['ev_pct']}% 勝率={bt['win_rate']}% 約定率={bt['fill_rate']} "
+              f"年率={bt['annualized_return_pct']}% DD={bt['max_dd_pct']}%")
+        for label, d in esc.get("by_overheat", {}).items():
+            lm, ll = d["market"], d["limit"]
+            print(f"  [{label}] market: n={lm['trade_count']} PF={lm['pf']} EV={lm['ev_pct']}% / "
+                  f"limit: n={ll['trade_count']} PF={ll['pf']} EV={ll['ev_pct']}%")
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     json_path = os.path.join(OUTPUT_DIR, "backtest_walkforward_result.json")
