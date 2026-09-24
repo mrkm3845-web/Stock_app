@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -505,7 +505,8 @@
 
         function esc(s) {
             if (s === null || s === undefined) return "";
-            return String(s).split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+            return String(s).split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;")
+                .split('"').join("&quot;").split("'").join("&#39;");
         }
 
         function yen(v) {
@@ -531,11 +532,23 @@
             return '<span class="badge fw-bold" style="' + (cls === 'high' ? 'background:#d3f9d8;color:#2b8a3e;' : cls === 'mid' ? 'background:#e7f5ff;color:#1971c2;' : 'background:#e9ecef;color:#6c757d;') + '">' + score + '</span>';
         }
 
-        function verdictBadge(v) {
+        function verdictBadge(v, reason) {
             if (!v) return "";
             const map = {recommend: "verdict-recommend", neutral: "verdict-neutral", hold: "verdict-neutral", avoid: "verdict-avoid", caution: "verdict-avoid", watch: "verdict-watch"};
             const label = {recommend: "推奨", neutral: "中立", hold: "保有", caution: "注意", avoid: "回避", watch: "様子見"}[v] || v;
-            return '<span class="badge ' + (map[v] || "verdict-watch") + '">' + label + '</span>';
+            const tip = reason ? ` title="${esc(reason)}"` : '';
+            return '<span class="badge ' + (map[v] || "verdict-watch") + '"' + tip + '>' + label + '</span>';
+        }
+
+        // 注意・回避・様子見の「理由」を明示するコールアウト
+        function verdictReasonHtml(v, reason) {
+            if (v !== "caution" && v !== "avoid" && v !== "watch") return "";
+            const cls = (v === "watch")
+                ? "bg-secondary-subtle border-secondary text-secondary"
+                : "bg-danger-subtle border-danger text-danger";
+            const title = (v === "avoid") ? "回避の理由" : (v === "watch") ? "様子見の理由" : "注意の理由";
+            const body = reason ? esc(reason) : "理由の記載がありません。下記の「過熱警戒」や「決算日」も確認してください。";
+            return `<div class="p-2 mb-2 ${cls} border rounded small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>${title}<div class="fw-normal mt-1">${body}</div></div>`;
         }
 
         function checkMini(s) {
@@ -585,7 +598,8 @@
                 let aiHtml = '';
                 if (ai) {
                     aiHtml = `<div class="strategy-box ai">
-                        <div class="fw-bold text-warning small mb-2"><i class="bi bi-stars me-1"></i> AI戦略分析（${esc(ai.date || '-')} 更新${isCurrentAIBatch(code) ? ` / 順位 ${ai.rank != null ? ai.rank : '-'}` : '・最新バッチ外（参考）'}）${verdictBadge(ai.verdict)}</div>
+                        <div class="fw-bold text-warning small mb-2"><i class="bi bi-stars me-1"></i> AI戦略分析（${esc(ai.date || '-')} 更新${isCurrentAIBatch(code) ? ` / 順位 ${ai.rank != null ? ai.rank : '-'}` : '・最新バッチ外（参考）'}）${verdictBadge(ai.verdict, ai.reason)}</div>
+                        ${verdictReasonHtml(ai.verdict, ai.reason)}
                         <div class="strategy-item"><small class="text-muted">根拠</small><div>${esc(ai.reason || '-')}</div></div>
                         <div class="row g-1 text-center mt-1 mb-2">
                             <div class="col-3"><small class="text-muted">エントリー</small><div class="fw-bold">${yen(ai.entry_price)}</div></div>
@@ -687,7 +701,8 @@
             let aiSectionHtml = "";
             if (ai) {
                 aiSectionHtml = `<div class="strategy-box ai">
-                    <div class="fw-bold text-warning small mb-2"><i class="bi bi-stars me-1"></i> AI戦略分析（${esc(ai.date || '-')} 更新${isCurrentAIBatch(code) ? ` / 順位 ${ai.rank != null ? ai.rank : '-'}` : '・最新バッチ外（参考）'}）${verdictBadge(ai.verdict)}</div>
+                    <div class="fw-bold text-warning small mb-2"><i class="bi bi-stars me-1"></i> AI戦略分析（${esc(ai.date || '-')} 更新${isCurrentAIBatch(code) ? ` / 順位 ${ai.rank != null ? ai.rank : '-'}` : '・最新バッチ外（参考）'}）${verdictBadge(ai.verdict, ai.reason)}</div>
+                    ${verdictReasonHtml(ai.verdict, ai.reason)}
                     <div class="strategy-desc">※ AIの水準は参考情報です。実際の売買指示は下記「スイング売買戦略（価格帯別ルール）」を使用。</div>
                     <div class="strategy-item"><small class="text-muted">根拠</small><div>${esc(ai.reason || '-')}</div></div>
                     <div class="strategy-item"><small class="text-muted">直近の材料・ニュース</small><div>${esc(ai.news_note || '-')}</div></div>
@@ -979,7 +994,7 @@
                         <div class="fw-bold">
                             <span class="stock-link" onclick="openRakuten('${t.code}')" style="cursor:pointer;" title="タップでiSPEEDを開く">${t.code}</span>
                             <span class="company-name" onclick="showStockDetail('${t.code}')" title="${esc(t.name || '')}（タップで詳細・AI戦略）">${esc(t.name || '')}</span>
-                            ${aiForBadge ? verdictBadge(aiForBadge.verdict) : ''}
+                            ${aiForBadge ? verdictBadge(aiForBadge.verdict, aiForBadge.reason) : ''}
                             <i class="bi bi-box-arrow-up-right text-muted" style="font-size:0.65rem;"></i>
                         </div>
                         <div class="text-muted" style="font-size:0.7rem;">${shortDate}買 · ${t.qty}株</div>
@@ -1056,7 +1071,7 @@
                     <td class="text-start fw-bold">
                         <span class="stock-link" onclick="openRakuten('${t.code}')" style="cursor:pointer;">${t.code}</span>
                         <span class="company-name" onclick="showStockDetail('${t.code}')" title="${esc(t.name || '')}（タップで詳細・AI戦略）">${esc(t.name || '')}</span>
-                        ${aiForBadge ? verdictBadge(aiForBadge.verdict) : ''}
+                        ${aiForBadge ? verdictBadge(aiForBadge.verdict, aiForBadge.reason) : ''}
                     </td>
                     <td style="font-size:0.75rem;">${t.buy_date.substring(5)} ➔ ${t.sell_date.substring(5)} (${holdDays}日)</td>
                     <td style="font-size:0.75rem;">¥${Number(t.buy_price).toLocaleString()} ➔ ¥${Number(t.sell_price).toLocaleString()}</td>

@@ -390,7 +390,8 @@
 
         function esc(s) {
             if (s === null || s === undefined) return "";
-            return String(s).split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+            return String(s).split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;")
+                .split('"').join("&quot;").split("'").join("&#39;");
         }
 
         function yen(v) {
@@ -526,7 +527,7 @@
             return `<span class="badge-score ${cls}">${score}</span>`;
         }
 
-        function verdictBadge(v) {
+        function verdictBadge(v, reason) {
             if (!v) return "";
             const map = {
                 recommend: "verdict-recommend", neutral: "verdict-neutral",
@@ -537,7 +538,19 @@
                 recommend: "推奨", neutral: "中立", hold: "保有",
                 caution: "注意", avoid: "回避", watch: "様子見",
             }[v] || v;
-            return '<span class="badge ' + (map[v] || "verdict-watch") + '">' + label + '</span>';
+            const tip = reason ? ` title="${esc(reason)}"` : '';
+            return '<span class="badge ' + (map[v] || "verdict-watch") + '"' + tip + '>' + label + '</span>';
+        }
+
+        // 注意・回避・様子見の「理由」を明示するコールアウト
+        function verdictReasonHtml(v, reason) {
+            if (v !== "caution" && v !== "avoid" && v !== "watch") return "";
+            const cls = (v === "watch")
+                ? "bg-secondary-subtle border-secondary text-secondary"
+                : "bg-danger-subtle border-danger text-danger";
+            const title = (v === "avoid") ? "回避の理由" : (v === "watch") ? "様子見の理由" : "注意の理由";
+            const body = reason ? esc(reason) : "理由の記載がありません。下記の「過熱警戒」や「決算日」も確認してください。";
+            return `<div class="p-2 mb-2 ${cls} border rounded small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>${title}<div class="fw-normal mt-1">${body}</div></div>`;
         }
 
         // エントリー方式（高値掴み防止）と過熱度
@@ -898,7 +911,7 @@
                         : `⭐AI ${ai.date ? ai.date.slice(5) : ''}`;
                     const styleAttr = isCur ? '' : ' style="opacity:.6;"';
                     const tip = isCur ? `AI戦略分析 (${ai.date})` : `AI戦略分析 (${ai.date})・最新バッチ外の参考`;
-                    aiBadge = `<span class="badge-ai ms-1"${styleAttr} title="${tip}">${label}</span> ${verdictBadge(ai.verdict)}`;
+                    aiBadge = `<span class="badge-ai ms-1"${styleAttr} title="${tip}">${label}</span> ${verdictBadge(ai.verdict, ai.reason)}`;
                 }
 
                 let entryBadge = "";
@@ -1167,8 +1180,9 @@
                     <div class="strategy-box ai">
                         <div class="fw-bold text-warning small mb-2">
                             <i class="bi bi-stars me-1"></i> AI戦略分析（${esc(ai.date || '-')} 更新${isCurrentAIBatch(s.code) ? ` / 順位 ${ai.rank !== null && ai.rank !== undefined ? ai.rank : '-'}` : '・最新バッチ外（参考）'}）
-                            ${verdictBadge(ai.verdict)}
+                            ${verdictBadge(ai.verdict, ai.reason)}
                         </div>
+                        ${verdictReasonHtml(ai.verdict, ai.reason)}
                         <div class="strategy-desc">※ AIの水準は参考情報です。実際の売買指示は下記「スイング売買戦略（価格帯別ルール）」を使用。</div>
                         <div class="strategy-item"><small class="text-muted">根拠</small><div>${esc(ai.reason || '-')}</div></div>
                         <div class="strategy-item"><small class="text-muted">直近の材料・ニュース</small><div>${esc(ai.news_note || '-')}</div></div>
