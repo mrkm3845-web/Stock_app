@@ -703,7 +703,7 @@
                 aiSectionHtml = `<div class="strategy-box ai">
                     <div class="fw-bold text-warning small mb-2"><i class="bi bi-stars me-1"></i> AI戦略分析（${esc(ai.date || '-')} 更新${isCurrentAIBatch(code) ? ` / 順位 ${ai.rank != null ? ai.rank : '-'}` : '・最新バッチ外（参考）'}）${verdictBadge(ai.verdict, ai.reason)}</div>
                     ${verdictReasonHtml(ai.verdict, ai.reason)}
-                    <div class="strategy-desc">※ AIの水準は参考情報です。実際の売買指示は下記「スイング売買戦略（価格帯別ルール）」を使用。</div>
+                    <div class="strategy-desc">※ AIの水準は参考情報です。実際の売買指示は上記「スイング売買戦略（価格帯別ルール）」を使用。</div>
                     <div class="strategy-item"><small class="text-muted">根拠</small><div>${esc(ai.reason || '-')}</div></div>
                     <div class="strategy-item"><small class="text-muted">直近の材料・ニュース</small><div>${esc(ai.news_note || '-')}</div></div>
                     <div class="row g-1 text-center mt-1 mb-2">
@@ -750,7 +750,6 @@
                         <div class="col-4"><small class="text-muted" style="font-size:0.7rem;">出来高増加率</small><div class="fw-bold text-primary" style="font-size:0.8rem;">${valRatioStr}</div></div>
                     </div>
                 </div>
-                ${aiSectionHtml}
                 ${sizeHtml}
                 <div class="strategy-box">
                     <div class="fw-bold text-dark small mb-2"><i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略（価格帯別ルール${pick ? '・推奨' : ''}）:</div>
@@ -761,6 +760,7 @@
                     <div class="strategy-item text-secondary fw-bold"><i class="bi bi-clock-history me-1"></i> 最適保有期間: ${maxHoldDays}営業日</div>
                     <div class="strategy-desc">└ 【手仕舞い】${maxHoldDays}営業日経過時点で目標未達の場合は終値で手仕舞い推奨</div>
                 </div>
+                ${aiSectionHtml}
                 <div class="row g-2">
                     <div class="col-4 text-center p-2 border rounded"><small class="text-muted">ミックス係数</small><div class="fw-bold fs-6">${Number(s.mix_index || 0).toFixed(2)}</div></div>
                     <div class="col-4 text-center p-2 border rounded"><small class="text-muted">PER</small><div class="fw-bold fs-6">${Number(s.per || 0).toFixed(1)} 倍</div></div>
