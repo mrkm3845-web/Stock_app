@@ -685,9 +685,9 @@
                 ${sizeHtml}
                 <div class="strategy-box">
                     <div class="fw-bold text-dark small mb-2"><i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略（価格帯別ルール${pick ? '・推奨' : ''}）:</div>
-                    <div class="strategy-item text-danger fw-bold"><i class="bi bi-shield-x me-1"></i> 損切りライン: ¥${stopLoss.toLocaleString()} (-${(slPctVal*100).toFixed(1)}%)</div>
+                    <div class="strategy-item text-primary fw-bold"><i class="bi bi-shield-x me-1"></i> 損切りライン: ¥${stopLoss.toLocaleString()} (-${(slPctVal*100).toFixed(1)}%)</div>
                     <div class="strategy-desc">└ 【逆指値】価格帯別のATR${atrMult}倍。無駄なロスカットを抑えたストップ値</div>
-                    <div class="strategy-item text-primary fw-bold"><i class="bi bi-trophy me-1"></i> 利確ターゲット: ¥${takeProfit.toLocaleString()} (+${(tpPctVal*100).toFixed(1)}%)</div>
+                    <div class="strategy-item text-danger fw-bold"><i class="bi bi-trophy me-1"></i> 利確ターゲット: ¥${takeProfit.toLocaleString()} (+${(tpPctVal*100).toFixed(1)}%)</div>
                     <div class="strategy-desc">└ 【利食い】価格帯別の目標${rrVal !== null ? ` (リスクリワード比 1:${rrVal.toFixed(1)})` : ''}</div>
                     <div class="strategy-item text-secondary fw-bold"><i class="bi bi-clock-history me-1"></i> 最適保有期間: ${maxHoldDays}営業日</div>
                     <div class="strategy-desc">└ 【手仕舞い】${maxHoldDays}営業日経過時点で目標未達の場合は終値で手仕舞い推奨</div>

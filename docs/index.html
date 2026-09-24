@@ -1211,12 +1211,12 @@
                         <i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略（価格帯別ルール${pick ? '・推奨' : ''}）:
                     </div>
 
-                    <div class="strategy-item text-danger fw-bold">
+                    <div class="strategy-item text-primary fw-bold">
                         <i class="bi bi-shield-x me-1"></i> 損切りライン: ¥${stopLoss.toLocaleString()} (-${(slPctVal*100).toFixed(1)}%)
                     </div>
                     <div class="strategy-desc">└ 【逆指値】価格帯別のATR${atrMult}倍。無駄なロスカットを抑えたストップ値</div>
 
-                    <div class="strategy-item text-primary fw-bold">
+                    <div class="strategy-item text-danger fw-bold">
                         <i class="bi bi-trophy me-1"></i> 利確ターゲット: ¥${takeProfit.toLocaleString()} (+${(tpPctVal*100).toFixed(1)}%)
                     </div>
                     <div class="strategy-desc">└ 【利食い】価格帯別の目標${rrVal !== null ? ` (リスクリワード比 1:${rrVal.toFixed(1)})` : ''}</div>
