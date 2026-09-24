@@ -176,6 +176,17 @@
                     </select>
                 </div>
 
+                <div class="col-6 col-md-2">
+                    <div class="filter-label text-warning fw-bold">AI判定 (最新バッチのみ)</div>
+                    <select id="filter-ai" class="form-select form-select-sm fw-bold border-warning" onchange="applyFilters()">
+                        <option value="ALL">すべて</option>
+                        <option value="RECOMMEND">推奨のみ</option>
+                        <option value="NEUTRAL_UP">中立以上</option>
+                        <option value="EXCLUDE_CAUTION">要注意・回避を除外</option>
+                        <option value="AI_ONLY">AI分析済みのみ</option>
+                    </select>
+                </div>
+
                 <div class="col-6 col-md-3">
                     <div class="filter-label text-primary fw-bold">株価帯クイック選択</div>
                     <select id="filter-price-preset" class="form-select form-select-sm fw-bold border-primary text-primary" onchange="onManualFilterChange()">
@@ -237,6 +248,7 @@
                     <div class="filter-label">並び替え順 (ソート)</div>
                     <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="onSortSelect(this.value)">
                         <option value="score" selected>総合スコア (高い順) ⭐</option>
+                        <option value="ai">AI判定順 (最新バッチ優先)</option>
                         <option value="entry">エントリー判定 (追いかけ優先)</option>
                         <option value="earn">決算が近い順</option>
                         <option value="ai_order">AI推奨順 (推奨→スコア→順位) 🤖</option>
@@ -278,7 +290,8 @@
                         <tr>
                             <th style="width: 35px;">No</th>
                             <th class="text-start th-sticky">銘柄 (コード / 社名 / 市場・業種)</th>
-                            <th class="text-primary sortable" data-key="score" onclick="onHeaderSort('score')" title="クリックで並べ替え">スコア<span class="sort-ind"></span></th>
+                            <th class="text-primary sortable" data-key="score" onclick="onHeaderSort('score')" title="値動きの強さ（検証済み）／クリックで並べ替え">スコア<span class="sort-ind"></span></th>
+                            <th class="sortable" data-key="ai" onclick="onHeaderSort('ai')" title="AI判定（参考・未検証）／クリックで並べ替え">AI判定<span class="sort-ind"></span></th>
                             <th class="sortable" data-key="entry" onclick="onHeaderSort('entry')" title="クリックで並べ替え">エントリー / 過熱<span class="sort-ind"></span></th>
                             <th class="text-danger sortable" data-key="valratio" onclick="onHeaderSort('valratio')" title="クリックで並べ替え">🚀 増加率<span class="sort-ind"></span></th>
                             <th class="sortable" data-key="earn" onclick="onHeaderSort('earn')" title="クリックで並べ替え">決算<span class="sort-ind"></span></th>
@@ -336,7 +349,7 @@
         let scoreThreshold = 70;
         let sortKey = "score";
         let sortDir = "desc";
-        const SORT_DEFAULT_DIR = { score: "desc", entry: "asc", earn: "asc", ai_order: "asc", valratio: "desc", gc: "asc", discount: "desc", avgval: "desc", mix: "asc", div: "desc", roe: "desc", per: "asc", pbr: "asc" };
+        const SORT_DEFAULT_DIR = { score: "desc", ai: "asc", entry: "asc", earn: "asc", ai_order: "asc", valratio: "desc", gc: "asc", discount: "desc", avgval: "desc", mix: "asc", div: "desc", roe: "desc", per: "asc", pbr: "asc" };
         const ENTRY_TYPE_ORDER = { breakout_chase: 0, pullback_wait: 1, probe_only: 2, wait: 3 };
         const OVERHEAT_ORDER = { low: 0, moderate: 1, strong: 2, extreme: 3 };
 
@@ -858,6 +871,7 @@
             const minDiscount = parseFloat(document.getElementById("filter-discount").value);
             const minRoe = parseFloat(document.getElementById("filter-roe").value);
             const minDiv = parseFloat(document.getElementById("filter-div").value);
+            const aiFilter = document.getElementById("filter-ai").value;
 
             let filtered = STOCKS.filter(s => {
                 if (s.excluded) return false;  // 週足トレンド下向き等の除外銘柄は表示しない
@@ -865,6 +879,16 @@
                 if (market !== "ALL" && s.market !== market) return false;
                 if (kabumini === "ONLY" && !isMini) return false;
                 if (sector !== "ALL" && s.sector !== sector) return false;
+
+                // AI判定フィルタ（最新バッチの判定のみを対象）
+                if (aiFilter !== "ALL") {
+                    const aiCur = isCurrentAIBatch(s.code) ? AI_LATEST[s.code] : null;
+                    const v = aiCur ? aiCur.verdict : null;
+                    if (aiFilter === "AI_ONLY" && !v) return false;
+                    if (aiFilter === "RECOMMEND" && v !== "recommend") return false;
+                    if (aiFilter === "NEUTRAL_UP" && !(v === "recommend" || v === "neutral")) return false;
+                    if (aiFilter === "EXCLUDE_CAUTION" && (v === "caution" || v === "avoid")) return false;
+                }
 
                 if (scoreThreshold > 0 && scoreOf(s) < scoreThreshold) return false;
 
@@ -918,6 +942,7 @@
                 } else {
                     let av, bv;
                     if (sortKey === "score") { av = scoreOf(a); bv = scoreOf(b); }
+                    else if (sortKey === "ai") { av = aiVerdictPriority(a.code); bv = aiVerdictPriority(b.code); }
                     else if (sortKey === "valratio") { av = num(a.val_ratio_5d); bv = num(b.val_ratio_5d); }
                     else if (sortKey === "gc") { av = (a.gc_days != null ? a.gc_days : 999); bv = (b.gc_days != null ? b.gc_days : 999); }
                     else if (sortKey === "discount") { av = a.discount_rate; bv = b.discount_rate; }
@@ -957,7 +982,7 @@
             const tbody = document.getElementById("stock-table-body");
             tbody.innerHTML = "";
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" class="p-4 text-muted text-center">条件に一致する銘柄はありません。</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="13" class="p-4 text-muted text-center">条件に一致する銘柄はありません。</td></tr>';
                 return;
             }
             let html = "";
@@ -975,17 +1000,16 @@
 
                 const sig = evaluateSignal(s);
 
-                let aiBadge = "";
+                let aiCell = '<span class="text-muted">—</span>';
                 const ai = currentAI(s.code);
                 if (ai) {
                     const isCur = (LATEST_AI_DATE && ai.date === LATEST_AI_DATE);
-                    const r = (isCur && ai.rank !== null && ai.rank !== undefined) ? ai.rank : '';
-                    const label = isCur
-                        ? `⭐AI${r !== '' ? ' #' + r : ''}`
-                        : `⭐AI ${ai.date ? ai.date.slice(5) : ''}`;
-                    const styleAttr = isCur ? '' : ' style="opacity:.6;"';
-                    const tip = isCur ? `AI戦略分析 (${ai.date})` : `AI戦略分析 (${ai.date})・最新バッチ外の参考`;
-                    aiBadge = `<span class="badge-ai ms-1"${styleAttr} title="${tip}">${label}</span> ${verdictBadge(ai.verdict, ai.reason)}`;
+                    const dateStr = ai.date ? ai.date.slice(5) : '';
+                    const rankStr = (isCur && ai.rank !== null && ai.rank !== undefined) ? ` <span class="text-muted" style="font-size:0.68rem;">#${ai.rank}</span>` : '';
+                    const wrapperStyle = isCur ? '' : ' style="opacity:.55;"';
+                    const tip = isCur ? `AI判定（${ai.date}）` : `AI判定（${ai.date}）・最新バッチ外の参考`;
+                    aiCell = `<span${wrapperStyle} title="${esc(tip)}">${verdictBadge(ai.verdict, ai.reason)}${rankStr}</span>`
+                        + (isCur ? '' : `<div class="text-muted" style="font-size:0.66rem;">(${dateStr})</div>`);
                 }
 
                 let entryCell = '<span class="text-muted">-</span>';
@@ -1022,7 +1046,6 @@
                             <span onclick="openRakuten('${s.code}')" class="rakuten-link me-1" title="タップでiSPEEDを開く">${s.code}</span>
                             <span class="company-name" onclick="showStockDetail('${s.code}')" title="${esc(s.name)}（タップで詳細・AI戦略）">${s.name}</span>
                             ${gcBadge}
-                            ${aiBadge}
                             ${sig.badgeHtml}
                         </div>
                         <div class="stock-sub-info">
@@ -1032,6 +1055,7 @@
                         </div>
                     </td>
                     <td>${scoreBadge(scoreOf(s))}</td>
+                    <td>${aiCell}</td>
                     <td>${entryCell}</td>
                     <td><span class="${vRatioClass}">${vRatioText}</span></td>
                     <td>${earnCell}</td>
@@ -1123,6 +1147,7 @@
             document.getElementById("filter-market").value = "ALL";
             document.getElementById("filter-kabumini").value = "ALL";
             document.getElementById("filter-sector").value = "ALL";
+            document.getElementById("filter-ai").value = "ALL";
             document.getElementById("filter-price-preset").value = "ALL";
             document.getElementById("filter-gc").value = "ALL";
             document.getElementById("filter-avgval").value = "";
