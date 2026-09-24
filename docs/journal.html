@@ -556,25 +556,19 @@
             return s.market === 'プライム' || (s.price >= 300 && s.price <= 50000);
         }
 
+        // 警告判定: 現行の strategy_params.warnings（過熱ルール）に一本化
         function evaluateSignal(s) {
-            const p = s.price;
-            const vr = (s.val_ratio_5d !== null && typeof s.val_ratio_5d !== 'undefined') ? s.val_ratio_5d : 0.0;
-            const gcd = (s.gc_days !== null && typeof s.gc_days !== 'undefined') ? s.gc_days : 999;
-            const avgVal = s.avg_val_5d || 0;
-            let result = { badgeHtml: '', isWarning: false, warnReason: '', recReason: '' };
-
-            if (p <= 1000 && vr >= 4.0) {
+            let result = { badgeHtml: '', isWarning: false, warnReason: '' };
+            const warnIds = (s && s.warnings) || [];
+            const defs = (PARAMS && PARAMS.warnings) || [];
+            if (warnIds.length) {
+                const labels = warnIds.map(function (id) {
+                    const d = defs.find(function (w) { return w.id === id; });
+                    return d ? d.description : id;
+                });
                 result.isWarning = true;
-                result.badgeHtml = `<span class="badge bg-danger ms-1" style="font-size:0.68rem;" title="低位株の出来高4倍超は仕手天井の罠リスク(PF 0.85)">⚠️過熱天井警戒(${vr}倍)</span>`;
-                result.warnReason = '低位株(〜1,000円)の出来高4倍超はイナゴタワー天井になりやすく、未見期PF 0.85に急落します。高値掴みに厳重警戒！';
-            } else if (p > 2000 && p <= 3000 && vr >= 4.0) {
-                result.isWarning = true;
-                result.badgeHtml = `<span class="badge bg-danger ms-1" style="font-size:0.68rem;" title="中位株の出来高4倍超は過熱急落リスク(PF 0.72)">⚠️過熱警戒(${vr}倍)</span>`;
-                result.warnReason = '2,000〜3,000円ゾーンの出来高4倍超は過熱感による急反落リスク高(PF 0.72)。';
-            }
-            if (p >= 1000 && p <= 2000 && (gcd === 2 || gcd === 3) && vr >= 2.0 && avgVal >= 30000) {
-                result.badgeHtml = `<span class="badge" style="font-size:0.68rem;background:#fff3bf;color:#d9480f;border:1px solid #ffd43b;" title="全検証中最高成績(PF 1.79)">🏆最高期待値(3日目)</span>`;
-                result.recReason = '【全検証中最高期待値】GC直後の押し目を通過し、3日目でも大口急増が持続している本物のトレンド確定シグナル！(PF 1.69〜1.79)';
+                result.badgeHtml = `<span class="badge bg-danger ms-1" style="font-size:0.68rem;" title="${esc(labels.join(' / '))}">⚠️過熱警戒</span>`;
+                result.warnReason = labels.join(' / ') + '（出来高急増・乖離過大は反落しやすいため、高値掴みに警戒）';
             }
             return result;
         }
@@ -637,9 +631,7 @@
 
             let alertBoxHtml = "";
             if (sig.isWarning) {
-                alertBoxHtml = `<div class="p-2 mb-2 bg-danger-subtle border border-danger rounded text-danger fw-bold small"><i class="bi bi-exclamation-triangle-fill me-1"></i>【バックテスト警戒シグナル】<div class="fw-normal mt-1">${sig.warnReason}</div></div>`;
-            } else if (sig.recReason) {
-                alertBoxHtml = `<div class="p-2 mb-2 bg-success-subtle border border-success rounded text-success fw-bold small"><i class="bi bi-award-fill me-1"></i>【バックテスト推奨シグナル】<div class="fw-normal mt-1">${sig.recReason}</div></div>`;
+                alertBoxHtml = `<div class="p-2 mb-2 bg-danger-subtle border border-danger rounded text-danger fw-bold small"><i class="bi bi-exclamation-triangle-fill me-1"></i>【過熱警戒】<div class="fw-normal mt-1">${sig.warnReason}</div></div>`;
             }
 
             const pick = J_PICKS[code] || null;
