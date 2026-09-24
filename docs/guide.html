@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>見方ガイド｜割安優良株＆スイング スクリーナー</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.9rem; padding-bottom: 60px; }
+        .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
+        h2.section { font-size: 1.15rem; font-weight: 800; color: #0d6efd; border-left: 5px solid #0d6efd; padding-left: 10px; margin-top: 10px; }
+        h3.sub { font-size: 1rem; font-weight: 700; color: #212529; margin-top: 18px; }
+        table th { background-color: #212529 !important; color: #fff !important; text-align: center; vertical-align: middle !important; font-size: 0.82rem; }
+        table td { vertical-align: middle; font-size: 0.85rem; }
+        .term { font-weight: 700; color: #0d6efd; }
+        .plain { background: #f8f9fa; border-left: 4px solid #adb5bd; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .tip { background: #fff9db; border-left: 4px solid #ffd43b; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .warn { background: #fff5f5; border-left: 4px solid #ff6b6b; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .ex { color: #6c757d; font-size: 0.8rem; }
+        .toc a { text-decoration: none; }
+        .badge-sample { font-size: 0.75rem; padding: 3px 6px; border-radius: 5px; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="container py-3" style="max-width: 900px;">
+
+    <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-question-circle"></i> 見方ガイド（はじめての人向け）</h1>
+                <small class="text-muted">割安優良株＆スイング スクリーナーの読み方</small>
+            </div>
+            <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i>スクリーナーへ戻る</a>
+        </div>
+    </div>
+
+    <div class="card p-3 toc">
+        <div class="fw-bold mb-2"><i class="bi bi-list-ul me-1"></i>目次</div>
+        <ol class="mb-0">
+            <li><a href="#intro">30秒でわかる：このアプリは何をするもの？</a></li>
+            <li><a href="#list">一覧（表）の見方</a></li>
+            <li><a href="#badges">一覧に出るバッジ・マークの意味</a></li>
+            <li><a href="#sort">並び替えの「スコア順」と「AI推奨順」</a></li>
+            <li><a href="#modal">モーダル（詳細画面）の見方</a></li>
+            <li><a href="#entry">エントリー判定の4種類（高値掴み防止）</a></li>
+            <li><a href="#glossary">用語集</a></li>
+            <li><a href="#caution">注意事項</a></li>
+        </ol>
+    </div>
+
+    <!-- 1 -->
+    <div class="card p-3" id="intro">
+        <h2 class="section">1. 30秒でわかる：このアプリは何をするもの？</h2>
+        <p class="mb-2">
+            日本株（プライム・スタンダードの約3,000銘柄）を毎日自動でスキャンし、
+            <strong>「今、値動きが良くて注目すべき銘柄」</strong>を技術スコアで絞り込み、必要に応じてAIがコメントと作戦を付けます。
+        </p>
+        <div class="plain">
+            <strong>ざっくり流れ：</strong><br>
+            1) 全銘柄の値動きを計算 → 2) スコアの高い順に候補を並べる → 3) AIが材料・リスク・エントリー作戦をコメント →
+            4) あなたが最終判断して売買する（<strong>このアプリは注文はしません</strong>）。
+        </div>
+        <div class="tip">
+            <strong>大切な考え方：</strong>スコアが高い＝「儲かる」ではなく「注目に値する」。実際に買うかは、
+            企業の中身（PER・ROEなど）、チャートの位置、決算、そして自分の資金計画を合わせて判断します。
+        </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="card p-3" id="list">
+        <h2 class="section">2. 一覧（表）の見方</h2>
+        <p>スクリーナー画面の表は、左から順に次の意味です。</p>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>列</th><th>意味</th><th>素人向けのかみくだき</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>No</td><td>表示順の番号</td><td>ただの通し番号。並び替えると変わります。</td></tr>
+                    <tr>
+                        <td>銘柄<br>（コード / 社名 / マーク）</td>
+                        <td>証券コードと会社名、各種マーク</td>
+                        <td>コードをタップすると楽天iSPEED、社名をタップすると詳細が開きます。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">スコア</td>
+                        <td>0〜100の総合スコア（値動きの強さ）</td>
+                        <td>「上昇トレンドに乗っているか」を数値化。高いほどトレンドが強い。</td>
+                    </tr>
+                    <tr><td>現在値</td><td>直近の株価（円）</td><td>今いくらか。</td></tr>
+                    <tr>
+                        <td class="term">増加率</td>
+                        <td>出来高増加率（5営業日前と比べた売買の多さ）</td>
+                        <td>2倍なら「いつもの2倍売れてる＝注目されている」。大きすぎる時は過熱注意。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">割安度</td>
+                        <td>グレアム理論株価との差（+なら理論より安い）</td>
+                        <td>プラスが大きいほど「企業価値に比べて株価が安い」目安。</td>
+                    </tr>
+                    <tr><td>利回り</td><td>配当利回り（％）</td><td>配当で何％もらえるか。高いほど配当ねらい向き。</td></tr>
+                    <tr><td>PER</td><td>株価収益率（利益の何倍まで買われているか）</td><td>低いほど割安、高いほど成長期待が大きい（が高すぎは注意）。</td></tr>
+                    <tr><td>PBR</td><td>株価純資産倍率（資産の何倍か）</td><td>1倍未満は「解散価値より安い」の目安。</td></tr>
+                    <tr><td>ROE</td><td>自己資本利益率（効率の良さ）</td><td>高いほど稼ぐ効率が良い会社。</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip">
+            <strong>絞り込みの基本：</strong>画面上部の「総合スコア◯以上」ボタンで候補を絞れます。
+            既定は「スコア70以上」。数値を下げると候補が増え、上げると絞られます。
+        </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="card p-3" id="badges">
+        <h2 class="section">3. 一覧に出るバッジ・マークの意味</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead><tr><th>表示</th><th>意味</th><th>どう見るか</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge-sample" style="background:#fff3bf;color:#d9480f;border:1px solid #ffd43b;">AI</span></td>
+                        <td>AI戦略分析済み（順位・判定つき）</td>
+                        <td>マウスを乗せると日付と順位。詳細にAIコメントがあります。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-sample" style="background:#ffeeba;color:#856404;">◯日前GC</span></td>
+                        <td>ゴールデンクロス（短期線が長期線を上抜けた）からの日数</td>
+                        <td>上昇に転じたばかりの目安。「本日GC」は初動。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-sample" style="background:#ffe3e3;color:#c92a2a;border:1px solid #ffc9c9;">過熱警戒</span></td>
+                        <td>買われ過ぎ・出来高急増など</td>
+                        <td>高値掴み注意。詳細モーダルの「過熱警戒」と「エントリー判定」を確認。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-sample" style="background:#fff3cd;color:#664d03;">決算接近</span></td>
+                        <td>14日以内に決算予定</td>
+                        <td>決算またぎは急な窓開けリスク。保有中なら警戒。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-sample" style="background:#e7f5ff;color:#1971c2;border:1px solid #a5d8ff;">押し目待ち</span></td>
+                        <td>今は追いかけず、下がった所で買う候補</td>
+                        <td>慌てて買わない。表示された価格まで待つ。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="card p-3" id="sort">
+        <h2 class="section">4. 並び替えの「スコア順」と「AI推奨順」</h2>
+        <p class="mb-1">画面上部の「並び替え順」で切り替えられます。</p>
+        <ul>
+            <li><strong>総合スコア順（既定）：</strong>スコアが高い順。同点のときは出来高増加率→5日平均売買代金の順で並びます。<br>
+                <span class="ex">→ 過去検証で「効いている」と確認された指標を主軸にした、再現性のある並び。</span></li>
+            <li><strong>AI推奨順：</strong>AIの判定（推奨→様子見→…）で並べ、その中はスコア順。AI順位は同スコアのときの参考順位。</li>
+        </ul>
+        <div class="plain">
+            <strong>使い分けの目安：</strong>ふだんはスコア順で「値動きの強い順」に見て、
+            AI推奨順は「AIが今イチオシと言っている銘柄」を確認したいときに使う、で十分です。
+        </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="card p-3" id="modal">
+        <h2 class="section">5. モーダル（詳細画面）の見方</h2>
+        <p>一覧で社名をタップすると開く画面です。上から順に説明します。</p>
+
+        <h3 class="sub">(1) 上部の警告・推奨バナー</h3>
+        <p class="mb-1">バックテスト由来の警戒・推奨パターンに当てはまると表示されます。</p>
+
+        <h3 class="sub">(2) 基本情報</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead><tr><th>項目</th><th>意味・見方</th></tr></thead>
+                <tbody>
+                    <tr><td>市場 / 業種</td><td>プライムかスタンダードか、どの業種か。</td></tr>
+                    <tr><td>現在株価</td><td>直近の株価。</td></tr>
+                    <tr><td>総合スコア</td><td>値動きの強さ（0〜100）。</td></tr>
+                    <tr><td>グレアム理論株価</td><td>企業の利益・資産から計算した「あるべき株価」の目安。</td></tr>
+                    <tr><td>理論株価との割安度</td><td>プラスなら理論株価より安い（割安）。</td></tr>
+                    <tr><td>価格帯</td><td>利確・損切のルールを決めるための株価グループ。</td></tr>
+                    <tr>
+                        <td class="term">決算日</td>
+                        <td>
+                            次回の決算予定日。「あとN日」で近さがわかります。
+                            <div class="ex">例：「2026-11-13（あと14日）」。14日以内なら黄色で強調。</div>
+                            <div class="ex">データが取れない銘柄は「—（未取得）」、古い場合は「（更新待ち）」と表示します。</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="sub">(3) 需給・水準（サポート / レジスタンス / ATR）</h3>
+        <p class="mb-1">「どこで買われやすく、どこで売られやすいか」を数字で示します。</p>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead><tr><th>項目</th><th>意味</th><th>使い方</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="term">サポート(20日)</td>
+                        <td>直近20営業日の最安値（下値の支えになりやすい価格）</td>
+                        <td>ここに近づくと買いが入りやすい。割れると下落加速も。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">レジスタンス(20日)</td>
+                        <td>直近20営業日の最高値（上値の壁になりやすい価格）</td>
+                        <td>ここを上抜けると上昇加速、跳ね返されると反落しやすい。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">ATR14</td>
+                        <td>1日にどれくらい動くかの平均（値動きの荒さ）。括弧内は株価に対する％</td>
+                        <td>損切幅の目安。ATRが大きい銘柄は損切も広めに、株数は少なめに。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">52週高値位置</td>
+                        <td>1年の最高値にどれだけ近いか（100%＝最高値）</td>
+                        <td>高いほど高値圏＝勢いは強いが、押し目なく追うと高値掴み注意。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">200日線乖離</td>
+                        <td>長期平均線（200日）から何％離れているか</td>
+                        <td>大きくプラスだと「行き過ぎ」。反動（調整）が起きやすい。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">レンジ位置</td>
+                        <td>20日の安値〜高値の中で今どこか（0＝安値、1＝高値）</td>
+                        <td>1に近い＝高値圏、0に近い＝安値圏。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">過熱警戒</td>
+                        <td>買われ過ぎサイン（25日線乖離・RSI・急騰・窓開け・上ヒゲなど）</td>
+                        <td>点灯が多いほど、今の値段で飛び乗るのは危険。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="sub">(4) モメンタム状態</h3>
+        <p class="mb-1">GC状態、5日平均売買代金、出来高増加率、RSI14、25日線乖離、連騰日数をまとめて表示。</p>
+        <div class="plain"><strong>RSI14：</strong>買われ過ぎ・売られ過ぎの目安（70〜80以上で買われ過ぎ、30以下で売られ過ぎ）。</div>
+
+        <h3 class="sub">(5) AI戦略分析</h3>
+        <p class="mb-1">AIによる根拠・材料・エントリー水準の<strong>参考情報</strong>です。最終的な売買は下の「スイング売買戦略（価格帯別ルール）」を使います。</p>
+
+        <h3 class="sub">(6) エントリー判定（高値掴み防止）</h3>
+        <p class="mb-1">「今買ってよいか」ではなく「どう入るか（入口の調整）」を示します。詳しくは次の章で。</p>
+
+        <h3 class="sub">(7) スイング売買戦略（価格帯別ルール）</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead><tr><th>項目</th><th>色</th><th>意味</th></tr></thead>
+                <tbody>
+                    <tr><td>損切りライン</td><td>青</td><td>ここまで下がったら撤退（逆指値）。ATR×係数で設定。</td></tr>
+                    <tr><td>利確ターゲット</td><td>赤</td><td>ここまで上がったら利益確定の目安。</td></tr>
+                    <tr><td>最適保有期間</td><td>グレー</td><td>何営業日で手仕舞いを考えるか。</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip"><strong>色の慣例：</strong>日本株では「上昇＝赤・下落＝青」。だから利確が赤、損切が青で表示されます。</div>
+
+        <h3 class="sub">(8) ファンダメンタル（PER / PBR / ROE / 営業利益率 / 配当利回り）</h3>
+        <p class="mb-0">会社の割安さ・稼ぐ力・株主還元の目安。一覧の説明と同じです。</p>
+    </div>
+
+    <!-- 6 -->
+    <div class="card p-3" id="entry">
+        <h2 class="section">6. エントリー判定の4種類（高値掴み防止）</h2>
+        <p>急騰した銘柄に飛び乗ると、翌日に反落して「高値掴み」になりがちです。そこで入口を4つに分けています。</p>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead><tr><th>方式</th><th>意味</th><th>具体的な行動</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="term">追いかけ<br>(breakout_chase)</td>
+                        <td>過熱が軽く、上昇余地がある</td>
+                        <td>現在値〜直近高値で買ってよい。勢いに乗るタイプ。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">押し目待ち<br>(pullback_wait)</td>
+                        <td>少し過熱。いったん下がるのを待つ</td>
+                        <td>表示された「押し目候補ゾーン」まで待つ。現値での成行は高値掴み注意。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">打診のみ<br>(probe_only)</td>
+                        <td>過熱が強い</td>
+                        <td>小口だけ試し買い。深い押し目で分割。推奨株数も少なめに表示。</td>
+                    </tr>
+                    <tr>
+                        <td class="term">見送り<br>(wait)</td>
+                        <td>過熱が極めて強い</td>
+                        <td>今は買わない。押し目ができてから再評価。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="plain">
+            <strong>「押し目候補ゾーン」と「目安入口」：</strong>待つべき価格帯です。
+            「約N日以内に未到達なら見送り」は、待ちすぎを防ぐための期限です。
+        </div>
+        <div class="tip">
+            <strong>過熱度：</strong>低・中・強・極の4段階。上に行くほど「今追いかけるのは危険」です。
+        </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="card p-3" id="glossary">
+        <h2 class="section">7. 用語集</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead><tr><th>用語</th><th>かんたん解説</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">スコア</td><td>値動きの強さを0〜100で表したもの。高いほど上昇トレンドが強い。</td></tr>
+                    <tr><td class="term">GC（ゴールデンクロス）</td><td>短期の平均線が長期の平均線を上に抜けること。上昇転換の合図。</td></tr>
+                    <tr><td class="term">サポート</td><td>下値の支え。ここまで下がると買われやすい価格。</td></tr>
+                    <tr><td class="term">レジスタンス</td><td>上値の壁。ここまで上がると売られやすい価格。</td></tr>
+                    <tr><td class="term">移動平均線（SMA）</td><td>一定期間の平均株価をつないだ線。5日・25日・200日など。</td></tr>
+                    <tr><td class="term">乖離（かいり）</td><td>株価が平均線からどれだけ離れているか。離れすぎは調整しやすい。</td></tr>
+                    <tr><td class="term">RSI</td><td>買われ過ぎ・売られ過ぎの度合い。70〜80以上は買われ過ぎ。</td></tr>
+                    <tr><td class="term">ATR</td><td>1日の値動きの大きさ（荒さ）。損切幅や株数の決め方に使う。</td></tr>
+                    <tr><td class="term">出来高</td><td>売買された株数。増えるほど注目が集まっている。</td></tr>
+                    <tr><td class="term">PER</td><td>株価 ÷ 1株利益。会社の利益の何倍まで買われているか。</td></tr>
+                    <tr><td class="term">PBR</td><td>株価 ÷ 1株純資産。1倍未満は資産より安い目安。</td></tr>
+                    <tr><td class="term">ROE</td><td>自己資本利益率。会社がどれだけ効率よく稼いでいるか。</td></tr>
+                    <tr><td class="term">配当利回り</td><td>1年間の配当 ÷ 株価。配当で得られる割合。</td></tr>
+                    <tr><td class="term">グレアム理論株価</td><td>企業の利益と資産から計算した妥当な株価の目安。</td></tr>
+                    <tr><td class="term">押し目</td><td>上昇トレンド中に一時的に下がった所。買い場になりやすい。</td></tr>
+                    <tr><td class="term">高値掴み</td><td>上がり切った高値で買ってしまい、その後下がって含み損になること。</td></tr>
+                    <tr><td class="term">逆指値（ぎゃくさしね）</td><td>「ここまで下がったら自動で売る」注文。損切りの道具。</td></tr>
+                    <tr><td class="term">リスクリワード比</td><td>損する幅に対する、儲ける幅の比率。大きいほど効率が良い。</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="card p-3" id="caution">
+        <h2 class="section">8. 注意事項</h2>
+        <div class="warn">
+            <ul class="mb-0">
+                <li>このアプリは<strong>投資助言・売買推奨ではありません</strong>。最終判断は必ずご自身で。</li>
+                <li>データは yfinance 等の外部由来で、<strong>決算日・ファンダメンタルは古い／欠損</strong>のことがあります。</li>
+                <li>スコアやAI判定は<strong>過去データの検証・推定</strong>であり、将来の利益を保証しません。</li>
+                <li>急騰銘柄は大きく下がることもあります。<strong>損切り（逆指値）と小口から</strong>を徹底しましょう。</li>
+                <li>「押し目待ち」で約定しないまま上昇することもあります（見送りは損失ではありません）。</li>
+            </ul>
+        </div>
+        <p class="mb-0 text-muted small">困ったら、このページの目次に戻って該当の項目を確認してください。</p>
+    </div>
+
+    <div class="text-center mb-4">
+        <a href="index.html" class="btn btn-primary fw-bold"><i class="bi bi-sliders me-1"></i>スクリーナーへ戻る</a>
+    </div>
+
+</div>
+</body>
+</html>

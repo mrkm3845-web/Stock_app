@@ -51,6 +51,7 @@
                 </div>
                 <div class="d-flex flex-wrap gap-1">
                     <a href="index.html" class="btn btn-outline-secondary btn-sm py-1 px-2 fw-bold" style="font-size:0.75rem;"><i class="bi bi-sliders me-1"></i>スクリーナー</a>
+                    <a href="guide.html" class="btn btn-outline-secondary btn-sm py-1 px-2 fw-bold" style="font-size:0.75rem;"><i class="bi bi-question-circle me-1"></i>見方ガイド</a>
                     
                     <div class="dropdown">
                         <button class="btn btn-outline-success btn-sm py-1 px-2 fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown" style="font-size:0.75rem;">
@@ -384,6 +385,7 @@
         let PARAMS = null;
         let J_PICKS = {};
         let J_META = null;
+        let EARNINGS = {};
         let chartInstance = null;
 
         let FILTER_START_DATE = "";
@@ -394,7 +396,7 @@
             trashModalInstance = new bootstrap.Modal(document.getElementById('trashModal'));
             stockModalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
             loadTradesFromStorage();
-            await Promise.all([loadAIStrategies(), loadParams(), loadPicks(), loadMeta()]);
+            await Promise.all([loadAIStrategies(), loadParams(), loadPicks(), loadMeta(), loadEarnings()]);
             await loadLatestPrices();
             renderAll();
             renderRecAlert();
@@ -475,6 +477,11 @@
         async function loadMeta() {
             try { const res = await fetch('history/meta.json'); J_META = await res.json(); }
             catch (e) { J_META = null; }
+        }
+
+        async function loadEarnings() {
+            try { const res = await fetch('earnings.json'); const d = await res.json(); EARNINGS = d.items || {}; }
+            catch (e) { EARNINGS = {}; }
         }
 
         function tierForPrice(price) {
@@ -622,6 +629,39 @@
             }
 
             const pick = J_PICKS[code] || null;
+
+            // 決算日（未取得・過去日はその旨を明示）
+            const earn = EARNINGS[code] || null;
+            let earnText = "—（未取得）";
+            let earnClass = "text-muted";
+            if (earn && earn.days_until !== null && typeof earn.days_until !== 'undefined' && earn.days_until >= 0) {
+                earnText = `${earn.date}（あと${earn.days_until}日）`;
+                if (earn.soon) earnClass = "text-warning";
+            } else if (earn && earn.date) {
+                earnText = `${earn.date}（更新待ち）`;
+            }
+
+            // 需給・水準（ctx優先、pickで補完）
+            const c = s.ctx || {};
+            const sup20 = (pick && pick.support != null) ? pick.support : c.support_20d;
+            const res20 = (pick && pick.resistance != null) ? pick.resistance : c.resistance_20d;
+            const atrYen = (s.atr14 != null) ? s.atr14 : c.atr14;
+            const atrPctVal = (c.atr_pct != null) ? c.atr_pct : null;
+            const pos52Val = (c.pos_52w != null) ? Math.round(c.pos_52w * 100) : null;
+            const dist200Val = (c.dist_sma200_pct != null) ? c.dist_sma200_pct : null;
+            const rangePosVal = (c.range_position != null) ? c.range_position : null;
+            const fmtNum = (v, suffix) => (v === null || v === undefined) ? '-' : `${v}${suffix || ''}`;
+            const fmtYen = (v) => (v === null || v === undefined) ? '-' : `¥${Number(v).toLocaleString()}`;
+
+            // 過熱警戒バッジ（strategy_params の warnings を説明文に変換）
+            const warnList = (pick && pick.warnings && pick.warnings.length) ? pick.warnings : (s.warnings || []);
+            const warnDefs = (PARAMS && PARAMS.warnings) || [];
+            const warnBadges = warnList.map(function (id) {
+                const def = warnDefs.find(function (w) { return w.id === id; });
+                const label = def ? def.description : id;
+                return `<span class="badge bg-warning-subtle text-dark border border-warning me-1 mb-1" title="${esc(label)}">⚠ ${esc(label)}</span>`;
+            }).join('');
+
             const tier = tierForPrice(p);
             const atrMult = (pick && pick.atr_sl_mult) || (tier && tier.atr_sl_mult) || 2.0;
             const tierTpPct = (tier && tier.tp_pct) || 0.12;
@@ -672,6 +712,20 @@
                     <div class="col-6"><small class="text-muted">グレアム理論株価</small><div class="fs-5 fw-bold text-success">¥${Number(s.graham_price || 0).toLocaleString()}</div></div>
                     <div class="col-6"><small class="text-muted">理論株価との割安度</small><div class="fs-5 fw-bold ${discountClass}">${discountText}</div></div>
                     <div class="col-6"><small class="text-muted">価格帯</small><div class="fw-bold">${esc(s.tier || '-')}</div></div>
+                    <div class="col-6"><small class="text-muted">決算日</small><div class="fw-bold ${earnClass}">${esc(earnText)}</div></div>
+                </div>
+                <div class="p-2 mb-2 bg-light rounded border">
+                    <div class="fw-bold text-primary small mb-1"><i class="bi bi-rulers me-1"></i> 需給・水準（サポート/レジスタンス/ATR）:</div>
+                    <div class="row g-1 text-center">
+                        <div class="col-3"><small class="text-muted" style="font-size:0.7rem;">サポート(20日)</small><div class="fw-bold text-primary" style="font-size:0.8rem;">${fmtYen(sup20)}</div></div>
+                        <div class="col-3"><small class="text-muted" style="font-size:0.7rem;">レジスタンス(20日)</small><div class="fw-bold text-danger" style="font-size:0.8rem;">${fmtYen(res20)}</div></div>
+                        <div class="col-3"><small class="text-muted" style="font-size:0.7rem;">ATR14</small><div class="fw-bold" style="font-size:0.8rem;">${fmtYen(atrYen)}${atrPctVal !== null ? ` <small class="text-muted">(${atrPctVal}%)</small>` : ''}</div></div>
+                        <div class="col-3"><small class="text-muted" style="font-size:0.7rem;">52週高値位置</small><div class="fw-bold" style="font-size:0.8rem;">${fmtNum(pos52Val, '%')}</div></div>
+                    </div>
+                    <div class="text-muted mt-1" style="font-size:0.72rem;">
+                        200日線乖離: ${fmtNum(dist200Val, '%')} / レンジ位置: ${fmtNum(rangePosVal, '')}
+                    </div>
+                    ${warnBadges ? `<div class="mt-1">${warnBadges}</div>` : ''}
                 </div>
                 <div class="p-2 mb-2 bg-light rounded border">
                     <div class="fw-bold text-danger small mb-1"><i class="bi bi-graph-up-arrow"></i> モメンタム状態:</div>
