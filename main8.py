@@ -534,6 +534,7 @@ def _ai_system_prompt(max_picks=5):
         "verdict は recommend（推奨）/ watch（様子見）/ neutral（中立）/ caution（注意）/ avoid（回避）のいずれか1つだけを使ってください。"
         "code は必ず候補一覧に記載された実際のコードをそのままコピーし、「...」や省略形は使わないでください。"
         "news_note は直近の決算・ニュース・材料を具体的に記述し、見出しや確度が無い銘柄は『要確認』と付記してください。"
+        "JSONが長すぎると途中で切れて無効になるため、reason / news_note / entry_strategy / trailing_plan は各60文字以内で簡潔にまとめてください。"
         "全候補銘柄を stocks 配列に含めてください。画像は使用しない。数値は与えられたデータに基づく。最終判断は人間が行う前提。"
     )
 
@@ -593,10 +594,17 @@ def _call_gemini(user, system, params):
                     continue
                 resp.raise_for_status()
                 data = resp.json()
-                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                cand = (data.get("candidates") or [{}])[0]
+                finish = cand.get("finishReason")
+                parts = (cand.get("content") or {}).get("parts") or [{}]
+                text = parts[0].get("text", "") or ""
                 parsed = _extract_json(text)
                 if parsed is None:
-                    print(f">> Gemini {model} は200 OKだがJSON解析失敗（応答先頭）: {text[:400]}")
+                    last_err = f"{model} JSON解析失敗 (finishReason={finish}, len={len(text)})"
+                    print(f">> Gemini {model} は200 OKだがJSON解析失敗 "
+                          f"(finishReason={finish}, 応答長={len(text)})（応答先頭）: {text[:300]}")
+                    time.sleep(min(2 ** attempt, 10))
+                    continue
                 return parsed
             except requests.exceptions.HTTPError as e:
                 last_err = f"{e} ({model}): {e.response.text[:200] if e.response is not None else ''}"
@@ -612,11 +620,18 @@ def _call_gemini(user, system, params):
 def call_ai(pool, fund_map, news_map, params, base_date=None):
     ai = params.get("ai", {})
     max_picks = ai.get("max_picks", ai.get("weekly_top_picks", 5))
-    user = _build_ai_prompt(pool[: ai.get("max_calls_per_run", 40)], fund_map, news_map, params, base_date)
     system = _ai_system_prompt(max_picks)
-    if ai.get("provider", "deepseek") == "gemini":
-        return _call_gemini(user, system, params)
-    return _call_deepseek(user, system, params)
+    provider = ai.get("provider", "deepseek")
+    cap = ai.get("max_calls_per_run", 40)
+    retry_cap = min(ai.get("retry_candidates", 15), cap)
+    caps = [cap] if retry_cap >= cap else [cap, retry_cap]
+    for c in caps:
+        user = _build_ai_prompt(pool[:c], fund_map, news_map, params, base_date)
+        res = _call_gemini(user, system, params) if provider == "gemini" else _call_deepseek(user, system, params)
+        if res:
+            return res
+        print(f">> AI応答が得られませんでした（候補数 {c}）→ 候補を絞って再試行します")
+    return None
 
 
 def _extract_json(text):
