@@ -15,6 +15,14 @@
         .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; max-height: 70vh; }
         table th { background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; vertical-align: middle !important; font-size: 0.8rem; }
         table td { vertical-align: middle; white-space: nowrap; text-align: center; }
+        th.sortable { cursor: pointer; user-select: none; }
+        th.sortable:hover { background-color: #343a40 !important; }
+        th.sortable .sort-ind { font-size: 0.68rem; margin-left: 2px; }
+        th.th-sticky { position: sticky; left: 0; z-index: 11; }
+        td.td-sticky { position: sticky; left: 0; z-index: 4; background-color: #fff; }
+        .table-striped > tbody > tr:nth-of-type(odd) > td.td-sticky { background-color: #f2f3f5; }
+        .table-hover > tbody > tr:hover > td.td-sticky { background-color: #e9ecef; }
+        .entry-col { font-size: 0.72rem; line-height: 1.2; }
 
         .stock-main-cell { text-align: left !important; min-width: 150px; max-width: 210px; }
         .company-name {
@@ -227,16 +235,20 @@
 
                 <div class="col-6 col-md-2">
                     <div class="filter-label">並び替え順 (ソート)</div>
-                    <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="applyFilters()">
+                    <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="onSortSelect(this.value)">
+                        <option value="score" selected>総合スコア (高い順) ⭐</option>
+                        <option value="entry">エントリー判定 (追いかけ優先)</option>
+                        <option value="earn">決算が近い順</option>
                         <option value="ai_order">AI推奨順 (推奨→スコア→順位) 🤖</option>
-                        <option value="score_desc" selected>総合スコア (高い順) ⭐</option>
-                        <option value="valratio_desc">売買代金増加率 (急増順 🚀)</option>
-                        <option value="gc_asc">GC発生順 (最新初動順)</option>
-                        <option value="discount_desc">割安度(%) (降順)</option>
-                        <option value="avgval_desc">5日平均売買代金 (流動性順)</option>
-                        <option value="mix_asc">ミックス係数 (昇順/割安順)</option>
-                        <option value="div_desc">配当利回り(%) (降順)</option>
-                        <option value="roe_desc">ROE(%) (降順)</option>
+                        <option value="valratio">売買代金増加率 (急増順 🚀)</option>
+                        <option value="gc">GC発生順 (最新初動順)</option>
+                        <option value="discount">割安度(%) (降順)</option>
+                        <option value="avgval">5日平均売買代金 (流動性順)</option>
+                        <option value="mix">ミックス係数 (昇順/割安順)</option>
+                        <option value="div">配当利回り(%) (降順)</option>
+                        <option value="roe">ROE(%) (降順)</option>
+                        <option value="per">PER (低い順)</option>
+                        <option value="pbr">PBR (低い順)</option>
                     </select>
                 </div>
                 <div class="col-6 col-md-2">
@@ -258,22 +270,24 @@
         <div class="card p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-dark">該当件数: <span id="filtered-count" class="text-primary fs-5">0</span> 件</span>
-                <span class="text-muted small">💡 コードでiSPEED直行 / ⚠️過熱天井マークに注意 / ⭐AIマークはAI戦略分析済み</span>
+                <span class="text-muted small">💡 コードでiSPEED直行 / 列見出しクリックで並べ替え / ⚠️過熱・決算接近に注意</span>
             </div>
             <div class="table-container">
                 <table class="table table-hover table-striped table-sm mb-0">
                     <thead>
                         <tr>
                             <th style="width: 35px;">No</th>
-                            <th class="text-start">銘柄 (コード / 社名 / シグナル)</th>
-                            <th class="text-primary">スコア</th>
-                            <th>現在値</th>
-                            <th class="text-danger">🚀 増加率</th>
-                            <th>割安度</th>
-                            <th>利回り</th>
-                            <th>PER</th>
-                            <th>PBR</th>
-                            <th>ROE</th>
+                            <th class="text-start th-sticky">銘柄 (コード / 社名 / 市場・業種)</th>
+                            <th class="text-primary sortable" data-key="score" onclick="onHeaderSort('score')" title="クリックで並べ替え">スコア<span class="sort-ind"></span></th>
+                            <th class="sortable" data-key="entry" onclick="onHeaderSort('entry')" title="クリックで並べ替え">エントリー / 過熱<span class="sort-ind"></span></th>
+                            <th class="text-danger sortable" data-key="valratio" onclick="onHeaderSort('valratio')" title="クリックで並べ替え">🚀 増加率<span class="sort-ind"></span></th>
+                            <th class="sortable" data-key="earn" onclick="onHeaderSort('earn')" title="クリックで並べ替え">決算<span class="sort-ind"></span></th>
+                            <th class="d-none d-md-table-cell">現在値</th>
+                            <th class="d-none d-md-table-cell sortable" data-key="discount" onclick="onHeaderSort('discount')" title="クリックで並べ替え">割安度<span class="sort-ind"></span></th>
+                            <th class="d-none d-md-table-cell sortable" data-key="per" onclick="onHeaderSort('per')" title="クリックで並べ替え">PER<span class="sort-ind"></span></th>
+                            <th class="d-none d-lg-table-cell sortable" data-key="div" onclick="onHeaderSort('div')" title="クリックで並べ替え">利回り<span class="sort-ind"></span></th>
+                            <th class="d-none d-lg-table-cell sortable" data-key="pbr" onclick="onHeaderSort('pbr')" title="クリックで並べ替え">PBR<span class="sort-ind"></span></th>
+                            <th class="d-none d-lg-table-cell sortable" data-key="roe" onclick="onHeaderSort('roe')" title="クリックで並べ替え">ROE<span class="sort-ind"></span></th>
                         </tr>
                     </thead>
                     <tbody id="stock-table-body"></tbody>
@@ -320,6 +334,11 @@
         let PICKS = {};
         let PARAMS = null;
         let scoreThreshold = 70;
+        let sortKey = "score";
+        let sortDir = "desc";
+        const SORT_DEFAULT_DIR = { score: "desc", entry: "asc", earn: "asc", ai_order: "asc", valratio: "desc", gc: "asc", discount: "desc", avgval: "desc", mix: "asc", div: "desc", roe: "desc", per: "asc", pbr: "asc" };
+        const ENTRY_TYPE_ORDER = { breakout_chase: 0, pullback_wait: 1, probe_only: 2, wait: 3 };
+        const OVERHEAT_ORDER = { low: 0, moderate: 1, strong: 2, extreme: 3 };
 
         document.addEventListener("DOMContentLoaded", async () => {
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
@@ -520,6 +539,10 @@
             return (s.score !== null && typeof s.score !== 'undefined') ? s.score : 0;
         }
 
+        function num(v) {
+            return (v === null || v === undefined || isNaN(Number(v))) ? 0 : Number(v);
+        }
+
         function scoreBadge(score) {
             let cls = "low";
             if (score >= 80) cls = "high";
@@ -551,6 +574,56 @@
             const title = (v === "avoid") ? "回避の理由" : (v === "watch") ? "様子見の理由" : "注意の理由";
             const body = reason ? esc(reason) : "理由の記載がありません。下記の「過熱警戒」や「決算日」も確認してください。";
             return `<div class="p-2 mb-2 ${cls} border rounded small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>${title}<div class="fw-normal mt-1">${body}</div></div>`;
+        }
+
+        // エントリー判定（common/features.compute_entry_plan と同じロジックを全銘柄向けに再現）
+        function entryPlanOf(s) {
+            const pick = PICKS[s.code];
+            if (pick && pick.entry_type) {
+                return { level: pick.overheat_level || "low", type: pick.entry_type, hasCtx: true };
+            }
+            const c = (s && s.ctx) || {};
+            if (s.ctx == null) return { level: null, type: null, hasCtx: false };
+            const eg = (PARAMS && PARAMS.entry_guard) || {};
+            const g = (k, dflt) => (eg[k] != null ? eg[k] : dflt);
+            const dist25 = (c.dist_sma25_pct != null) ? c.dist_sma25_pct : null;
+            const rsi = (c.rsi14 != null) ? c.rsi14 : null;
+            const ret5 = (c.ret_5d_pct != null) ? c.ret_5d_pct : null;
+            const d = (dist25 != null) ? dist25 : 0;
+            let level;
+            if (d >= g("dist_sma25_extreme", 45) || (dist25 != null && dist25 >= g("dist_sma25_strong", 30) && rsi != null && rsi >= g("rsi_hot", 80))) level = "extreme";
+            else if (d >= g("dist_sma25_strong", 30) || (rsi != null && rsi >= g("rsi_hot", 80)) || (ret5 != null && ret5 >= g("ret5_hot", 30))) level = "strong";
+            else if (d >= g("dist_sma25_moderate", 18) || (rsi != null && rsi >= g("rsi_watch", 75)) || (ret5 != null && ret5 >= g("ret5_watch", 20))) level = "moderate";
+            else level = "low";
+            const type = level === "low" ? "breakout_chase" : level === "moderate" ? "pullback_wait" : level === "strong" ? "probe_only" : "wait";
+            return { level: level, type: type, hasCtx: true };
+        }
+
+        function onSortSelect(key) {
+            sortKey = key;
+            sortDir = SORT_DEFAULT_DIR[key] || "desc";
+            applyFilters();
+        }
+
+        function onHeaderSort(key) {
+            if (!key) return;
+            if (sortKey === key) {
+                sortDir = (sortDir === "asc") ? "desc" : "asc";
+            } else {
+                sortKey = key;
+                sortDir = SORT_DEFAULT_DIR[key] || "desc";
+            }
+            const sel = document.getElementById("sort-by");
+            if (sel) sel.value = key;
+            applyFilters();
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll("th[data-key]").forEach(function (th) {
+                const span = th.querySelector(".sort-ind");
+                if (!span) return;
+                span.textContent = (th.getAttribute("data-key") === sortKey) ? (sortDir === "asc" ? " ▲" : " ▼") : "";
+            });
         }
 
         // エントリー方式（高値掴み防止）と過熱度
@@ -681,7 +754,7 @@
         function applyScoreMode() {
             currentSmartPreset = 'none';
             updatePresetButtonsUI();
-            document.getElementById("sort-by").value = "score_desc";
+            sortKey = "score"; sortDir = "desc"; document.getElementById("sort-by").value = "score";
             scoreThreshold = 70;
             updateScoreButtonsUI();
             applyFilters();
@@ -704,7 +777,7 @@
                 document.getElementById("filter-valratio").value = 1.5;
                 document.getElementById("filter-valratio-max").value = "";
                 document.getElementById("filter-per-min").value = 4;
-                document.getElementById("sort-by").value = "valratio_desc";
+                sortKey = "valratio"; sortDir = "desc"; document.getElementById("sort-by").value = "valratio";
             } else if (type === 'bestMid') {
                 document.getElementById("filter-price-preset").value = "1000-2000";
                 document.getElementById("filter-gc").value = "2-3";
@@ -712,7 +785,7 @@
                 document.getElementById("filter-valratio").value = 2.0;
                 document.getElementById("filter-valratio-max").value = "";
                 document.getElementById("filter-per-min").value = 4;
-                document.getElementById("sort-by").value = "valratio_desc";
+                sortKey = "valratio"; sortDir = "desc"; document.getElementById("sort-by").value = "valratio";
             } else if (type === 'bestLow') {
                 document.getElementById("filter-price-preset").value = "500-1000";
                 document.getElementById("filter-gc").value = "0";
@@ -720,7 +793,7 @@
                 document.getElementById("filter-valratio").value = 1.5;
                 document.getElementById("filter-valratio-max").value = 3.0;
                 document.getElementById("filter-per-min").value = 4;
-                document.getElementById("sort-by").value = "valratio_desc";
+                sortKey = "valratio"; sortDir = "desc"; document.getElementById("sort-by").value = "valratio";
             } else if (type === 'bestHighMid') {
                 document.getElementById("filter-price-preset").value = "2000-3000";
                 document.getElementById("filter-gc").value = "2-3";
@@ -728,7 +801,7 @@
                 document.getElementById("filter-valratio").value = 2.0;
                 document.getElementById("filter-valratio-max").value = 4.0;
                 document.getElementById("filter-per-min").value = 4;
-                document.getElementById("sort-by").value = "valratio_desc";
+                sortKey = "valratio"; sortDir = "desc"; document.getElementById("sort-by").value = "valratio";
             }
 
             applyFilters();
@@ -785,7 +858,6 @@
             const minDiscount = parseFloat(document.getElementById("filter-discount").value);
             const minRoe = parseFloat(document.getElementById("filter-roe").value);
             const minDiv = parseFloat(document.getElementById("filter-div").value);
-            const sortBy = document.getElementById("sort-by").value;
 
             let filtered = STOCKS.filter(s => {
                 if (s.excluded) return false;  // 週足トレンド下向き等の除外銘柄は表示しない
@@ -835,45 +907,47 @@
             });
 
             filtered.sort((a, b) => {
-                if (sortBy === "ai_order") {
+                if (sortKey === "ai_order") {
                     const va = aiVerdictPriority(a.code);
                     const vb = aiVerdictPriority(b.code);
                     if (va !== vb) return va - vb;
-                    const sa = scoreOf(a), sb = scoreOf(b);
-                    if (sb !== sa) return sb - sa;
-                    const ra = aiRankOf(a.code);
-                    const rb = aiRankOf(b.code);
+                    const sa0 = scoreOf(a), sb0 = scoreOf(b);
+                    if (sb0 !== sa0) return sb0 - sa0;
+                    const ra = aiRankOf(a.code), rb = aiRankOf(b.code);
                     if (ra !== rb) return ra - rb;
-                    const vra = (a.val_ratio_5d !== null && typeof a.val_ratio_5d !== 'undefined') ? a.val_ratio_5d : 0;
-                    const vrb = (b.val_ratio_5d !== null && typeof b.val_ratio_5d !== 'undefined') ? b.val_ratio_5d : 0;
-                    if (vrb !== vra) return vrb - vra;
-                    return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
+                } else {
+                    let av, bv;
+                    if (sortKey === "score") { av = scoreOf(a); bv = scoreOf(b); }
+                    else if (sortKey === "valratio") { av = num(a.val_ratio_5d); bv = num(b.val_ratio_5d); }
+                    else if (sortKey === "gc") { av = (a.gc_days != null ? a.gc_days : 999); bv = (b.gc_days != null ? b.gc_days : 999); }
+                    else if (sortKey === "discount") { av = a.discount_rate; bv = b.discount_rate; }
+                    else if (sortKey === "avgval") { av = (a.avg_val_5d || 0); bv = (b.avg_val_5d || 0); }
+                    else if (sortKey === "mix") { av = a.mix_index; bv = b.mix_index; }
+                    else if (sortKey === "div") { av = a.div_yield; bv = b.div_yield; }
+                    else if (sortKey === "roe") { av = a.roe; bv = b.roe; }
+                    else if (sortKey === "per") { av = a.per; bv = b.per; }
+                    else if (sortKey === "pbr") { av = a.pbr; bv = b.pbr; }
+                    else if (sortKey === "entry") {
+                        const pa = entryPlanOf(a), pb = entryPlanOf(b);
+                        av = (pa.type != null ? ENTRY_TYPE_ORDER[pa.type] : 9);
+                        bv = (pb.type != null ? ENTRY_TYPE_ORDER[pb.type] : 9);
+                    } else if (sortKey === "earn") {
+                        const ea = EARNINGS[a.code], eb = EARNINGS[b.code];
+                        av = (ea && ea.days_until != null && ea.days_until >= 0) ? ea.days_until : 1e9;
+                        bv = (eb && eb.days_until != null && eb.days_until >= 0) ? eb.days_until : 1e9;
+                    } else { av = scoreOf(a); bv = scoreOf(b); }
+                    let r = (av > bv) ? 1 : (av < bv) ? -1 : 0;
+                    if (sortDir === "desc") r = -r;
+                    if (r !== 0) return r;
                 }
-                if (sortBy === "score_desc") {
-                    const sa = scoreOf(a), sb = scoreOf(b);
-                    if (sb !== sa) return sb - sa;
-                    const va = (a.val_ratio_5d !== null && typeof a.val_ratio_5d !== 'undefined') ? a.val_ratio_5d : 0;
-                    const vb = (b.val_ratio_5d !== null && typeof b.val_ratio_5d !== 'undefined') ? b.val_ratio_5d : 0;
-                    if (vb !== va) return vb - va;
-                    return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
-                }
-                if (sortBy === "valratio_desc") {
-                    const va = (a.val_ratio_5d !== null && typeof a.val_ratio_5d !== 'undefined') ? a.val_ratio_5d : 0;
-                    const vb = (b.val_ratio_5d !== null && typeof b.val_ratio_5d !== 'undefined') ? b.val_ratio_5d : 0;
-                    return vb - va;
-                }
-                if (sortBy === "gc_asc") {
-                    const ga = (a.gc_days !== null && typeof a.gc_days !== 'undefined') ? a.gc_days : 999;
-                    const gb = (b.gc_days !== null && typeof b.gc_days !== 'undefined') ? b.gc_days : 999;
-                    return ga - gb;
-                }
-                if (sortBy === "discount_desc") return b.discount_rate - a.discount_rate;
-                if (sortBy === "mix_asc") return a.mix_index - b.mix_index;
-                if (sortBy === "avgval_desc") return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
-                if (sortBy === "div_desc") return b.div_yield - a.div_yield;
-                if (sortBy === "roe_desc") return b.roe - a.roe;
-                return 0;
+                // 同順位のタイブレーク: スコア → 出来高増加率 → 5日平均代金
+                const sa = scoreOf(a), sb = scoreOf(b);
+                if (sb !== sa) return sb - sa;
+                const vra = num(a.val_ratio_5d), vrb = num(b.val_ratio_5d);
+                if (vrb !== vra) return vrb - vra;
+                return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
             });
+            updateSortIndicators();
 
             renderTable(filtered);
         }
@@ -883,7 +957,7 @@
             const tbody = document.getElementById("stock-table-body");
             tbody.innerHTML = "";
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" class="p-4 text-muted text-center">条件に一致する銘柄はありません。</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" class="p-4 text-muted text-center">条件に一致する銘柄はありません。</td></tr>';
                 return;
             }
             let html = "";
@@ -914,16 +988,19 @@
                     aiBadge = `<span class="badge-ai ms-1"${styleAttr} title="${tip}">${label}</span> ${verdictBadge(ai.verdict, ai.reason)}`;
                 }
 
-                let entryBadge = "";
-                const pickEntry = PICKS[s.code];
-                if (pickEntry && pickEntry.entry_type && pickEntry.entry_type !== "breakout_chase") {
-                    entryBadge = entryTypeBadge(pickEntry.entry_type);
+                let entryCell = '<span class="text-muted">-</span>';
+                const ep = entryPlanOf(s);
+                if (ep.type) {
+                    entryCell = `${entryTypeBadge(ep.type)}<div class="text-muted mt-1" style="font-size:0.68rem;">過熱:${OVERHEAT_LABELS[ep.level] || '-'}</div>`;
                 }
 
-                let earnBadge = "";
+                let earnCell = '<span class="text-muted">-</span>';
                 const earn = EARNINGS[s.code];
-                if (earn && earn.soon) {
-                    earnBadge = `<span class="badge bg-warning text-dark ms-1" style="font-size:0.66rem;" title="決算接近: ${earn.date}（あと${earn.days_until}日）">⚠️決算接近</span>`;
+                if (earn && earn.days_until !== null && typeof earn.days_until !== 'undefined' && earn.days_until >= 0) {
+                    const tip = `決算予定: ${esc(earn.date)}（あと${earn.days_until}日）`;
+                    earnCell = earn.soon
+                        ? `<span class="badge bg-warning text-dark" title="${tip}">あと${earn.days_until}日</span>`
+                        : `<span title="${tip}">あと${earn.days_until}日</span>`;
                 }
 
                 const isPositiveDiscount = s.discount_rate > 0;
@@ -940,14 +1017,12 @@
 
                 html += `<tr>
                     <td><strong>${idx + 1}</strong></td>
-                    <td class="stock-main-cell">
+                    <td class="stock-main-cell td-sticky">
                         <div class="d-flex align-items-center flex-wrap">
                             <span onclick="openRakuten('${s.code}')" class="rakuten-link me-1" title="タップでiSPEEDを開く">${s.code}</span>
                             <span class="company-name" onclick="showStockDetail('${s.code}')" title="${esc(s.name)}（タップで詳細・AI戦略）">${s.name}</span>
                             ${gcBadge}
                             ${aiBadge}
-                            ${entryBadge}
-                            ${earnBadge}
                             ${sig.badgeHtml}
                         </div>
                         <div class="stock-sub-info">
@@ -957,13 +1032,15 @@
                         </div>
                     </td>
                     <td>${scoreBadge(scoreOf(s))}</td>
-                    <td class="fw-bold">¥${s.price.toLocaleString()}</td>
+                    <td>${entryCell}</td>
                     <td><span class="${vRatioClass}">${vRatioText}</span></td>
-                    <td class="${discountClass} fw-bold">${discountText}</td>
-                    <td class="fw-bold text-dark">${s.div_yield}%</td>
-                    <td>${s.per.toFixed(1)}</td>
-                    <td>${s.pbr.toFixed(2)}</td>
-                    <td>${s.roe}%</td>
+                    <td>${earnCell}</td>
+                    <td class="d-none d-md-table-cell fw-bold">¥${s.price.toLocaleString()}</td>
+                    <td class="d-none d-md-table-cell ${discountClass} fw-bold">${discountText}</td>
+                    <td class="d-none d-md-table-cell">${s.per.toFixed(1)}</td>
+                    <td class="d-none d-lg-table-cell fw-bold text-dark">${s.div_yield}%</td>
+                    <td class="d-none d-lg-table-cell">${s.pbr.toFixed(2)}</td>
+                    <td class="d-none d-lg-table-cell">${s.roe}%</td>
                 </tr>`;
             });
             tbody.innerHTML = html;
@@ -1058,7 +1135,7 @@
             document.getElementById("filter-discount").value = "";
             document.getElementById("filter-roe").value = "";
             document.getElementById("filter-div").value = "";
-            document.getElementById("sort-by").value = "score_desc";
+            sortKey = "score"; sortDir = "desc"; document.getElementById("sort-by").value = "score";
             document.getElementById("quick-search").value = "";
             scoreThreshold = 70;
             updateScoreButtonsUI();
