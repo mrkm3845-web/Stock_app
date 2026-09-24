@@ -225,8 +225,8 @@
                 <div class="col-6 col-md-2">
                     <div class="filter-label">並び替え順 (ソート)</div>
                     <select id="sort-by" class="form-select form-select-sm fw-bold text-primary" onchange="applyFilters()">
-                        <option value="ai_order" selected>AI推奨順 (推奨→様子見→順位) 🤖</option>
-                        <option value="score_desc">総合スコア (高い順) ⭐</option>
+                        <option value="ai_order">AI推奨順 (推奨→スコア→順位) 🤖</option>
+                        <option value="score_desc" selected>総合スコア (高い順) ⭐</option>
                         <option value="valratio_desc">売買代金増加率 (急増順 🚀)</option>
                         <option value="gc_asc">GC発生順 (最新初動順)</option>
                         <option value="discount_desc">割安度(%) (降順)</option>
@@ -823,21 +823,23 @@
                     const va = aiVerdictPriority(a.code);
                     const vb = aiVerdictPriority(b.code);
                     if (va !== vb) return va - vb;
+                    const sa = scoreOf(a), sb = scoreOf(b);
+                    if (sb !== sa) return sb - sa;
                     const ra = aiRankOf(a.code);
                     const rb = aiRankOf(b.code);
                     if (ra !== rb) return ra - rb;
-                    const sa = scoreOf(a), sb = scoreOf(b);
-                    if (sb !== sa) return sb - sa;
                     const vra = (a.val_ratio_5d !== null && typeof a.val_ratio_5d !== 'undefined') ? a.val_ratio_5d : 0;
                     const vrb = (b.val_ratio_5d !== null && typeof b.val_ratio_5d !== 'undefined') ? b.val_ratio_5d : 0;
-                    return vrb - vra;
+                    if (vrb !== vra) return vrb - vra;
+                    return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
                 }
                 if (sortBy === "score_desc") {
                     const sa = scoreOf(a), sb = scoreOf(b);
                     if (sb !== sa) return sb - sa;
                     const va = (a.val_ratio_5d !== null && typeof a.val_ratio_5d !== 'undefined') ? a.val_ratio_5d : 0;
                     const vb = (b.val_ratio_5d !== null && typeof b.val_ratio_5d !== 'undefined') ? b.val_ratio_5d : 0;
-                    return vb - va;
+                    if (vb !== va) return vb - va;
+                    return (b.avg_val_5d || 0) - (a.avg_val_5d || 0);
                 }
                 if (sortBy === "valratio_desc") {
                     const va = (a.val_ratio_5d !== null && typeof a.val_ratio_5d !== 'undefined') ? a.val_ratio_5d : 0;

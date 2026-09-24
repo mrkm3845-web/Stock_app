@@ -92,7 +92,8 @@ flowchart LR
 
 - 全銘柄を一括スキャン。価格は増分キャッシュ（`data/price_cache`、**約400暦日**取得）。ファンダ（PER/PBR/ROE/配当）は yfinance `.info` から。
 - 候補プール = スコア上位 `stage1_pool_max`（40）。
-- **おすすめの並び**（`build_recommendations`）: **判定優先度 → AI順位 → スコア → 出来高増加率 → 流動性**。
+- **おすすめの並び**（`build_recommendations`）: **判定優先度 → スコア → AI順位 → 出来高増加率 → 流動性**。
+  - **検証済みスコアを主軸**にし、AI順位は同スコア帯のタイブレーク（AIは補助）。判定優先度（`recommend`優先）のみAIで先頭に寄せる。
   - 判定優先度: `recommend`(0) → `watch`(1) → `neutral`(2) → `hold`(3) → `caution`(4) → `avoid`/`sell`(5) → AIなし(9)。
   - **AI実行時は `verdict=recommend` のみを「推奨」として採用**。件数は無理に埋めず**0件もあり得る**（上限 `ai.max_picks`、旧キー `weekly_top_picks` も後方互換）。
   - **技術実行（AIなし）**はスコア上位を技術候補として `recommendations_technical.json` に出力（`verdict=technical_only`）。
@@ -114,7 +115,7 @@ flowchart LR
   - 一覧バッジ: **最新AI実行日**の銘柄は `⭐AI #順位`、**過去バッチ**の銘柄は `⭐AI MM-DD`（順位なし・薄表示の参考）＋判定（推奨/様子見/中立/注意/回避）。`excluded` 銘柄は非表示。※rankは回ごとの順位のため日付をまたいで混在させない。
   - **推奨0件バナー**: `recommendations.json` が空のとき「本日のAI推奨（recommend）はありません」を表示。
   - ヘッダ: **地合い risk-on/off** と **推奨ポートフォリオ（最大N銘柄・1取引リスク%）**。
-  - デフォルト並び替え: **AI推奨順**（推奨→様子見→中立→保有→注意→回避→順位）。他にスコア順など。
+  - デフォルト並び替え: **総合スコア順**（スコア→出来高増加率→5日平均代金）。「AI推奨順」も選択可（推奨→スコア→AI順位→出来高増加率→5日平均代金）。他に出来高増加率順・GC順など。
   - 銘柄モーダル: 銘柄詳細＋**価格帯別ルールの利確/損切（ATR損切）**＋**推奨株数**＋決算警告。AI戦略は**参考情報（売買指示には未採用）**と明示。「最新AI実行」ボタンは**常時有効**（プロンプトをコピーしてGeminiへ）。
 - [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示。`strategy_params` / `recommendations` / `meta` を読み、利確/損切・推奨株数を index と統一。OCO既定値とCSV取込も価格帯別ルールで算出。
 - 旧 `main7.html` / `index_main6_backup.html` は退避。

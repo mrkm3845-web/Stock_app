@@ -791,10 +791,11 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
         v_pri = VERDICT_PRIORITY.get(verdict, 9)
         rank = _ai_rank(item) if item else None
         rank_val = rank if rank is not None else 10 ** 9
+        # 検証済みスコアを主軸にし、AI順位は同スコア帯のタイブレーク（AIは補助）
         return (
             v_pri,
-            rank_val,
             -r["score"],
+            rank_val,
             -r.get("val_ratio_5d", 0),
             -r.get("avg_val_5d", 0),
         )
