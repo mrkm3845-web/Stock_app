@@ -25,8 +25,11 @@ import re
 import sqlite3
 import sys
 import time
+import urllib.parse
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 
 import numpy as np
 import pandas as pd
@@ -438,24 +441,103 @@ def build_pool(results, params):
 
 
 # ---------------------------------------------------------------- ニュース（プール分のみ）
-def fetch_news_for_pool(pool):
+_SEARCH_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+
+
+def _fetch_gnews_rss(name, days, max_items):
+    """Google News RSS から直近 days 日の見出しを新しい順に返す（重複除去）。"""
+    url = ("https://news.google.com/rss/search?q=" + urllib.parse.quote(name)
+           + "&hl=ja&gl=JP&ceid=JP:ja")
+    try:
+        res = requests.get(url, headers={"User-Agent": _SEARCH_UA}, timeout=20)
+        if res.status_code != 200 or not res.content.lstrip().startswith(b"<?xml"):
+            return []
+        root = ET.fromstring(res.content)
+    except Exception:
+        return []
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    rows = []
+    for it in root.iter("item"):
+        title = (it.findtext("title") or "").strip()
+        if not title:
+            continue
+        try:
+            pdt = parsedate_to_datetime((it.findtext("pubDate") or "").strip())
+            if pdt is not None and pdt.tzinfo is None:
+                pdt = pdt.replace(tzinfo=timezone.utc)
+        except Exception:
+            pdt = None
+        if pdt is not None and pdt < cutoff:
+            continue
+        rows.append((pdt, title))
+    rows.sort(key=lambda x: (x[0] is None, x[0] if x[0] is not None else datetime.min.replace(tzinfo=timezone.utc)),
+              reverse=True)
+    out, seen = [], set()
+    for _pdt, title in rows:
+        key = re.sub(r"\s+", "", title)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(title)
+        if len(out) >= max_items:
+            break
+    return out
+
+
+def _fetch_yf_news(code, max_items):
+    """yfinance .news の見出し（フォールバック/併用）。新旧の構造差を吸収。"""
+    try:
+        items = yf.Ticker(f"{code}.T").news or []
+    except Exception:
+        return []
+    heads = []
+    for n in items:
+        title = n.get("title")
+        if not title and isinstance(n.get("content"), dict):
+            title = n["content"].get("title")
+        if title:
+            heads.append(str(title).strip())
+        if len(heads) >= max_items:
+            break
+    return heads
+
+
+def fetch_news_for_pool(pool, params=None):
+    """候補銘柄のニュース見出しを取得する。
+
+    情報源は strategy_params の ai.news_source で切替:
+      - "gnews"    : Google News RSS（既定。失敗時は yfinance にフォールバック）
+      - "yfinance" : 従来の yfinance .news
+      - "hybrid"   : Google News RSS を優先し、yfinance を重複除外して併用
+    """
+    ai = (params or {}).get("ai", {})
+    source = ai.get("news_source", "gnews")
+    days = int(ai.get("news_days", 14))
+    max_items = int(ai.get("news_max", 5))
     news_map = {}
     total = len(pool)
     for i, r in enumerate(pool):
-        try:
-            t = yf.Ticker(f"{r['code']}.T")
-            items = t.news or []
-            headlines = []
-            for n in items[:5]:
-                title = n.get("title")
-                if title:
-                    headlines.append(title)
-            if headlines:
-                news_map[r["code"]] = headlines
-        except Exception:
-            pass
+        code = r["code"]
+        name = r.get("name") or ""
+        headlines = []
+        if source in ("gnews", "hybrid") and name:
+            headlines = _fetch_gnews_rss(name, days, max_items)
+        use_yf = source == "yfinance" or (source in ("gnews", "hybrid") and not headlines)
+        if use_yf:
+            yf_heads = _fetch_yf_news(code, max_items)
+            headlines = yf_heads or headlines
+        elif source == "hybrid":
+            seen = set(headlines)
+            for h in _fetch_yf_news(code, max_items):
+                if h not in seen:
+                    headlines.append(h)
+                    seen.add(h)
+            headlines = headlines[:max_items]
+        if headlines:
+            news_map[code] = headlines
         if i < total - 1:
-            time.sleep(0.25)
+            time.sleep(0.2)
     return news_map
 
 
@@ -1254,7 +1336,7 @@ def main():
                 ai_map = None
 
         if ai_map is None:
-            news_map = fetch_news_for_pool(pool)
+            news_map = fetch_news_for_pool(pool, params)
             ai_map = call_ai(pool, fund_map, news_map, params, date)
             ai_map = sanitize_ai_map(ai_map, pool)
             if ai_map:

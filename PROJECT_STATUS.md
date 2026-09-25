@@ -132,6 +132,7 @@ flowchart LR
 - 応答の `code` を文字列正規化して候補プールと突合（`sanitize_ai_map`）。
 - `verdict` は `recommend/watch/neutral/caution/avoid` に限定（プロンプトで明示）。main8・フロント双方で同じ優先順位に正規化。
 - AI入力には `過熱警戒（warnings）` `決算（接近時はあとN日）` `グレアム理論株価/割安度` `価格帯` に加え、**`25日/5日乖離率` `RSI14` `連騰日数` `寄付ギャップ` `ATR%` `ルール推奨入口` `押し目候補ゾーン`** を含む。
+- **ニュース取得**: `ai.news_source` で切替（`gnews`=Google News RSS（既定・失敗時 yfinance フォールバック）/ `yfinance` / `hybrid`）。`ai.news_days`（直近N日）/ `ai.news_max`（件数）で整形・重複除去し、プロンプトの「ニュース」欄へ注入。※日本株の yfinance `.news` はほぼ空のため RSS を既定化（PoC: 5銘柄すべてで yfinance 0件 / RSS 2〜13件）。
 - AI出力には `entry_type`（`breakout_chase`/`pullback_wait`/`probe_only`/`wait`）を含め、**高値掴み（イナゴ買い）防止を最優先**するよう明示。`breakout_chase`/`pullback_wait`/`probe_only` は `recommend`、`wait` は `watch`/`caution` を指示。
 - yfinance の 401/429（想定内）はログ抑制（`logging.getLogger("yfinance")`）。
 - 出力: `ai_analysis/{date}.json`（生キャッシュ）＋ `ai_strategy_latest.json`（銘柄別最新）。
@@ -166,7 +167,7 @@ flowchart LR
 - `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
 - `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`（moderate用）・`probe_wait_days`（high=strong+extreme用）・`probe_qty_factor`）。押し目深さ/待機日数はバックテストの成行比較で**過熱度別に**更新されうる。
-- `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, max_picks:5, ...}`（`max_picks`＝表示する推奨の最大件数。旧 `weekly_top_picks` は後方互換で読む。`stage1_pool_min` は定義のみで**未使用**）
+- `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, max_picks:5, news_source:gnews, news_days:14, news_max:5, ...}`（`max_picks`＝表示する推奨の最大件数。旧 `weekly_top_picks` は後方互換で読む。`stage1_pool_min` は定義のみで**未使用**）
 
 ---
 
@@ -216,7 +217,8 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 **既知の制約**
 - **画像入力なし**: AIはチャート画像を見ない（OHLC由来の数値で近似）。
 - **決算日データ**: yfinance 由来で一部古い。**未来の決算日が取れた場合のみ**警告。
-- **ライブニュース**: yfinance `.news`。日本株・小型株は網羅度が低く「要確認」が多い。
+- **ライブニュース**: 既定は **Google News RSS**（企業名クエリ・直近N日）。yfinance `.news` は日本株でほぼ空のためフォールバック扱い。RSSは見出しのみで**リンクはGoogleリダイレクト**、古い記事混在に注意（期間フィルタ済み）。Google News RSS は非公式・SLA無し。
+- **Grounding（検討中）**: Gemini の Google Search grounding は仕様確認済み（`tools:[{googleSearch:{}}]`、引用=`groundingMetadata`、Gemini 3系は月5,000クエリ無料）。採用時は**Search Suggestions表示義務**と**JSON構造化との併用未記載（二段構成推奨）**に留意。
 - **サバイバーシップバイアス / 多重検定**: バックテスト結果はやや楽に出る／偶然の好成績に注意。ガードで緩和。
 - **プリセットは未検証**: index.html の「3大実証厳選」等の PF 値は削除済みの旧バックテスト由来（UI上「⚠未検証」表示）。
 - **ポートフォリオ指標は実現損益ベース**（保有时価評価なし）。
