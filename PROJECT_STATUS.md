@@ -129,7 +129,7 @@ flowchart LR
 **プロバイダ / 認証**
 - `ai.provider` で切替: `"gemini"`（既定） / `"deepseek"`。実装は `_call_gemini`（`main8.py`） / `_call_deepseek`。
 - 環境変数: `GEMINI_API_KEY` / `DEEPSEEK_API_KEY`。**GitHub Actions の env に渡す必要あり**（現状 `daily_main8_ai.yml` は `GEMINI_API_KEY` のみ。DeepSeek利用時は `DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}` を追記）。
-- 既定: `provider=gemini`, `model=gemini-3.6-flash`（フォールバック `gemini-3.1-pro-preview`）。DeepSeek利用時は `provider=deepseek`, `model=deepseek-flash`（`deepseek-flash`=DeepSeek-V4.1-Flash。JSON出力/Vision対応、最大出力384K）。
+- **現在の既定: `provider=deepseek`, `model=deepseek-flash`（DeepSeek-V4.1-Flash。JSON出力/Vision対応、最大出力384K）**。Gemini運用に戻す場合は `provider=gemini`, `model=gemini-3.6-flash`（フォールバック `gemini-3.1-pro-preview`）。※Geminiは当環境で503/429（混雑・無料枠超過）が続いたため DeepSeek を既定化。
 - リトライ: 5xx は最大5回（指数バックオフ）、**課金クォータ 429 は即スキップ**。JSON解析失敗時は再試行。応答が得られなければ `retry_candidates` 件に絞って再試行。
 
 **入力（Stage1候補 → プロンプト）**
@@ -179,7 +179,7 @@ flowchart LR
 - `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
 - `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`（moderate用）・`probe_wait_days`（high=strong+extreme用）・`probe_qty_factor`）。押し目深さ/待機日数はバックテストの成行比較で**過熱度別に**更新されうる。
-- `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, max_picks:5, max_calls_per_run:40, retry_candidates:15, max_output_stocks:15, news_source:gnews, news_days:14, news_max:5, ...}`（`max_picks`＝表示する推奨の最大件数。`max_output_stocks`＝AIが返すstocks配列の上限目安。`stage1_pool_min` は定義のみで**未使用**）
+- `ai`: `{enabled, provider:deepseek, model:deepseek-flash, stage1_pool_max:40, max_picks:5, max_calls_per_run:40, retry_candidates:15, max_output_stocks:15, news_source:gnews, news_days:14, news_max:5, ...}`（`max_picks`＝表示する推奨の最大件数。`max_output_stocks`＝AIが返すstocks配列の上限目安。`stage1_pool_min` は定義のみで**未使用**）
 
 ---
 
@@ -255,3 +255,4 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **旧PFバッジ廃止**: 旧バックテスト由来の固定PF（最高期待値/低位初動/中位ブレイク/過熱警戒PF）を撤去し、警告は `strategy_params.warnings` に一本化。
 - **AI**: `provider`（gemini/deepseek）抽象化、**ニュース源を Google News RSS 既定**（yfinanceフォールバック、`news_source/news_days/news_max`）、**AI出力件数制限** `max_output_stocks`（JSON切れ対策）、JSON解析失敗時の再試行・候補絞り再試行。
 - **初心者向け見方ガイド** `docs/guide.html` を新設（一覧/バッジ/並び替え/モーダル/用語集/注意）。
+- **AIプロバイダをDeepSeekへ切替（既定）**: `provider=deepseek` / `model=deepseek-flash`、JSON出力指定、`daily_main8_ai.yml` に `DEEPSEEK_API_KEY` を追加（Secret登録済み）。初回実行成功（15件出力・推奨5件）。Geminiは503/429のため保留。
