@@ -46,6 +46,7 @@ jobs:
       - name: Run main8 screener with AI analysis
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           if [ "${{ inputs.force }}" = "true" ]; then

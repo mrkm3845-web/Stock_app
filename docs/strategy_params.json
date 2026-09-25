@@ -141,8 +141,8 @@
   },
   "ai": {
     "enabled": true,
-    "provider": "gemini",
-    "model": "gemini-3.6-flash",
+    "provider": "deepseek",
+    "model": "deepseek-flash",
     "stage1_pool_min": 20,
     "stage1_pool_max": 40,
     "max_picks": 5,

@@ -626,22 +626,38 @@ def _call_deepseek(user, system, params):
     key = os.environ.get("DEEPSEEK_API_KEY")
     ai = params.get("ai", {})
     if not key:
+        print(">> DEEPSEEK_API_KEY 未設定のためAIをスキップします")
         return None
     url = "https://api.deepseek.com/chat/completions"
     headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
     payload = {
-        "model": ai.get("model", "deepseek-chat"),
+        "model": ai.get("model", "deepseek-flash"),
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
         "temperature": 0.2,
+        "response_format": {"type": "json_object"},
     }
-    try:
-        resp = requests.post(url, headers=headers, json=payload, timeout=120)
-        resp.raise_for_status()
-        content = resp.json()["choices"][0]["message"]["content"]
-        return _extract_json(content)
-    except Exception as e:
-        print(f">> DeepSeek呼び出し失敗（技術スコアでフォールバック）: {e}")
-        return None
+    last_err = None
+    for attempt in range(3):
+        try:
+            resp = requests.post(url, headers=headers, json=payload, timeout=180)
+            if resp.status_code in (429, 500, 502, 503, 504):
+                last_err = f"{resp.status_code} {resp.reason}: {resp.text[:200]}"
+                time.sleep(min(2 ** attempt, 10))
+                continue
+            resp.raise_for_status()
+            content = resp.json()["choices"][0]["message"]["content"]
+            parsed = _extract_json(content)
+            if parsed is None:
+                last_err = "JSON解析失敗"
+                print(f">> DeepSeek 200 OKだがJSON解析失敗（応答先頭）: {content[:300]}")
+                time.sleep(min(2 ** attempt, 10))
+                continue
+            return parsed
+        except Exception as e:
+            last_err = str(e)
+            time.sleep(min(2 ** attempt, 10))
+    print(f">> DeepSeek呼び出し失敗（技術スコアでフォールバック）: {last_err}")
+    return None
 
 
 def _call_gemini(user, system, params):
