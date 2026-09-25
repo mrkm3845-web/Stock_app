@@ -149,6 +149,7 @@
     "monthly_budget_jpy": 1000,
     "max_calls_per_run": 40,
     "retry_candidates": 15,
+    "max_output_stocks": 15,
     "news_source": "gnews",
     "news_days": 14,
     "news_max": 5

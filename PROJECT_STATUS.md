@@ -9,7 +9,7 @@
 
 ## 0. 30秒サマリ
 
-- 日本株スクリーナー（プライム+スタンダード 約3,100銘柄）。全銘柄をスキャン → **スコア上位40を AI（Gemini）が順位付け** → 「推奨/様子見」を提示。
+- 日本株スクリーナー（プライム+スタンダード 約3,100銘柄）。全銘柄をスキャン → **スコア上位40を候補に AI（Gemini/DeepSeek 切替可）が順位付け** → 「推奨/様子見」を提示。AI入力には **Google News RSS の材料**を注入。
 - **スコアは Phase 2 の「トレンド合成」**（52週高値位置・200日線乖離・200日線傾き・120日リターン）。
 - バックテストは**同一リポジトリ内の [`back_tester/`](back_tester/)**。**毎月 第1土曜にガード付きで `docs/strategy_params.json` へ自動反映**。
 - フロントは GitHub Pages（[`docs/index.html`](docs/index.html) / [`docs/journal.html`](docs/journal.html)）。
@@ -124,18 +124,30 @@ flowchart LR
 
 ---
 
-## 6. AI（Gemini）
+## 6. AI 連携（現状仕様）
 
-- 環境変数 `GEMINI_API_KEY`（GitHub Secrets）。`ai.provider` / `ai.model` で切替。
-- **既定モデル: `gemini-3.6-flash`**（フォールバック: `gemini-3.1-pro-preview`）。
-- リトライ: 5xx は最大5回（指数バックオフ）、**課金クォータ 429 は即スキップ**。
+**プロバイダ / 認証**
+- `ai.provider` で切替: `"gemini"`（既定） / `"deepseek"`。実装は `_call_gemini`（`main8.py`） / `_call_deepseek`。
+- 環境変数: `GEMINI_API_KEY` / `DEEPSEEK_API_KEY`。**GitHub Actions の env に渡す必要あり**（現状 `daily_main8_ai.yml` は `GEMINI_API_KEY` のみ。DeepSeek利用時は `DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}` を追記）。
+- 既定: `provider=gemini`, `model=gemini-3.6-flash`（フォールバック `gemini-3.1-pro-preview`）。DeepSeek利用時は `provider=deepseek`, `model=deepseek-flash`（`deepseek-flash`=DeepSeek-V4.1-Flash。JSON出力/Vision対応、最大出力384K）。
+- リトライ: 5xx は最大5回（指数バックオフ）、**課金クォータ 429 は即スキップ**。JSON解析失敗時は再試行。応答が得られなければ `retry_candidates` 件に絞って再試行。
+
+**入力（Stage1候補 → プロンプト）**
+- 候補 = スコア上位 `max_calls_per_run`（40）。プロンプトには技術（乖離/RSI/ATR/需給/エントリー判定/過熱）＋ファンダ＋決算＋**ニュース**を注入。
+- **ニュース**: `ai.news_source`（`gnews`=Google News RSS（既定）/ `yfinance` / `hybrid`）、`ai.news_days`（14）、`ai.news_max`（5）。企業名検索→直近N日→重複除去。※日本株の yfinance `.news` はほぼ空（PoC: 5銘柄すべて0件）。プロンプトの「ニュース」欄には先頭3件を注入。
+- 画像は渡さない（テキストのみ）。
+
+**出力（件数制限でJSON切れ防止・案2）**
+- `ai.max_output_stocks`（15）: **stocks配列は「上位15銘柄程度＋verdict=recommendの全件」のみ**返させる（全候補を返さない）。これで出力トークン超過によるJSON切れを回避。
+- `verdict` は `recommend/watch/neutral/caution/avoid`。`entry_type`（`breakout_chase`/`pullback_wait`/`probe_only`/`wait`）。`reason`等は各60文字以内。
 - 応答の `code` を文字列正規化して候補プールと突合（`sanitize_ai_map`）。
-- `verdict` は `recommend/watch/neutral/caution/avoid` に限定（プロンプトで明示）。main8・フロント双方で同じ優先順位に正規化。
-- AI入力には `過熱警戒（warnings）` `決算（接近時はあとN日）` `グレアム理論株価/割安度` `価格帯` に加え、**`25日/5日乖離率` `RSI14` `連騰日数` `寄付ギャップ` `ATR%` `ルール推奨入口` `押し目候補ゾーン`** を含む。
-- **ニュース取得**: `ai.news_source` で切替（`gnews`=Google News RSS（既定・失敗時 yfinance フォールバック）/ `yfinance` / `hybrid`）。`ai.news_days`（直近N日）/ `ai.news_max`（件数）で整形・重複除去し、プロンプトの「ニュース」欄へ注入。※日本株の yfinance `.news` はほぼ空のため RSS を既定化（PoC: 5銘柄すべてで yfinance 0件 / RSS 2〜13件）。
-- AI出力には `entry_type`（`breakout_chase`/`pullback_wait`/`probe_only`/`wait`）を含め、**高値掴み（イナゴ買い）防止を最優先**するよう明示。`breakout_chase`/`pullback_wait`/`probe_only` は `recommend`、`wait` は `watch`/`caution` を指示。
-- yfinance の 401/429（想定内）はログ抑制（`logging.getLogger("yfinance")`）。
-- 出力: `ai_analysis/{date}.json`（生キャッシュ）＋ `ai_strategy_latest.json`（銘柄別最新）。
+
+**保存**
+- `ai_analysis/{date}.json`（生キャッシュ）＋ `ai_strategy_latest.json`（銘柄別最新）。
+
+**検討中（未実装）**
+- **Gemini Google Search grounding**: `tools:[{googleSearch:{}}]`、引用=`groundingMetadata`、Gemini3系は月5,000クエリ無料。採用時は**Search Suggestions表示義務**＋**JSON構造化は二段構成推奨**。
+- **AI有界オーバーレイ**（総合=S+Δ、Δ∈{−10..+10}）: 設計済み・未実装。
 
 ---
 
@@ -167,7 +179,7 @@ flowchart LR
 - `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
 - `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`（moderate用）・`probe_wait_days`（high=strong+extreme用）・`probe_qty_factor`）。押し目深さ/待機日数はバックテストの成行比較で**過熱度別に**更新されうる。
-- `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, max_picks:5, news_source:gnews, news_days:14, news_max:5, ...}`（`max_picks`＝表示する推奨の最大件数。旧 `weekly_top_picks` は後方互換で読む。`stage1_pool_min` は定義のみで**未使用**）
+- `ai`: `{enabled, provider:gemini, model:gemini-3.6-flash, stage1_pool_max:40, max_picks:5, max_calls_per_run:40, retry_candidates:15, max_output_stocks:15, news_source:gnews, news_days:14, news_max:5, ...}`（`max_picks`＝表示する推奨の最大件数。`max_output_stocks`＝AIが返すstocks配列の上限目安。`stage1_pool_min` は定義のみで**未使用**）
 
 ---
 
@@ -207,7 +219,11 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 ## 11. 残タスク・既知の制約
 
 **残タスク**
-- **過熱指標（25日乖離・RSI・5日リターン・ギャップ）と押し目エントリーのバックテスト検証の実行**: 分析コード（`research_signals.py` の過熱系指標、`backtest_rolling_walkforward.py` の `entry_style_comparison`、`apply_optimal_params.py` の `entry_guard` 反映）は実装済み。**次は実際にウォークフォワードを回して OOS 結果を取得し、`entry_guard` の暫定閾値を更新する**（実行は月次 `run_walkforward.yml` or ローカル全件）。
+- **過熱指標・押し目エントリーのバックテスト定期検証**: 実装済み・初回反映済み（`entry_guard`: moderate=1.5ATR/10日、high=1.5ATR/5日）。以降は月次 `run_walkforward.yml` で再検証し、ガード通過時に `entry_guard` を更新。
+- **AI有界オーバーレイ（総合=S+Δ）**: 設計は確定（Δ∈{−10..+10}、根拠必須、`docs/ai_overlay/{date}.json` ログ＋校正）。**未実装**。
+- **ニュース源の効果検証**: Google News RSS を既定化済み。次回AI実行成功時に「材料の具体性・記事の妥当性」を確認。
+- **Gemini grounding PoC（b）**: クォータ回復 or 課金、および **Search Suggestions 表示のUI対応**が前提。JSON併用は未記載のため二段構成で検証。
+- **DeepSeek利用時のCI設定**: `daily_main8_ai.yml` の `env` に `DEEPSEEK_API_KEY` を追加（Secretは登録済み）。
 - エグジット係数（ATR損切・トレーリング・部分利確）の区分別最適化の拡張。
 - 同時保有数の頑健性検証（単一経路依存の解消）。
 - スコアのランダム対比での優位性向上（現状はリターンで勝ち・PFは同等）。
@@ -234,3 +250,8 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - スコア再設計（Phase 0→1→2、トレンド合成）。
 - 資金配分ガイド・推奨株数、決算接近の警告、ルール基本エグジット、地合い表示。
 - バックテストに選定エッジ検証・地合い比較・同時保有数比較を追加し、自動反映を単一リポジトリで実現。
+- **高値掴み防止**: 過熱指標（25日線乖離/RSI/5日リターン/寄付ギャップ/上ヒゲ）と `entry_type`（追いかけ/押し目待ち/打診/見送り）、`entry_guard`（過熱度別の押し目深さ・待機日数）を導入。バックテストに「成行 vs 押し目指値」比較と、`entry_guard` のガード付き自動反映を追加。
+- **一覧・モーダル再設計**: 一覧に「AI判定」「エントリー」「決算」列、**ヘッダークリックソート**、**列見出しクリック/プルダウンの同期**、レスポンシブ（二次列の自動非表示、銘柄列固定）。モーダルを優先度順に再編（検証済み→AI参考）し、決算日・需給水準・過熱警戒・「注意/回避の理由」を追加。既定ソートはスコア順、AI順位は同スコアのタイブレーク。
+- **旧PFバッジ廃止**: 旧バックテスト由来の固定PF（最高期待値/低位初動/中位ブレイク/過熱警戒PF）を撤去し、警告は `strategy_params.warnings` に一本化。
+- **AI**: `provider`（gemini/deepseek）抽象化、**ニュース源を Google News RSS 既定**（yfinanceフォールバック、`news_source/news_days/news_max`）、**AI出力件数制限** `max_output_stocks`（JSON切れ対策）、JSON解析失敗時の再試行・候補絞り再試行。
+- **初心者向け見方ガイド** `docs/guide.html` を新設（一覧/バッジ/並び替え/モーダル/用語集/注意）。

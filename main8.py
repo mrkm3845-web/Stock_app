@@ -591,9 +591,9 @@ def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None)
     return "\n".join(lines)
 
 
-def _ai_system_prompt(max_picks=5):
+def _ai_system_prompt(max_picks=5, max_output=15):
     return (
-        "あなたは日本株スイングトレードのプロ。以下の候補銘柄すべてを、上昇期待・リスク・流動性・テクニカル・"
+        "あなたは日本株スイングトレードのプロ。以下の候補銘柄を、上昇期待・リスク・流動性・テクニカル・"
         "ファンダメンタルの観点で1位から順位づけしてください。"
         f"verdict=recommend は本当に買い推奨できる銘柄だけに付け、件数を無理に埋めないでください（該当が無ければ0件で構いません。上限{max_picks}件）。"
         "【最重要】イナゴ買いによる高値掴みの防止を最優先してください。"
@@ -617,7 +617,8 @@ def _ai_system_prompt(max_picks=5):
         "code は必ず候補一覧に記載された実際のコードをそのままコピーし、「...」や省略形は使わないでください。"
         "news_note は直近の決算・ニュース・材料を具体的に記述し、見出しや確度が無い銘柄は『要確認』と付記してください。"
         "JSONが長すぎると途中で切れて無効になるため、reason / news_note / entry_strategy / trailing_plan は各60文字以内で簡潔にまとめてください。"
-        "全候補銘柄を stocks 配列に含めてください。画像は使用しない。数値は与えられたデータに基づく。最終判断は人間が行う前提。"
+        f"stocks 配列には、あなたが選んだ上位{max_output}銘柄程度と、verdict=recommend を付けた全銘柄のみを含めてください（全候補を返す必要はありません。迷ったら上位を優先）。"
+        "画像は使用しない。数値は与えられたデータに基づく。最終判断は人間が行う前提。"
     )
 
 
@@ -702,7 +703,8 @@ def _call_gemini(user, system, params):
 def call_ai(pool, fund_map, news_map, params, base_date=None):
     ai = params.get("ai", {})
     max_picks = ai.get("max_picks", ai.get("weekly_top_picks", 5))
-    system = _ai_system_prompt(max_picks)
+    max_output = int(ai.get("max_output_stocks", 15))
+    system = _ai_system_prompt(max_picks, max_output)
     provider = ai.get("provider", "deepseek")
     cap = ai.get("max_calls_per_run", 40)
     retry_cap = min(ai.get("retry_candidates", 15), cap)
