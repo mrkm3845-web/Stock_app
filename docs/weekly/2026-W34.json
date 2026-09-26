@@ -2,7 +2,7 @@
   "week": "2026-W34",
   "start": "2026-08-17",
   "end": "2026-08-21",
-  "generated_at": "2026-09-26T12:44:44",
+  "generated_at": "2026-09-26T12:52:12",
   "review_rule": {
     "entry": "entry_plan通り（未到達は見送り）",
     "exit": "約定週の金曜11:30（前場引け）に成行",
@@ -23,6 +23,12 @@
     "beat_benchmark_rate": 0.45,
     "rule_avg_return_pct": 1.363,
     "rule_win_rate": 0.7,
+    "n_missed_evaluated": 0,
+    "missed_avg_pct": null,
+    "missed_up_count": 0,
+    "missed_down_count": 0,
+    "missed_up_avg_pct": null,
+    "missed_down_avg_pct": null,
     "best": {
       "code": "1515",
       "name": "日鉄鉱業",
@@ -80,7 +86,10 @@
       "return_rule_pct": 0.1334,
       "benchmark_pct": -0.9092,
       "excess_pct": -0.6105,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1301",
@@ -127,7 +136,10 @@
       "return_rule_pct": -0.4038,
       "benchmark_pct": -0.9092,
       "excess_pct": -0.0161,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1379",
@@ -174,7 +186,10 @@
       "return_rule_pct": 3.5671,
       "benchmark_pct": -0.9092,
       "excess_pct": 4.1826,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1429",
@@ -221,7 +236,10 @@
       "return_rule_pct": 1.2149,
       "benchmark_pct": -0.9092,
       "excess_pct": -0.1476,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1518",
@@ -268,7 +286,10 @@
       "return_rule_pct": 3.0602,
       "benchmark_pct": -0.9092,
       "excess_pct": 0.566,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1379",
@@ -315,7 +336,10 @@
       "return_rule_pct": 1.426,
       "benchmark_pct": 0.1745,
       "excess_pct": 0.9639,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1332",
@@ -362,7 +386,10 @@
       "return_rule_pct": -2.0245,
       "benchmark_pct": 0.1745,
       "excess_pct": -1.279,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1414",
@@ -409,7 +436,10 @@
       "return_rule_pct": -0.3387,
       "benchmark_pct": 0.1745,
       "excess_pct": -2.12,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1417",
@@ -456,7 +486,10 @@
       "return_rule_pct": 4.1982,
       "benchmark_pct": 0.1745,
       "excess_pct": 1.3712,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1605",
@@ -503,7 +536,10 @@
       "return_rule_pct": 0.1137,
       "benchmark_pct": 0.1745,
       "excess_pct": 0.9207,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1333",
@@ -550,7 +586,10 @@
       "return_rule_pct": -0.8736,
       "benchmark_pct": 0.246,
       "excess_pct": -0.6221,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1301",
@@ -597,7 +636,10 @@
       "return_rule_pct": 0.8622,
       "benchmark_pct": 0.246,
       "excess_pct": 0.0881,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1417",
@@ -644,7 +686,10 @@
       "return_rule_pct": 2.9478,
       "benchmark_pct": 0.246,
       "excess_pct": 0.0811,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1414",
@@ -691,7 +736,10 @@
       "return_rule_pct": 0.8505,
       "benchmark_pct": 0.246,
       "excess_pct": -1.0214,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1518",
@@ -738,7 +786,10 @@
       "return_rule_pct": 5.0368,
       "benchmark_pct": 0.246,
       "excess_pct": 1.3222,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1332",
@@ -785,7 +836,10 @@
       "return_rule_pct": -2.3623,
       "benchmark_pct": 1.578,
       "excess_pct": -3.0999,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1414",
@@ -832,7 +886,10 @@
       "return_rule_pct": 0.7704,
       "benchmark_pct": 1.578,
       "excess_pct": -1.2039,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1333",
@@ -879,7 +936,10 @@
       "return_rule_pct": -1.7412,
       "benchmark_pct": 1.578,
       "excess_pct": -2.826,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1429",
@@ -926,7 +986,10 @@
       "return_rule_pct": 1.8596,
       "benchmark_pct": 1.578,
       "excess_pct": -0.3535,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1515",
@@ -973,7 +1036,10 @@
       "return_rule_pct": 8.9593,
       "benchmark_pct": 1.578,
       "excess_pct": 4.8318,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     }
   ],
   "ranking": {
@@ -3287,5 +3353,24 @@
     "推奨の平均リターンは +0.32% で、TOPIX（+0.27%）を上回りました。",
     "エントリー「追いかけ」は 20件・平均 +0.32%。",
     "過熱度「低」は 20件・平均 +0.32%。"
-  ]
+  ],
+  "actions": [
+    "過熱度『低』（121件・平均-0.439%）は 減点 +0.00。"
+  ],
+  "feedback": {
+    "enabled": true,
+    "window_weeks": 6,
+    "n_filled": 121,
+    "baseline_avg_pct": -0.439,
+    "overheat_delta": {
+      "low": 0.0
+    },
+    "overheat_stats": {
+      "low": {
+        "n": 121,
+        "avg": -0.439
+      }
+    },
+    "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
+  }
 }

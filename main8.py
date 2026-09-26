@@ -899,6 +899,15 @@ def _normalize_entry_type(v):
     return None
 
 
+def _feedback_delta(overheat_level, fb):
+    """週次レビューの実績に基づく過熱度別のスコア補正量（上限クランプ済み）。"""
+    if not fb or not fb.get("enabled"):
+        return 0.0
+    d = (fb.get("overheat_delta") or {}).get(overheat_level, 0.0) or 0.0
+    mx = abs(float(fb.get("max_delta", 3.0) or 3.0))
+    return max(-mx, min(mx, float(d)))
+
+
 def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime=None, earnings_map=None):
     picks = []
     ai = params.get("ai", {})
@@ -913,6 +922,15 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
     pool_codes = {r["code"] for r in pool}
     ai_by_code = {s.get("code"): s for s in ai_stocks if s.get("code") in pool_codes}
 
+    # 週次レビューの実績に基づく過熱度別スコア補正（Phase B・上限クランプ済み）
+    fb = params.get("weekly_feedback") or {}
+    fb_enabled = bool(fb.get("enabled"))
+    delta_by_code = {}
+    if fb_enabled:
+        for r in pool:
+            plan = F.compute_entry_plan(r.get("ctx") or {}, params)
+            delta_by_code[r["code"]] = _feedback_delta(plan.get("overheat_level"), fb)
+
     def sort_key(r):
         item = ai_by_code.get(r["code"])
         verdict = item.get("verdict") if item else None
@@ -922,7 +940,7 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
         # 検証済みスコアを主軸にし、AI順位は同スコア帯のタイブレーク（AIは補助）
         return (
             v_pri,
-            -r["score"],
+            -(r["score"] + delta_by_code.get(r["code"], 0.0)),
             rank_val,
             -r.get("val_ratio_5d", 0),
             -r.get("avg_val_5d", 0),
@@ -997,6 +1015,7 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
             "sector": r["sector"],
             "price": r["price"],
             "score": r["score"],
+            "feedback_delta": delta_by_code.get(r["code"], 0.0),
             "tier": r["tier"],
             "verdict": verdict,
             "rank": _ai_rank(item),

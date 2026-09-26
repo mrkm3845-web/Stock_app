@@ -1,0 +1,28 @@
+{
+  "enabled": true,
+  "generated_at": "2026-09-26T12:52:18",
+  "window_weeks": 6,
+  "weeks": [
+    "2026-W39",
+    "2026-W38",
+    "2026-W37",
+    "2026-W36",
+    "2026-W35",
+    "2026-W34"
+  ],
+  "n_filled": 121,
+  "baseline_avg_pct": -0.439,
+  "overheat_delta": {
+    "low": 0.0
+  },
+  "overheat_stats": {
+    "low": {
+      "n": 121,
+      "avg": -0.439
+    }
+  },
+  "max_delta": 3.0,
+  "shrinkage_k": 10.0,
+  "min_group_trades": 8,
+  "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
+}

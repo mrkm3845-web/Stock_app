@@ -532,6 +532,65 @@ def _entry_fill(pick, df, signal_date):
     # breakout_chase（現在値近辺なら翌日寄成、上抜けなら買いストップ）
     trigger = _to_num(pick.get("entry_price"))
     if trigger is None:
+        d = window[0]
+        row = _row_on(df, d)
+        op = _to_num(row.get("Open")) if row is not None else None
+        return (d, op, "filled") if op is not None else (None, None, "no_data")
+
+    if signal_close is not None and trigger <= signal_close * 1.001:
+        # 現在値近辺＝成行扱い（翌営業日寄り）
+        d = window[0]
+        row = _row_on(df, d)
+        op = _to_num(row.get("Open")) if row is not None else None
+        return (d, op, "filled") if op is not None else (None, None, "no_data")
+
+    # 上抜け買いストップ
+    for d in window:
+        row = _row_on(df, d)
+        if row is None:
+            continue
+        op = _to_num(row.get("Open"))
+        high = _to_num(row.get("High"))
+        if op is not None and op >= trigger:
+            return d, op, "filled"
+        if high is not None and high >= trigger:
+            return d, trigger, "filled"
+    return None, None, "not_filled"
+
+
+def _market_counterfactual(daily, intraday, ticker, signal_date, fee_rate, slip):
+    """「もし翌営業日の寄りで成行買いしていたら」の損益（見送りの機会損益）。
+
+    約定しなかった（押し目未到達）銘柄について、追随買いの機会損失／回避を測る。
+    戻り値: (return_net_pct, entry_date, exit_date) or (None, None, None)
+    """
+    df = (daily or {}).get(ticker)
+    if df is None or len(df) == 0:
+        return None, None, None
+    dates = list(df.index.normalize())
+    signal_ts = pd.Timestamp(signal_date)
+    future = [d for d in dates if d > signal_ts]
+    if not future:
+        return None, None, None
+    entry_date = future[0]
+    row = _row_on(df, entry_date)
+    entry = _to_num(row.get("Open")) if row is not None else None
+    if not entry:
+        return None, None, None
+    target_fri = _friday_of(entry_date.date())
+    cands = [d for d in dates if d.date() <= target_fri and d >= entry_date]
+    exit_date = max(cands) if cands else entry_date
+    exit_price, _src = _exit_morning(daily, intraday, ticker, exit_date)
+    if not exit_price:
+        return None, None, None
+    net = _net_return(entry, exit_price, fee_rate, slip)
+    if net is None:
+        return None, None, None
+    return net * 100.0, entry_date, exit_date
+
+    # breakout_chase（現在値近辺なら翌日寄成、上抜けなら買いストップ）
+    trigger = _to_num(pick.get("entry_price"))
+    if trigger is None:
         # トリガ未設定なら翌日寄成
         d = window[0]
         row = _row_on(df, d)
@@ -660,11 +719,22 @@ def simulate_pick(pick, daily, intraday, signal_date, bench_daily, bench_intr, p
         "benchmark_pct": None,
         "excess_pct": None,
         "exit_price_source": None,
+        "missed_return_pct": None,
+        "missed_entry_date": None,
+        "missed_exit_date": None,
     }
 
     fill_date, fill_price, status = _entry_fill(pick, df, signal_date)
     result["status"] = status
     if status != "filled" or fill_date is None or fill_price is None:
+        # 見送り（押し目未到達など）は「成行追随した場合」の機会損益を記録する
+        if status in ("not_filled", "wait"):
+            mret, m_entry, m_exit = _market_counterfactual(
+                daily, intraday, ticker, signal_date, fee_rate, slip)
+            if mret is not None:
+                result["missed_return_pct"] = _clean(mret)
+                result["missed_entry_date"] = m_entry.strftime("%Y-%m-%d")
+                result["missed_exit_date"] = m_exit.strftime("%Y-%m-%d")
         return result
     result["fill_date"] = fill_date.strftime("%Y-%m-%d")
     result["fill_price"] = _clean(fill_price)
@@ -884,6 +954,20 @@ def _breakdown(trades, key, label_map=None):
 
 def build_notes(summary, ranking, calib, breakdown):
     notes = []
+    # 見送り（押し目未到達など）の機会損益
+    n_missed = summary.get("n_missed_evaluated") or 0
+    if n_missed > 0:
+        m_avg = summary.get("missed_avg_pct")
+        up = summary.get("missed_up_count") or 0
+        down = summary.get("missed_down_count") or 0
+        m_up = summary.get("missed_up_avg_pct")
+        m_dn = summary.get("missed_down_avg_pct")
+        if m_avg is not None:
+            tag = "機会損失" if m_avg > 0 else "回避できた"
+            notes.append(
+                f"見送り {n_missed}件を成行追随していたら平均 {m_avg:+.2f}%（{tag}）。"
+                f"うち上昇 {up}件（平均 {(m_up or 0.0):+.2f}%）/ 下落 {down}件（平均 {(m_dn or 0.0):+.2f}%）。"
+            )
     if summary.get("n_filled", 0) == 0:
         notes.append("今週は約定した推奨がありませんでした（押し目・ブレイク未到達、または相場急変）。")
         return notes
@@ -919,6 +1003,127 @@ def build_notes(summary, ranking, calib, breakdown):
         if st and st.get("n", 0) > 0 and st.get("avg") is not None:
             notes.append(f"過熱度「{key}」は {st['n']}件・平均 {st['avg']:+.2f}%。")
     return notes
+
+
+# --------------------------------------------------------------------------- フィードバック（結果をランキングへ還元）
+def compute_weekly_feedback(params):
+    """直近N週の実績から、過熱度別の「スコア補正量」を計算する（縮小推定つき）。
+
+    - baseline からの超過リターンを、サンプル数で縮小（n/(n+k)）して安定化。
+    - グループの取引数が min_group_trades 未満なら補正しない（0）。
+    - 補正量は ±max_delta にクランプし、小さなサンプルでの過学習を防ぐ。
+    """
+    import glob
+    cfg = params.get("weekly_review", {})
+    window = int(cfg.get("feedback_window_weeks", 6))
+    min_weeks = int(cfg.get("feedback_min_weeks", 3))
+    min_group = int(cfg.get("feedback_min_group_trades", 8))
+    k = float(cfg.get("feedback_shrinkage_k", 10.0))
+    max_delta = float(cfg.get("feedback_max_delta", 3.0))
+    enabled = bool(cfg.get("feedback_enabled", False))
+
+    weeks = []
+    for path in glob.glob(os.path.join(WEEKLY_DIR, "*.json")):
+        name = os.path.basename(path)
+        if name in ("index.json", "latest.json", "feedback.json"):
+            continue
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                j = json.load(f)
+            if j.get("week"):
+                weeks.append(j)
+        except Exception:
+            continue
+    weeks.sort(key=lambda j: j.get("week", ""), reverse=True)
+    use = weeks[:window]
+
+    filled = []
+    for j in use:
+        for t in j.get("trades") or []:
+            if t.get("status") == "filled" and t.get("return_net_pct") is not None:
+                filled.append(t)
+
+    fb = {
+        "enabled": False,
+        "generated_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "window_weeks": len(use),
+        "weeks": [j.get("week") for j in use],
+        "n_filled": len(filled),
+        "baseline_avg_pct": None,
+        "overheat_delta": {},
+        "overheat_stats": {},
+        "max_delta": max_delta,
+        "shrinkage_k": k,
+        "min_group_trades": min_group,
+        "note": "",
+    }
+    if len(use) < min_weeks or len(filled) < min_group:
+        fb["note"] = f"サンプル不足のため補正なし（週{len(use)}/{min_weeks}・取引{len(filled)}/{min_group}）"
+        return fb
+
+    baseline = float(np.mean([t["return_net_pct"] for t in filled]))
+    groups = {}
+    for t in filled:
+        lvl = t.get("overheat_level") or "unknown"
+        groups.setdefault(lvl, []).append(t["return_net_pct"])
+
+    deltas, stats = {}, {}
+    for lvl, vals in groups.items():
+        nn = len(vals)
+        m = float(np.mean(vals))
+        stats[lvl] = {"n": nn, "avg": round(m, 3)}
+        if nn >= min_group:
+            shrink = nn / (nn + k)
+            d = shrink * (m - baseline)
+            deltas[lvl] = round(max(-max_delta, min(max_delta, d)), 2)
+
+    fb["baseline_avg_pct"] = round(baseline, 3)
+    fb["overheat_delta"] = deltas
+    fb["overheat_stats"] = stats
+    fb["enabled"] = bool(enabled and deltas)
+    if not fb["enabled"]:
+        fb["note"] = "feedback_enabled=false のため補正は適用しません（観測のみ）。"
+    else:
+        fb["note"] = "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±%.1f）" % max_delta
+    return fb
+
+
+def build_actions(fb):
+    """フィードバックから「来週の作戦」を生成する。"""
+    acts = []
+    stats = fb.get("overheat_stats") or {}
+    for lvl, d in (fb.get("overheat_delta") or {}).items():
+        st = stats.get(lvl) or {}
+        label = OVERHEAT_LABELS.get(lvl, lvl)
+        neg = "加点" if d > 0 else "減点"
+        acts.append(
+            f"過熱度『{label}』（{st.get('n','?')}件・平均{st.get('avg')}%）は {neg} {d:+.2f}。"
+        )
+    if not acts:
+        acts.append(fb.get("note") or "有効なサンプルが不足のため補正なし（観測継続）。")
+    return acts
+
+
+def write_feedback(fb):
+    """フィードバックを docs/weekly/feedback.json と strategy_params に反映する。"""
+    os.makedirs(WEEKLY_DIR, exist_ok=True)
+    with open(os.path.join(WEEKLY_DIR, "feedback.json"), "w", encoding="utf-8") as f:
+        json.dump(_json_safe(fb), f, ensure_ascii=False, indent=2)
+
+    params_path = os.path.join(DOCS_DIR, "strategy_params.json")
+    try:
+        with open(params_path, "r", encoding="utf-8") as f:
+            sp = json.load(f)
+    except Exception:
+        return
+    # 手動のキーを壊さないよう、weekly_feedback だけを更新
+    try:
+        sp["weekly_feedback"] = _json_safe(fb)
+        with open(params_path, "w", encoding="utf-8") as f:
+            json.dump(sp, f, ensure_ascii=False, indent=2)
+        print(f">> weekly_feedback を更新: enabled={fb.get('enabled')} deltas={fb.get('overheat_delta')}")
+    except Exception as e:
+        print(f">> ⚠️ weekly_feedback の反映に失敗: {e}")
 
 
 # --------------------------------------------------------------------------- 本体
@@ -997,6 +1202,11 @@ def review_week(monday, params, no_fetch=False):
     best = max(filled, key=lambda t: t["return_net_pct"]) if filled else None
     worst = min(filled, key=lambda t: t["return_net_pct"]) if filled else None
 
+    # 見送り（押し目未到達など）を成行追随していた場合の機会損益
+    missed_vals = [t["missed_return_pct"] for t in trades if t.get("missed_return_pct") is not None]
+    missed_up = [v for v in missed_vals if v > 0]
+    missed_down = [v for v in missed_vals if v <= 0]
+
     summary = {
         "picks_total": len(trades),
         "n_filled": len(filled),
@@ -1011,6 +1221,12 @@ def review_week(monday, params, no_fetch=False):
         "beat_benchmark_rate": round(sum(1 for e in excess if e > 0) / len(excess), 3) if excess else None,
         "rule_avg_return_pct": _stats(rule_rets)["avg"],
         "rule_win_rate": _stats(rule_rets)["win_rate"],
+        "n_missed_evaluated": len(missed_vals),
+        "missed_avg_pct": round(float(np.mean(missed_vals)), 3) if missed_vals else None,
+        "missed_up_count": len(missed_up),
+        "missed_down_count": len(missed_down),
+        "missed_up_avg_pct": round(float(np.mean(missed_up)), 3) if missed_up else None,
+        "missed_down_avg_pct": round(float(np.mean(missed_down)), 3) if missed_down else None,
         "best": None if not best else {
             "code": best["code"], "name": best["name"], "return_net_pct": best["return_net_pct"],
         },
@@ -1133,6 +1349,12 @@ def render_markdown(r):
     lines.append(f"- 順位相関(Spearman): {rk.get('spearman')}")
     lines.append(f"- 上位群 平均: {rk.get('top_avg_pct')}% / 下位群 平均: {rk.get('bottom_avg_pct')}% / スプレッド: {rk.get('spread_pct')}%")
     lines.append("")
+    if r.get("actions"):
+        lines.append("## 来週の作戦（自動提案）")
+        lines.append("")
+        for a in r["actions"]:
+            lines.append(f"- {a}")
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -1158,6 +1380,10 @@ def resolve_weeks(args):
 
 
 def main():
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     parser = argparse.ArgumentParser(description="週次スイング戦略の答え合わせ")
     parser.add_argument("--week", help="対象週 YYYY-Www（例 2026-W39）")
     parser.add_argument("--weeks", type=int, default=1, help="直近N週を生成（既定1）")
@@ -1172,6 +1398,7 @@ def main():
 
     mondays = resolve_weeks(args)
     print(f">> 対象週: {len(mondays)} 週")
+    results = []
     for monday in mondays:
         try:
             result = review_week(monday, params, no_fetch=args.no_fetch)
@@ -1182,6 +1409,33 @@ def main():
             continue
         if result:
             write_outputs(result)
+            results.append(result)
+
+    # 結果を今後に反映: 直近N週の実績からスコア補正を計算し、
+    # strategy_params の weekly_feedback を更新する（main8 が次回から参照）。
+    try:
+        params = load_strategy_params()
+        fb = compute_weekly_feedback(params)
+        actions = build_actions(fb)
+        fb_summary = {
+            "enabled": fb.get("enabled"),
+            "window_weeks": fb.get("window_weeks"),
+            "n_filled": fb.get("n_filled"),
+            "baseline_avg_pct": fb.get("baseline_avg_pct"),
+            "overheat_delta": fb.get("overheat_delta"),
+            "overheat_stats": fb.get("overheat_stats"),
+            "note": fb.get("note"),
+        }
+        # 各週のレポートに「来週の作戦」を追記して再出力
+        for r in results:
+            r["actions"] = actions
+            r["feedback"] = fb_summary
+            write_outputs(r)
+        write_feedback(fb)
+    except Exception as e:
+        print(f">> ⚠️ フィードバック計算に失敗（結果は出力済み）: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 if __name__ == "__main__":

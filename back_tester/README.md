@@ -167,6 +167,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 ### 8-2. 出力指標
 - 約定率・勝率・平均/中央リターン・TOPIX超過・`recommend` vs `watch`。
 - **順位の効き**: スコアとリターンの Spearman、上位群/下位群のスプレッド（満点で並ぶ場合は順位付け不能として表示）。
+- **見送りの機会損益**: 押し目未到達などで約定しなかった銘柄を「翌営業日寄りの成行」で追随していた場合の損益（機会損失か回避か）。
 - 入口（`entry_type`）別・過熱度別・業種別の実績、および**今週の気づき**（テンプレ文）。
 
 ### 8-3. 入力と出力
@@ -185,8 +186,9 @@ python back_tester/weekly_review.py --all
 ```
 CI は [`weekly_review.yml`](../.github/workflows/weekly_review.yml) が**毎週 土曜 09:00 JST**（`workflow_dispatch` で週指定・全週遡及も可）。
 
-### 8-5. 還元（段階的）
-- **Phase A（現在）**: 観測のみ（`strategy_params.weekly_review.feedback_enabled=false`）。
-- **Phase B**: 4週＆30取引以上が貯まったら、実績に基づく**並び順・タイブレークの校正**。
-- **Phase C**: 月次バックテストと同様のガード付きでスコア重み・`entry_guard` を調整。
+### 8-5. 還元（結果をランキングへ反映）
+- **Phase B（実装済み）**: 直近N週の実績から**過熱度別のスコア補正量**を計算し、`docs/strategy_params.json` の `weekly_feedback` に書き込む。`main8.py` は `enabled=true` のとき `score + overheat_delta` で並び順を補正する。
+  - 過学習防止: **縮小推定**（`n/(n+k)`）＋**上限クランプ**（`feedback_max_delta`、既定±3）＋**最低サンプル**（`feedback_min_group_trades`、既定8件/群）。群が少ない/偏る間は補正0（観測のみ）。
+  - 透明性: `docs/weekly/feedback.json` に補正の根拠（群別の件数・平均・delta）を出力し、画面の「来週の作戦」に表示。
+- **Phase C（将来）**: 十分なサンプルが貯まったら、月次バックテストと同様のガード付きで `entry_guard`・スコア重みへ拡張。
 - 小さなサンプルで重みを動かさない（過学習回避）ことを優先する。

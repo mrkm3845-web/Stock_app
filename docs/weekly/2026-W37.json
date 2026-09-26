@@ -2,7 +2,7 @@
   "week": "2026-W37",
   "start": "2026-09-07",
   "end": "2026-09-11",
-  "generated_at": "2026-09-26T12:44:47",
+  "generated_at": "2026-09-26T12:52:15",
   "review_rule": {
     "entry": "entry_plan通り（未到達は見送り）",
     "exit": "約定週の金曜11:30（前場引け）に成行",
@@ -23,6 +23,12 @@
     "beat_benchmark_rate": 0.64,
     "rule_avg_return_pct": 1.234,
     "rule_win_rate": 0.84,
+    "n_missed_evaluated": 0,
+    "missed_avg_pct": null,
+    "missed_up_count": 0,
+    "missed_down_count": 0,
+    "missed_up_avg_pct": null,
+    "missed_down_avg_pct": null,
     "best": {
       "code": "1605",
       "name": "ＩＮＰＥＸ",
@@ -80,7 +86,10 @@
       "return_rule_pct": 1.194,
       "benchmark_pct": -2.2884,
       "excess_pct": 1.5943,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1379",
@@ -127,7 +136,10 @@
       "return_rule_pct": 2.8793,
       "benchmark_pct": -2.2884,
       "excess_pct": 1.6999,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1301",
@@ -174,7 +186,10 @@
       "return_rule_pct": 1.2111,
       "benchmark_pct": -2.2884,
       "excess_pct": 2.6363,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1414",
@@ -221,7 +236,10 @@
       "return_rule_pct": 0.8087,
       "benchmark_pct": -2.2884,
       "excess_pct": 0.7619,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1605",
@@ -268,7 +286,10 @@
       "return_rule_pct": 3.2084,
       "benchmark_pct": -2.2884,
       "excess_pct": 7.1585,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1417",
@@ -315,7 +336,10 @@
       "return_rule_pct": 1.1368,
       "benchmark_pct": -1.0342,
       "excess_pct": 0.284,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1379",
@@ -362,7 +386,10 @@
       "return_rule_pct": 1.7002,
       "benchmark_pct": -1.0342,
       "excess_pct": -0.6937,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1301",
@@ -409,7 +436,10 @@
       "return_rule_pct": 0.5581,
       "benchmark_pct": -1.0342,
       "excess_pct": 0.7346,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1414",
@@ -456,7 +486,10 @@
       "return_rule_pct": 2.826,
       "benchmark_pct": -1.0342,
       "excess_pct": -0.5314,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1605",
@@ -503,7 +536,10 @@
       "return_rule_pct": -1.0079,
       "benchmark_pct": -1.0342,
       "excess_pct": 1.6201,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1417",
@@ -550,7 +586,10 @@
       "return_rule_pct": 1.6537,
       "benchmark_pct": -0.8457,
       "excess_pct": 0.6028,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1379",
@@ -597,7 +636,10 @@
       "return_rule_pct": 3.1784,
       "benchmark_pct": -0.8457,
       "excess_pct": 0.5461,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1301",
@@ -644,7 +686,10 @@
       "return_rule_pct": 1.4306,
       "benchmark_pct": -0.8457,
       "excess_pct": 1.4112,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1414",
@@ -691,7 +736,10 @@
       "return_rule_pct": 0.2579,
       "benchmark_pct": -0.8457,
       "excess_pct": -0.0909,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1605",
@@ -738,7 +786,10 @@
       "return_rule_pct": -0.9828,
       "benchmark_pct": -0.8457,
       "excess_pct": 1.4571,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1417",
@@ -785,7 +836,10 @@
       "return_rule_pct": 3.595,
       "benchmark_pct": 0.9086,
       "excess_pct": 0.7535,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1379",
@@ -832,7 +886,10 @@
       "return_rule_pct": 3.1784,
       "benchmark_pct": 0.9086,
       "excess_pct": -1.2082,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1301",
@@ -879,7 +936,10 @@
       "return_rule_pct": 1.6511,
       "benchmark_pct": 0.9086,
       "excess_pct": -0.1244,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1414",
@@ -926,7 +986,10 @@
       "return_rule_pct": 1.9682,
       "benchmark_pct": 0.9086,
       "excess_pct": -0.1553,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1605",
@@ -973,7 +1036,10 @@
       "return_rule_pct": -1.1584,
       "benchmark_pct": 0.9086,
       "excess_pct": -0.4756,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1417",
@@ -1020,7 +1086,10 @@
       "return_rule_pct": 1.4233,
       "benchmark_pct": 1.2724,
       "excess_pct": 0.2356,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1379",
@@ -1067,7 +1136,10 @@
       "return_rule_pct": 2.3847,
       "benchmark_pct": 1.2724,
       "excess_pct": 0.7768,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1301",
@@ -1114,7 +1186,10 @@
       "return_rule_pct": 1.1016,
       "benchmark_pct": 1.2724,
       "excess_pct": 0.1526,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1414",
@@ -1161,7 +1236,10 @@
       "return_rule_pct": 0.2579,
       "benchmark_pct": 1.2724,
       "excess_pct": -0.6562,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "1605",
@@ -1208,7 +1286,10 @@
       "return_rule_pct": -3.6007,
       "benchmark_pct": 1.2724,
       "excess_pct": -4.479,
-      "exit_price_source": "intraday_1130"
+      "exit_price_source": "intraday_1130",
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     }
   ],
   "ranking": {
@@ -4076,5 +4157,24 @@
     "推奨の平均リターンは +0.16% で、TOPIX（-0.40%）を上回りました。",
     "エントリー「追いかけ」は 25件・平均 +0.16%。",
     "過熱度「低」は 25件・平均 +0.16%。"
-  ]
+  ],
+  "actions": [
+    "過熱度『低』（121件・平均-0.439%）は 減点 +0.00。"
+  ],
+  "feedback": {
+    "enabled": true,
+    "window_weeks": 6,
+    "n_filled": 121,
+    "baseline_avg_pct": -0.439,
+    "overheat_delta": {
+      "low": 0.0
+    },
+    "overheat_stats": {
+      "low": {
+        "n": 121,
+        "avg": -0.439
+      }
+    },
+    "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
+  }
 }

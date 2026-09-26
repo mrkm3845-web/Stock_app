@@ -177,10 +177,11 @@ flowchart LR
 日々の**実運用で提示した推奨・技術上位**を、1週間（月〜金）単位で実際の値動きと突き合わせて採点する（既存の月次バックテストとは**並行・補完**。置換ではない）。
 - 入力: `docs/picks/{date}.json`（main8 が保存する日次スナップショット。無い日は `docs/history` と `docs/ai_analysis` から**復元**）。
 - 評価ルール: エントリーは **`entry_plan` 通り**（突破/押し目到達のみ約定、未到達は見送り）→ **約定週の金曜11:30（前場引け）に成行**。コストは手数料0.05%＋スリッページ0.1%。参考として**アプリのTP/SL・保有期限**適用時も併記。ベンチマークは `1306.T`。
-- 出力指標: 約定率・勝率・平均/中央リターン・TOPIX超過・`rank↔return` の Spearman・上位/下位スプレッド・`recommend` vs `watch`・`entry_type`／過熱度／業種別の実績・「今週の気づき」。
-- 出力: `docs/weekly/{YYYY-Www}.json`・`latest.json`・`index.json`・`docs/weekly.html`・`results/weekly_review_{week}.md`。
+- 出力指標: 約定率・勝率・平均/中央リターン・TOPIX超過・`rank↔return` の Spearman・上位/下位スプレッド・`recommend` vs `watch`・`entry_type`／過熱度／業種別の実績・**見送り（押し目未到達）を成行追随した場合の機会損失/回避**・「今週の気づき」。
+- **還元（Phase B 実装済み）**: 直近N週の実績から**過熱度別のスコア補正**を計算し `docs/strategy_params.json` の `weekly_feedback` に反映。`main8.py` が並び順（`score + delta`）に反映する。**縮小推定（n/(n+k)）＋上限クランプ（±3）＋最低サンプル（8件/群）**で過学習を防止。サンプルが偏る（例: 過熱度が「低」ばかり）間は補正0で観測のみ。
+- 出力: `docs/weekly/{YYYY-Www}.json`・`latest.json`・`index.json`・`feedback.json`・`docs/weekly.html`・`results/weekly_review_{week}.md`。
 - [`weekly_review.yml`](.github/workflows/weekly_review.yml): **毎週 土曜 09:00 JST**（`workflow_dispatch` で週指定・全週遡及も可）。
-- **還元は段階的**: まずは観測（`weekly_review.feedback_enabled=false`）。数週間分が貯まったら並び順の校正 → 最終的にスコア重み、の順で検討する（小さなサンプルでの過学習回避）。
+- **段階**: 並び順の校正（Phase B・実装済み）→ 4週＆十分な取引が貯まったら `entry_guard` 等（Phase C）を検討。
 
 ### 直近の検証所見（2022-01〜2026-08）
 - 新スコア: 分位スプレッド **+0.347%** / Spearman **0.92**（上位分位 +0.16% / 下位分位 −0.19%）。
@@ -200,7 +201,8 @@ flowchart LR
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
 - `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`（moderate用）・`probe_wait_days`（high=strong+extreme用）・`probe_qty_factor`）。押し目深さ/待機日数はバックテストの成行比較で**過熱度別に**更新されうる。
 - `ai`: `{enabled, provider:deepseek, model:deepseek-flash, stage1_pool_max:40, max_picks:5, max_calls_per_run:40, retry_candidates:15, max_output_stocks:15, news_source:gnews, news_days:14, news_max:5, ...}`（`max_picks`＝表示する推奨の最大件数。`max_output_stocks`＝AIが返すstocks配列の上限目安。`stage1_pool_min` は定義のみで**未使用**）
-- `weekly_review`: `{enabled:true, exit_weekday:4, exit_time:"11:30", fee_rate:0.0005, slippage_rate:0.001, top_k_ranking:10, benchmark_ticker:"1306.T", feedback_enabled:false, feedback_min_weeks:4, feedback_min_trades:30}`（週次答え合わせの採点ルール。`feedback_enabled=false` の間は観測のみ）
+- `weekly_review`: `{enabled:true, exit_weekday:4, exit_time:"11:30", fee_rate:0.0005, slippage_rate:0.001, benchmark_ticker:"1306.T", feedback_enabled:true, feedback_window_weeks:6, feedback_min_weeks:3, feedback_min_group_trades:8, feedback_shrinkage_k:10.0, feedback_max_delta:3.0}`（週次答え合わせの採点・還元ルール）
+- `weekly_feedback`: 週次レビューが自動更新する**実績ベースのスコア補正**（`{enabled, window_weeks, n_filled, baseline_avg_pct, overheat_delta:{low/moderate/strong/extreme}, overheat_stats, note}`）。`main8.py` は `enabled=true` のとき `score + overheat_delta` で並び順を補正する（縮小推定・上限±3）。
 
 ---
 
@@ -250,7 +252,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 ## 11. 残タスク・既知の制約
 
 **残タスク**
-- **週次答え合わせの還元（校正）**: 現在は観測のみ（`weekly_review.feedback_enabled=false`）。4週＆30取引以上が貯まったら、実績に基づく**並び順・タイブレークの校正**（Phase B）→ガード付きスコア重み（Phase C）へ段階的に進める。
+- **週次答え合わせの還元（校正）**: Phase B（実績に基づく**過熱度別スコア補正**を `weekly_feedback` に反映し `main8` の並び順へ）を実装済み。今後 `docs/picks` が蓄積し過熱度・entry_type のサンプルが増えると補正が有効化される（現在は再構成データで過熱度が「低」に偏り、補正0＝観測のみ）。十分に貯まったら `entry_guard` 等（Phase C）へ拡張。
 - **週次スナップショットの蓄積**: `docs/picks/{date}.json` が今後蓄積される（過去分は `history`/`ai_analysis` から復元＝「復元」表示）。AI判定の校正は蓄積後に精度が上がる。
 - **過熱指標・押し目エントリーのバックテスト定期検証**: 実装済み・初回反映済み（`entry_guard`: moderate=1.5ATR/10日、high=1.5ATR/5日）。以降は月次 `run_walkforward.yml` で再検証し、ガード通過時に `entry_guard` を更新。
 - **AI有界オーバーレイ（総合=S+Δ）**: 設計は確定（Δ∈{−10..+10}、根拠必須、`docs/ai_overlay/{date}.json` ログ＋校正）。**未実装**。

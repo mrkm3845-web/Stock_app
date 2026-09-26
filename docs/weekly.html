@@ -76,6 +76,13 @@
                 <div id="notes"></div>
             </div>
 
+            <!-- 来週の作戦（自動提案） -->
+            <div class="card p-3" id="actions-card">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-signpost-split me-1"></i> 来週の作戦（実績からの自動補正）</h2>
+                <div id="actions"></div>
+                <div class="muted-small mt-2" id="feedback-meta"></div>
+            </div>
+
             <!-- 銘柄ごとの結果 -->
             <div class="card p-3">
                 <h2 class="h6 fw-bold mb-3"><i class="bi bi-list-check me-1"></i> 銘柄ごとの結果</h2>
@@ -192,6 +199,9 @@ function render(r) {
         ['TOPIX超過', pct(s.avg_excess_pct), `TOPIX平均 ${pct(s.avg_benchmark_pct)}`, cls(s.avg_excess_pct)],
         ['ルール出口', pct(s.rule_avg_return_pct), `勝率 ${s.rule_win_rate != null ? (s.rule_win_rate*100).toFixed(0)+'%' : '-'}`],
     ];
+    if (s.n_missed_evaluated) {
+        cards.push(['見送り(成行比)', pct(s.missed_avg_pct), `上昇${s.missed_up_count}/下落${s.missed_down_count}件`, cls(s.missed_avg_pct)]);
+    }
     document.getElementById('summary-cards').innerHTML = cards.map(c =>
         `<div class="col-6 col-md-4 col-lg-2"><div class="border rounded-3 p-3 text-center h-100">
             <div class="stat-label">${esc(c[0])}</div>
@@ -222,6 +232,7 @@ function render(r) {
     renderRanking(r.ranking || {});
     renderCalib(r.ai_calibration || {});
     renderBreakdown(r.breakdown || {});
+    renderActions(r.actions || [], r.feedback || {});
 }
 
 function statusBadge(t) {
@@ -352,6 +363,22 @@ function renderBreakdown(bd) {
         breakdownTable('過熱度', bd.by_overheat) +
         breakdownTable('判定', bd.by_verdict) +
         breakdownTable('業種', bd.by_sector);
+}
+
+function renderActions(actions, fb) {
+    const box = document.getElementById('actions');
+    if (!actions || !actions.length) {
+        box.innerHTML = '<div class="muted-small">補正なし（観測のみ）。</div>';
+    } else {
+        const on = fb && fb.enabled;
+        box.innerHTML = actions.map(a => `<div class="note-item ${on ? '' : 'border-secondary bg-light'}">${esc(a)}</div>`).join('');
+    }
+    const meta = document.getElementById('feedback-meta');
+    if (fb && fb.n_filled != null) {
+        meta.textContent = `直近${fb.window_weeks || '-'}週・約定${fb.n_filled}件・基準平均${fb.baseline_avg_pct != null ? fb.baseline_avg_pct + '%' : '-'}。補正は縮小推定＋上限クランプでランキングに反映（${fb.enabled ? '適用中' : '観測のみ'}）。`;
+    } else {
+        meta.textContent = '';
+    }
 }
 
 boot();
