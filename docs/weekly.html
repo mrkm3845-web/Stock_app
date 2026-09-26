@@ -106,6 +106,18 @@
                 <div class="muted-small" id="trades-note"></div>
             </div>
 
+            <!-- 上位N件レビュー -->
+            <div class="card p-3">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-funnel me-1"></i> 上位N件だけ買った場合（実行可能性の検証）</h2>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle">
+                        <thead><tr><th>件数/日</th><th>対象</th><th>約定</th><th>約定率</th><th>平均</th><th>中央値</th><th>勝率</th><th>TOPIX超過</th></tr></thead>
+                        <tbody id="topn-body"></tbody>
+                    </table>
+                </div>
+                <div class="muted-small">※ その日の推奨順位（判定→スコア→AI順位）の上位N件だけを買った想定。全部は買えない実情に合わせた検証です。</div>
+            </div>
+
             <!-- スコア順位の効き -->
             <div class="card p-3">
                 <h2 class="h6 fw-bold mb-3"><i class="bi bi-bar-chart-line me-1"></i> スコア順位は効いたか（技術スコア上位）</h2>
@@ -231,6 +243,7 @@ function render(r) {
 
     renderTrades();
     renderRanking(r.ranking || {});
+    renderTopN(r.top_n || {});
     renderCalib(r.ai_calibration || {});
     renderBreakdown(r.breakdown || {});
     renderActions(r.actions || [], r.feedback || {});
@@ -364,6 +377,25 @@ function renderBreakdown(bd) {
         breakdownTable('過熱度', bd.by_overheat) +
         breakdownTable('判定', bd.by_verdict) +
         breakdownTable('業種', bd.by_sector);
+}
+
+function renderTopN(tn) {
+    const body = document.getElementById('topn-body');
+    const keys = Object.keys(tn || {}).sort((a, b) => Number(a) - Number(b));
+    if (!keys.length) { body.innerHTML = '<tr><td colspan="8" class="text-muted p-3">データがありません。</td></tr>'; return; }
+    body.innerHTML = keys.map(k => {
+        const s = tn[k];
+        return `<tr>
+            <td class="fw-bold">${s.n_per_day}</td>
+            <td>${s.picks}</td>
+            <td>${s.n_filled}</td>
+            <td>${s.fill_rate != null ? (s.fill_rate*100).toFixed(0) + '%' : '-'}</td>
+            <td class="fw-bold ${cls(s.avg_return_pct)}">${pct(s.avg_return_pct)}</td>
+            <td class="${cls(s.median_return_pct)}">${pct(s.median_return_pct)}</td>
+            <td>${s.win_rate != null ? (s.win_rate*100).toFixed(0) + '%' : '-'}</td>
+            <td class="${cls(s.avg_excess_pct)}">${pct(s.avg_excess_pct)}</td>
+        </tr>`;
+    }).join('');
 }
 
 function renderActions(actions, fb) {

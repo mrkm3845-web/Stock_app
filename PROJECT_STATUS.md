@@ -177,7 +177,7 @@ flowchart LR
 日々の**実運用で提示した推奨・技術上位**を、1週間（月〜金）単位で実際の値動きと突き合わせて採点する（既存の月次バックテストとは**並行・補完**。置換ではない）。
 - 入力: `docs/picks/{date}.json`（main8 が保存する日次スナップショット。無い日は `docs/history` と `docs/ai_analysis` から**復元**）。
 - 評価ルール: エントリーは **`entry_plan` 通り**（突破/押し目到達のみ約定、未到達は見送り）→ **約定週の金曜11:30（前場引け）に成行**。コストは手数料0.05%＋スリッページ0.1%。参考として**アプリのTP/SL・保有期限**適用時も併記。ベンチマークは `1306.T`。
-- 出力指標: 約定率・勝率・平均/中央リターン・TOPIX超過・`rank↔return` の Spearman・上位/下位スプレッド・`recommend` vs `watch`・`entry_type`／過熱度／業種別の実績・**見送り（押し目未到達）を成行追随した場合の機会損失/回避**・「今週の気づき」。
+- 出力指標: 約定率・勝率・平均/中央リターン・TOPIX超過・`rank↔return` の Spearman・上位/下位スプレッド・`recommend` vs `watch`・`entry_type`／過熱度／業種別の実績・**上位N件だけ買った場合（既定 1/3/5）**・**見送り（押し目未到達）を成行追随した場合の機会損失/回避**・「今週の気づき」。
 - **還元（Phase B 実装済み）**: 直近N週の実績から**過熱度別のスコア補正**を計算し `docs/strategy_params.json` の `weekly_feedback` に反映。`main8.py` が並び順（`score + delta`）に反映する。**縮小推定（n/(n+k)）＋上限クランプ（±3）＋最低サンプル（8件/群）**で過学習を防止。サンプルが偏る（例: 過熱度が「低」ばかり）間は補正0で観測のみ。
 - 出力: `docs/weekly/{YYYY-Www}.json`・`latest.json`・`index.json`・`feedback.json`・`docs/weekly.html`・`results/weekly_review_{week}.md`。
 - **持ち越し採点（`carryover_weeks=2`）**: 金曜シグナルは翌週に約定・手仕舞いするため、毎回**先週分も再採点**して確定させる（未評価の取りこぼし防止。各週レポートは自己完結で二重計上なし）。
@@ -204,7 +204,7 @@ flowchart LR
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
 - `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`（moderate用）・`probe_wait_days`（high=strong+extreme用）・`probe_qty_factor`）。押し目深さ/待機日数はバックテストの成行比較で**過熱度別に**更新されうる。
 - `ai`: `{enabled, provider:deepseek, model:deepseek-flash, stage1_pool_max:40, max_picks:5, max_calls_per_run:40, retry_candidates:15, max_output_stocks:15, news_source:gnews, news_days:14, news_max:5, ...}`（`max_picks`＝表示する推奨の最大件数。`max_output_stocks`＝AIが返すstocks配列の上限目安。`stage1_pool_min` は定義のみで**未使用**）
-- `weekly_review`: `{enabled:true, exit_weekday:4, exit_time:"11:30", fee_rate:0.0005, slippage_rate:0.001, benchmark_ticker:"1306.T", feedback_enabled:true, feedback_window_weeks:6, feedback_min_weeks:3, feedback_min_group_trades:8, feedback_shrinkage_k:10.0, feedback_max_delta:3.0}`（週次答え合わせの採点・還元ルール）
+- `weekly_review`: `{enabled:true, exit_weekday:4, exit_time:"11:30", fee_rate:0.0005, slippage_rate:0.001, benchmark_ticker:"1306.T", carryover_weeks:2, top_n_review:[1,3,5], feedback_enabled:true, feedback_window_weeks:6, feedback_min_weeks:3, feedback_min_group_trades:8, feedback_shrinkage_k:10.0, feedback_max_delta:3.0}`（週次答え合わせの採点・還元ルール）
 - `weekly_feedback`: 週次レビューが自動更新する**実績ベースのスコア補正**（`{enabled, window_weeks, n_filled, baseline_avg_pct, overheat_delta:{low/moderate/strong/extreme}, overheat_stats, note}`）。`main8.py` は `enabled=true` のとき `score + overheat_delta` で並び順を補正する（縮小推定・上限±3）。
 
 ---

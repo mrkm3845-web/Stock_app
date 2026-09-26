@@ -698,6 +698,8 @@ def simulate_pick(pick, daily, intraday, signal_date, bench_daily, bench_intr, p
         "overheat_level": pick.get("overheat_level"),
         "overheat_label": pick.get("overheat_label") or OVERHEAT_LABELS.get(pick.get("overheat_level")),
         "reconstructed": bool(pick.get("reconstructed")),
+        "day_rank": pick.get("day_rank"),
+        "day_pick_count": pick.get("day_pick_count"),
         "price": _to_num(pick.get("price")),
         "reason": reason,
         "news_note": news_note,
@@ -952,6 +954,34 @@ def _breakdown(trades, key, label_map=None):
     return out
 
 
+def analyze_top_n(trades, ns):
+    """その日の推奨上位N件だけを買った場合の成績（実行可能性を踏まえた検証）。"""
+    out = {}
+    for n in ns:
+        sel = [t for t in trades if (t.get("day_rank") or 99) <= n]
+        filled = [t for t in sel if t.get("status") == "filled"]
+        not_filled = [t for t in sel if t.get("status") == "not_filled"]
+        evaluated = len(filled) + len(not_filled)
+        rets = [t["return_net_pct"] for t in filled if t.get("return_net_pct") is not None]
+        excess = [t["excess_pct"] for t in filled if t.get("excess_pct") is not None]
+        st = _stats(rets)
+        best = max(filled, key=lambda t: t["return_net_pct"]) if filled else None
+        worst = min(filled, key=lambda t: t["return_net_pct"]) if filled else None
+        out[str(n)] = {
+            "n_per_day": n,
+            "picks": len(sel),
+            "n_filled": len(filled),
+            "fill_rate": round(len(filled) / evaluated, 3) if evaluated else None,
+            "avg_return_pct": st["avg"],
+            "median_return_pct": st["median"],
+            "win_rate": st["win_rate"],
+            "avg_excess_pct": round(float(np.mean(excess)), 3) if excess else None,
+            "best": None if not best else {"code": best["code"], "name": best["name"], "return_net_pct": best["return_net_pct"]},
+            "worst": None if not worst else {"code": worst["code"], "name": worst["name"], "return_net_pct": worst["return_net_pct"]},
+        }
+    return out
+
+
 def build_notes(summary, ranking, calib, breakdown):
     notes = []
     # 見送り（押し目未到達など）の機会損益
@@ -1181,13 +1211,16 @@ def review_week(monday, params, no_fetch=False):
         print(">> 対象週に営業日のデータがありません（全休場など）。スキップします。")
         return None
 
-    # 各ピックを採点
+    # 各ピックを採点（day_rank はその日の推奨順位＝買う優先順）
     trades = []
     for ds, snap in sorted(pool_by_date.items()):
         src = snap.get("source")
-        for p in snap.get("picks") or []:
+        picks = snap.get("picks") or []
+        for rank_in_day, p in enumerate(picks, start=1):
             p = dict(p)
             p["source"] = src
+            p["day_rank"] = rank_in_day
+            p["day_pick_count"] = len(picks)
             trades.append(simulate_pick(p, daily, intraday, ds, daily, intraday, params))
 
     filled = [t for t in trades if t["status"] == "filled"]
@@ -1237,6 +1270,12 @@ def review_week(monday, params, no_fetch=False):
 
     ranking = analyze_ranking(pool_by_date, daily, intraday, daily, params)
     calib = analyze_ai_calibration(pool_by_date, daily, intraday, daily, params)
+    top_n_ns = params.get("weekly_review", {}).get("top_n_review") or [3]
+    try:
+        top_n_ns = [int(x) for x in top_n_ns if int(x) > 0]
+    except Exception:
+        top_n_ns = [3]
+    top_n = analyze_top_n(trades, top_n_ns)
     breakdown = {
         "by_entry_type": _breakdown(filled, "entry_type", ENTRY_TYPE_LABELS),
         "by_overheat": _breakdown(filled, "overheat_level", OVERHEAT_LABELS),
@@ -1261,6 +1300,7 @@ def review_week(monday, params, no_fetch=False):
         "trades": trades,
         "ranking": ranking,
         "ai_calibration": calib,
+        "top_n": top_n,
         "breakdown": breakdown,
         "notes": notes,
     }
@@ -1344,6 +1384,19 @@ def render_markdown(r):
             f"{t.get('return_net_pct')}% | {t.get('excess_pct')}% | {note} |"
         )
     lines.append("")
+    tn = r.get("top_n") or {}
+    if tn:
+        lines.append("## 上位N件だけ買った場合（実行可能性の検証）")
+        lines.append("")
+        lines.append("| 件数/日 | 対象 | 約定 | 約定率 | 平均 | 中央値 | 勝率 | TOPIX超過 |")
+        lines.append("| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |")
+        for key in sorted(tn, key=lambda x: int(x)):
+            s = tn[key]
+            lines.append(
+                f"| {s.get('n_per_day')} | {s.get('picks')} | {s.get('n_filled')} | {s.get('fill_rate')} | "
+                f"{s.get('avg_return_pct')}% | {s.get('median_return_pct')}% | {s.get('win_rate')} | {s.get('avg_excess_pct')}% |"
+            )
+        lines.append("")
     rk = r.get("ranking") or {}
     lines.append("## スコア順位の効き（技術候補プール）")
     lines.append("")

@@ -2,7 +2,7 @@
   "week": "2026-W39",
   "start": "2026-09-21",
   "end": "2026-09-25",
-  "generated_at": "2026-09-26T04:05:23",
+  "generated_at": "2026-09-26T16:47:04",
   "review_rule": {
     "entry": "entry_plan通り（未到達は見送り）",
     "exit": "約定週の金曜11:30（前場引け）に成行",
@@ -57,6 +57,8 @@
       "overheat_level": "low",
       "overheat_label": "低",
       "reconstructed": true,
+      "day_rank": 1,
+      "day_pick_count": 5,
       "price": 4280.0,
       "reason": "ゴールデンクロス達成直後で高営業利益率。過熱感も少なく上昇余地大。",
       "news_note": "直近決算・材料は要確認。半導体関連の需要回復期待が背景。",
@@ -107,6 +109,8 @@
       "overheat_level": "low",
       "overheat_label": "低",
       "reconstructed": true,
+      "day_rank": 2,
+      "day_pick_count": 5,
       "price": 4370.0,
       "reason": "PBR0.88倍・PER9.9倍と割安。地銀セクターの買戻し波に乗る。",
       "news_note": "金利環境改善に伴う利ざや改善期待。直近決算要確認。",
@@ -157,6 +161,8 @@
       "overheat_level": "low",
       "overheat_label": "低",
       "reconstructed": true,
+      "day_rank": 3,
+      "day_pick_count": 5,
       "price": 10700.0,
       "reason": "高営業利益率29.4%と好ファンダ。トレンド良好で過熱感も軽度。",
       "news_note": "貴金属材料需要の底堅さが支援。直近材料は要確認。",
@@ -207,6 +213,8 @@
       "overheat_level": "low",
       "overheat_label": "低",
       "reconstructed": true,
+      "day_rank": 4,
+      "day_pick_count": 5,
       "price": 6140.0,
       "reason": "5日移動平均線に沿った綺麗な上昇波。好業績背景で追随余地あり。",
       "news_note": "半導体商社としての好決算・業績上振れ期待。要確認。",
@@ -257,6 +265,8 @@
       "overheat_level": "low",
       "overheat_label": "低",
       "reconstructed": true,
+      "day_rank": 5,
+      "day_pick_count": 5,
       "price": 4508.0,
       "reason": "大型株でGC達成。出来高増加に伴い上昇トレンドへの回帰が鮮明。",
       "news_note": "事業構造改革および車載電池事業への期待。要確認。",
@@ -307,6 +317,8 @@
       "overheat_level": "moderate",
       "overheat_label": "中",
       "reconstructed": true,
+      "day_rank": 1,
+      "day_pick_count": 5,
       "price": 43700.0,
       "reason": "上場来高値も25日乖離19%と過熱。押し目なら配当8.2%で妙味。",
       "news_note": "上場来高値銘柄として紹介。半導体商社。要確認。",
@@ -347,6 +359,8 @@
       "overheat_level": "low",
       "overheat_label": "低",
       "reconstructed": true,
+      "day_rank": 2,
+      "day_pick_count": 5,
       "price": 4280.0,
       "reason": "半導体関連で営業利益率21.7%、RSI59と過熱感薄い。25日線GC直後。",
       "news_note": "直近の個別材料は要確認。半導体設備関連として物色。",
@@ -387,6 +401,8 @@
       "overheat_level": "moderate",
       "overheat_label": "中",
       "reconstructed": true,
+      "day_rank": 3,
+      "day_pick_count": 5,
       "price": 11700.0,
       "reason": "非過熱で高流動性、大口受注と目標株価引き上げが材料。営業利益率29%と高収益。",
       "news_note": "大口受注獲得もよう、国内証券が目標株価上げ。要確認要素あり。",
@@ -427,6 +443,8 @@
       "overheat_level": "low",
       "overheat_label": "低",
       "reconstructed": true,
+      "day_rank": 4,
+      "day_pick_count": 5,
       "price": 11040.0,
       "reason": "上方修正・増配で上場来高値圏、RSI61で過熱軽度。地銀再編期待。",
       "news_note": "27年3月期純利益200億円へ上方修正、4円増配。上場来高値更新。",
@@ -467,6 +485,8 @@
       "overheat_level": "moderate",
       "overheat_label": "中",
       "reconstructed": true,
+      "day_rank": 5,
+      "day_pick_count": 5,
       "price": 3700.0,
       "reason": "いよぎんとの経営統合協議が材料。RSI68だが地銀セクター追い風。",
       "news_note": "いよぎん・愛媛銀行 経営統合に向け協議と報道。",
@@ -1373,6 +1393,68 @@
         "return_net_pct": 9.2421
       }
     ]
+  },
+  "top_n": {
+    "1": {
+      "n_per_day": 1,
+      "picks": 2,
+      "n_filled": 1,
+      "fill_rate": 1.0,
+      "avg_return_pct": 2.178,
+      "median_return_pct": 2.178,
+      "win_rate": 1.0,
+      "avg_excess_pct": 1.848,
+      "best": {
+        "code": "6668",
+        "name": "アドテック　プラズマ　テクノロジー",
+        "return_net_pct": 2.1782
+      },
+      "worst": {
+        "code": "6668",
+        "name": "アドテック　プラズマ　テクノロジー",
+        "return_net_pct": 2.1782
+      }
+    },
+    "3": {
+      "n_per_day": 3,
+      "picks": 6,
+      "n_filled": 3,
+      "fill_rate": 1.0,
+      "avg_return_pct": 5.21,
+      "median_return_pct": 4.977,
+      "win_rate": 1.0,
+      "avg_excess_pct": 4.879,
+      "best": {
+        "code": "7826",
+        "name": "フルヤ金属",
+        "return_net_pct": 8.4734
+      },
+      "worst": {
+        "code": "6668",
+        "name": "アドテック　プラズマ　テクノロジー",
+        "return_net_pct": 2.1782
+      }
+    },
+    "5": {
+      "n_per_day": 5,
+      "picks": 10,
+      "n_filled": 5,
+      "fill_rate": 1.0,
+      "avg_return_pct": 3.796,
+      "median_return_pct": 2.493,
+      "win_rate": 1.0,
+      "avg_excess_pct": 3.465,
+      "best": {
+        "code": "7826",
+        "name": "フルヤ金属",
+        "return_net_pct": 8.4734
+      },
+      "worst": {
+        "code": "6752",
+        "name": "パナソニック　ホールディングス",
+        "return_net_pct": 0.8577
+      }
+    }
   },
   "breakdown": {
     "by_entry_type": {
