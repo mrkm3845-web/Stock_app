@@ -182,7 +182,7 @@ flowchart LR
 - **還元（Phase B 実装済み）**: 直近N週の実績から**過熱度別のスコア補正**を計算し `docs/strategy_params.json` の `weekly_feedback` に反映。`main8.py` が並び順（`score + delta`）に反映する。**縮小推定（n/(n+k)）＋上限クランプ（±3）＋最低サンプル（8件/群）**で過学習を防止。サンプルが偏る（例: 過熱度が「低」ばかり）間は補正0で観測のみ。
 - 出力: `docs/weekly/{YYYY-Www}.json`・`latest.json`・`index.json`・`feedback.json`・`plan.json`・`docs/weekly.html`・`results/weekly_review_{week}.md`。
 - **来週の作戦（AI深掘り）**: 金曜時点の最新候補を毎日のAIより深掘りし、`top_pick`・補欠・回避・入口/OCO・シナリオ・リスクを生成 → `docs/weekly/plan.json`。`weekly.html` 最下段に表示。ペルソナ（`common/persona.py`）を日次AIと共通で前置。失敗時は実績ベースのテンプレ作戦にフォールバック（`plan_enabled` / `plan_candidates` / `--no-plan`）。
-- **容量対策**: `main8.py` が古い `docs/history/{date}.json` を `history_keep_days`（既定90日）で削除。`data/stocks.db` はコミット停止（`.gitignore`・Actionsキャッシュ運用）。
+- **容量対策**: `main8.py` が古い `docs/history/{date}.json(/.gz)` を `history_keep_days`（既定90日）で削除。**日別履歴はgzip（`.json.gz`）で保存**（JSON比 約15%、`.git`/Pagesの増加を約85%削減）。書き込み時に解凍検証し、失敗時は平文 `.json` にフォールバック。**読み手（フロント／週次）は `.json.gz` 優先＋`.json` フォールバック**。`data/stocks.db` はコミット停止（`.gitignore`・Actionsキャッシュ運用）。
 - **持ち越し採点（`carryover_weeks=5`）**: 金曜シグナルは翌週に約定し、OCOは最大20営業日保有するため、土曜時点では未確定（pending）になり得る。毎回**直近5週を再採点**して確定させる（取りこぼし防止。各週レポートは自己完結で二重計上なし）。
 - 非営業日（土日祝・取引所休場）は集計から除外。`main8.py` 側も JPX 取引所カレンダーでスキップ。
 - 注記: 本採点は**機械的な答え合わせ**であり、特定日の売買を強制するものではない（実行は資金・時間に合わせて調整）。
@@ -215,8 +215,8 @@ flowchart LR
 
 ## 9. 出力ファイル
 
-- `docs/history/{date}.json` / `latest.json`: 全銘柄レコード（スコア付き）。
-- `docs/history/meta.json`: `{date, generated_at, regime, portfolio}`。
+- `docs/history/{date}.json.gz` / `latest.json.gz`: 全銘柄レコード（スコア付き、gzip）。読み手は `.json` にフォールバック（移行期・旧ファイル対応）。
+- `docs/history/dates.json` / `meta.json`: 日付一覧 / データ鮮度メタ（小さいので平文）。
 - `docs/recommendations.json`（AI時）/ `recommendations_technical.json`（技術のみ）: `{regime, portfolio_guide, picks[]}`。
   - `picks[]`: `code,name,price,score,verdict,rank,tp_price,sl_price,ai_tp_price,ai_sl_price,atr_sl_mult,stop_distance,suggested_qty,trailing_plan,earnings_date,earnings_soon,entry_type,entry_type_label,entry_zone_low,entry_zone_high,overheat_level,overheat_flags,rsi14,dist_sma5_pct,dist_sma25_pct,pos_52w,run_up_days,gap_pct,atr_pct,...`
 - `docs/earnings.json`: `{date, horizon_days:14, items:{code:{date,days_until,soon}}}`。
@@ -305,3 +305,4 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **来週の作戦（AI深掘り）**: 金曜時点の最新候補を深掘りし `docs/weekly/plan.json` と `weekly.html` 最下段に表示。ペルソナ（`common/persona.py`）を日次AIと共通化。`weekly_review.yml` に AIキーを追加。
 - **容量対策**: `history_keep_days`(90) による古い日別JSONの削除、`data/stocks.db` のコミット停止（`.gitignore`＋Actionsキャッシュ）、日次ワークフローの `git add docs/` のみ化。
 - **運用ツール**: `tools/cleanup_git_history.md` / `.ps1` を追加（`.git` の年次掃除＝git履歴の書き換え手順。削除では `.git` は減らないため）。**`journal.html` に「預かり金（買付余力）」の手入力欄**を追加（`localStorage` のみ・非公開、モーダルに「買付目安」を表示）。
+- **履歴のgzip化**: 日別履歴を `.json.gz` で保存（実測 約2.97MB→約0.45MB、約85%削減）。フロント（`index.html`/`journal.html`）は `DecompressionStream` で解凍＋`.json`フォールバック、`weekly_review` は `.json.gz`/`.json` 二重読み、`main8` は書き込み時に解凍検証（失敗時は平文）。Pagesは `.gz` を `Content-Encoding` なしで配信することを実機確認済み。

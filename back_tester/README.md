@@ -173,7 +173,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - 入口（`entry_type`）別・過熱度別・業種別の実績、および**今週の気づき**（テンプレ文）。
 
 ### 8-3. 入力と出力
-- 入力: `docs/picks/{date}.json`（main8 の日次スナップショット）。無い日は `docs/history/{date}.json` ＋ `docs/ai_analysis/{date}.json` から**復元**（レポート上「復元」表示）。
+- 入力: `docs/picks/{date}.json`（main8 の日次スナップショット）。無い日は `docs/history/{date}.json[.gz]`（`docs/history` は容量対策で gzip 化。`.json.gz` 優先＋`.json` フォールバックで読む）＋ `docs/ai_analysis/{date}.json` から**復元**（レポート上「復元」表示）。
 - **非営業日（土日祝・取引所休場）は除外**：ベンチマーク（`1306.T`）の実際の営業日を基準に、シグナル日が営業日でなければ集計から外す。`main8.py` 側も JPX 取引所カレンダーで非営業日をスキップする。
 - 出力: `docs/weekly/{YYYY-Www}.json` / `latest.json` / `index.json` / `feedback.json` / `plan.json`、`docs/weekly.html`、`back_tester/results/weekly_review_{week}.md`。
 
