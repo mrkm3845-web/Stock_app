@@ -588,38 +588,13 @@ def _market_counterfactual(daily, intraday, ticker, signal_date, fee_rate, slip)
         return None, None, None
     return net * 100.0, entry_date, exit_date
 
-    # breakout_chase（現在値近辺なら翌日寄成、上抜けなら買いストップ）
-    trigger = _to_num(pick.get("entry_price"))
-    if trigger is None:
-        # トリガ未設定なら翌日寄成
-        d = window[0]
-        row = _row_on(df, d)
-        op = _to_num(row.get("Open")) if row is not None else None
-        return (d, op, "filled") if op is not None else (None, None, "no_data")
-
-    if signal_close is not None and trigger <= signal_close * 1.001:
-        # 現在値近辺＝成行扱い（翌営業日寄り）
-        d = window[0]
-        row = _row_on(df, d)
-        op = _to_num(row.get("Open")) if row is not None else None
-        return (d, op, "filled") if op is not None else (None, None, "no_data")
-
-    # 上抜け買いストップ
-    for d in window:
-        row = _row_on(df, d)
-        if row is None:
-            continue
-        op = _to_num(row.get("Open"))
-        high = _to_num(row.get("High"))
-        if op is not None and op >= trigger:
-            return d, op, "filled"
-        if high is not None and high >= trigger:
-            return d, trigger, "filled"
-    return None, None, "not_filled"
-
 
 def _rule_exit(pick, df, entry_date, entry_price):
-    """アプリのルール出口（TP/SL/最大保有日数）を適用した場合の結果。"""
+    """実行ルール（OCO）の出口: TP/SL 到達、未到達なら最大保有日数の引け。
+
+    データが最大保有日数に届いていない場合は None（＝未確定）を返す。
+    呼び出し側で「持ち越し（pending）」として扱い、翌週以降に再採点する。
+    """
     tp = _to_num(pick.get("tp_price"))
     sl = _to_num(pick.get("sl_price"))
     max_hold = int(pick.get("max_hold_days") or 14)
@@ -650,12 +625,10 @@ def _rule_exit(pick, df, entry_date, entry_price):
                 return {"reason": "利確", "date": d.strftime("%Y-%m-%d"), "price": op}
             if high is not None and high >= tp:
                 return {"reason": "利確", "date": d.strftime("%Y-%m-%d"), "price": tp}
-        if i == len(hold_dates) - 1 and close is not None:
+        # 最大保有日数まで到達し、TP/SL 未到達 → 期間終了の引けで決済
+        if i == len(hold_dates) - 1 and len(hold_dates) >= max_hold and close is not None:
             return {"reason": "保有期限", "date": d.strftime("%Y-%m-%d"), "price": close}
-    if last_row is not None:
-        close = _to_num(last_row.get("Close"))
-        d = hold_dates[-1]
-        return {"reason": "保有期限", "date": d.strftime("%Y-%m-%d"), "price": close}
+    # データが最大保有日数に届いていない → 未確定（持ち越し）
     return None
 
 
@@ -713,11 +686,13 @@ def simulate_pick(pick, daily, intraday, signal_date, bench_daily, bench_intr, p
         "fill_date": None,
         "fill_price": None,
         "status": "no_data",
+        "exit_oco": None,
         "exit_weekly": None,
         "exit_rule": None,
         "return_gross_pct": None,
         "return_net_pct": None,
         "return_rule_pct": None,
+        "return_weekly_pct": None,
         "benchmark_pct": None,
         "excess_pct": None,
         "exit_price_source": None,
@@ -741,48 +716,56 @@ def simulate_pick(pick, daily, intraday, signal_date, bench_daily, bench_intr, p
     result["fill_date"] = fill_date.strftime("%Y-%m-%d")
     result["fill_price"] = _clean(fill_price)
 
-    # --- 主ルール: 約定週の金曜 11:30 に手仕舞い ---
+    # --- 参考: 約定週の金曜11:30で手仕舞い（短期の参考値。主指標ではない） ---
     dates = list(df.index.normalize()) if df is not None else []
     target_fri = _friday_of(fill_date.date() if hasattr(fill_date, "date") else fill_date)
-    exit_candidates = [d for d in dates if d.date() <= target_fri and d >= fill_date]
-    exit_date = max(exit_candidates) if exit_candidates else fill_date
-
-    morning, src = _exit_morning(daily, intraday, ticker, exit_date)
-    if morning is not None:
-        gross = (morning - fill_price) / fill_price if fill_price else None
-        net = _net_return(fill_price, morning, fee_rate, slip)
+    weekly_cands = [d for d in dates if d.date() <= target_fri and d >= fill_date]
+    weekly_exit_date = max(weekly_cands) if weekly_cands else fill_date
+    w_price, w_src = _exit_morning(daily, intraday, ticker, weekly_exit_date)
+    if w_price is not None:
+        w_net = _net_return(fill_price, w_price, fee_rate, slip)
         result["exit_weekly"] = {
-            "date": exit_date.strftime("%Y-%m-%d"),
-            "price": _clean(morning),
-            "return_gross_pct": _clean(gross * 100 if gross is not None else None),
-            "return_net_pct": _clean(net * 100 if net is not None else None),
+            "date": weekly_exit_date.strftime("%Y-%m-%d"),
+            "price": _clean(w_price),
+            "return_net_pct": _clean(w_net * 100 if w_net is not None else None),
+            "source": w_src,
         }
-        result["exit_price_source"] = src
-        result["return_gross_pct"] = _clean(gross * 100 if gross is not None else None)
-        result["return_net_pct"] = _clean(net * 100 if net is not None else None)
+        result["return_weekly_pct"] = _clean(w_net * 100 if w_net is not None else None)
 
-    # --- 参考: アプリのルール出口 ---
+    # --- 主ルール（実行ルール）: OCO（利確=指値／損切=逆指値）→ 未到達は最大保有日数の引け ---
     rule = _rule_exit(pick, df, fill_date, fill_price)
-    if rule and rule.get("price") is not None:
-        net = _net_return(fill_price, rule["price"], fee_rate, slip)
-        result["exit_rule"] = {
-            "date": rule["date"],
-            "price": _clean(rule["price"]),
-            "reason": rule["reason"],
-            "return_net_pct": _clean(net * 100 if net is not None else None),
-        }
-        result["return_rule_pct"] = _clean(net * 100 if net is not None else None)
+    if rule is None or rule.get("price") is None:
+        # データが最大保有日数に届いていない → 未確定（翌週以降に再採点）
+        result["status"] = "pending"
+        return result
+    o_net = _net_return(fill_price, rule["price"], fee_rate, slip)
+    result["exit_oco"] = {
+        "date": rule["date"],
+        "price": _clean(rule["price"]),
+        "reason": rule["reason"],
+        "return_net_pct": _clean(o_net * 100 if o_net is not None else None),
+    }
+    result["exit_rule"] = result["exit_oco"]  # 後方互換
+    result["return_net_pct"] = _clean(o_net * 100 if o_net is not None else None)
+    result["return_rule_pct"] = result["return_net_pct"]
+    if fill_price:
+        result["return_gross_pct"] = _clean((rule["price"] - fill_price) / fill_price * 100)
 
-    # --- ベンチマーク（約定日寄り→同じ出口日・同時刻） ---
+    # --- ベンチマーク（約定日寄り→OCO決済日の終値） ---
     bdf = (bench_daily or {}).get(BENCH_TICKER)
     b_entry_row = _row_on(bdf, fill_date)
     b_entry = _to_num(b_entry_row.get("Open")) if b_entry_row is not None else None
-    b_exit, _b_src = _exit_morning(bench_daily, bench_intr, BENCH_TICKER, exit_date)
+    b_exit_row = _row_on(bdf, pd.Timestamp(rule["date"]))
+    b_exit = None
+    if b_exit_row is not None:
+        b_exit = _to_num(b_exit_row.get("Close"))
+        if b_exit is None:
+            b_exit = _to_num(b_exit_row.get("Open"))
     if b_entry and b_exit:
         b_net = _net_return(b_entry, b_exit, fee_rate, slip)
         result["benchmark_pct"] = _clean(b_net * 100 if b_net is not None else None)
         if result["return_net_pct"] is not None and b_net is not None:
-            result["excess_pct"] = _clean((result["return_net_pct"]) - b_net * 100)
+            result["excess_pct"] = _clean(result["return_net_pct"] - b_net * 100)
 
     return result
 
@@ -961,6 +944,7 @@ def analyze_top_n(trades, ns):
         sel = [t for t in trades if (t.get("day_rank") or 99) <= n]
         filled = [t for t in sel if t.get("status") == "filled"]
         not_filled = [t for t in sel if t.get("status") == "not_filled"]
+        pending = [t for t in sel if t.get("status") == "pending"]
         evaluated = len(filled) + len(not_filled)
         rets = [t["return_net_pct"] for t in filled if t.get("return_net_pct") is not None]
         excess = [t["excess_pct"] for t in filled if t.get("excess_pct") is not None]
@@ -971,6 +955,7 @@ def analyze_top_n(trades, ns):
             "n_per_day": n,
             "picks": len(sel),
             "n_filled": len(filled),
+            "n_pending": len(pending),
             "fill_rate": round(len(filled) / evaluated, 3) if evaluated else None,
             "avg_return_pct": st["avg"],
             "median_return_pct": st["median"],
@@ -984,6 +969,10 @@ def analyze_top_n(trades, ns):
 
 def build_notes(summary, ranking, calib, breakdown):
     notes = []
+    # 未確定（OCOの最大保有日数にデータが届かず来週以降に確定）
+    n_pending = summary.get("n_pending") or 0
+    if n_pending:
+        notes.append(f"未確定（データ不足で来週確定）が {n_pending}件あります。翌週のレビューで確定します。")
     # 見送り（押し目未到達など）の機会損益
     n_missed = summary.get("n_missed_evaluated") or 0
     if n_missed > 0:
@@ -999,7 +988,12 @@ def build_notes(summary, ranking, calib, breakdown):
                 f"うち上昇 {up}件（平均 {(m_up or 0.0):+.2f}%）/ 下落 {down}件（平均 {(m_dn or 0.0):+.2f}%）。"
             )
     if summary.get("n_filled", 0) == 0:
-        notes.append("今週は約定した推奨がありませんでした（押し目・ブレイク未到達、または相場急変）。")
+        if (summary.get("n_pending") or 0) > 0:
+            notes.append("OCO決済が未確定です（最大保有日数に未到達）。翌週以降のレビューで確定します。")
+        elif (summary.get("n_entered") or 0) > 0:
+            notes.append("建玉はありますが、まだ確定した決済がありません。")
+        else:
+            notes.append("今週は約定した推奨がありませんでした（押し目・ブレイク未到達、または相場急変）。")
         return notes
     avg = summary.get("avg_return_pct")
     bench = summary.get("avg_benchmark_pct")
@@ -1182,10 +1176,15 @@ def review_week(monday, params, no_fetch=False):
     tickers = {_ticker(c) for c in codes}
     tickers.add(BENCH_TICKER)
 
+    # OCO の最大保有日数は週をまたぐため、その分の将来データも取得対象にする
+    carryover = int(params.get("weekly_review", {}).get("carryover_weeks", 2) or 2)
+    tiers = params.get("price_tiers") or []
+    max_hold = max([int(t.get("max_hold_days") or 14) for t in tiers] or [14])
+    horizon_days = 7 * (carryover + 1) + int(max_hold * 1.6) + 10
     fetch_start = (monday - timedelta(days=7)).strftime("%Y-%m-%d")
-    fetch_end = (monday + timedelta(days=14)).strftime("%Y-%m-%d")
+    fetch_end = (monday + timedelta(days=horizon_days)).strftime("%Y-%m-%d")
     need_start = monday - timedelta(days=3)
-    need_end = min(monday + timedelta(days=14), datetime.now().date()) - timedelta(days=3)
+    need_end = min(monday + timedelta(days=horizon_days), datetime.now().date()) - timedelta(days=3)
     daily = fetch_daily(sorted(tickers), fetch_start, fetch_end, no_fetch=no_fetch)
     intraday = fetch_intraday(sorted(tickers), no_fetch=no_fetch,
                               need_start=need_start, need_end=need_end)
@@ -1225,10 +1224,15 @@ def review_week(monday, params, no_fetch=False):
 
     filled = [t for t in trades if t["status"] == "filled"]
     not_filled = [t for t in trades if t["status"] == "not_filled"]
+    pending = [t for t in trades if t["status"] == "pending"]
     no_data = [t for t in trades if t["status"] in ("no_data", "wait")]
+    entered = [t for t in trades if t.get("fill_date")]
     evaluated = len(filled) + len(not_filled)
-    weekly_rets = [t["return_net_pct"] for t in filled]
-    rule_rets = [t["return_rule_pct"] for t in filled if t.get("return_rule_pct") is not None]
+    # 主指標 = OCO（実行ルール）リターン（確定分のみ）
+    primary_rets = [t["return_net_pct"] for t in filled if t.get("return_net_pct") is not None]
+    # 参考 = 金曜11:30手仕舞い（未確定分も金曜時点の値が取れれば含める）
+    weekly_ref_rets = [t["return_weekly_pct"] for t in trades
+                       if t.get("return_weekly_pct") is not None]
     bench_rets = [t["benchmark_pct"] for t in filled if t.get("benchmark_pct") is not None]
     excess = [t["excess_pct"] for t in filled if t.get("excess_pct") is not None]
 
@@ -1244,16 +1248,20 @@ def review_week(monday, params, no_fetch=False):
         "picks_total": len(trades),
         "n_filled": len(filled),
         "n_not_filled": len(not_filled),
+        "n_pending": len(pending),
         "n_no_data": len(no_data),
+        "n_entered": len(entered),
         "fill_rate": round(len(filled) / evaluated, 3) if evaluated else None,
-        "avg_return_pct": _stats(weekly_rets)["avg"],
-        "median_return_pct": _stats(weekly_rets)["median"],
-        "win_rate": _stats(weekly_rets)["win_rate"],
+        "avg_return_pct": _stats(primary_rets)["avg"],
+        "median_return_pct": _stats(primary_rets)["median"],
+        "win_rate": _stats(primary_rets)["win_rate"],
         "avg_benchmark_pct": round(float(np.mean(bench_rets)), 3) if bench_rets else None,
         "avg_excess_pct": round(float(np.mean(excess)), 3) if excess else None,
         "beat_benchmark_rate": round(sum(1 for e in excess if e > 0) / len(excess), 3) if excess else None,
-        "rule_avg_return_pct": _stats(rule_rets)["avg"],
-        "rule_win_rate": _stats(rule_rets)["win_rate"],
+        "rule_avg_return_pct": _stats(primary_rets)["avg"],
+        "rule_win_rate": _stats(primary_rets)["win_rate"],
+        "avg_weekly_return_pct": _stats(weekly_ref_rets)["avg"],
+        "weekly_win_rate": _stats(weekly_ref_rets)["win_rate"],
         "n_missed_evaluated": len(missed_vals),
         "missed_avg_pct": round(float(np.mean(missed_vals)), 3) if missed_vals else None,
         "missed_up_count": len(missed_up),
@@ -1290,11 +1298,12 @@ def review_week(monday, params, no_fetch=False):
         "end": end,
         "generated_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "review_rule": {
-            "entry": "entry_plan通り（未到達は見送り）",
-            "exit": "約定週の金曜11:30（前場引け）に成行",
+            "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
+            "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
+            "exit_reference": "参考: 約定週の金曜11:30（前場引け）に成行（短期メトリクス）",
             "cost": f"手数料{params.get('weekly_review', {}).get('fee_rate', 0.0005)*100:.3f}%+スリッページ{params.get('weekly_review', {}).get('slippage_rate', 0.001)*100:.1f}%",
-            "benchmark": BENCH_TICKER,
-            "note": "機械的な答え合わせであり、特定日の売買を強制するものではありません。実際の売買は資金・時間に合わせて調整してください。",
+            "benchmark": "1306.T（TOPIX ETF。約定日寄り→OCO決済日終値）",
+            "note": "OCO主指標は最大保有日数（7〜20営業日）で確定するため、直近週は未確定が多くなります（翌週以降に順次確定）。短期的な参考として金曜11:30手仕舞いを併記。機械的な答え合わせであり、特定日の売買を強制するものではありません。",
         },
         "summary": summary,
         "trades": trades,
@@ -1347,41 +1356,46 @@ def write_outputs(result):
 
 
 def render_markdown(r):
+    def m(v, suffix="%"):
+        return "-" if v is None else f"{v}{suffix}"
     s = r["summary"]
     lines = [f"# 週次答え合わせレポート {r['week']}（{r['start']} 〜 {r['end']}）", ""]
-    lines.append(f"※ ルール: {r['review_rule']['entry']} / {r['review_rule']['exit']} / コスト {r['review_rule']['cost']}")
+    lines.append(f"※ ルール: {r['review_rule']['entry']} / {r['review_rule']['exit']}")
+    lines.append(f"※ {r['review_rule'].get('exit_reference','')} / コスト {r['review_rule']['cost']} / ベンチマーク {r['review_rule'].get('benchmark','')}")
     lines.append("")
-    lines.append("## サマリ")
+    lines.append("## サマリ（主指標＝OCO／参考＝金曜11:30）")
     lines.append("")
     lines.append("| 指標 | 値 |")
     lines.append("| :--- | ---: |")
     lines.append(f"| 対象ピック数 | {s['picks_total']} |")
-    lines.append(f"| 約定 / 見送り | {s['n_filled']} / {s['n_not_filled']}（約定率 {s['fill_rate']}） |")
-    lines.append(f"| 平均リターン | {s['avg_return_pct']}% |")
-    lines.append(f"| 中央値 | {s['median_return_pct']}% |")
-    lines.append(f"| 勝率 | {s['win_rate']} |")
-    lines.append(f"| 平均 TOPIX比 | {s['avg_excess_pct']}% |")
-    lines.append(f"| ルール出口の平均 | {s['rule_avg_return_pct']}% |")
+    lines.append(f"| 建玉 / OCO確定 / 未確定 / 見送り | {s.get('n_entered',0)} / {s['n_filled']} / {s.get('n_pending', 0)} / {s['n_not_filled']}（約定率 {m(s['fill_rate'])}) |")
+    lines.append(f"| 平均リターン（OCO） | {m(s['avg_return_pct'])} |")
+    lines.append(f"| 中央値（OCO） | {m(s['median_return_pct'])} |")
+    lines.append(f"| 勝率（OCO） | {m(s['win_rate'],'')} |")
+    lines.append(f"| 平均 TOPIX比（OCO） | {m(s['avg_excess_pct'])} |")
+    lines.append(f"| 参考: 金曜11:30 平均 | {m(s.get('avg_weekly_return_pct'))} |")
     lines.append("")
     lines.append("## 今週の気づき")
     for n in r.get("notes") or []:
         lines.append(f"- {n}")
     lines.append("")
-    lines.append("## 銘柄ごとの結果")
+    lines.append("## 銘柄ごとの結果（損益はOCO＝実行ルール）")
     lines.append("")
-    lines.append("| シグナル日 | コード | 銘柄 | 判定 | 入口 | 過熱 | 約定日 | 約定値 | 手仕舞い | 損益(ネット) | TOPIX比 | 状況・材料 |")
-    lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | ---: | ---: | ---: | ---: | :--- |")
+    lines.append("| シグナル日 | コード | 銘柄 | 判定 | 入口 | 過熱 | 約定日 | 約定値 | 決済日 | 決済値 | 出口理由 | 損益(OCO) | TOPIX比 | 参考:金曜 | 状況・材料 |")
+    lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | ---: | :--- | ---: | :--- | ---: | ---: | ---: | :--- |")
     for t in r.get("trades") or []:
         if t.get("status") != "filled":
             continue
         note = (t.get("news_note") or t.get("reason") or "").replace("|", "/")
         if len(note) > 40:
             note = note[:40] + "…"
+        oco = t.get("exit_oco") or {}
+        wk = t.get("exit_weekly") or {}
         lines.append(
             f"| {t['signal_date']} | {t['code']} | {t.get('name','')} | {t.get('verdict_label','')} | "
             f"{t.get('entry_type_label','')} | {t.get('overheat_label','')} | {t.get('fill_date','')} | "
-            f"{t.get('fill_price')} | {t.get('exit_weekly',{}).get('price')} | "
-            f"{t.get('return_net_pct')}% | {t.get('excess_pct')}% | {note} |"
+            f"{t.get('fill_price')} | {oco.get('date','')} | {oco.get('price')} | {oco.get('reason','')} | "
+            f"{t.get('return_net_pct')}% | {t.get('excess_pct')}% | {t.get('return_weekly_pct')}% | {note} |"
         )
     lines.append("")
     tn = r.get("top_n") or {}
@@ -1391,10 +1405,10 @@ def render_markdown(r):
         lines.append("| 件数/日 | 対象 | 約定 | 約定率 | 平均 | 中央値 | 勝率 | TOPIX超過 |")
         lines.append("| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |")
         for key in sorted(tn, key=lambda x: int(x)):
-            s = tn[key]
+            ts = tn[key]
             lines.append(
-                f"| {s.get('n_per_day')} | {s.get('picks')} | {s.get('n_filled')} | {s.get('fill_rate')} | "
-                f"{s.get('avg_return_pct')}% | {s.get('median_return_pct')}% | {s.get('win_rate')} | {s.get('avg_excess_pct')}% |"
+                f"| {ts.get('n_per_day')} | {ts.get('picks')} | {ts.get('n_filled')} | {m(ts.get('fill_rate'),'')} | "
+                f"{m(ts.get('avg_return_pct'))} | {m(ts.get('median_return_pct'))} | {m(ts.get('win_rate'),'')} | {m(ts.get('avg_excess_pct'))} |"
             )
         lines.append("")
     rk = r.get("ranking") or {}

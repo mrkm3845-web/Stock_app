@@ -97,7 +97,7 @@
                         <thead>
                             <tr>
                                 <th>シグナル日</th><th>コード</th><th>銘柄</th><th>判定</th><th>入口</th><th>過熱</th>
-                                <th>約定日</th><th>約定値</th><th>手仕舞い</th><th>損益(ネット)</th><th>TOPIX比</th><th>ルール出口</th><th>状況・材料</th>
+                                <th>約定日</th><th>約定値</th><th>決済日</th><th>決済値</th><th>出口理由</th><th>損益(OCO)</th><th>TOPIX比</th><th>参考:金曜</th><th>状況・材料</th>
                             </tr>
                         </thead>
                         <tbody id="trades-body"></tbody>
@@ -199,18 +199,19 @@ function render(r) {
     document.getElementById('week-label').textContent = `${r.week}（${r.start}〜${r.end}）`;
     const rr = r.review_rule || {};
     document.getElementById('rule-box').innerHTML =
-        `<i class="bi bi-info-circle me-1"></i><b>採点ルール：</b> ` +
-        `エントリーは <b>${esc(rr.entry)}</b>、手仕舞いは <b>${esc(rr.exit)}</b>、コストは <b>${esc(rr.cost)}</b>、比較は <b>${esc(rr.benchmark)}（TOPIX ETF）</b>。` +
+        `<i class="bi bi-info-circle me-1"></i><b>採点ルール（主指標＝OCO）：</b> ` +
+        `エントリーは <b>${esc(rr.entry)}</b>、出口は <b>${esc(rr.exit)}</b>、コストは <b>${esc(rr.cost)}</b>、比較は <b>${esc(rr.benchmark)}</b>。` +
+        (rr.exit_reference ? `<br><span class="muted-small">${esc(rr.exit_reference)}</span>` : '') +
         (rr.note ? `<br><span class="muted-small">${esc(rr.note)}</span>` : '');
 
-    // サマリカード
+    // サマリカード（主指標＝OCO。欄外で参考:金曜11:30）
     const cards = [
-        ['対象ピック', `${s.picks_total ?? '-'} 件`, `${s.n_filled ?? 0}約定 / ${s.n_not_filled ?? 0}見送り / ${s.n_no_data ?? 0}未評価`],
+        ['対象ピック', `${s.picks_total ?? '-'} 件`, `建玉${s.n_entered ?? '-'} / OCO確定${s.n_filled ?? 0} / 未確定${s.n_pending ?? 0} / 見送り${s.n_not_filled ?? 0}`],
         ['約定率', s.fill_rate != null ? (s.fill_rate * 100).toFixed(0) + '%' : '-', '押し目・ブレイク到達の割合'],
-        ['平均リターン', pct(s.avg_return_pct), `中央値 ${pct(s.median_return_pct)}`, cls(s.avg_return_pct)],
-        ['勝率', s.win_rate != null ? (s.win_rate * 100).toFixed(0) + '%' : '-', `${s.n_filled ?? 0}件中のプラス比率`],
-        ['TOPIX超過', pct(s.avg_excess_pct), `TOPIX平均 ${pct(s.avg_benchmark_pct)}`, cls(s.avg_excess_pct)],
-        ['ルール出口', pct(s.rule_avg_return_pct), `勝率 ${s.rule_win_rate != null ? (s.rule_win_rate*100).toFixed(0)+'%' : '-'}`],
+        ['平均リターン(OCO)', pct(s.avg_return_pct), `中央値 ${pct(s.median_return_pct)}`, cls(s.avg_return_pct)],
+        ['勝率(OCO)', s.win_rate != null ? (s.win_rate * 100).toFixed(0) + '%' : '-', `${s.n_filled ?? 0}件中のプラス比率`],
+        ['TOPIX超過(OCO)', pct(s.avg_excess_pct), `TOPIX平均 ${pct(s.avg_benchmark_pct)}`, cls(s.avg_excess_pct)],
+        ['参考: 金曜11:30', pct(s.avg_weekly_return_pct), `勝率 ${s.weekly_win_rate != null ? (s.weekly_win_rate*100).toFixed(0)+'%' : '-'}`, cls(s.avg_weekly_return_pct)],
     ];
     if (s.n_missed_evaluated) {
         cards.push(['見送り(成行比)', pct(s.missed_avg_pct), `上昇${s.missed_up_count}/下落${s.missed_down_count}件`, cls(s.missed_avg_pct)]);
@@ -251,6 +252,7 @@ function render(r) {
 
 function statusBadge(t) {
     if (t.status === 'filled') return '';
+    if (t.status === 'pending') return '<span class="badge bg-warning text-dark">未確定（来週確定）</span>';
     if (t.status === 'not_filled') return '<span class="badge bg-secondary">見送り（未約定）</span>';
     if (t.status === 'wait') return '<span class="badge bg-secondary">見送り指示</span>';
     return '<span class="badge bg-light text-dark border">翌営業日未到来</span>';
@@ -268,13 +270,14 @@ function renderTrades() {
     const showAll = document.getElementById('showUnfilled').checked;
     const rows = (CURRENT.trades || []).filter(t => showAll || t.status === 'filled');
     const body = document.getElementById('trades-body');
-    if (!rows.length) { body.innerHTML = '<tr><td colspan="13" class="text-muted p-3">該当する取引はありません。</td></tr>'; return; }
+    if (!rows.length) { body.innerHTML = '<tr><td colspan="15" class="text-muted p-3">該当する取引はありません。</td></tr>'; return; }
     body.innerHTML = rows.map(t => {
         const v = t.verdict || '';
         const vlabel = VL[v] || v || '-';
         const vcls = VCLS[v] || 'v-neutral';
         const rc = t.return_net_pct;
-        const rule = t.exit_rule ? `${esc(t.exit_rule.reason)} ${pct(t.exit_rule.return_net_pct)}` : '-';
+        const oco = t.exit_oco || {};
+        const wk = t.exit_weekly || {};
         if (t.status === 'filled') {
             return `<tr>
                 <td>${esc(t.signal_date)}</td>
@@ -285,10 +288,12 @@ function renderTrades() {
                 <td><span class="badge-oh ${esc(t.overheat_level||'')}">${esc(t.overheat_label || '-')}</span></td>
                 <td>${esc(t.fill_date)}</td>
                 <td>${yen(t.fill_price)}</td>
-                <td>${t.exit_weekly ? yen(t.exit_weekly.price) + ' <span class="muted-small">' + esc(t.exit_weekly.date) + '</span>' : '-'}</td>
+                <td>${esc(oco.date || '-')}</td>
+                <td>${yen(oco.price)}</td>
+                <td>${esc(oco.reason || '-')}</td>
                 <td class="fw-bold ${cls(rc)}">${pct(rc)}</td>
                 <td class="${cls(t.excess_pct)}">${pct(t.excess_pct)}</td>
-                <td class="muted-small">${rule}</td>
+                <td class="muted-small ${cls(t.return_weekly_pct)}">${pct(t.return_weekly_pct)}</td>
                 <td class="text-start">${snippet(t)}</td>
             </tr>`;
         }
@@ -299,11 +304,12 @@ function renderTrades() {
             <td><span class="badge-verdict ${vcls}">${esc(vlabel)}</span></td>
             <td>${esc(t.entry_type_label || t.entry_type || '-')}</td>
             <td><span class="badge-oh ${esc(t.overheat_level||'')}">${esc(t.overheat_label || '-')}</span></td>
-            <td colspan="7" class="text-muted">${statusBadge(t)}</td>
+            <td colspan="9" class="text-muted">${statusBadge(t)}</td>
         </tr>`;
     }).join('');
     document.getElementById('trades-note').innerHTML =
-        '※ 損益は手数料・スリッページ控除後。上昇＝<span class="pos">赤</span>／下落＝<span class="neg">青</span>。「ルール出口」はアプリのTP/SL・保有期限を適用した場合。' +
+        '※ 損益は手数料・スリッページ控除後。上昇＝<span class="pos">赤</span>／下落＝<span class="neg">青</span>。' +
+        '主指標「損益(OCO)」は利確/損切のOCOで決済した結果、「参考:金曜」は約定週の金曜11:30手仕舞いの結果。' +
         '「復元」はその日の保存スナップショットが無く、履歴とAIキャッシュから当時の候補を再現したものです。';
 }
 
@@ -388,7 +394,7 @@ function renderTopN(tn) {
         return `<tr>
             <td class="fw-bold">${s.n_per_day}</td>
             <td>${s.picks}</td>
-            <td>${s.n_filled}</td>
+            <td>${s.n_filled}${s.n_pending ? ' <span class="muted-small">(+' + s.n_pending + '未確定)</span>' : ''}</td>
             <td>${s.fill_rate != null ? (s.fill_rate*100).toFixed(0) + '%' : '-'}</td>
             <td class="fw-bold ${cls(s.avg_return_pct)}">${pct(s.avg_return_pct)}</td>
             <td class="${cls(s.median_return_pct)}">${pct(s.median_return_pct)}</td>

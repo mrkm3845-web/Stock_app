@@ -2,44 +2,41 @@
   "week": "2026-W38",
   "start": "2026-09-14",
   "end": "2026-09-18",
-  "generated_at": "2026-09-26T07:48:12",
+  "generated_at": "2026-09-26T17:03:12",
   "review_rule": {
-    "entry": "entry_plan通り（未到達は見送り）",
-    "exit": "約定週の金曜11:30（前場引け）に成行",
+    "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
+    "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
+    "exit_reference": "参考: 約定週の金曜11:30（前場引け）に成行（短期メトリクス）",
     "cost": "手数料0.050%+スリッページ0.1%",
-    "benchmark": "1306.T",
-    "note": "機械的な答え合わせであり、特定日の売買を強制するものではありません。実際の売買は資金・時間に合わせて調整してください。"
+    "benchmark": "1306.T（TOPIX ETF。約定日寄り→OCO決済日終値）",
+    "note": "OCO主指標は最大保有日数（7〜20営業日）で確定するため、直近週は未確定が多くなります（翌週以降に順次確定）。短期的な参考として金曜11:30手仕舞いを併記。機械的な答え合わせであり、特定日の売買を強制するものではありません。"
   },
   "summary": {
     "picks_total": 22,
-    "n_filled": 21,
+    "n_filled": 0,
     "n_not_filled": 1,
+    "n_pending": 21,
     "n_no_data": 0,
-    "fill_rate": 0.955,
-    "avg_return_pct": -0.205,
-    "median_return_pct": -0.376,
-    "win_rate": 0.381,
-    "avg_benchmark_pct": -0.325,
-    "avg_excess_pct": 0.12,
-    "beat_benchmark_rate": 0.667,
-    "rule_avg_return_pct": -0.575,
-    "rule_win_rate": 0.381,
+    "n_entered": 21,
+    "fill_rate": 0.0,
+    "avg_return_pct": null,
+    "median_return_pct": null,
+    "win_rate": null,
+    "avg_benchmark_pct": null,
+    "avg_excess_pct": null,
+    "beat_benchmark_rate": null,
+    "rule_avg_return_pct": null,
+    "rule_win_rate": null,
+    "avg_weekly_return_pct": -0.205,
+    "weekly_win_rate": 0.381,
     "n_missed_evaluated": 1,
     "missed_avg_pct": 0.294,
     "missed_up_count": 1,
     "missed_down_count": 0,
     "missed_up_avg_pct": 0.294,
     "missed_down_avg_pct": null,
-    "best": {
-      "code": "1379",
-      "name": "ホクト",
-      "return_net_pct": 1.5609
-    },
-    "worst": {
-      "code": "1605",
-      "name": "ＩＮＰＥＸ",
-      "return_net_pct": -2.2159
-    }
+    "best": null,
+    "worst": null
   },
   "trades": [
     {
@@ -71,25 +68,22 @@
       },
       "fill_date": "2026-09-15",
       "fill_price": 3542.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3594.0,
-        "return_gross_pct": 1.4681,
-        "return_net_pct": 1.1641
+        "return_net_pct": 1.1641,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 3580.0,
-        "reason": "保有期限",
-        "return_net_pct": 0.7701
-      },
-      "return_gross_pct": 1.4681,
-      "return_net_pct": 1.1641,
-      "return_rule_pct": 0.7701,
-      "benchmark_pct": 0.1953,
-      "excess_pct": 0.9688,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": 1.1641,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -123,25 +117,22 @@
       },
       "fill_date": "2026-09-15",
       "fill_price": 2090.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 2129.0,
-        "return_gross_pct": 1.866,
-        "return_net_pct": 1.5609
+        "return_net_pct": 1.5609,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 2125.0,
-        "reason": "保有期限",
-        "return_net_pct": 1.3701
-      },
-      "return_gross_pct": 1.866,
-      "return_net_pct": 1.5609,
-      "return_rule_pct": 1.3701,
-      "benchmark_pct": 0.1953,
-      "excess_pct": 1.3656,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": 1.5609,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -175,25 +166,22 @@
       },
       "fill_date": "2026-09-15",
       "fill_price": 4710.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 4705.0,
-        "return_gross_pct": -0.1062,
-        "return_net_pct": -0.4054
+        "return_net_pct": -0.4054,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 4715.0,
-        "reason": "保有期限",
-        "return_net_pct": -0.1937
-      },
-      "return_gross_pct": -0.1062,
-      "return_net_pct": -0.4054,
-      "return_rule_pct": -0.1937,
-      "benchmark_pct": 0.1953,
-      "excess_pct": -0.6007,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -0.4054,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -227,25 +215,22 @@
       },
       "fill_date": "2026-09-15",
       "fill_price": 1266.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 1263.5,
-        "return_gross_pct": -0.1975,
-        "return_net_pct": -0.4964
+        "return_net_pct": -0.4964,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 1265.5,
-        "reason": "保有期限",
-        "return_net_pct": -0.3389
-      },
-      "return_gross_pct": -0.1975,
-      "return_net_pct": -0.4964,
-      "return_rule_pct": -0.3389,
-      "benchmark_pct": 0.1953,
-      "excess_pct": -0.6917,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -0.4964,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -279,25 +264,22 @@
       },
       "fill_date": "2026-09-15",
       "fill_price": 3932.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3929.0,
-        "return_gross_pct": -0.0763,
-        "return_net_pct": -0.3756
+        "return_net_pct": -0.3756,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 3857.0,
-        "reason": "保有期限",
-        "return_net_pct": -2.2013
-      },
-      "return_gross_pct": -0.0763,
-      "return_net_pct": -0.3756,
-      "return_rule_pct": -2.2013,
-      "benchmark_pct": 0.1953,
-      "excess_pct": -0.5709,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -0.3756,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -331,25 +313,22 @@
       },
       "fill_date": "2026-09-16",
       "fill_price": 3544.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3594.0,
-        "return_gross_pct": 1.4108,
-        "return_net_pct": 1.1071
+        "return_net_pct": 1.1071,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 3580.0,
-        "reason": "保有期限",
-        "return_net_pct": 0.7132
-      },
-      "return_gross_pct": 1.4108,
-      "return_net_pct": 1.1071,
-      "return_rule_pct": 0.7132,
-      "benchmark_pct": 0.2427,
-      "excess_pct": 0.8644,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": 1.1071,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -383,25 +362,22 @@
       },
       "fill_date": "2026-09-16",
       "fill_price": 2100.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 2129.0,
-        "return_gross_pct": 1.381,
-        "return_net_pct": 1.0773
+        "return_net_pct": 1.0773,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 2125.0,
-        "reason": "保有期限",
-        "return_net_pct": 0.8874
-      },
-      "return_gross_pct": 1.381,
-      "return_net_pct": 1.0773,
-      "return_rule_pct": 0.8874,
-      "benchmark_pct": 0.2427,
-      "excess_pct": 0.8346,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": 1.0773,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -435,25 +411,22 @@
       },
       "fill_date": "2026-09-16",
       "fill_price": 4650.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 4705.0,
-        "return_gross_pct": 1.1828,
-        "return_net_pct": 0.8797
+        "return_net_pct": 0.8797,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 4715.0,
-        "reason": "保有期限",
-        "return_net_pct": 1.0941
-      },
-      "return_gross_pct": 1.1828,
-      "return_net_pct": 0.8797,
-      "return_rule_pct": 1.0941,
-      "benchmark_pct": 0.2427,
-      "excess_pct": 0.637,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": 0.8797,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -487,25 +460,22 @@
       },
       "fill_date": "2026-09-16",
       "fill_price": 1278.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 1263.5,
-        "return_gross_pct": -1.1346,
-        "return_net_pct": -1.4307
+        "return_net_pct": -1.4307,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 1265.5,
-        "reason": "保有期限",
-        "return_net_pct": -1.2747
-      },
-      "return_gross_pct": -1.1346,
-      "return_net_pct": -1.4307,
-      "return_rule_pct": -1.2747,
-      "benchmark_pct": 0.2427,
-      "excess_pct": -1.6734,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -1.4307,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -539,25 +509,22 @@
       },
       "fill_date": "2026-09-16",
       "fill_price": 4006.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3929.0,
-        "return_gross_pct": -1.9221,
-        "return_net_pct": -2.2159
+        "return_net_pct": -2.2159,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 3857.0,
-        "reason": "保有期限",
-        "return_net_pct": -4.0078
-      },
-      "return_gross_pct": -1.9221,
-      "return_net_pct": -2.2159,
-      "return_rule_pct": -4.0078,
-      "benchmark_pct": 0.2427,
-      "excess_pct": -2.4586,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -2.2159,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -591,25 +558,22 @@
       },
       "fill_date": "2026-09-17",
       "fill_price": 3587.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3594.0,
-        "return_gross_pct": 0.1951,
-        "return_net_pct": -0.105
+        "return_net_pct": -0.105,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 3580.0,
-        "reason": "保有期限",
-        "return_net_pct": -0.4941
-      },
-      "return_gross_pct": 0.1951,
-      "return_net_pct": -0.105,
-      "return_rule_pct": -0.4941,
-      "benchmark_pct": -0.65,
-      "excess_pct": 0.545,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -0.105,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -643,25 +607,22 @@
       },
       "fill_date": "2026-09-17",
       "fill_price": 2112.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 2129.0,
-        "return_gross_pct": 0.8049,
-        "return_net_pct": 0.503
+        "return_net_pct": 0.503,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 2125.0,
-        "reason": "保有期限",
-        "return_net_pct": 0.3141
-      },
-      "return_gross_pct": 0.8049,
-      "return_net_pct": 0.503,
-      "return_rule_pct": 0.3141,
-      "benchmark_pct": -0.65,
-      "excess_pct": 1.153,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": 0.503,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -695,25 +656,22 @@
       },
       "fill_date": "2026-09-17",
       "fill_price": 4700.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 4705.0,
-        "return_gross_pct": 0.1064,
-        "return_net_pct": -0.1935
+        "return_net_pct": -0.1935,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 4715.0,
-        "reason": "保有期限",
-        "return_net_pct": 0.0186
-      },
-      "return_gross_pct": 0.1064,
-      "return_net_pct": -0.1935,
-      "return_rule_pct": 0.0186,
-      "benchmark_pct": -0.65,
-      "excess_pct": 0.4565,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -0.1935,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -747,25 +705,22 @@
       },
       "fill_date": "2026-09-17",
       "fill_price": 1284.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 1263.5,
-        "return_gross_pct": -1.5966,
-        "return_net_pct": -1.8913
+        "return_net_pct": -1.8913,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 1265.5,
-        "reason": "保有期限",
-        "return_net_pct": -1.736
-      },
-      "return_gross_pct": -1.5966,
-      "return_net_pct": -1.8913,
-      "return_rule_pct": -1.736,
-      "benchmark_pct": -0.65,
-      "excess_pct": -1.2413,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -1.8913,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -799,25 +754,22 @@
       },
       "fill_date": "2026-09-17",
       "fill_price": 3939.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3929.0,
-        "return_gross_pct": -0.2539,
-        "return_net_pct": -0.5527
+        "return_net_pct": -0.5527,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 3857.0,
-        "reason": "保有期限",
-        "return_net_pct": -2.3751
-      },
-      "return_gross_pct": -0.2539,
-      "return_net_pct": -0.5527,
-      "return_rule_pct": -2.3751,
-      "benchmark_pct": -0.65,
-      "excess_pct": 0.0973,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -0.5527,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -851,25 +803,22 @@
       },
       "fill_date": "2026-09-18",
       "fill_price": 3624.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3594.0,
-        "return_gross_pct": -0.8278,
-        "return_net_pct": -1.1249
+        "return_net_pct": -1.1249,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 3580.0,
-        "reason": "保有期限",
-        "return_net_pct": -1.51
-      },
-      "return_gross_pct": -0.8278,
-      "return_net_pct": -1.1249,
-      "return_rule_pct": -1.51,
-      "benchmark_pct": -1.2057,
-      "excess_pct": 0.0808,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -1.1249,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -903,25 +852,22 @@
       },
       "fill_date": "2026-09-18",
       "fill_price": 2138.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 2129.0,
-        "return_gross_pct": -0.421,
-        "return_net_pct": -0.7192
+        "return_net_pct": -0.7192,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 2125.0,
-        "reason": "保有期限",
-        "return_net_pct": -0.9058
-      },
-      "return_gross_pct": -0.421,
-      "return_net_pct": -0.7192,
-      "return_rule_pct": -0.9058,
-      "benchmark_pct": -1.2057,
-      "excess_pct": 0.4865,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -0.7192,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -955,25 +901,22 @@
       },
       "fill_date": "2026-09-18",
       "fill_price": 4735.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 4705.0,
-        "return_gross_pct": -0.6336,
-        "return_net_pct": -0.9312
+        "return_net_pct": -0.9312,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 4715.0,
-        "reason": "保有期限",
-        "return_net_pct": -0.7207
-      },
-      "return_gross_pct": -0.6336,
-      "return_net_pct": -0.9312,
-      "return_rule_pct": -0.7207,
-      "benchmark_pct": -1.2057,
-      "excess_pct": 0.2745,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -0.9312,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -1007,25 +950,22 @@
       },
       "fill_date": "2026-09-18",
       "fill_price": 1255.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 1263.5,
-        "return_gross_pct": 0.6773,
-        "return_net_pct": 0.3757
+        "return_net_pct": 0.3757,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 1265.5,
-        "reason": "保有期限",
-        "return_net_pct": 0.5346
-      },
-      "return_gross_pct": 0.6773,
-      "return_net_pct": 0.3757,
-      "return_rule_pct": 0.5346,
-      "benchmark_pct": -1.2057,
-      "excess_pct": 1.5814,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": 0.3757,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -1059,25 +999,22 @@
       },
       "fill_date": "2026-09-18",
       "fill_price": 3903.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3929.0,
-        "return_gross_pct": 0.6662,
-        "return_net_pct": 0.3646
+        "return_net_pct": 0.3646,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 3857.0,
-        "reason": "保有期限",
-        "return_net_pct": -1.4746
-      },
-      "return_gross_pct": 0.6662,
-      "return_net_pct": 0.3646,
-      "return_rule_pct": -1.4746,
-      "benchmark_pct": -1.2057,
-      "excess_pct": 1.5703,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": 0.3646,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -1112,11 +1049,13 @@
       "fill_date": null,
       "fill_price": null,
       "status": "not_filled",
+      "exit_oco": null,
       "exit_weekly": null,
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
+      "return_weekly_pct": null,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -1153,25 +1092,22 @@
       },
       "fill_date": "2026-09-24",
       "fill_price": 1655.0,
-      "status": "filled",
+      "status": "pending",
+      "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-25",
         "price": 1645.0,
-        "return_gross_pct": -0.6042,
-        "return_net_pct": -0.902
+        "return_net_pct": -0.902,
+        "source": "intraday_1130"
       },
-      "exit_rule": {
-        "date": "2026-09-25",
-        "price": 1651.0,
-        "reason": "保有期限",
-        "return_net_pct": -0.5405
-      },
-      "return_gross_pct": -0.6042,
-      "return_net_pct": -0.902,
-      "return_rule_pct": -0.5405,
-      "benchmark_pct": 0.2602,
-      "excess_pct": -1.1622,
-      "exit_price_source": "intraday_1130",
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": -0.902,
+      "benchmark_pct": null,
+      "excess_pct": null,
+      "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
       "missed_exit_date": null
@@ -5142,145 +5078,69 @@
     "1": {
       "n_per_day": 1,
       "picks": 5,
-      "n_filled": 4,
-      "fill_rate": 0.8,
-      "avg_return_pct": 0.26,
-      "median_return_pct": 0.501,
-      "win_rate": 0.5,
-      "avg_excess_pct": 0.615,
-      "best": {
-        "code": "1417",
-        "name": "ミライト・ワン",
-        "return_net_pct": 1.1641
-      },
-      "worst": {
-        "code": "1417",
-        "name": "ミライト・ワン",
-        "return_net_pct": -1.1249
-      }
+      "n_filled": 0,
+      "n_pending": 4,
+      "fill_rate": 0.0,
+      "avg_return_pct": null,
+      "median_return_pct": null,
+      "win_rate": null,
+      "avg_excess_pct": null,
+      "best": null,
+      "worst": null
     },
     "3": {
       "n_per_day": 3,
       "picks": 14,
-      "n_filled": 13,
-      "fill_rate": 0.929,
-      "avg_return_pct": 0.147,
-      "median_return_pct": -0.105,
-      "win_rate": 0.462,
-      "avg_excess_pct": 0.454,
-      "best": {
-        "code": "1379",
-        "name": "ホクト",
-        "return_net_pct": 1.5609
-      },
-      "worst": {
-        "code": "1417",
-        "name": "ミライト・ワン",
-        "return_net_pct": -1.1249
-      }
+      "n_filled": 0,
+      "n_pending": 13,
+      "fill_rate": 0.0,
+      "avg_return_pct": null,
+      "median_return_pct": null,
+      "win_rate": null,
+      "avg_excess_pct": null,
+      "best": null,
+      "worst": null
     },
     "5": {
       "n_per_day": 5,
       "picks": 22,
-      "n_filled": 21,
-      "fill_rate": 0.955,
-      "avg_return_pct": -0.205,
-      "median_return_pct": -0.376,
-      "win_rate": 0.381,
-      "avg_excess_pct": 0.12,
-      "best": {
-        "code": "1379",
-        "name": "ホクト",
-        "return_net_pct": 1.5609
-      },
-      "worst": {
-        "code": "1605",
-        "name": "ＩＮＰＥＸ",
-        "return_net_pct": -2.2159
-      }
+      "n_filled": 0,
+      "n_pending": 21,
+      "fill_rate": 0.0,
+      "avg_return_pct": null,
+      "median_return_pct": null,
+      "win_rate": null,
+      "avg_excess_pct": null,
+      "best": null,
+      "worst": null
     }
   },
   "breakdown": {
-    "by_entry_type": {
-      "追いかけ": {
-        "n": 21,
-        "avg": -0.205,
-        "median": -0.376,
-        "win_rate": 0.381
-      }
-    },
-    "by_overheat": {
-      "低": {
-        "n": 21,
-        "avg": -0.205,
-        "median": -0.376,
-        "win_rate": 0.381
-      }
-    },
-    "by_sector": {
-      "建設業": {
-        "n": 8,
-        "avg": -0.3,
-        "median": -0.301,
-        "win_rate": 0.375
-      },
-      "水産・農林業": {
-        "n": 8,
-        "avg": 0.221,
-        "median": 0.155,
-        "win_rate": 0.5
-      },
-      "鉱業": {
-        "n": 4,
-        "avg": -0.695,
-        "median": -0.464,
-        "win_rate": 0.25
-      },
-      "サービス業": {
-        "n": 1,
-        "avg": -0.902,
-        "median": -0.902,
-        "win_rate": 0.0
-      }
-    },
-    "by_verdict": {
-      "スコア順": {
-        "n": 20,
-        "avg": -0.17,
-        "median": -0.285,
-        "win_rate": 0.4
-      },
-      "推奨": {
-        "n": 1,
-        "avg": -0.902,
-        "median": -0.902,
-        "win_rate": 0.0
-      }
-    }
+    "by_entry_type": {},
+    "by_overheat": {},
+    "by_sector": {},
+    "by_verdict": {}
   },
   "notes": [
+    "未確定（データ不足で来週確定）が 21件あります。翌週のレビューで確定します。",
     "見送り 1件を成行追随していたら平均 +0.29%（機会損失）。うち上昇 1件（平均 +0.29%）/ 下落 0件（平均 +0.00%）。",
-    "推奨の平均リターンは -0.20% で、TOPIX（-0.33%）を上回りました。",
-    "スコアとリターンの関係はほぼ中立でした（順位相関 +0.06）。",
-    "AIの「推奨」は「様子見」に平均 0.49% 劣後しました。",
-    "エントリー「追いかけ」は 21件・平均 -0.20%。",
-    "過熱度「低」は 21件・平均 -0.20%。"
+    "OCO決済が未確定です（最大保有日数に未到達）。翌週以降のレビューで確定します。"
   ],
   "actions": [
-    "過熱度『低』（121件・平均-0.439%）は 減点 +0.00。"
+    "過熱度『低』（63件・平均-1.322%）は 減点 +0.00。"
   ],
   "feedback": {
     "enabled": true,
     "window_weeks": 6,
-    "n_filled": 121,
-    "baseline_avg_pct": -0.439,
+    "n_filled": 63,
+    "baseline_avg_pct": -1.322,
     "overheat_delta": {
       "low": 0.0
     },
     "overheat_stats": {
       "low": {
-        "n": 121,
-        "avg": -0.439
+        "n": 63,
+        "avg": -1.322
       }
     },
     "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"

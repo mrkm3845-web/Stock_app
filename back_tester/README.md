@@ -159,10 +159,11 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **エントリー**: `entry_plan` 通り。
   - `breakout_chase` / `probe_only`: 買いストップ。翌日以降 `entry_wait_days` 内に `entry_price` へ到達で約定（窓開けは始値）。現在値近辺なら翌日寄成扱い。
   - `pullback_wait`: `entry_zone_high` への押し目指値。未到達は**見送り**（勝率の分母から除外し、約定率を別集計）。
-- **手仕舞い**: 約定日を含む週の**金曜11:30（前場引け）に成行**。「昼」は取引不可のため前場引けで代用。
+- **手仕舞い（主指標＝実行ルール／OCO）**: 約定直後に **OCO（利確=指値 `tp_price`／損切=逆指値 `sl_price`）** を置き、到達で自動決済。同日両到達は**損切優先**。未到達は**最大保有日数（`price_tiers`：7/14/20営業日）の引け**で決済。
+- **参考（短期）**: 約定週の**金曜11:30（前場引け）に成行**。「昼」は取引不可のため前場引けで代用。
+- **未確定（pending）**: OCOは保有が最大20営業日に及ぶため、直近週は未確定が多くなる。翌週以降に再採点して確定（**持ち越し採点 `carryover_weeks=5`**）。
 - **コスト**: 手数料0.05%＋スリッページ0.1%（既存バックテストと同率）。上昇＝赤／下落＝青。
-- **参考**: アプリのルール出口（TP/SL/最大保有日数、同日両到達は損切り優先）を適用した結果も併記。
-- **ベンチマーク**: `1306.T`（TOPIX ETF）の同区間リターン。
+- **ベンチマーク**: `1306.T`（TOPIX ETF。約定日寄り→OCO決済日終値）。
 
 ### 8-2. 出力指標
 - 約定率・勝率・平均/中央リターン・TOPIX超過・`recommend` vs `watch`。
@@ -178,7 +179,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 
 ### 8-4. 実行
 ```bash
-# 既定（先週＋今週の2週を採点。金曜シグナルを翌週に確定させる）
+# 既定（直近5週を採点。OCOの確定と金曜シグナルの持ち越しを翌週以降に反映）
 python back_tester/weekly_review.py
 # 対象週を指定
 python back_tester/weekly_review.py --week 2026-W39
@@ -187,12 +188,12 @@ python back_tester/weekly_review.py --all
 ```
 CI は [`weekly_review.yml`](../.github/workflows/weekly_review.yml) が**毎週 土曜 09:00 JST**（`workflow_dispatch` で週指定・全週遡及も可）。
 
-> **持ち越し採点（carryover_weeks=2）**: 金曜シグナルは翌週に約定・手仕舞いするため、土曜時点では未確定
-> （＝「未評価」）。毎回**先週分も再採点**して確定させることで、金曜シグナルや週をまたぐ押し目約定の
-> 取りこぼしを防ぐ。各週のレポートは自己完結なので二重計上は起きない。
+> **持ち越し採点（carryover_weeks=5）**: 金曜シグナルは翌週に約定し、OCOは最大20営業日保有するため、
+> 土曜時点では未確定（pending）になり得る。毎回**直近5週を再採点**して確定させ、取りこぼしを防ぐ。
+> 各週のレポートは自己完結なので二重計上は起きない。
 
 ### 8-5. 還元（結果をランキングへ反映）
-- **Phase B（実装済み）**: 直近N週の実績から**過熱度別のスコア補正量**を計算し、`docs/strategy_params.json` の `weekly_feedback` に書き込む。`main8.py` は `enabled=true` のとき `score + overheat_delta` で並び順を補正する。
+- **Phase B（実装済み）**: 直近N週の実績（**OCO＝実行ルールのリターン**）から**過熱度別のスコア補正量**を計算し、`docs/strategy_params.json` の `weekly_feedback` に書き込む。`main8.py` は `enabled=true` のとき `score + overheat_delta` で並び順を補正する。
   - 過学習防止: **縮小推定**（`n/(n+k)`）＋**上限クランプ**（`feedback_max_delta`、既定±3）＋**最低サンプル**（`feedback_min_group_trades`、既定8件/群）。群が少ない/偏る間は補正0（観測のみ）。
   - 透明性: `docs/weekly/feedback.json` に補正の根拠（群別の件数・平均・delta）を出力し、画面の「来週の作戦」に表示。
 - **Phase C（将来）**: 十分なサンプルが貯まったら、月次バックテストと同様のガード付きで `entry_guard`・スコア重みへ拡張。

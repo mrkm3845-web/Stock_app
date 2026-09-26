@@ -162,7 +162,7 @@
     "slippage_rate": 0.001,
     "top_k_ranking": 10,
     "benchmark_ticker": "1306.T",
-    "carryover_weeks": 2,
+    "carryover_weeks": 5,
     "top_n_review": [
       1,
       3,
@@ -177,7 +177,7 @@
   },
   "weekly_feedback": {
     "enabled": true,
-    "generated_at": "2026-09-26T07:48:12",
+    "generated_at": "2026-09-26T17:03:13",
     "window_weeks": 6,
     "weeks": [
       "2026-W39",
@@ -187,15 +187,15 @@
       "2026-W35",
       "2026-W34"
     ],
-    "n_filled": 121,
-    "baseline_avg_pct": -0.439,
+    "n_filled": 63,
+    "baseline_avg_pct": -1.322,
     "overheat_delta": {
       "low": 0.0
     },
     "overheat_stats": {
       "low": {
-        "n": 121,
-        "avg": -0.439
+        "n": 63,
+        "avg": -1.322
       }
     },
     "max_delta": 3.0,
