@@ -17,6 +17,7 @@ main7（技術スコア + AI戦略提言）を統合した単一エントリポ�
 """
 
 import argparse
+import gzip
 import io
 import json
 import logging
@@ -1265,8 +1266,39 @@ def save_earnings_json(earnings_map, target_date):
     return data
 
 
+def _write_history_file(base_noext, payload_obj):
+    """日別JSONを gzip 保存する（検証つき）。検証失敗時は平文 .json にフォールバック。
+
+    容量対策。読み手（フロント/週次）は .json.gz 優先＋.json フォールバックで読む。
+    """
+    gz_path = base_noext + ".json.gz"
+    plain_path = base_noext + ".json"
+    try:
+        raw = json.dumps(payload_obj, ensure_ascii=False).encode("utf-8")
+        blob = gzip.compress(raw, compresslevel=6)
+        with open(gz_path, "wb") as f:
+            f.write(blob)
+        # 検証: 解凍して JSON として読めるか（壊れた .gz を残さない）
+        with open(gz_path, "rb") as f:
+            back = gzip.decompress(f.read())
+        json.loads(back.decode("utf-8"))
+        if os.path.exists(plain_path):
+            os.remove(plain_path)
+        return "gz"
+    except Exception as e:
+        print(f">> ⚠️ gzip保存に失敗。平文で保存します: {e}")
+        try:
+            if os.path.exists(gz_path):
+                os.remove(gz_path)
+        except OSError:
+            pass
+        with open(plain_path, "w", encoding="utf-8") as f:
+            json.dump(payload_obj, f, ensure_ascii=False)
+        return "plain"
+
+
 def _prune_history(keep_days):
-    """古い日別JSONを削除して保持期間を制限する（リポジトリ/Pages容量対策）。
+    """古い日別JSON(.json/.json.gz)を削除して保持期間を制限する（容量対策）。
 
     週次レビューが遡るのは最大5週のため、既定90営業日で十分。
     バックテストは docs/history を参照しない（独自キャッシュを使用）。
@@ -1278,28 +1310,30 @@ def _prune_history(keep_days):
     if keep_days <= 0:
         return
     cutoff = (_jst_now().date() - timedelta(days=keep_days))
-    removed = []
-    retained = []
+    removed = 0
+    retained = set()
     for name in os.listdir(HISTORY_DIR):
-        if not re.match(r"^\d{4}-\d{2}-\d{2}\.json$", name):
+        m = re.match(r"^(\d{4}-\d{2}-\d{2})\.json(\.gz)?$", name)
+        if not m:
             continue
+        date_str = m.group(1)
         try:
-            d = datetime.strptime(name[:-5], "%Y-%m-%d").date()
+            d = datetime.strptime(date_str, "%Y-%m-%d").date()
         except ValueError:
             continue
         if d < cutoff:
             try:
                 os.remove(os.path.join(HISTORY_DIR, name))
-                removed.append(name[:-5])
+                removed += 1
             except OSError:
                 pass
         else:
-            retained.append(name[:-5])
+            retained.add(date_str)
     if removed:
-        retained.sort(reverse=True)
+        retained_sorted = sorted(retained, reverse=True)
         with open(os.path.join(HISTORY_DIR, "dates.json"), "w", encoding="utf-8") as f:
-            json.dump(retained, f, ensure_ascii=False)
-        print(f">> 古い日別JSONを削除: {len(removed)}件（保持 {keep_days}日）")
+            json.dump(retained_sorted, f, ensure_ascii=False)
+        print(f">> 古い日別JSONを削除: {removed}件（保持 {keep_days}日）")
 
 
 def save_history_json(all_stocks, target_date, regime=None, portfolio=None, keep_days=None):
@@ -1310,9 +1344,10 @@ def save_history_json(all_stocks, target_date, regime=None, portfolio=None, keep
         item = {k: v for k, v in s.items()}
         serializable.append(item)
 
-    for filename in [f"{target_date}.json", "latest.json"]:
-        with open(os.path.join(HISTORY_DIR, filename), "w", encoding="utf-8") as f:
-            json.dump(serializable, f, ensure_ascii=False)
+    modes = []
+    for base_noext in (os.path.join(HISTORY_DIR, target_date), os.path.join(HISTORY_DIR, "latest")):
+        modes.append(_write_history_file(base_noext, serializable))
+    print(f">> 日別JSONを保存（{','.join(modes)}）")
 
     dates_file = os.path.join(HISTORY_DIR, "dates.json")
     existing_dates = []
@@ -1332,7 +1367,7 @@ def save_history_json(all_stocks, target_date, regime=None, portfolio=None, keep
     with open(os.path.join(HISTORY_DIR, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False)
 
-    print(f">> 日別JSON (docs/history/{target_date}.json) と meta.json を保存しました。")
+    print(f">> 日別履歴 (docs/history/{target_date}.json[.gz]) と meta.json を保存しました。")
     _prune_history(keep_days)
 
 

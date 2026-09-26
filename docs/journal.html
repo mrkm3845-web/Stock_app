@@ -836,10 +836,30 @@
             });
         }
 
+        async function fetchHistoryJson(baseNoExt) {
+            // 容量対策で履歴は .json.gz（gzip）の場合がある。無ければ .json にフォールバック。
+            try {
+                const res = await fetch(baseNoExt + '.json.gz', { cache: 'no-store' });
+                if (res.ok) {
+                    const buf = await res.arrayBuffer();
+                    // 1) gzipとして解凍を試す（Pagesが生の.gzを配信する場合）
+                    try {
+                        const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'));
+                        return JSON.parse(await new Response(stream).text());
+                    } catch (e1) {
+                        // 2) サーバがContent-Encodingで既に解凍済みの場合
+                        try { return JSON.parse(new TextDecoder('utf-8').decode(buf)); } catch (e2) { /* fallthrough */ }
+                    }
+                }
+            } catch (e) { /* フォールバックへ */ }
+            const res2 = await fetch(baseNoExt + '.json', { cache: 'no-store' });
+            if (!res2.ok) throw new Error('history not found: ' + baseNoExt);
+            return await res2.json();
+        }
+
         async function loadLatestPrices() {
             try {
-                const res = await fetch('history/latest.json');
-                const stocks = await res.json();
+                const stocks = await fetchHistoryJson('history/latest');
                 stocks.forEach(s => { LATEST_STOCKS_MAP[s.code] = s; });
             } catch (e) {
                 console.log("Latest prices load fallback");

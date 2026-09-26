@@ -30,6 +30,7 @@ weekly_review.py
 """
 
 import argparse
+import gzip
 import json
 import math
 import os
@@ -149,15 +150,23 @@ def _clean(x):
 
 
 # --------------------------------------------------------------------------- データ読込
+def _read_json_maybe_gz(base_path):
+    """`<base>.json.gz` を優先し、無ければ `<base>.json` を読む（二重対応）。"""
+    for p in (base_path + ".json.gz", base_path + ".json"):
+        if os.path.exists(p):
+            try:
+                with open(p, "rb") as f:
+                    raw = f.read()
+                if p.endswith(".gz"):
+                    raw = gzip.decompress(raw)
+                return json.loads(raw.decode("utf-8"))
+            except Exception:
+                return None
+    return None
+
+
 def load_history(date_str):
-    path = os.path.join(HISTORY_DIR, f"{date_str}.json")
-    if not os.path.exists(path):
-        return None
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return None
+    return _read_json_maybe_gz(os.path.join(HISTORY_DIR, date_str))
 
 
 def load_snapshot(date_str):
@@ -1205,7 +1214,7 @@ def _cand_from_pick(p, hist):
 def _load_latest_candidates(params, limit):
     """金曜時点の最新候補を返す（AI推奨 → スコア上位プールの順、重複除去）。"""
     rec = _load_json(RECOMMENDATIONS_PATH)
-    hist = _load_json(os.path.join(HISTORY_DIR, "latest.json")) or []
+    hist = _read_json_maybe_gz(os.path.join(HISTORY_DIR, "latest")) or []
     hist_by_code = {r.get("code"): r for r in hist if r.get("code")}
     based = (rec or {}).get("date")
     if not based:
