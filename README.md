@@ -14,9 +14,9 @@
 | :--- | :--- |
 | [`main8.py`](main8.py) | 現行スクリーナー（Stage1 技術スコア → Stage2 AI 順位付け） |
 | [`common/`](common/) | 共通モジュール（特徴量・スコア・パラメータ読込） |
-| [`docs/`](docs/) | フロント（`index.html` / `journal.html` / `guide.html`）と出力JSON・`strategy_params.json` |
-| [`back_tester/`](back_tester/) | ローリングウォークフォワード検証・シグナル研究・自動反映 |
-| [`.github/workflows/`](.github/workflows/) | 技術スクリーニング（平日5回）／AI分析（20:17 JST）／バックテスト（月次）／Discord通知（AI実行時） |
+| [`docs/`](docs/) | フロント（`index.html` / `journal.html` / `weekly.html` / `guide.html`）と出力JSON・`strategy_params.json` |
+| [`back_tester/`](back_tester/) | ローリングウォークフォワード検証・シグナル研究・週次答え合わせ・自動反映 |
+| [`.github/workflows/`](.github/workflows/) | 技術スクリーニング（平日5回）／AI分析（20:17 JST）／バックテスト（月次）／週次答え合わせ（土曜09:00）／Discord通知（AI実行時） |
 
 ---
 
@@ -37,13 +37,16 @@
 
 ```bash
 # スクリーナー（技術のみ）
-uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python main8.py
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd --with pandas_market_calendars python main8.py
 
 # スクリーナー（AI分析）
-uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python main8.py --ai
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd --with pandas_market_calendars python main8.py --ai
 
 # バックテスト
 uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python back_tester/backtest_rolling_walkforward.py
+
+# 週次答え合わせ（その週の推奨がどうなったかを採点）
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with pandas_market_calendars python back_tester/weekly_review.py
 ```
 
 実行方法・出力・既知の制約・残タスクは [`PROJECT_STATUS.md`](PROJECT_STATUS.md) を参照してください。

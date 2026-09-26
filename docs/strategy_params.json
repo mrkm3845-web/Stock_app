@@ -153,5 +153,17 @@
     "news_source": "gnews",
     "news_days": 14,
     "news_max": 5
+  },
+  "weekly_review": {
+    "enabled": true,
+    "exit_weekday": 4,
+    "exit_time": "11:30",
+    "fee_rate": 0.0005,
+    "slippage_rate": 0.001,
+    "top_k_ranking": 10,
+    "benchmark_ticker": "1306.T",
+    "feedback_enabled": false,
+    "feedback_min_weeks": 4,
+    "feedback_min_trades": 30
   }
 }

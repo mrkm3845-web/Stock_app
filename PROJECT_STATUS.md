@@ -12,6 +12,7 @@
 - 日本株スクリーナー（プライム+スタンダード 約3,100銘柄）。全銘柄をスキャン → **スコア上位40を候補に AI（Gemini/DeepSeek 切替可）が順位付け** → 「推奨/様子見」を提示。AI入力には **Google News RSS の材料**を注入。
 - **スコアは Phase 2 の「トレンド合成」**（52週高値位置・200日線乖離・200日線傾き・120日リターン）。
 - バックテストは**同一リポジトリ内の [`back_tester/`](back_tester/)**。**毎月 第1土曜にガード付きで `docs/strategy_params.json` へ自動反映**。
+- **週次答え合わせ** [`back_tester/weekly_review.py`](back_tester/weekly_review.py) を新設。日々の推奨・技術上位を1週間（月〜金）単位で実際の値動きと突き合わせ、**毎週 土曜09:00 JSTに `docs/weekly.html` へ自動生成**。
 - フロントは GitHub Pages（[`docs/index.html`](docs/index.html) / [`docs/journal.html`](docs/journal.html)）。
 - ワークフローは3本（技術スクリーニング / AI分析 / バックテスト）。
 
@@ -33,15 +34,19 @@ Stock_app/
 │   ├── strategy_params.json      # 単一情報源（バックテストが自動更新）
 │   ├── history/                  # 日次データ（{date}.json / latest.json / meta.json / dates.json）
 │   ├── recommendations.json      # AIおすすめ / recommendations_technical.json（技術のみ）
+│   ├── picks/{date}.json         # 日次ピックのスナップショット（週次答え合わせ用）
+│   ├── weekly/{week}.json        # 週次答え合わせ結果 / index.json / latest.json
+│   ├── weekly.html               # 週次答え合わせページ
 │   ├── ai_analysis/{date}.json   # AI応答キャッシュ / ai_strategy_latest.json（銘柄別最新）
 │   └── earnings.json             # 決算接近の警告データ
 ├── data/{stocks.db,price_cache}  # DB・価格キャッシュ
-├── back_tester/                  # バックテスト（下記 7章）
+├── back_tester/                  # バックテスト（下記 7章）＋ 週次答え合わせ
 │   ├── backtest_rolling_walkforward.py
 │   ├── apply_optimal_params.py
 │   ├── research_signals.py
+│   ├── weekly_review.py         # 週次答え合わせ（月〜金・金曜11:30手仕舞いで採点）
 │   └── results/
-└── .github/workflows/            # daily_main8 / daily_main8_ai / run_walkforward
+└── .github/workflows/            # daily_main8 / daily_main8_ai / run_walkforward / weekly_review
 ```
 
 ---
@@ -54,16 +59,22 @@ flowchart LR
   SCAN --> POOL[スコア上位40]
   POOL --> AI[Gemini Stage2: 順位付け]
   AI --> REC[docs/recommendations.json]
+  REC --> PICKS[docs/picks/{date}.json 日次スナップショット]
   SCAN --> HIST[docs/history/*.json]
   BT[back_tester 月次] -->|ガード付き| params[docs/strategy_params.json]
+  PICKS --> WR[weekly_review.py 土曜]
+  HIST --> WR
+  WR --> WK[docs/weekly/*.json / weekly.html]
   params --> SCAN
   REC --> UI[index.html / journal.html]
   HIST --> UI
+  WK --> UI
 ```
 
 - **Stage1（無料・ローカル）**: 全銘柄の技術スコアを計算し、上位40を候補プールに。
 - **Stage2（Gemini）**: プールを構造化データ＋ニュースで順位付け（`recommend`/`watch` 等）。画像は使わない。**`recommend` のみを推奨として提示**（無理に件数は埋めない）。
 - **バックテスト（月次）**: スコア／エグジットを検証し、ガード通過分を `docs/strategy_params.json` へ自動反映。
+- **週次答え合わせ（土曜）**: 日次スナップショット（`docs/picks`）と履歴から、その週に出した推奨・技術上位を採点し `docs/weekly/` と `weekly.html` を生成。
 
 ---
 
@@ -162,6 +173,15 @@ flowchart LR
   - ガード: 最低100件 / OOS PF≧1.15 / 期待値>0 / 年率>ベンチマーク / DD≦50% / （signals）近傍安定性 / 前回比劣化なし。
 - [`run_walkforward.yml`](.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST**。バックテスト→ガード反映→`docs/strategy_params.json` と `results/` をコミット（**手動同期不要**）。
 
+### 週次答え合わせ（[`weekly_review.py`](back_tester/weekly_review.py)）
+日々の**実運用で提示した推奨・技術上位**を、1週間（月〜金）単位で実際の値動きと突き合わせて採点する（既存の月次バックテストとは**並行・補完**。置換ではない）。
+- 入力: `docs/picks/{date}.json`（main8 が保存する日次スナップショット。無い日は `docs/history` と `docs/ai_analysis` から**復元**）。
+- 評価ルール: エントリーは **`entry_plan` 通り**（突破/押し目到達のみ約定、未到達は見送り）→ **約定週の金曜11:30（前場引け）に成行**。コストは手数料0.05%＋スリッページ0.1%。参考として**アプリのTP/SL・保有期限**適用時も併記。ベンチマークは `1306.T`。
+- 出力指標: 約定率・勝率・平均/中央リターン・TOPIX超過・`rank↔return` の Spearman・上位/下位スプレッド・`recommend` vs `watch`・`entry_type`／過熱度／業種別の実績・「今週の気づき」。
+- 出力: `docs/weekly/{YYYY-Www}.json`・`latest.json`・`index.json`・`docs/weekly.html`・`results/weekly_review_{week}.md`。
+- [`weekly_review.yml`](.github/workflows/weekly_review.yml): **毎週 土曜 09:00 JST**（`workflow_dispatch` で週指定・全週遡及も可）。
+- **還元は段階的**: まずは観測（`weekly_review.feedback_enabled=false`）。数週間分が貯まったら並び順の校正 → 最終的にスコア重み、の順で検討する（小さなサンプルでの過学習回避）。
+
 ### 直近の検証所見（2022-01〜2026-08）
 - 新スコア: 分位スプレッド **+0.347%** / Spearman **0.92**（上位分位 +0.16% / 下位分位 −0.19%）。
 - 選定比較: 上位 PF 1.04 / 年率 +16.2% / DD 35.1%、ランダム PF 1.14、下位 PF 0.88（**上位>下位は明確、PFではランダムと同等**）。
@@ -180,6 +200,7 @@ flowchart LR
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
 - `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`（moderate用）・`probe_wait_days`（high=strong+extreme用）・`probe_qty_factor`）。押し目深さ/待機日数はバックテストの成行比較で**過熱度別に**更新されうる。
 - `ai`: `{enabled, provider:deepseek, model:deepseek-flash, stage1_pool_max:40, max_picks:5, max_calls_per_run:40, retry_candidates:15, max_output_stocks:15, news_source:gnews, news_days:14, news_max:5, ...}`（`max_picks`＝表示する推奨の最大件数。`max_output_stocks`＝AIが返すstocks配列の上限目安。`stage1_pool_min` は定義のみで**未使用**）
+- `weekly_review`: `{enabled:true, exit_weekday:4, exit_time:"11:30", fee_rate:0.0005, slippage_rate:0.001, top_k_ranking:10, benchmark_ticker:"1306.T", feedback_enabled:false, feedback_min_weeks:4, feedback_min_trades:30}`（週次答え合わせの採点ルール。`feedback_enabled=false` の間は観測のみ）
 
 ---
 
@@ -191,6 +212,8 @@ flowchart LR
   - `picks[]`: `code,name,price,score,verdict,rank,tp_price,sl_price,ai_tp_price,ai_sl_price,atr_sl_mult,stop_distance,suggested_qty,trailing_plan,earnings_date,earnings_soon,entry_type,entry_type_label,entry_zone_low,entry_zone_high,overheat_level,overheat_flags,rsi14,dist_sma5_pct,dist_sma25_pct,pos_52w,run_up_days,gap_pct,atr_pct,...`
 - `docs/earnings.json`: `{date, horizon_days:14, items:{code:{date,days_until,soon}}}`。
 - `docs/ai_analysis/{date}.json` / `ai_strategy_latest.json`。
+- `docs/picks/{date}.json`: 日次ピックのスナップショット（`source`, `picks[]`, `pool[]`, `ai_stocks[]`）。週次答え合わせとAI校正の入力。
+- `docs/weekly/{YYYY-Www}.json` / `latest.json` / `index.json`: 週次答え合わせの結果（`summary` / `trades[]` / `ranking` / `ai_calibration` / `breakdown` / `notes`）。
 - `data/stocks.db`（ファンダ・履歴キャッシュ）。
 
 ---
@@ -199,26 +222,36 @@ flowchart LR
 
 ```bash
 # スクリーナー（技術のみ）
-uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python main8.py
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd --with pandas_market_calendars python main8.py
 
 # スクリーナー（AI分析）
-uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python main8.py --ai
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd --with pandas_market_calendars python main8.py --ai
 
 # AIを強制再分析
-uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python main8.py --ai --force-ai
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd --with pandas_market_calendars python main8.py --ai --force-ai
 
 # バックテスト
 uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with openpyxl --with xlrd python back_tester/backtest_rolling_walkforward.py
+
+# 週次答え合わせ（直近の完了週）
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with pandas_market_calendars python back_tester/weekly_review.py
+
+# 週次答え合わせ（対象週指定 / 全週遡及）
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with pandas_market_calendars python back_tester/weekly_review.py --week 2026-W39
+uv run --no-project --python 3.11 --with pandas --with numpy --with requests --with yfinance --with pandas_market_calendars python back_tester/weekly_review.py --all
 ```
 
 - ワークフロー実行時は、**どのワークフローを実行するか宣言してから**実行する（`AGENTS.md`）。
-- ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）。
+- ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）/ `weekly_review.yml`（土曜09:00）。
+- **非営業日スキップ**: `main8.py` は JPX 取引所カレンダー（`pandas_market_calendars`）で**土日祝・取引所休場を判定してスキップ**。週次レビューもベンチマークの実営業日で非営業日のシグナルを除外する。カレンダー未導入時は安全側（営業日扱い）にフォールバック。
 
 ---
 
 ## 11. 残タスク・既知の制約
 
 **残タスク**
+- **週次答え合わせの還元（校正）**: 現在は観測のみ（`weekly_review.feedback_enabled=false`）。4週＆30取引以上が貯まったら、実績に基づく**並び順・タイブレークの校正**（Phase B）→ガード付きスコア重み（Phase C）へ段階的に進める。
+- **週次スナップショットの蓄積**: `docs/picks/{date}.json` が今後蓄積される（過去分は `history`/`ai_analysis` から復元＝「復元」表示）。AI判定の校正は蓄積後に精度が上がる。
 - **過熱指標・押し目エントリーのバックテスト定期検証**: 実装済み・初回反映済み（`entry_guard`: moderate=1.5ATR/10日、high=1.5ATR/5日）。以降は月次 `run_walkforward.yml` で再検証し、ガード通過時に `entry_guard` を更新。
 - **AI有界オーバーレイ（総合=S+Δ）**: 設計は確定（Δ∈{−10..+10}、根拠必須、`docs/ai_overlay/{date}.json` ログ＋校正）。**未実装**。
 - **ニュース源の効果検証**: Google News RSS を既定化済み。次回AI実行成功時に「材料の具体性・記事の妥当性」を確認。
@@ -256,3 +289,5 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **AI**: `provider`（gemini/deepseek）抽象化、**ニュース源を Google News RSS 既定**（yfinanceフォールバック、`news_source/news_days/news_max`）、**AI出力件数制限** `max_output_stocks`（JSON切れ対策）、JSON解析失敗時の再試行・候補絞り再試行。
 - **初心者向け見方ガイド** `docs/guide.html` を新設（一覧/バッジ/並び替え/モーダル/用語集/注意）。
 - **AIプロバイダをDeepSeekへ切替（既定）**: `provider=deepseek` / `model=deepseek-flash`、JSON出力指定、`daily_main8_ai.yml` に `DEEPSEEK_API_KEY` を追加（Secret登録済み）。初回実行成功（15件出力・推奨5件）。Geminiは503/429のため保留。
+- **週次答え合わせを新設**: main8 が日次ピックを `docs/picks/{date}.json` に保存。`weekly_review.py` が毎週土曜09:00に、その週の推奨・技術上位を **entry_plan約定→金曜11:30手仕舞い**で採点し、`docs/weekly/` と **`docs/weekly.html`**（サマリ・銘柄別結果・順位効き・AI校正・内訳・気づき）を生成。既存の月次バックテストとは並行運用。
+- **非営業日スキップ**: `main8.py` が JPX 取引所カレンダーで土日祝・取引所休場を判定してスキップ（`pandas_market_calendars`。未導入時は営業日扱いにフォールバック）。`weekly_review.py` もベンチマークの実営業日で非営業日のシグナルを除外。祝日に生成された重複データ（例: 2026-09-21〜23）を集計から排除。

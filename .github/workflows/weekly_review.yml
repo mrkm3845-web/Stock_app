@@ -1,0 +1,72 @@
+name: 週次答え合わせレビュー（週次スイング戦略）
+
+on:
+  schedule:
+    # 毎週 土曜 09:00 JST（＝ 金曜大引け後・UTC 土曜 00:00）
+    - cron: '0 0 * * 6'
+  workflow_dispatch:
+    inputs:
+      week:
+        description: '対象週 YYYY-Www（例 2026-W39）。未指定なら直近の完了週'
+        required: false
+        type: string
+      all:
+        description: 'historyにある全週を遡及生成する'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy requests yfinance pandas_market_calendars
+
+      - name: Cache weekly price data
+        uses: actions/cache@v4
+        with:
+          path: back_tester/data/weekly_cache
+          key: weekly-cache-${{ runner.os }}
+          restore-keys: |
+            weekly-cache-${{ runner.os }}-
+
+      - name: Run weekly review
+        run: |
+          if [ -n "${{ inputs.week }}" ]; then
+            python back_tester/weekly_review.py --week "${{ inputs.week }}"
+          elif [ "${{ inputs.all }}" = "true" ]; then
+            python back_tester/weekly_review.py --all
+          else
+            python back_tester/weekly_review.py
+          fi
+
+      - name: 結果をコミット＆プッシュ
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/weekly back_tester/results
+          if git diff --staged --quiet; then
+            echo "変更なし"
+          else
+            git commit -m "Update weekly review report [skip ci]"
+            git pull --rebase -X theirs origin main || {
+              echo "競合が発生したため、ローカル生成データを優先して解決します"
+              GIT_EDITOR=true git rebase --continue
+            }
+            git push origin main
+          fi

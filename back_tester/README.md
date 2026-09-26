@@ -15,11 +15,13 @@
 | `back_tester/backtest_rolling_walkforward.py` | 本体。スコア式のウォークフォワード＋株価帯別エグジット最適化＋選定エッジ検証 |
 | `back_tester/apply_optimal_params.py` | 結果JSONを読み、ガード付きで `docs/strategy_params.json` を更新 |
 | `back_tester/research_signals.py` | 候補シグナル研究（Phase 1）。指標ごとの分位スプレッドを測る（トレンド系＋過熱系 `ret_5d` / `dist_sma5` / `rsi14` / `gap_pct` / `run_up_days`、業種相対強度 `sector_rs_20d` を含む） |
+| `back_tester/weekly_review.py` | **週次答え合わせ**。実運用で提示した推奨・技術上位を1週間（月〜金）単位で採点（下記 8章） |
 | `common/config.py` | `docs/strategy_params.json` のローダー（リポジトリ直下） |
 | `common/features.py` | 特徴量・スコア計算（スクリーナーと同一式） |
-| `docs/strategy_params.json` | 単一情報源（シグナル閾値・株価帯・警告・スコア重み・AI設定） |
+| `docs/strategy_params.json` | 単一情報源（シグナル閾値・株価帯・警告・スコア重み・AI設定・週次設定） |
 | `.github/workflows/run_walkforward.yml` | 月次実行＋ガード反映＋コミット（`docs/strategy_params.json` を直接更新） |
-| `back_tester/results/` | 結果JSON / CSV / Markdown・候補シグナル研究 |
+| `.github/workflows/weekly_review.yml` | 週次（土曜09:00 JST）答え合わせ実行＋コミット |
+| `back_tester/results/` | 結果JSON / CSV / Markdown・候補シグナル研究・週次レポート |
 
 > 旧スクリプト `backtest_scanner.py` / `backtest_scanner_v2.py` / `backtest_volume_deepdive.py` は
 > ウォークフォワードに統合されたため削除済み。
@@ -142,6 +144,49 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **業種相対強度は不採用**: `sector_rs_20d`（同業種平均からの20日リターン超過）は分位スプレッド **−0.162%** / Spearman **−0.139** / プラス期間率 0.286（2026-09-20 検証）。GC直後・出来高増加率・週足上昇と同様、現行期間では逆方向のためスコアに採用しない。
 - **サバイバーシップバイアス**: 現在のJPX上場銘柄のみ対象。過去に上場廃止・合併した銘柄は欠落するため、成績は実運用より楽に出る傾向。
 - **多重検定**: 条件数を増やすほど偶然の好成績が出やすい。ガード（近傍安定性・前回比）で緩和。
-- **Stage2（AI）は未検証**: 本検証は技術スコアのランキング力と機械的エグジットのみ。実運用の AI 判断・実手仕舞いは対象外。
+- **Stage2（AI）は未検証**: 本検証は技術スコアのランキング力と機械的エグジットのみ。実運用の AI 判断は **8章の週次答え合わせ**で実績を観測・校正する（本バックテストの対象外）。
 - **atr_trail の尾リスク**: ATRトレーリングはギャップダウン時に始値で手仕舞うため、固定TP/SLより大きな単発損失が出ることがある。
 - **ポートフォリオ指標は実現損益ベース**（保有中の時価評価は行わない）。
+
+---
+
+## 8. 週次答え合わせ（`weekly_review.py`）
+
+月次のウォークフォワードが「**未来向けにパラメータが頑健か**」を合成履歴で検証するのに対し、週次レビューは「**実際に出した推奨がどうなったか**」を過去向けに採点する。両者は**並行・補完**（置換ではない）。
+
+### 8-1. 採点ルール（合意済み）
+- **対象**: AI推奨（`recommend`）と、技術スコア上位候補の両方。
+- **エントリー**: `entry_plan` 通り。
+  - `breakout_chase` / `probe_only`: 買いストップ。翌日以降 `entry_wait_days` 内に `entry_price` へ到達で約定（窓開けは始値）。現在値近辺なら翌日寄成扱い。
+  - `pullback_wait`: `entry_zone_high` への押し目指値。未到達は**見送り**（勝率の分母から除外し、約定率を別集計）。
+- **手仕舞い**: 約定日を含む週の**金曜11:30（前場引け）に成行**。「昼」は取引不可のため前場引けで代用。
+- **コスト**: 手数料0.05%＋スリッページ0.1%（既存バックテストと同率）。上昇＝赤／下落＝青。
+- **参考**: アプリのルール出口（TP/SL/最大保有日数、同日両到達は損切り優先）を適用した結果も併記。
+- **ベンチマーク**: `1306.T`（TOPIX ETF）の同区間リターン。
+
+### 8-2. 出力指標
+- 約定率・勝率・平均/中央リターン・TOPIX超過・`recommend` vs `watch`。
+- **順位の効き**: スコアとリターンの Spearman、上位群/下位群のスプレッド（満点で並ぶ場合は順位付け不能として表示）。
+- 入口（`entry_type`）別・過熱度別・業種別の実績、および**今週の気づき**（テンプレ文）。
+
+### 8-3. 入力と出力
+- 入力: `docs/picks/{date}.json`（main8 の日次スナップショット）。無い日は `docs/history/{date}.json` ＋ `docs/ai_analysis/{date}.json` から**復元**（レポート上「復元」表示）。
+- **非営業日（土日祝・取引所休場）は除外**：ベンチマーク（`1306.T`）の実際の営業日を基準に、シグナル日が営業日でなければ集計から外す。`main8.py` 側も JPX 取引所カレンダーで非営業日をスキップする。
+- 出力: `docs/weekly/{YYYY-Www}.json` / `latest.json` / `index.json`、`docs/weekly.html`、`back_tester/results/weekly_review_{week}.md`。
+
+### 8-4. 実行
+```bash
+# 直近の完了週
+python back_tester/weekly_review.py
+# 対象週を指定
+python back_tester/weekly_review.py --week 2026-W39
+# history にある全週を遡及生成
+python back_tester/weekly_review.py --all
+```
+CI は [`weekly_review.yml`](../.github/workflows/weekly_review.yml) が**毎週 土曜 09:00 JST**（`workflow_dispatch` で週指定・全週遡及も可）。
+
+### 8-5. 還元（段階的）
+- **Phase A（現在）**: 観測のみ（`strategy_params.weekly_review.feedback_enabled=false`）。
+- **Phase B**: 4週＆30取引以上が貯まったら、実績に基づく**並び順・タイブレークの校正**。
+- **Phase C**: 月次バックテストと同様のガード付きでスコア重み・`entry_guard` を調整。
+- 小さなサンプルで重みを動かさない（過学習回避）ことを優先する。

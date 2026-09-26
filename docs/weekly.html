@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>週次答え合わせ（週次スイング戦略）</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.88rem; padding-bottom: 60px; }
+        .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
+        table th { background-color: #212529 !important; color: #fff !important; position: sticky; top: 0; z-index: 10; white-space: nowrap; text-align: center; vertical-align: middle !important; font-size: 0.8rem; }
+        table td { vertical-align: middle; white-space: nowrap; text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
+        .stat-label { font-size: 0.74rem; color: #6c757d; font-weight: 700; }
+        .pos { color: #d6336c; }   /* 上昇＝赤（日本式） */
+        .neg { color: #1971c2; }   /* 下落＝青（日本式） */
+        .rule-box { background: #fffdf5; border: 1px solid #ffe08a; border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; }
+        .note-item { border-left: 4px solid #0d6efd; background: #f1f6ff; padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; }
+        .badge-verdict { font-size: 0.7rem; padding: 2px 7px; border-radius: 6px; font-weight: 700; }
+        .v-recommend { background:#d3f9d8; color:#2b8a3e; }
+        .v-watch { background:#e7f5ff; color:#1971c2; }
+        .v-neutral { background:#e9ecef; color:#495057; }
+        .v-caution { background:#fff3bf; color:#d9480f; }
+        .v-avoid { background:#ffe3e3; color:#c92a2a; }
+        .badge-oh { font-size:0.7rem; padding:2px 6px; border-radius:6px; font-weight:700; background:#e9ecef; color:#495057; }
+        .badge-oh.strong { background:#ffe3e3; color:#c92a2a; }
+        .badge-oh.extreme { background:#f3d9fa; color:#862e9c; }
+        .best-card { background: linear-gradient(135deg,#fff0f6,#fff); border:1px solid #fcc2d7; }
+        .worst-card { background: linear-gradient(135deg,#e7f5ff,#fff); border:1px solid #a5d8ff; }
+        .muted-small { font-size: 0.72rem; color:#868e96; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-3 px-md-4">
+        <!-- ヘッダー -->
+        <div class="card p-3 bg-white">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-clipboard2-check"></i> 週次答え合わせ（週次スイング戦略）</h1>
+                    <small class="text-muted">その週に推薦・抽出した銘柄が、実際にどうなったかを採点します。</small>
+                </div>
+                <div class="d-flex flex-wrap gap-2 align-items-center ms-auto">
+                    <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナー</a>
+                    <a href="journal.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> 取引記録</a>
+                    <a href="guide.html" class="btn btn-outline-secondary btn-sm fw-bold"><i class="bi bi-question-circle me-1"></i> 見方ガイド</a>
+                    <div class="input-group input-group-sm" style="width: auto;">
+                        <span class="input-group-text bg-light fw-bold"><i class="bi bi-calendar-week me-1"></i> 対象週</span>
+                        <select id="week-selector" class="form-select form-select-sm fw-bold" onchange="loadWeek(this.value)"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="alert alert-info">読み込み中...</div>
+        <div id="error-box" class="alert alert-warning d-none"></div>
+
+        <div id="content" class="d-none">
+            <!-- ルール説明 -->
+            <div class="card p-3">
+                <div class="rule-box" id="rule-box"></div>
+            </div>
+
+            <!-- サマリ -->
+            <div class="card p-3">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-graph-up-arrow me-1"></i> 今週の結果サマリ <span class="muted-small" id="week-label"></span></h2>
+                <div class="row g-3" id="summary-cards"></div>
+            </div>
+
+            <!-- ベスト/ワースト -->
+            <div class="row g-3" id="best-worst"></div>
+
+            <!-- 気づき -->
+            <div class="card p-3">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-lightbulb me-1"></i> 今週の気づき（来週への生かし方）</h2>
+                <div id="notes"></div>
+            </div>
+
+            <!-- 銘柄ごとの結果 -->
+            <div class="card p-3">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-list-check me-1"></i> 銘柄ごとの結果</h2>
+                <div class="mb-2">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="showUnfilled" onchange="renderTrades()">
+                        <label class="form-check-label muted-small" for="showUnfilled">見送り・未評価も表示する</label>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>シグナル日</th><th>コード</th><th>銘柄</th><th>判定</th><th>入口</th><th>過熱</th>
+                                <th>約定日</th><th>約定値</th><th>手仕舞い</th><th>損益(ネット)</th><th>TOPIX比</th><th>ルール出口</th><th>状況・材料</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trades-body"></tbody>
+                    </table>
+                </div>
+                <div class="muted-small" id="trades-note"></div>
+            </div>
+
+            <!-- スコア順位の効き -->
+            <div class="card p-3">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-bar-chart-line me-1"></i> スコア順位は効いたか（技術スコア上位）</h2>
+                <div id="ranking-summary" class="mb-3"></div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle">
+                        <thead><tr><th>シグナル日</th><th>コード</th><th>銘柄</th><th>スコア</th><th>翌日寄り</th><th>週内手仕舞い</th><th>損益</th><th>TOPIX比</th></tr></thead>
+                        <tbody id="ranking-body"></tbody>
+                    </table>
+                </div>
+                <div class="muted-small">※ 候補プール全件を「翌営業日の寄り→その週の金曜11:30」で機械的に買った場合の検証です。 <span id="ranking-note"></span></div>
+            </div>
+
+            <!-- AI校正 -->
+            <div class="card p-3">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-robot me-1"></i> AI判定は当たったか</h2>
+                <div id="calib"></div>
+            </div>
+
+            <!-- 内訳 -->
+            <div class="card p-3">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-diagram-3 me-1"></i> 内訳（入口・過熱度・業種）</h2>
+                <div class="row g-3" id="breakdown"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const yen = (v) => (v === null || v === undefined) ? '-' : Number(v).toLocaleString('ja-JP');
+const pct = (v) => (v === null || v === undefined) ? '-' : ((v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%');
+const cls = (v) => (v === null || v === undefined) ? '' : (v > 0 ? 'pos' : (v < 0 ? 'neg' : ''));
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const VL = { recommend:'推奨', watch:'様子見', neutral:'中立', hold:'保有継続', caution:'注意', avoid:'回避', sell:'売却', technical_only:'スコア順' };
+const VCLS = { recommend:'v-recommend', watch:'v-watch', neutral:'v-neutral', caution:'v-caution', avoid:'v-avoid', sell:'v-avoid' };
+let CURRENT = null;
+
+async function boot() {
+    try {
+        const res = await fetch('weekly/index.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('index.json がありません');
+        const weeks = await res.json();
+        const sel = document.getElementById('week-selector');
+        sel.innerHTML = weeks.map(w => `<option value="${w.week}">${w.week}（${w.start}〜${w.end}）</option>`).join('');
+        const params = new URLSearchParams(location.search);
+        const want = params.get('week');
+        const target = (want && weeks.some(w => w.week === want)) ? want : (weeks[0] && weeks[0].week);
+        if (!target) throw new Error('レポートがまだありません');
+        sel.value = target;
+        await loadWeek(target);
+    } catch (e) {
+        document.getElementById('loading').classList.add('d-none');
+        const box = document.getElementById('error-box');
+        box.classList.remove('d-none');
+        box.innerHTML = `<i class="bi bi-exclamation-triangle me-1"></i>週次レポートを読み込めませんでした：${esc(e.message)}<br><small>まだ週次レビューが実行されていない可能性があります（毎週土曜 09:00 に自動生成）。</small>`;
+    }
+    document.getElementById('loading').classList.add('d-none');
+}
+
+async function loadWeek(week) {
+    document.getElementById('loading').classList.remove('d-none');
+    document.getElementById('content').classList.add('d-none');
+    try {
+        const res = await fetch(`weekly/${week}.json`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('対象週のJSONが見つかりません');
+        CURRENT = await res.json();
+        render(CURRENT);
+        document.getElementById('content').classList.remove('d-none');
+    } catch (e) {
+        const box = document.getElementById('error-box');
+        box.classList.remove('d-none');
+        box.textContent = '読み込みエラー: ' + e.message;
+    }
+    document.getElementById('loading').classList.add('d-none');
+}
+
+function render(r) {
+    const s = r.summary || {};
+    document.getElementById('week-label').textContent = `${r.week}（${r.start}〜${r.end}）`;
+    const rr = r.review_rule || {};
+    document.getElementById('rule-box').innerHTML =
+        `<i class="bi bi-info-circle me-1"></i><b>採点ルール：</b> ` +
+        `エントリーは <b>${esc(rr.entry)}</b>、手仕舞いは <b>${esc(rr.exit)}</b>、コストは <b>${esc(rr.cost)}</b>、比較は <b>${esc(rr.benchmark)}（TOPIX ETF）</b>。`;
+
+    // サマリカード
+    const cards = [
+        ['対象ピック', `${s.picks_total ?? '-'} 件`, `${s.n_filled ?? 0}約定 / ${s.n_not_filled ?? 0}見送り / ${s.n_no_data ?? 0}未評価`],
+        ['約定率', s.fill_rate != null ? (s.fill_rate * 100).toFixed(0) + '%' : '-', '押し目・ブレイク到達の割合'],
+        ['平均リターン', pct(s.avg_return_pct), `中央値 ${pct(s.median_return_pct)}`, cls(s.avg_return_pct)],
+        ['勝率', s.win_rate != null ? (s.win_rate * 100).toFixed(0) + '%' : '-', `${s.n_filled ?? 0}件中のプラス比率`],
+        ['TOPIX超過', pct(s.avg_excess_pct), `TOPIX平均 ${pct(s.avg_benchmark_pct)}`, cls(s.avg_excess_pct)],
+        ['ルール出口', pct(s.rule_avg_return_pct), `勝率 ${s.rule_win_rate != null ? (s.rule_win_rate*100).toFixed(0)+'%' : '-'}`],
+    ];
+    document.getElementById('summary-cards').innerHTML = cards.map(c =>
+        `<div class="col-6 col-md-4 col-lg-2"><div class="border rounded-3 p-3 text-center h-100">
+            <div class="stat-label">${esc(c[0])}</div>
+            <div class="stat-value ${c[3] || ''}">${esc(c[1])}</div>
+            <div class="muted-small">${esc(c[2])}</div>
+        </div></div>`).join('');
+
+    // ベスト/ワースト
+    const b = s.best, w = s.worst;
+    let bw = '';
+    if (b) bw += `<div class="col-12 col-md-6"><div class="card p-3 best-card h-100">
+        <div class="stat-label text-danger">今週のベスト</div>
+        <div class="fw-bold fs-6">${esc(b.code)} ${esc(b.name)}</div>
+        <div class="stat-value pos">${pct(b.return_net_pct)}</div></div></div>`;
+    if (w) bw += `<div class="col-12 col-md-6"><div class="card p-3 worst-card h-100">
+        <div class="stat-label text-primary">今週のワースト</div>
+        <div class="fw-bold fs-6">${esc(w.code)} ${esc(w.name)}</div>
+        <div class="stat-value neg">${pct(w.return_net_pct)}</div></div></div>`;
+    document.getElementById('best-worst').innerHTML = bw;
+
+    // 気づき
+    const notes = r.notes || [];
+    document.getElementById('notes').innerHTML = notes.length
+        ? notes.map(n => `<div class="note-item">${esc(n)}</div>`).join('')
+        : '<div class="muted-small">特筆すべき偏りはありませんでした。</div>';
+
+    renderTrades();
+    renderRanking(r.ranking || {});
+    renderCalib(r.ai_calibration || {});
+    renderBreakdown(r.breakdown || {});
+}
+
+function statusBadge(t) {
+    if (t.status === 'filled') return '';
+    if (t.status === 'not_filled') return '<span class="badge bg-secondary">見送り（未約定）</span>';
+    if (t.status === 'wait') return '<span class="badge bg-secondary">見送り指示</span>';
+    return '<span class="badge bg-light text-dark border">翌営業日未到来</span>';
+}
+
+function snippet(t) {
+    const txt = t.news_note || t.reason || '';
+    if (!txt) return '<span class="muted-small">-</span>';
+    const short = txt.length > 34 ? txt.slice(0, 34) + '…' : txt;
+    return `<span class="muted-small" title="${esc(txt)}">${esc(short)}</span>`;
+}
+
+function renderTrades() {
+    if (!CURRENT) return;
+    const showAll = document.getElementById('showUnfilled').checked;
+    const rows = (CURRENT.trades || []).filter(t => showAll || t.status === 'filled');
+    const body = document.getElementById('trades-body');
+    if (!rows.length) { body.innerHTML = '<tr><td colspan="13" class="text-muted p-3">該当する取引はありません。</td></tr>'; return; }
+    body.innerHTML = rows.map(t => {
+        const v = t.verdict || '';
+        const vlabel = VL[v] || v || '-';
+        const vcls = VCLS[v] || 'v-neutral';
+        const rc = t.return_net_pct;
+        const rule = t.exit_rule ? `${esc(t.exit_rule.reason)} ${pct(t.exit_rule.return_net_pct)}` : '-';
+        if (t.status === 'filled') {
+            return `<tr>
+                <td>${esc(t.signal_date)}</td>
+                <td class="fw-bold">${esc(t.code)}</td>
+                <td class="text-start" title="${esc(t.sector||'')}">${esc(t.name)}${t.reconstructed ? ' <span class="badge bg-light text-secondary border" style="font-size:0.6rem">復元</span>' : ''}</td>
+                <td><span class="badge-verdict ${vcls}">${esc(vlabel)}</span></td>
+                <td>${esc(t.entry_type_label || t.entry_type || '-')}</td>
+                <td><span class="badge-oh ${esc(t.overheat_level||'')}">${esc(t.overheat_label || '-')}</span></td>
+                <td>${esc(t.fill_date)}</td>
+                <td>${yen(t.fill_price)}</td>
+                <td>${t.exit_weekly ? yen(t.exit_weekly.price) + ' <span class="muted-small">' + esc(t.exit_weekly.date) + '</span>' : '-'}</td>
+                <td class="fw-bold ${cls(rc)}">${pct(rc)}</td>
+                <td class="${cls(t.excess_pct)}">${pct(t.excess_pct)}</td>
+                <td class="muted-small">${rule}</td>
+                <td class="text-start">${snippet(t)}</td>
+            </tr>`;
+        }
+        return `<tr class="table-light">
+            <td>${esc(t.signal_date)}</td>
+            <td class="fw-bold">${esc(t.code)}</td>
+            <td class="text-start">${esc(t.name)}${t.reconstructed ? ' <span class="badge bg-light text-secondary border" style="font-size:0.6rem">復元</span>' : ''}</td>
+            <td><span class="badge-verdict ${vcls}">${esc(vlabel)}</span></td>
+            <td>${esc(t.entry_type_label || t.entry_type || '-')}</td>
+            <td><span class="badge-oh ${esc(t.overheat_level||'')}">${esc(t.overheat_label || '-')}</span></td>
+            <td colspan="7" class="text-muted">${statusBadge(t)}</td>
+        </tr>`;
+    }).join('');
+    document.getElementById('trades-note').innerHTML =
+        '※ 損益は手数料・スリッページ控除後。上昇＝<span class="pos">赤</span>／下落＝<span class="neg">青</span>。「ルール出口」はアプリのTP/SL・保有期限を適用した場合。' +
+        '「復元」はその日の保存スナップショットが無く、履歴とAIキャッシュから当時の候補を再現したものです。';
+}
+
+function renderRanking(rk) {
+    const sp = rk.spearman;
+    const n = rk.n || 0;
+    const spTxt = sp == null ? (n >= 3 ? '同点多数' : '-') : sp;
+    let judge = 'ほぼ中立';
+    if (sp != null && sp >= 0.2) judge = '上位ほど良い（有効）';
+    else if (sp != null && sp <= -0.2) judge = '上位ほど弱い（逆）';
+    else if (sp == null) judge = 'スコアが満点で並び、順位付け不能';
+    document.getElementById('ranking-summary').innerHTML =
+        `<div class="row g-2">
+            <div class="col-6 col-md-3"><div class="border rounded-3 p-2 text-center"><div class="stat-label">順位相関(Spearman)</div><div class="stat-value">${esc(spTxt)}</div><div class="muted-small">${esc(judge)}</div></div></div>
+            <div class="col-6 col-md-3"><div class="border rounded-3 p-2 text-center"><div class="stat-label">上位群 平均</div><div class="stat-value ${cls(rk.top_avg_pct)}">${pct(rk.top_avg_pct)}</div></div></div>
+            <div class="col-6 col-md-3"><div class="border rounded-3 p-2 text-center"><div class="stat-label">下位群 平均</div><div class="stat-value ${cls(rk.bottom_avg_pct)}">${pct(rk.bottom_avg_pct)}</div></div></div>
+            <div class="col-6 col-md-3"><div class="border rounded-3 p-2 text-center"><div class="stat-label">スプレッド</div><div class="stat-value ${cls(rk.spread_pct)}">${pct(rk.spread_pct)}</div></div></div>
+        </div>`;
+    const rows = (rk.rows || []).slice().sort((a,b) => (b.score||0) - (a.score||0));
+    const show = rows.slice(0, 40);
+    document.getElementById('ranking-body').innerHTML = show.length ? show.map(x => `<tr>
+        <td>${esc(x.signal_date)}</td><td class="fw-bold">${esc(x.code)}</td>
+        <td class="text-start">${esc(x.name)}</td>
+        <td>${x.score == null ? '-' : Number(x.score).toFixed(1)}</td>
+        <td>${yen(x.entry_price)} <span class="muted-small">${esc(x.entry_date)}</span></td>
+        <td>${yen(x.exit_price)} <span class="muted-small">${esc(x.exit_date)}</span></td>
+        <td class="fw-bold ${cls(x.return_net_pct)}">${pct(x.return_net_pct)}</td>
+        <td class="${cls(x.excess_pct)}">${pct(x.excess_pct)}</td>
+    </tr>`).join('') : '<tr><td colspan="8" class="text-muted p-3">データがありません。</td></tr>';
+    const noteEl = document.getElementById('ranking-note');
+    if (noteEl) noteEl.textContent = `全 ${rows.length} 件中、スコア上位 ${show.length} 件を表示。`;
+}
+
+function renderCalib(c) {
+    const bv = c.by_verdict || {};
+    const order = ['recommend','watch','neutral','hold','caution','avoid'];
+    const keys = order.filter(k => bv[k]).concat(Object.keys(bv).filter(k => !order.includes(k)));
+    if (!keys.length) { document.getElementById('calib').innerHTML = '<div class="muted-small">AI判定のデータがありません（技術実行のみの週など）。</div>'; return; }
+    let html = '<div class="row g-2 mb-2">';
+    keys.forEach(k => {
+        const s = bv[k];
+        html += `<div class="col-6 col-md-3"><div class="border rounded-3 p-2 text-center">
+            <div class="stat-label">${esc(VL[k] || k)}</div>
+            <div class="stat-value ${cls(s.avg)}">${pct(s.avg)}</div>
+            <div class="muted-small">${s.n}件 / 勝率 ${s.win_rate != null ? (s.win_rate*100).toFixed(0)+'%' : '-'}</div>
+        </div></div>`;
+    });
+    html += '</div>';
+    const d = c.recommend_minus_watch_pct;
+    if (d != null) {
+        html += `<div class="${d >= 0 ? 'alert alert-success' : 'alert alert-secondary'} py-2 mb-0 muted-small">
+            「推奨」は「様子見」を平均 <b class="${cls(d)}">${pct(d)}</b> ${d >= 0 ? '上回りました（AI判定は機能）' : '下回りました（要調整）'}。</div>`;
+    }
+    document.getElementById('calib').innerHTML = html;
+}
+
+function breakdownTable(title, obj) {
+    const keys = Object.keys(obj || {});
+    if (!keys.length) return `<div class="col-12 col-md-4"><h3 class="h6 fw-bold">${esc(title)}</h3><div class="muted-small">データなし</div></div>`;
+    const rows = keys.sort((a,b) => (obj[b].n||0)-(obj[a].n||0)).map(k => {
+        const s = obj[k];
+        return `<tr><td class="text-start">${esc(k)}</td><td>${s.n}</td><td class="${cls(s.avg)}">${pct(s.avg)}</td><td>${s.win_rate != null ? (s.win_rate*100).toFixed(0)+'%' : '-'}</td></tr>`;
+    }).join('');
+    return `<div class="col-12 col-md-4"><h3 class="h6 fw-bold">${esc(title)}</h3>
+        <table class="table table-sm table-striped align-middle"><thead><tr><th>区分</th><th>件数</th><th>平均</th><th>勝率</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function renderBreakdown(bd) {
+    document.getElementById('breakdown').innerHTML =
+        breakdownTable('入口（entry_type）', bd.by_entry_type) +
+        breakdownTable('過熱度', bd.by_overheat) +
+        breakdownTable('判定', bd.by_verdict) +
+        breakdownTable('業種', bd.by_sector);
+}
+
+boot();
+</script>
+</body>
+</html>

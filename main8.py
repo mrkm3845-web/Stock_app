@@ -10,6 +10,7 @@ main7（技術スコア + AI戦略提言）を統合した単一エントリポ�
   - docs/history/dates.json / meta.json      日付一覧 / データ鮮度メタ
   - docs/recommendations.json                AI付きおすすめ（--ai 実行時）
   - docs/recommendations_technical.json      技術スコアのみのおすすめ
+  - docs/picks/{date}.json                   日次ピックのスナップショット（週次答え合わせ用）
   - docs/ai_analysis/{date}.json             AI応答生キャッシュ
   - docs/ai_strategy_latest.json             銘柄別最新AI戦略インデックス
   - data/stocks.db                           ファンダメンタル・キャッシュ
@@ -53,6 +54,7 @@ RECOMMENDATIONS_PATH = os.path.join(DOCS_DIR, "recommendations.json")
 TECHNICAL_REC_PATH = os.path.join(DOCS_DIR, "recommendations_technical.json")
 AI_LATEST_PATH = os.path.join(DOCS_DIR, "ai_strategy_latest.json")
 AI_ANALYSIS_DIR = os.path.join(DOCS_DIR, "ai_analysis")
+PICKS_DIR = os.path.join(DOCS_DIR, "picks")
 EARNINGS_PATH = os.path.join(DOCS_DIR, "earnings.json")
 # 決算接近の警告とみなす日数（保有上限に合わせる）
 EARNINGS_HORIZON_DAYS = 14
@@ -74,6 +76,32 @@ def get_target_date_str():
     if now.hour < 9:
         return (now - timedelta(days=1)).strftime("%Y-%m-%d")
     return now.strftime("%Y-%m-%d")
+
+
+_MARKET_CAL = None
+
+
+def is_market_open_day(date_str):
+    """date_str が日本の取引所の営業日（土日祝・取引所休場でない）かを判定する。
+
+    判定できない場合（カレンダー未導入・通信不要のローカル判定のみ）は、
+    データ欠損を避けるため安全側で True（営業日扱い）を返す。
+    """
+    try:
+        d = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except Exception:
+        return True
+    if d.weekday() >= 5:  # 土日
+        return False
+    global _MARKET_CAL
+    try:
+        import pandas_market_calendars as mcal
+        if _MARKET_CAL is None:
+            _MARKET_CAL = mcal.get_calendar("JPX")
+        days = _MARKET_CAL.valid_days(start_date=date_str, end_date=date_str)
+        return len(days) > 0
+    except Exception:
+        return True
 
 
 # ---------------------------------------------------------------- JPX銘柄リスト
@@ -1052,6 +1080,73 @@ def update_ai_latest(ai_map, date):
     print(f">> 最新AI戦略インデックスを更新: {AI_LATEST_PATH}（{len(latest)} 銘柄）")
 
 
+def save_picks_snapshot(target_date, recommendations, pool, ai_map, is_ai):
+    """日次の採用ピックと候補プールを保存する（週次答え合わせ用）。
+
+    これまで recommendations.json は毎日上書きされ、過去に「何を推薦したか」が
+    失われていた。週次の答え合わせ・校正に使うため、実行時点のスナップショットを
+    docs/picks/{date}.json に残す（日付ごとに1ファイル・上書き可）。
+    AI実行時は同日の技術スナップショットをAI版で上書きする。
+    """
+    os.makedirs(PICKS_DIR, exist_ok=True)
+    path = os.path.join(PICKS_DIR, f"{target_date}.json")
+
+    # 同日に AI 実行済みのスナップショットがある場合、後続の技術実行で
+    # 上書きしない（AI判定・順位を週次レビューの校正に残すため）。
+    if not is_ai and os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                existing = json.load(f)
+            if existing.get("source") == "ai":
+                print(f">> ピックスナップショットはAI版を保持: {path}")
+                return
+        except Exception:
+            pass
+
+    pool_records = []
+    for r in (pool or []):
+        ctx = r.get("ctx") or {}
+        pool_records.append({
+            "code": r.get("code"),
+            "name": r.get("name"),
+            "sector": r.get("sector"),
+            "score": r.get("score"),
+            "price": r.get("price"),
+            "atr14": r.get("atr14"),
+            "rsi14": ctx.get("rsi14"),
+            "dist_sma25_pct": ctx.get("dist_sma25_pct"),
+            "pos_52w": ctx.get("pos_52w"),
+        })
+
+    ai_records = []
+    if isinstance(ai_map, dict):
+        for s in (ai_map.get("stocks") or []):
+            if not s.get("code"):
+                continue
+            ai_records.append({
+                "code": s.get("code"),
+                "rank": s.get("rank"),
+                "verdict": s.get("verdict"),
+                "entry_type": s.get("entry_type"),
+            })
+
+    snapshot = {
+        "date": target_date,
+        "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "source": "ai" if is_ai else "technical",
+        "version": (recommendations or {}).get("version"),
+        "regime": (recommendations or {}).get("regime"),
+        "portfolio_guide": (recommendations or {}).get("portfolio_guide"),
+        "overall": (recommendations or {}).get("overall"),
+        "picks": (recommendations or {}).get("picks") or [],
+        "pool": pool_records,
+        "ai_stocks": ai_records,
+    }
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(snapshot, f, ensure_ascii=False)
+    print(f">> ピックスナップショット保存: {path}（picks {len(snapshot['picks'])} / pool {len(pool_records)} / ai {len(ai_records)}）")
+
+
 def save_to_sqlite(all_stocks, target_date):
     os.makedirs(DATA_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
@@ -1311,12 +1406,16 @@ def main():
     if args.max_stocks:
         stock_list = stock_list[: args.max_stocks]
 
+    date = get_target_date_str()
+    if not is_market_open_day(date):
+        print(f">> 【{date}】は非営業日（土日祝・取引所休場）のため処理をスキップします。")
+        return
+
     results = scan_market_merged(stock_list, params)
     if not results:
         print(">> ⚠️ 有効銘柄が0件のため、既存データを上書きしません。")
         return
 
-    date = get_target_date_str()
     added, updated = _diff_counts(date, results)
     print(f">> 【{date}】全件スキャン: {len(results)} 件 (新規 +{added}, 更新 {updated})")
 
@@ -1377,8 +1476,10 @@ def main():
         json.dump(recommendations, f, ensure_ascii=False)
     print(f">> おすすめ出力: {rec_path}（{len(recommendations.get('picks') or [])} 件）")
 
+    is_ai = bool(args.ai and params.get("ai", {}).get("enabled") and ai_map)
+    save_picks_snapshot(date, recommendations, pool, ai_map, is_ai)
+
     if not args.no_discord:
-        is_ai = bool(args.ai and params.get("ai", {}).get("enabled") and ai_map)
         send_recommendations_to_discord(recommendations, added, updated, date, DISCORD_WEBHOOK_URL, is_ai)
 
     print(">> スクリーニング（main8）完了")
