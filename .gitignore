@@ -1,3 +1,4 @@
 __pycache__/
 *.pyc
 back_tester/data/
+data/stocks.db

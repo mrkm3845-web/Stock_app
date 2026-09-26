@@ -154,6 +154,7 @@
     "news_days": 14,
     "news_max": 5
   },
+  "history_keep_days": 90,
   "weekly_review": {
     "enabled": true,
     "exit_weekday": 4,
@@ -168,6 +169,8 @@
       3,
       5
     ],
+    "plan_enabled": true,
+    "plan_candidates": 15,
     "feedback_enabled": true,
     "feedback_window_weeks": 6,
     "feedback_min_weeks": 3,
@@ -177,7 +180,7 @@
   },
   "weekly_feedback": {
     "enabled": true,
-    "generated_at": "2026-09-26T08:04:03",
+    "generated_at": "2026-09-26T17:22:14",
     "window_weeks": 6,
     "weeks": [
       "2026-W39",

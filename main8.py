@@ -43,6 +43,7 @@ logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common.config import load_strategy_params  # noqa: E402
 from common import features as F  # noqa: E402
+from common.persona import PERSONA_JA  # noqa: E402
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -621,6 +622,7 @@ def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None)
 
 def _ai_system_prompt(max_picks=5, max_output=15):
     return (
+        PERSONA_JA + "\n"
         "あなたは日本株スイングトレードのプロ。以下の候補銘柄を、上昇期待・リスク・流動性・テクニカル・"
         "ファンダメンタルの観点で1位から順位づけしてください。"
         f"verdict=recommend は本当に買い推奨できる銘柄だけに付け、件数を無理に埋めないでください（該当が無ければ0件で構いません。上限{max_picks}件）。"
@@ -1263,7 +1265,44 @@ def save_earnings_json(earnings_map, target_date):
     return data
 
 
-def save_history_json(all_stocks, target_date, regime=None, portfolio=None):
+def _prune_history(keep_days):
+    """古い日別JSONを削除して保持期間を制限する（リポジトリ/Pages容量対策）。
+
+    週次レビューが遡るのは最大5週のため、既定90営業日で十分。
+    バックテストは docs/history を参照しない（独自キャッシュを使用）。
+    """
+    try:
+        keep_days = int(keep_days)
+    except (TypeError, ValueError):
+        return
+    if keep_days <= 0:
+        return
+    cutoff = (_jst_now().date() - timedelta(days=keep_days))
+    removed = []
+    retained = []
+    for name in os.listdir(HISTORY_DIR):
+        if not re.match(r"^\d{4}-\d{2}-\d{2}\.json$", name):
+            continue
+        try:
+            d = datetime.strptime(name[:-5], "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        if d < cutoff:
+            try:
+                os.remove(os.path.join(HISTORY_DIR, name))
+                removed.append(name[:-5])
+            except OSError:
+                pass
+        else:
+            retained.append(name[:-5])
+    if removed:
+        retained.sort(reverse=True)
+        with open(os.path.join(HISTORY_DIR, "dates.json"), "w", encoding="utf-8") as f:
+            json.dump(retained, f, ensure_ascii=False)
+        print(f">> 古い日別JSONを削除: {len(removed)}件（保持 {keep_days}日）")
+
+
+def save_history_json(all_stocks, target_date, regime=None, portfolio=None, keep_days=None):
     os.makedirs(HISTORY_DIR, exist_ok=True)
 
     serializable = []
@@ -1294,6 +1333,7 @@ def save_history_json(all_stocks, target_date, regime=None, portfolio=None):
         json.dump(meta, f, ensure_ascii=False)
 
     print(f">> 日別JSON (docs/history/{target_date}.json) と meta.json を保存しました。")
+    _prune_history(keep_days)
 
 
 def send_recommendations_to_discord(recommendations, added_count, updated_count, target_date, webhook_url, is_ai=False):
@@ -1443,7 +1483,7 @@ def main():
     if regime:
         state = "risk-on" if regime["risk_on"] else "risk-off"
         print(f">> 地合い: {state} ({regime['ticker']} {regime['close']} vs SMA{regime['sma_days']} {regime['sma']})")
-    save_history_json(results, date, regime, params.get("portfolio"))
+    save_history_json(results, date, regime, params.get("portfolio"), params.get("history_keep_days"))
 
     # ---- AI ステージ ----
     pool = build_pool(results, params)

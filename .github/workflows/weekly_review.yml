@@ -46,6 +46,9 @@ jobs:
             weekly-cache-${{ runner.os }}-
 
       - name: Run weekly review
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           if [ -n "${{ inputs.week }}" ]; then
             python back_tester/weekly_review.py --week "${{ inputs.week }}"

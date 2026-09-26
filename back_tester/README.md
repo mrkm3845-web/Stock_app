@@ -175,7 +175,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 ### 8-3. 入力と出力
 - 入力: `docs/picks/{date}.json`（main8 の日次スナップショット）。無い日は `docs/history/{date}.json` ＋ `docs/ai_analysis/{date}.json` から**復元**（レポート上「復元」表示）。
 - **非営業日（土日祝・取引所休場）は除外**：ベンチマーク（`1306.T`）の実際の営業日を基準に、シグナル日が営業日でなければ集計から外す。`main8.py` 側も JPX 取引所カレンダーで非営業日をスキップする。
-- 出力: `docs/weekly/{YYYY-Www}.json` / `latest.json` / `index.json`、`docs/weekly.html`、`back_tester/results/weekly_review_{week}.md`。
+- 出力: `docs/weekly/{YYYY-Www}.json` / `latest.json` / `index.json` / `feedback.json` / `plan.json`、`docs/weekly.html`、`back_tester/results/weekly_review_{week}.md`。
 
 ### 8-4. 実行
 ```bash
@@ -195,6 +195,13 @@ CI は [`weekly_review.yml`](../.github/workflows/weekly_review.yml) が**毎週
 ### 8-5. 還元（結果をランキングへ反映）
 - **Phase B（実装済み）**: 直近N週の実績（**OCO＝実行ルールのリターン**）から**過熱度別のスコア補正量**を計算し、`docs/strategy_params.json` の `weekly_feedback` に書き込む。`main8.py` は `enabled=true` のとき `score + overheat_delta` で並び順を補正する。
   - 過学習防止: **縮小推定**（`n/(n+k)`）＋**上限クランプ**（`feedback_max_delta`、既定±3）＋**最低サンプル**（`feedback_min_group_trades`、既定8件/群）。群が少ない/偏る間は補正0（観測のみ）。
-  - 透明性: `docs/weekly/feedback.json` に補正の根拠（群別の件数・平均・delta）を出力し、画面の「来週の作戦」に表示。
+  - 透明性: `docs/weekly/feedback.json` に補正の根拠（群別の件数・平均・delta）を出力し、画面の「実績からの自動補正」に表示。
 - **Phase C（将来）**: 十分なサンプルが貯まったら、月次バックテストと同様のガード付きで `entry_guard`・スコア重みへ拡張。
 - 小さなサンプルで重みを動かさない（過学習回避）ことを優先する。
+
+### 8-6. 来週の作戦（AI深掘り）
+- 金曜大引け後の最新候補（`docs/recommendations.json` の推奨 ＋ `docs/history/latest.json` のスコア上位プール）を、**毎日のAI順位より踏み込んで**深掘りし、**来週一番のおすすめ（top_pick）**・補欠・回避・入口/OCO（利確/損切）・シナリオ・リスクを生成する。
+- ペルソナ（`common/persona.py`）を毎日のAIプロンプトと共通で前置。答え合わせ結果（`summary`）と `weekly_feedback` も入力に含める（必ずしも従う必要はない）。
+- 出力: `docs/weekly/plan.json`。`docs/weekly.html` の**最下段**「来週の作戦（AI深掘り）」に表示。
+- **フォールバック**: APIキー未設定・失敗時は生成せず、実績からの自動補正（テンプレ）を表示。
+- 設定: `weekly_review.plan_enabled` / `plan_candidates`。CLI: `--no-plan` で生成をスキップ。

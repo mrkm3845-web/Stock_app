@@ -78,7 +78,7 @@
 
             <!-- 来週の作戦（自動提案） -->
             <div class="card p-3" id="actions-card">
-                <h2 class="h6 fw-bold mb-3"><i class="bi bi-signpost-split me-1"></i> 来週の作戦（実績からの自動補正）</h2>
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-signpost-split me-1"></i> 実績からの自動補正</h2>
                 <div id="actions"></div>
                 <div class="muted-small mt-2" id="feedback-meta"></div>
             </div>
@@ -141,6 +141,13 @@
             <div class="card p-3">
                 <h2 class="h6 fw-bold mb-3"><i class="bi bi-diagram-3 me-1"></i> 内訳（入口・過熱度・業種）</h2>
                 <div class="row g-3" id="breakdown"></div>
+            </div>
+
+            <!-- 来週の作戦（AI深掘り） -->
+            <div class="card p-3 border-success" id="plan-card">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-signpost-2 me-1"></i> 来週の作戦（AI深掘り）<span class="muted-small" id="plan-week"></span></h2>
+                <div id="plan"></div>
+                <div class="muted-small mt-2" id="plan-meta"></div>
             </div>
         </div>
     </div>
@@ -248,6 +255,7 @@ function render(r) {
     renderCalib(r.ai_calibration || {});
     renderBreakdown(r.breakdown || {});
     renderActions(r.actions || [], r.feedback || {});
+    renderNextWeekPlan(r.next_week_plan, r.actions || []);
 }
 
 function statusBadge(t) {
@@ -418,6 +426,45 @@ function renderActions(actions, fb) {
     } else {
         meta.textContent = '';
     }
+}
+
+function renderNextWeekPlan(np, actions) {
+    const plan = (np && np.plan) || null;
+    const weekEl = document.getElementById('plan-week');
+    const box = document.getElementById('plan');
+    const meta = document.getElementById('plan-meta');
+    if (!plan) {
+        if (weekEl) weekEl.textContent = '';
+        box.innerHTML = '<div class="muted-small mb-2">AI深掘りは未生成です（APIキー未設定または失敗時）。以下は実績からの自動補正（テンプレ）です。</div>'
+            + ((actions && actions.length) ? actions.map(a => `<div class="note-item">${esc(a)}</div>`).join('') : '');
+        if (meta) meta.textContent = '';
+        return;
+    }
+    if (weekEl) weekEl.textContent = np.week ? `（対象: ${np.week} / 基準日 ${np.based_on_date}）` : '';
+    const top = plan.top_pick || {};
+    let html = '';
+    if (plan.market_view) html += `<div class="alert alert-light border py-2 mb-2"><b>見立て:</b> ${esc(plan.market_view)}</div>`;
+    if (top.code) {
+        html += `<div class="card p-3 mb-2 best-card">
+            <div class="stat-label text-success">一番のおすすめ（自信度: ${esc(top.confidence || '-')}）</div>
+            <div class="fw-bold fs-6">${esc(top.code)} ${esc(top.name || '')}</div>
+            <div class="mt-1">${esc(top.reason || '')}</div>
+            <div class="strategy-item mt-1">買い方: ${esc(top.entry_strategy || '-')}（入口 ${yen(top.entry_price)} / 利確 ${yen(top.tp_price)} / 損切 ${yen(top.sl_price)}）</div>
+            ${top.scenario ? `<div class="muted-small">シナリオ: ${esc(top.scenario)}</div>` : ''}
+        </div>`;
+    }
+    if ((plan.backups || []).length) {
+        html += '<div class="fw-bold muted-small mt-2">補欠</div><ul class="mb-2">'
+            + plan.backups.map(b => `<li>${esc(b.code)} ${esc(b.name || '')} — ${esc(b.reason || '')}（${esc(b.entry_strategy || '')} ${yen(b.entry_price)}）</li>`).join('')
+            + '</ul>';
+    }
+    if ((plan.avoid || []).length) {
+        html += '<div class="fw-bold muted-small">回避</div><ul class="mb-2">'
+            + plan.avoid.map(a => `<li>${esc(a.code)} — ${esc(a.reason || '')}</li>`).join('') + '</ul>';
+    }
+    if (plan.risk_notes) html += `<div class="alert alert-warning py-2 mb-0"><b>リスク・注意:</b> ${esc(plan.risk_notes)}</div>`;
+    box.innerHTML = html;
+    if (meta) meta.textContent = `生成: ${np.generated_at || '-'} / provider=${np.provider || '-'} model=${np.model || '-'}`;
 }
 
 boot();

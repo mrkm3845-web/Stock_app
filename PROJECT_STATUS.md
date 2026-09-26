@@ -180,7 +180,9 @@ flowchart LR
 - **未確定（pending）と持ち越し**: OCOは最大20営業日保有するため直近週は未確定が多くなる。毎回**直近5週を再採点**（`carryover_weeks=5`）して確定させる。
 - 出力指標: 約定率・勝率・平均/中央リターン（OCO）・TOPIX超過・`rank↔return` の Spearman・上位/下位スプレッド・`recommend` vs `watch`・`entry_type`／過熱度／業種別の実績・**上位N件だけ買った場合（既定 1/3/5）**・**見送り（押し目未到達）を成行追随した場合の機会損失/回避**・**参考（金曜11:30）**・「今週の気づき」。
 - **還元（Phase B 実装済み）**: 直近N週の実績から**過熱度別のスコア補正**を計算し `docs/strategy_params.json` の `weekly_feedback` に反映。`main8.py` が並び順（`score + delta`）に反映する。**縮小推定（n/(n+k)）＋上限クランプ（±3）＋最低サンプル（8件/群）**で過学習を防止。サンプルが偏る（例: 過熱度が「低」ばかり）間は補正0で観測のみ。
-- 出力: `docs/weekly/{YYYY-Www}.json`・`latest.json`・`index.json`・`feedback.json`・`docs/weekly.html`・`results/weekly_review_{week}.md`。
+- 出力: `docs/weekly/{YYYY-Www}.json`・`latest.json`・`index.json`・`feedback.json`・`plan.json`・`docs/weekly.html`・`results/weekly_review_{week}.md`。
+- **来週の作戦（AI深掘り）**: 金曜時点の最新候補を毎日のAIより深掘りし、`top_pick`・補欠・回避・入口/OCO・シナリオ・リスクを生成 → `docs/weekly/plan.json`。`weekly.html` 最下段に表示。ペルソナ（`common/persona.py`）を日次AIと共通で前置。失敗時は実績ベースのテンプレ作戦にフォールバック（`plan_enabled` / `plan_candidates` / `--no-plan`）。
+- **容量対策**: `main8.py` が古い `docs/history/{date}.json` を `history_keep_days`（既定90日）で削除。`data/stocks.db` はコミット停止（`.gitignore`・Actionsキャッシュ運用）。
 - **持ち越し採点（`carryover_weeks=5`）**: 金曜シグナルは翌週に約定し、OCOは最大20営業日保有するため、土曜時点では未確定（pending）になり得る。毎回**直近5週を再採点**して確定させる（取りこぼし防止。各週レポートは自己完結で二重計上なし）。
 - 非営業日（土日祝・取引所休場）は集計から除外。`main8.py` 側も JPX 取引所カレンダーでスキップ。
 - 注記: 本採点は**機械的な答え合わせ**であり、特定日の売買を強制するものではない（実行は資金・時間に合わせて調整）。
@@ -205,7 +207,8 @@ flowchart LR
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
 - `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`（moderate用）・`probe_wait_days`（high=strong+extreme用）・`probe_qty_factor`）。押し目深さ/待機日数はバックテストの成行比較で**過熱度別に**更新されうる。
 - `ai`: `{enabled, provider:deepseek, model:deepseek-flash, stage1_pool_max:40, max_picks:5, max_calls_per_run:40, retry_candidates:15, max_output_stocks:15, news_source:gnews, news_days:14, news_max:5, ...}`（`max_picks`＝表示する推奨の最大件数。`max_output_stocks`＝AIが返すstocks配列の上限目安。`stage1_pool_min` は定義のみで**未使用**）
-- `weekly_review`: `{enabled:true, exit_weekday:4, exit_time:"11:30", fee_rate:0.0005, slippage_rate:0.001, benchmark_ticker:"1306.T", carryover_weeks:5, top_n_review:[1,3,5], feedback_enabled:true, feedback_window_weeks:6, feedback_min_weeks:3, feedback_min_group_trades:8, feedback_shrinkage_k:10.0, feedback_max_delta:3.0}`（週次答え合わせの採点・還元ルール。主指標はOCO＝実行ルール、`exit_time` は参考の金曜手仕舞い）
+- `weekly_review`: `{enabled:true, exit_weekday:4, exit_time:"11:30", fee_rate:0.0005, slippage_rate:0.001, benchmark_ticker:"1306.T", carryover_weeks:5, top_n_review:[1,3,5], plan_enabled:true, plan_candidates:15, feedback_enabled:true, feedback_window_weeks:6, feedback_min_weeks:3, feedback_min_group_trades:8, feedback_shrinkage_k:10.0, feedback_max_delta:3.0}`（週次答え合わせの採点・還元ルール。主指標はOCO＝実行ルール、`exit_time` は参考の金曜手仕舞い）
+- `history_keep_days`: 90（`docs/history` の保持日数。超過分は `main8.py` が削除）
 - `weekly_feedback`: 週次レビューが自動更新する**実績ベースのスコア補正**（`{enabled, window_weeks, n_filled, baseline_avg_pct, overheat_delta:{low/moderate/strong/extreme}, overheat_stats, note}`）。`main8.py` は `enabled=true` のとき `score + overheat_delta` で並び順を補正する（縮小推定・上限±3）。
 
 ---
@@ -219,7 +222,8 @@ flowchart LR
 - `docs/earnings.json`: `{date, horizon_days:14, items:{code:{date,days_until,soon}}}`。
 - `docs/ai_analysis/{date}.json` / `ai_strategy_latest.json`。
 - `docs/picks/{date}.json`: 日次ピックのスナップショット（`source`, `picks[]`, `pool[]`, `ai_stocks[]`）。週次答え合わせとAI校正の入力。
-- `docs/weekly/{YYYY-Www}.json` / `latest.json` / `index.json`: 週次答え合わせの結果（`summary` / `trades[]` / `ranking` / `ai_calibration` / `breakdown` / `notes`）。
+- `docs/weekly/{YYYY-Www}.json` / `latest.json` / `index.json`: 週次答え合わせの結果（`summary` / `trades[]` / `ranking` / `ai_calibration` / `top_n` / `breakdown` / `notes` / `feedback` / `next_week_plan`（最新週のみ））。
+- `docs/weekly/feedback.json`: 実績ベースのスコア補正の根拠。`docs/weekly/plan.json`: 来週の作戦（AI深掘り）。
 - `data/stocks.db`（ファンダ・履歴キャッシュ）。
 
 ---
@@ -298,3 +302,5 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **週次答え合わせを新設**: main8 が日次ピックを `docs/picks/{date}.json` に保存。`weekly_review.py` が毎週土曜09:00に、その週の推奨・技術上位を **entry_plan約定→金曜11:30手仕舞い**で採点し、`docs/weekly/` と **`docs/weekly.html`**（サマリ・銘柄別結果・順位効き・AI校正・内訳・気づき）を生成。既存の月次バックテストとは並行運用。
 - **非営業日スキップ**: `main8.py` が JPX 取引所カレンダーで土日祝・取引所休場を判定してスキップ（`pandas_market_calendars`。未導入時は営業日扱いにフォールバック）。`weekly_review.py` もベンチマークの実営業日で非営業日のシグナルを除外。祝日に生成された重複データ（例: 2026-09-21〜23）を集計から排除。
 - **週次答え合わせの出口をOCO（実行ルール）へ**: 主指標を「約定後にOCO（利確=指値／損切=逆指値）→未到達は最大保有日数の引け」に変更。金曜11:30手仕舞いは**参考**へ。上位N件（1/3/5）・内訳・`weekly_feedback` もOCOベースに。OCOは保有が最大20営業日に及ぶため、**未確定（pending）**を導入し `carryover_weeks=5` で翌週以降に確定。
+- **来週の作戦（AI深掘り）**: 金曜時点の最新候補を深掘りし `docs/weekly/plan.json` と `weekly.html` 最下段に表示。ペルソナ（`common/persona.py`）を日次AIと共通化。`weekly_review.yml` に AIキーを追加。
+- **容量対策**: `history_keep_days`(90) による古い日別JSONの削除、`data/stocks.db` のコミット停止（`.gitignore`＋Actionsキャッシュ）、日次ワークフローの `git add docs/` のみ化。
