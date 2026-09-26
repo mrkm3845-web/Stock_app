@@ -177,7 +177,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 
 ### 8-4. 実行
 ```bash
-# 直近の完了週
+# 既定（先週＋今週の2週を採点。金曜シグナルを翌週に確定させる）
 python back_tester/weekly_review.py
 # 対象週を指定
 python back_tester/weekly_review.py --week 2026-W39
@@ -185,6 +185,10 @@ python back_tester/weekly_review.py --week 2026-W39
 python back_tester/weekly_review.py --all
 ```
 CI は [`weekly_review.yml`](../.github/workflows/weekly_review.yml) が**毎週 土曜 09:00 JST**（`workflow_dispatch` で週指定・全週遡及も可）。
+
+> **持ち越し採点（carryover_weeks=2）**: 金曜シグナルは翌週に約定・手仕舞いするため、土曜時点では未確定
+> （＝「未評価」）。毎回**先週分も再採点**して確定させることで、金曜シグナルや週をまたぐ押し目約定の
+> 取りこぼしを防ぐ。各週のレポートは自己完結なので二重計上は起きない。
 
 ### 8-5. 還元（結果をランキングへ反映）
 - **Phase B（実装済み）**: 直近N週の実績から**過熱度別のスコア補正量**を計算し、`docs/strategy_params.json` の `weekly_feedback` に書き込む。`main8.py` は `enabled=true` のとき `score + overheat_delta` で並び順を補正する。

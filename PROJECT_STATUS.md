@@ -180,6 +180,9 @@ flowchart LR
 - 出力指標: 約定率・勝率・平均/中央リターン・TOPIX超過・`rank↔return` の Spearman・上位/下位スプレッド・`recommend` vs `watch`・`entry_type`／過熱度／業種別の実績・**見送り（押し目未到達）を成行追随した場合の機会損失/回避**・「今週の気づき」。
 - **還元（Phase B 実装済み）**: 直近N週の実績から**過熱度別のスコア補正**を計算し `docs/strategy_params.json` の `weekly_feedback` に反映。`main8.py` が並び順（`score + delta`）に反映する。**縮小推定（n/(n+k)）＋上限クランプ（±3）＋最低サンプル（8件/群）**で過学習を防止。サンプルが偏る（例: 過熱度が「低」ばかり）間は補正0で観測のみ。
 - 出力: `docs/weekly/{YYYY-Www}.json`・`latest.json`・`index.json`・`feedback.json`・`docs/weekly.html`・`results/weekly_review_{week}.md`。
+- **持ち越し採点（`carryover_weeks=2`）**: 金曜シグナルは翌週に約定・手仕舞いするため、毎回**先週分も再採点**して確定させる（未評価の取りこぼし防止。各週レポートは自己完結で二重計上なし）。
+- 非営業日（土日祝・取引所休場）は集計から除外。`main8.py` 側も JPX 取引所カレンダーでスキップ。
+- 注記: 本採点は**機械的な答え合わせ**であり、特定日の売買を強制するものではない（実行は資金・時間に合わせて調整）。
 - [`weekly_review.yml`](.github/workflows/weekly_review.yml): **毎週 土曜 09:00 JST**（`workflow_dispatch` で週指定・全週遡及も可）。
 - **段階**: 並び順の校正（Phase B・実装済み）→ 4週＆十分な取引が貯まったら `entry_guard` 等（Phase C）を検討。
 

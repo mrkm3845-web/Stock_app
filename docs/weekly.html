@@ -188,7 +188,8 @@ function render(r) {
     const rr = r.review_rule || {};
     document.getElementById('rule-box').innerHTML =
         `<i class="bi bi-info-circle me-1"></i><b>採点ルール：</b> ` +
-        `エントリーは <b>${esc(rr.entry)}</b>、手仕舞いは <b>${esc(rr.exit)}</b>、コストは <b>${esc(rr.cost)}</b>、比較は <b>${esc(rr.benchmark)}（TOPIX ETF）</b>。`;
+        `エントリーは <b>${esc(rr.entry)}</b>、手仕舞いは <b>${esc(rr.exit)}</b>、コストは <b>${esc(rr.cost)}</b>、比較は <b>${esc(rr.benchmark)}（TOPIX ETF）</b>。` +
+        (rr.note ? `<br><span class="muted-small">${esc(rr.note)}</span>` : '');
 
     // サマリカード
     const cards = [

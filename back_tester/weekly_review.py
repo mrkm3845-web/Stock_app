@@ -1255,6 +1255,7 @@ def review_week(monday, params, no_fetch=False):
             "exit": "約定週の金曜11:30（前場引け）に成行",
             "cost": f"手数料{params.get('weekly_review', {}).get('fee_rate', 0.0005)*100:.3f}%+スリッページ{params.get('weekly_review', {}).get('slippage_rate', 0.001)*100:.1f}%",
             "benchmark": BENCH_TICKER,
+            "note": "機械的な答え合わせであり、特定日の売買を強制するものではありません。実際の売買は資金・時間に合わせて調整してください。",
         },
         "summary": summary,
         "trades": trades,
@@ -1370,13 +1371,15 @@ def resolve_weeks(args):
                     d = datetime.strptime(ds, "%Y-%m-%d").date()
                     mondays.add(d - timedelta(days=d.weekday()))
         return sorted(mondays)
-    # 直近の完了週（土曜実行想定）
+    # 直近の完了週（土曜実行想定）。古い週→新しい週の順で返す
+    # （複数週を処理するとき、latest.json が最新週で終わるようにするため）。
     today = datetime.now().date()
     last_friday = today - timedelta(days=(today.weekday() - 4) % 7)
     if last_friday > today:
         last_friday -= timedelta(days=7)
     monday = last_friday - timedelta(days=4)
-    return [monday - timedelta(days=7 * i) for i in range(args.weeks)]
+    weeks = [monday - timedelta(days=7 * i) for i in range(args.weeks)]
+    return sorted(weeks)
 
 
 def main():
@@ -1386,7 +1389,8 @@ def main():
         pass
     parser = argparse.ArgumentParser(description="週次スイング戦略の答え合わせ")
     parser.add_argument("--week", help="対象週 YYYY-Www（例 2026-W39）")
-    parser.add_argument("--weeks", type=int, default=1, help="直近N週を生成（既定1）")
+    parser.add_argument("--weeks", type=int, default=None,
+                        help="直近N週を生成（既定は設定 carryover_weeks。先週分を翌週に再採点して確定させる）")
     parser.add_argument("--all", action="store_true", help="historyにある全週を生成（遡及）")
     parser.add_argument("--no-fetch", action="store_true", help="ネット取得をせずキャッシュのみ使用")
     args = parser.parse_args()
@@ -1395,6 +1399,11 @@ def main():
     if not params.get("weekly_review", {}).get("enabled", True):
         print(">> weekly_review は無効化されています。")
         return
+
+    # 既定は「先週＋今週」の2週を毎回採点する。金曜シグナルや週をまたぐ
+    # 押し目約定を、翌週のデータが揃った時点で確定させるため。
+    if args.weeks is None:
+        args.weeks = int(params.get("weekly_review", {}).get("carryover_weeks", 2))
 
     mondays = resolve_weeks(args)
     print(f">> 対象週: {len(mondays)} 週")

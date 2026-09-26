@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: back_tester/data/weekly_cache
-          key: weekly-cache-${{ runner.os }}
+          key: weekly-cache-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
             weekly-cache-${{ runner.os }}-
 
