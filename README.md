@@ -16,6 +16,7 @@
 | [`common/`](common/) | 共通モジュール（特徴量・スコア・パラメータ読込） |
 | [`docs/`](docs/) | フロント（`index.html` / `journal.html` / `weekly.html` / `guide.html`）と出力JSON・`strategy_params.json` |
 | [`back_tester/`](back_tester/) | ローリングウォークフォワード検証・シグナル研究・週次答え合わせ・自動反映 |
+| [`tools/`](tools/) | 運用ツール（Git履歴の容量掃除 `cleanup_git_history.md` / `.ps1`） |
 | [`.github/workflows/`](.github/workflows/) | 技術スクリーニング（平日5回）／AI分析（20:17 JST）／バックテスト（月次）／週次答え合わせ（土曜09:00）／Discord通知（AI実行時） |
 
 ---

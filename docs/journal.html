@@ -64,6 +64,12 @@
                     </div>
                     <input type="file" id="backup-file-input" accept=".json" style="display:none;" onclick="this.value=null" onchange="importData(this.files[0])">
 
+                    <div class="input-group input-group-sm" style="width:auto;" title="楽天証券の「買付余力（預かり金）」を手入力。ブラウザ内のみに保存され、公開されません。">
+                        <span class="input-group-text bg-light fw-bold" style="font-size:0.72rem;"><i class="bi bi-cash-coin me-1"></i>預かり金</span>
+                        <input type="number" id="input-cash" class="form-control form-control-sm text-end" style="width:120px;font-size:0.75rem;" min="0" step="10000" placeholder="0" onchange="saveCash()" oninput="saveCash()">
+                        <span class="input-group-text bg-light" style="font-size:0.72rem;">円</span>
+                    </div>
+
                     <button class="btn btn-primary btn-sm py-1 px-2 fw-bold" onclick="openAddModal()" style="font-size:0.75rem;"><i class="bi bi-plus-lg me-1"></i>手動追加</button>
                     <button class="btn btn-outline-danger btn-sm py-1 px-2 fw-bold" onclick="openTrashModal()" style="font-size:0.75rem;"><i class="bi bi-trash3 me-1"></i>ゴミ箱 (<span id="trash-count">0</span>)</button>
                 </div>
@@ -374,6 +380,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const STORAGE_KEY = "swing_journal_trades_v1";
+        const CASH_KEY = "swing_journal_cash_v1";
+        let AVAILABLE_CASH = 0;
         let TRADES = [];
         let LATEST_STOCKS_MAP = {};
         let tradeModalInstance = null;
@@ -396,6 +404,7 @@
             trashModalInstance = new bootstrap.Modal(document.getElementById('trashModal'));
             stockModalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
             loadTradesFromStorage();
+            loadCash();
             await Promise.all([loadAIStrategies(), loadParams(), loadPicks(), loadMeta(), loadEarnings()]);
             await loadLatestPrices();
             renderAll();
@@ -406,6 +415,21 @@
                 renderAnalytics();
             });
         });
+
+        // 預かり金（買付余力）: 手入力。ブラウザ内(localStorage)のみで保持し、サーバー/公開リポジトリには送らない。
+        function loadCash() {
+            let v = parseInt(localStorage.getItem(CASH_KEY) || "0", 10);
+            AVAILABLE_CASH = isNaN(v) ? 0 : v;
+            const el = document.getElementById('input-cash');
+            if (el) el.value = AVAILABLE_CASH > 0 ? AVAILABLE_CASH : "";
+        }
+
+        function saveCash() {
+            const el = document.getElementById('input-cash');
+            const raw = (el && el.value ? el.value : "").replace(/[^0-9]/g, "");
+            AVAILABLE_CASH = raw ? parseInt(raw, 10) : 0;
+            localStorage.setItem(CASH_KEY, String(AVAILABLE_CASH));
+        }
 
         function openRakuten(code) {
             if (!code) return;
@@ -690,6 +714,18 @@
                 </div>`;
             }
 
+            let cashHtml = "";
+            if (AVAILABLE_CASH > 0 && p > 0) {
+                const q1 = Math.floor(AVAILABLE_CASH / p);
+                const q100 = Math.floor(AVAILABLE_CASH / (p * 100)) * 100;
+                cashHtml = `<div class="strategy-box">
+                    <div class="fw-bold text-dark small mb-2"><i class="bi bi-wallet2 me-1 text-success"></i> 預かり金での買付目安</div>
+                    <div class="strategy-item">利用可能現金: <strong>¥${AVAILABLE_CASH.toLocaleString()}</strong>（journalに手入力）</div>
+                    <div class="strategy-item">単元(100株)換算: <strong>${q100.toLocaleString()}株</strong> ／ ミニ(1株)換算: <strong>${q1.toLocaleString()}株</strong></div>
+                    <div class="strategy-desc">└ 株価 ¥${Number(p).toLocaleString()} で計算（手数料・余力は考慮せず）</div>
+                </div>`;
+            }
+
             let aiSectionHtml = "";
             if (ai) {
                 aiSectionHtml = `<div class="strategy-box ai">
@@ -743,6 +779,7 @@
                     </div>
                 </div>
                 ${sizeHtml}
+                ${cashHtml}
                 <div class="strategy-box">
                     <div class="fw-bold text-dark small mb-2"><i class="bi bi-crosshair me-1 text-primary"></i> 🎯 スイング売買戦略（価格帯別ルール${pick ? '・推奨' : ''}）:</div>
                     <div class="strategy-item text-primary fw-bold"><i class="bi bi-shield-x me-1"></i> 損切りライン: ¥${stopLoss.toLocaleString()} (-${(slPctVal*100).toFixed(1)}%)</div>

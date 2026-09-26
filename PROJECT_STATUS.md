@@ -304,3 +304,4 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **週次答え合わせの出口をOCO（実行ルール）へ**: 主指標を「約定後にOCO（利確=指値／損切=逆指値）→未到達は最大保有日数の引け」に変更。金曜11:30手仕舞いは**参考**へ。上位N件（1/3/5）・内訳・`weekly_feedback` もOCOベースに。OCOは保有が最大20営業日に及ぶため、**未確定（pending）**を導入し `carryover_weeks=5` で翌週以降に確定。
 - **来週の作戦（AI深掘り）**: 金曜時点の最新候補を深掘りし `docs/weekly/plan.json` と `weekly.html` 最下段に表示。ペルソナ（`common/persona.py`）を日次AIと共通化。`weekly_review.yml` に AIキーを追加。
 - **容量対策**: `history_keep_days`(90) による古い日別JSONの削除、`data/stocks.db` のコミット停止（`.gitignore`＋Actionsキャッシュ）、日次ワークフローの `git add docs/` のみ化。
+- **運用ツール**: `tools/cleanup_git_history.md` / `.ps1` を追加（`.git` の年次掃除＝git履歴の書き換え手順。削除では `.git` は減らないため）。**`journal.html` に「預かり金（買付余力）」の手入力欄**を追加（`localStorage` のみ・非公開、モーダルに「買付目安」を表示）。
