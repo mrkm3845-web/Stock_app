@@ -1,1298 +1,1298 @@
 {
-  "generated_at": "2026-09-26T16:07:35",
-  "walk_end": "2026-08-31",
+  "generated_at": "2026-10-01T18:23:33",
+  "walk_end": "2026-09-30",
   "n_quantiles": 10,
   "hold_days": 5,
   "candidates": [
     {
       "signal": "sma200_slope(200日線傾き)",
-      "top_bottom_spread_pct": 0.405,
-      "spearman": 0.952,
-      "positive_fold_ratio": 0.5,
+      "top_bottom_spread_pct": 0.308,
+      "spearman": 0.903,
+      "positive_fold_ratio": 0.467,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115319,
-          "mean_pct": -0.211,
-          "hit_rate": 45.53
+          "count": 123923,
+          "mean_pct": -0.169,
+          "hit_rate": 45.94
         },
         {
           "quantile": 1,
-          "count": 114902,
-          "mean_pct": -0.09,
-          "hit_rate": 47.17
+          "count": 123496,
+          "mean_pct": -0.067,
+          "hit_rate": 47.5
         },
         {
           "quantile": 2,
-          "count": 114942,
-          "mean_pct": 0.061,
-          "hit_rate": 48.29
+          "count": 123557,
+          "mean_pct": 0.079,
+          "hit_rate": 48.32
         },
         {
           "quantile": 3,
-          "count": 114902,
-          "mean_pct": 0.034,
-          "hit_rate": 48.48
+          "count": 123459,
+          "mean_pct": 0.052,
+          "hit_rate": 48.61
         },
         {
           "quantile": 4,
-          "count": 114788,
-          "mean_pct": 0.037,
-          "hit_rate": 48.75
+          "count": 123387,
+          "mean_pct": 0.046,
+          "hit_rate": 48.86
         },
         {
           "quantile": 5,
-          "count": 115063,
-          "mean_pct": 0.061,
-          "hit_rate": 49.15
+          "count": 123660,
+          "mean_pct": 0.059,
+          "hit_rate": 49.12
         },
         {
           "quantile": 6,
-          "count": 114965,
-          "mean_pct": 0.105,
-          "hit_rate": 49.55
+          "count": 123539,
+          "mean_pct": 0.117,
+          "hit_rate": 49.45
         },
         {
           "quantile": 7,
-          "count": 114879,
-          "mean_pct": 0.144,
-          "hit_rate": 49.65
+          "count": 123477,
+          "mean_pct": 0.13,
+          "hit_rate": 49.42
         },
         {
           "quantile": 8,
-          "count": 114965,
-          "mean_pct": 0.215,
-          "hit_rate": 49.73
+          "count": 123576,
+          "mean_pct": 0.186,
+          "hit_rate": 49.4
         },
         {
           "quantile": 9,
-          "count": 114559,
-          "mean_pct": 0.194,
-          "hit_rate": 48.25
+          "count": 123103,
+          "mean_pct": 0.139,
+          "hit_rate": 47.93
         }
       ]
     },
     {
       "signal": "現行スコア(score)",
-      "top_bottom_spread_pct": 0.347,
-      "spearman": 0.915,
-      "positive_fold_ratio": 0.643,
+      "top_bottom_spread_pct": 0.219,
+      "spearman": 0.612,
+      "positive_fold_ratio": 0.6,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115424,
-          "mean_pct": -0.191,
-          "hit_rate": 45.61
+          "count": 124033,
+          "mean_pct": -0.136,
+          "hit_rate": 46.03
         },
         {
           "quantile": 1,
-          "count": 114969,
-          "mean_pct": -0.056,
-          "hit_rate": 47.55
+          "count": 123569,
+          "mean_pct": -0.019,
+          "hit_rate": 48.0
         },
         {
           "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.01,
-          "hit_rate": 48.35
-        },
-        {
-          "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.074,
-          "hit_rate": 48.6
-        },
-        {
-          "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.109,
-          "hit_rate": 49.08
-        },
-        {
-          "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.066,
-          "hit_rate": 49.18
-        },
-        {
-          "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.144,
-          "hit_rate": 49.86
-        },
-        {
-          "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.129,
-          "hit_rate": 49.36
-        },
-        {
-          "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.113,
-          "hit_rate": 48.7
-        },
-        {
-          "quantile": 9,
-          "count": 114652,
-          "mean_pct": 0.156,
-          "hit_rate": 48.23
-        }
-      ]
-    },
-    {
-      "signal": "dist_sma200(200日線乖離)",
-      "top_bottom_spread_pct": 0.266,
-      "spearman": 0.794,
-      "positive_fold_ratio": 0.643,
-      "per_quantile": [
-        {
-          "quantile": 0,
-          "count": 115412,
-          "mean_pct": -0.188,
-          "hit_rate": 45.91
-        },
-        {
-          "quantile": 1,
-          "count": 114965,
-          "mean_pct": -0.031,
-          "hit_rate": 47.76
-        },
-        {
-          "quantile": 2,
-          "count": 115028,
+          "count": 123647,
           "mean_pct": 0.021,
           "hit_rate": 48.49
         },
         {
           "quantile": 3,
-          "count": 114970,
-          "mean_pct": 0.068,
-          "hit_rate": 48.64
+          "count": 123560,
+          "mean_pct": 0.088,
+          "hit_rate": 48.74
         },
         {
           "quantile": 4,
-          "count": 114877,
-          "mean_pct": 0.101,
-          "hit_rate": 49.14
+          "count": 123490,
+          "mean_pct": 0.113,
+          "hit_rate": 49.03
         },
         {
           "quantile": 5,
-          "count": 115136,
-          "mean_pct": 0.097,
-          "hit_rate": 49.4
+          "count": 123752,
+          "mean_pct": 0.079,
+          "hit_rate": 49.2
         },
         {
           "quantile": 6,
-          "count": 115033,
-          "mean_pct": 0.111,
-          "hit_rate": 49.64
+          "count": 123643,
+          "mean_pct": 0.15,
+          "hit_rate": 49.76
         },
         {
           "quantile": 7,
-          "count": 114965,
-          "mean_pct": 0.156,
-          "hit_rate": 49.41
+          "count": 123564,
+          "mean_pct": 0.116,
+          "hit_rate": 49.13
         },
         {
           "quantile": 8,
-          "count": 115028,
-          "mean_pct": 0.14,
-          "hit_rate": 48.88
+          "count": 123652,
+          "mean_pct": 0.082,
+          "hit_rate": 48.4
         },
         {
           "quantile": 9,
-          "count": 114640,
-          "mean_pct": 0.078,
-          "hit_rate": 47.27
+          "count": 123221,
+          "mean_pct": 0.083,
+          "hit_rate": 47.75
         }
       ]
     },
     {
       "signal": "pos_52w(52週高値位置)",
-      "top_bottom_spread_pct": 0.256,
+      "top_bottom_spread_pct": 0.17,
       "spearman": 0.479,
-      "positive_fold_ratio": 0.714,
+      "positive_fold_ratio": 0.667,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115424,
-          "mean_pct": -0.233,
-          "hit_rate": 44.24
+          "count": 124033,
+          "mean_pct": -0.181,
+          "hit_rate": 44.65
         },
         {
           "quantile": 1,
-          "count": 114969,
-          "mean_pct": -0.074,
-          "hit_rate": 46.88
+          "count": 123569,
+          "mean_pct": -0.044,
+          "hit_rate": 47.16
         },
         {
           "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.06,
-          "hit_rate": 48.15
+          "count": 123647,
+          "mean_pct": 0.065,
+          "hit_rate": 48.25
         },
         {
           "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.092,
-          "hit_rate": 48.83
+          "count": 123560,
+          "mean_pct": 0.097,
+          "hit_rate": 48.88
         },
         {
           "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.125,
-          "hit_rate": 49.51
+          "count": 123490,
+          "mean_pct": 0.128,
+          "hit_rate": 49.56
         },
         {
           "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.147,
-          "hit_rate": 49.67
+          "count": 123752,
+          "mean_pct": 0.136,
+          "hit_rate": 49.63
         },
         {
           "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.155,
-          "hit_rate": 50.08
+          "count": 123643,
+          "mean_pct": 0.151,
+          "hit_rate": 49.97
         },
         {
           "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.175,
-          "hit_rate": 49.82
+          "count": 123564,
+          "mean_pct": 0.162,
+          "hit_rate": 49.63
         },
         {
           "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.083,
-          "hit_rate": 49.11
+          "count": 123652,
+          "mean_pct": 0.072,
+          "hit_rate": 48.95
         },
         {
           "quantile": 9,
-          "count": 114652,
-          "mean_pct": 0.023,
-          "hit_rate": 48.24
+          "count": 123221,
+          "mean_pct": -0.011,
+          "hit_rate": 47.87
+        }
+      ]
+    },
+    {
+      "signal": "dist_sma200(200日線乖離)",
+      "top_bottom_spread_pct": 0.127,
+      "spearman": 0.527,
+      "positive_fold_ratio": 0.6,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 124014,
+          "mean_pct": -0.127,
+          "hit_rate": 46.42
+        },
+        {
+          "quantile": 1,
+          "count": 123566,
+          "mean_pct": -0.001,
+          "hit_rate": 48.12
+        },
+        {
+          "quantile": 2,
+          "count": 123633,
+          "mean_pct": 0.037,
+          "hit_rate": 48.62
+        },
+        {
+          "quantile": 3,
+          "count": 123556,
+          "mean_pct": 0.075,
+          "hit_rate": 48.71
+        },
+        {
+          "quantile": 4,
+          "count": 123475,
+          "mean_pct": 0.111,
+          "hit_rate": 49.18
+        },
+        {
+          "quantile": 5,
+          "count": 123743,
+          "mean_pct": 0.11,
+          "hit_rate": 49.4
+        },
+        {
+          "quantile": 6,
+          "count": 123634,
+          "mean_pct": 0.12,
+          "hit_rate": 49.57
+        },
+        {
+          "quantile": 7,
+          "count": 123555,
+          "mean_pct": 0.145,
+          "hit_rate": 49.17
+        },
+        {
+          "quantile": 8,
+          "count": 123644,
+          "mean_pct": 0.105,
+          "hit_rate": 48.58
+        },
+        {
+          "quantile": 9,
+          "count": 123205,
+          "mean_pct": 0.0,
+          "hit_rate": 46.77
         }
       ]
     },
     {
       "signal": "ret_120d(120日リターン)",
-      "top_bottom_spread_pct": 0.234,
-      "spearman": 0.673,
-      "positive_fold_ratio": 0.643,
+      "top_bottom_spread_pct": 0.106,
+      "spearman": 0.418,
+      "positive_fold_ratio": 0.6,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115412,
-          "mean_pct": -0.174,
-          "hit_rate": 46.11
+          "count": 124014,
+          "mean_pct": -0.115,
+          "hit_rate": 46.6
         },
         {
           "quantile": 1,
-          "count": 114965,
-          "mean_pct": -0.03,
-          "hit_rate": 47.42
+          "count": 123566,
+          "mean_pct": -0.002,
+          "hit_rate": 47.71
         },
         {
           "quantile": 2,
-          "count": 115028,
-          "mean_pct": 0.046,
-          "hit_rate": 48.44
+          "count": 123633,
+          "mean_pct": 0.066,
+          "hit_rate": 48.64
         },
         {
           "quantile": 3,
-          "count": 114970,
-          "mean_pct": 0.077,
-          "hit_rate": 49.14
+          "count": 123556,
+          "mean_pct": 0.086,
+          "hit_rate": 49.2
         },
         {
           "quantile": 4,
-          "count": 114877,
-          "mean_pct": 0.065,
-          "hit_rate": 48.87
+          "count": 123475,
+          "mean_pct": 0.075,
+          "hit_rate": 48.88
         },
         {
           "quantile": 5,
-          "count": 115136,
-          "mean_pct": 0.123,
-          "hit_rate": 49.43
+          "count": 123743,
+          "mean_pct": 0.127,
+          "hit_rate": 49.4
         },
         {
           "quantile": 6,
-          "count": 115033,
-          "mean_pct": 0.114,
-          "hit_rate": 49.67
+          "count": 123634,
+          "mean_pct": 0.129,
+          "hit_rate": 49.63
         },
         {
           "quantile": 7,
-          "count": 114965,
-          "mean_pct": 0.154,
-          "hit_rate": 49.33
+          "count": 123555,
+          "mean_pct": 0.136,
+          "hit_rate": 49.13
         },
         {
           "quantile": 8,
-          "count": 115028,
-          "mean_pct": 0.117,
-          "hit_rate": 48.97
+          "count": 123644,
+          "mean_pct": 0.084,
+          "hit_rate": 48.7
         },
         {
           "quantile": 9,
-          "count": 114640,
-          "mean_pct": 0.06,
-          "hit_rate": 47.15
+          "count": 123205,
+          "mean_pct": -0.009,
+          "hit_rate": 46.66
         }
       ]
     },
     {
       "signal": "log_avg_val(流動性)",
-      "top_bottom_spread_pct": 0.138,
-      "spearman": 0.576,
-      "positive_fold_ratio": 0.5,
+      "top_bottom_spread_pct": 0.104,
+      "spearman": 0.297,
+      "positive_fold_ratio": 0.467,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115424,
-          "mean_pct": 0.039,
-          "hit_rate": 46.33
+          "count": 124033,
+          "mean_pct": 0.041,
+          "hit_rate": 46.31
         },
         {
           "quantile": 1,
-          "count": 114969,
-          "mean_pct": 0.04,
-          "hit_rate": 47.13
+          "count": 123569,
+          "mean_pct": 0.05,
+          "hit_rate": 47.16
         },
         {
           "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.044,
-          "hit_rate": 47.54
+          "count": 123647,
+          "mean_pct": 0.045,
+          "hit_rate": 47.57
         },
         {
           "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.055,
-          "hit_rate": 48.42
+          "count": 123560,
+          "mean_pct": 0.074,
+          "hit_rate": 48.5
         },
         {
           "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.001,
-          "hit_rate": 48.66
+          "count": 123490,
+          "mean_pct": 0.022,
+          "hit_rate": 48.76
         },
         {
           "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.041,
-          "hit_rate": 49.13
+          "count": 123752,
+          "mean_pct": 0.052,
+          "hit_rate": 49.27
         },
         {
           "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.025,
-          "hit_rate": 48.91
+          "count": 123643,
+          "mean_pct": 0.034,
+          "hit_rate": 48.93
         },
         {
           "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.067,
-          "hit_rate": 49.52
+          "count": 123564,
+          "mean_pct": 0.068,
+          "hit_rate": 49.46
         },
         {
           "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.063,
-          "hit_rate": 48.88
-        },
-        {
-          "quantile": 9,
-          "count": 114652,
-          "mean_pct": 0.177,
-          "hit_rate": 50.01
-        }
-      ]
-    },
-    {
-      "signal": "ret_60d(60日リターン)",
-      "top_bottom_spread_pct": 0.099,
-      "spearman": 0.745,
-      "positive_fold_ratio": 0.429,
-      "per_quantile": [
-        {
-          "quantile": 0,
-          "count": 115419,
-          "mean_pct": -0.081,
-          "hit_rate": 46.73
-        },
-        {
-          "quantile": 1,
-          "count": 114967,
-          "mean_pct": 0.008,
-          "hit_rate": 48.01
-        },
-        {
-          "quantile": 2,
-          "count": 115038,
-          "mean_pct": 0.008,
-          "hit_rate": 48.44
-        },
-        {
-          "quantile": 3,
-          "count": 114969,
-          "mean_pct": 0.055,
+          "count": 123652,
+          "mean_pct": 0.044,
           "hit_rate": 48.73
         },
         {
-          "quantile": 4,
-          "count": 114883,
-          "mean_pct": 0.059,
-          "hit_rate": 49.08
-        },
-        {
-          "quantile": 5,
-          "count": 115144,
-          "mean_pct": 0.081,
-          "hit_rate": 49.25
-        },
-        {
-          "quantile": 6,
-          "count": 115036,
-          "mean_pct": 0.107,
-          "hit_rate": 49.41
-        },
-        {
-          "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.12,
-          "hit_rate": 49.17
-        },
-        {
-          "quantile": 8,
-          "count": 115034,
-          "mean_pct": 0.177,
-          "hit_rate": 48.9
-        },
-        {
           "quantile": 9,
-          "count": 114644,
-          "mean_pct": 0.018,
-          "hit_rate": 46.78
+          "count": 123221,
+          "mean_pct": 0.145,
+          "hit_rate": 49.85
         }
       ]
     },
     {
       "signal": "atr_pct(ボラティリティ)",
-      "top_bottom_spread_pct": 0.072,
-      "spearman": 0.018,
-      "positive_fold_ratio": 0.571,
+      "top_bottom_spread_pct": -0.011,
+      "spearman": -0.236,
+      "positive_fold_ratio": 0.533,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115424,
-          "mean_pct": -0.073,
-          "hit_rate": 47.24
+          "count": 124033,
+          "mean_pct": -0.061,
+          "hit_rate": 47.19
         },
         {
           "quantile": 1,
-          "count": 114969,
-          "mean_pct": 0.027,
-          "hit_rate": 49.38
+          "count": 123569,
+          "mean_pct": 0.049,
+          "hit_rate": 49.63
         },
         {
           "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.099,
-          "hit_rate": 50.27
+          "count": 123647,
+          "mean_pct": 0.121,
+          "hit_rate": 50.43
         },
         {
           "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.103,
-          "hit_rate": 49.95
+          "count": 123560,
+          "mean_pct": 0.111,
+          "hit_rate": 49.99
         },
         {
           "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.103,
-          "hit_rate": 49.86
+          "count": 123490,
+          "mean_pct": 0.12,
+          "hit_rate": 49.95
         },
         {
           "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.11,
-          "hit_rate": 49.46
+          "count": 123752,
+          "mean_pct": 0.12,
+          "hit_rate": 49.48
         },
         {
           "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.088,
-          "hit_rate": 49.25
+          "count": 123643,
+          "mean_pct": 0.098,
+          "hit_rate": 49.17
         },
         {
           "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.029,
-          "hit_rate": 47.89
+          "count": 123564,
+          "mean_pct": 0.034,
+          "hit_rate": 47.75
         },
         {
           "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.067,
-          "hit_rate": 47.4
+          "count": 123652,
+          "mean_pct": 0.055,
+          "hit_rate": 47.31
         },
         {
           "quantile": 9,
-          "count": 114652,
-          "mean_pct": -0.001,
-          "hit_rate": 43.8
+          "count": 123221,
+          "mean_pct": -0.072,
+          "hit_rate": 43.62
+        }
+      ]
+    },
+    {
+      "signal": "ret_60d(60日リターン)",
+      "top_bottom_spread_pct": -0.042,
+      "spearman": 0.418,
+      "positive_fold_ratio": 0.4,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 124024,
+          "mean_pct": -0.02,
+          "hit_rate": 47.25
+        },
+        {
+          "quantile": 1,
+          "count": 123567,
+          "mean_pct": 0.04,
+          "hit_rate": 48.36
+        },
+        {
+          "quantile": 2,
+          "count": 123640,
+          "mean_pct": 0.032,
+          "hit_rate": 48.61
+        },
+        {
+          "quantile": 3,
+          "count": 123554,
+          "mean_pct": 0.069,
+          "hit_rate": 48.77
+        },
+        {
+          "quantile": 4,
+          "count": 123488,
+          "mean_pct": 0.062,
+          "hit_rate": 49.04
+        },
+        {
+          "quantile": 5,
+          "count": 123746,
+          "mean_pct": 0.094,
+          "hit_rate": 49.26
+        },
+        {
+          "quantile": 6,
+          "count": 123637,
+          "mean_pct": 0.12,
+          "hit_rate": 49.38
+        },
+        {
+          "quantile": 7,
+          "count": 123557,
+          "mean_pct": 0.107,
+          "hit_rate": 49.03
+        },
+        {
+          "quantile": 8,
+          "count": 123650,
+          "mean_pct": 0.132,
+          "hit_rate": 48.58
+        },
+        {
+          "quantile": 9,
+          "count": 123213,
+          "mean_pct": -0.062,
+          "hit_rate": 46.25
         }
       ]
     },
     {
       "signal": "rsi14(RSI14)",
-      "top_bottom_spread_pct": -0.041,
-      "spearman": -0.176,
-      "positive_fold_ratio": 0.571,
+      "top_bottom_spread_pct": -0.093,
+      "spearman": -0.636,
+      "positive_fold_ratio": 0.533,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115424,
-          "mean_pct": 0.044,
-          "hit_rate": 48.11
+          "count": 124033,
+          "mean_pct": 0.065,
+          "hit_rate": 48.29
         },
         {
           "quantile": 1,
-          "count": 114969,
+          "count": 123569,
+          "mean_pct": 0.093,
+          "hit_rate": 48.87
+        },
+        {
+          "quantile": 2,
+          "count": 123647,
+          "mean_pct": 0.07,
+          "hit_rate": 48.67
+        },
+        {
+          "quantile": 3,
+          "count": 123560,
           "mean_pct": 0.079,
-          "hit_rate": 48.63
-        },
-        {
-          "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.052,
-          "hit_rate": 48.58
-        },
-        {
-          "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.055,
-          "hit_rate": 48.65
+          "hit_rate": 48.82
         },
         {
           "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.073,
-          "hit_rate": 48.89
-        },
-        {
-          "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.074,
-          "hit_rate": 48.75
-        },
-        {
-          "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.06,
-          "hit_rate": 48.7
-        },
-        {
-          "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.059,
-          "hit_rate": 48.57
-        },
-        {
-          "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.053,
-          "hit_rate": 48.22
-        },
-        {
-          "quantile": 9,
-          "count": 114652,
-          "mean_pct": 0.003,
-          "hit_rate": 47.41
-        }
-      ]
-    },
-    {
-      "signal": "gap_pct(寄付ギャップ)",
-      "top_bottom_spread_pct": -0.082,
-      "spearman": -0.236,
-      "positive_fold_ratio": 0.214,
-      "per_quantile": [
-        {
-          "quantile": 0,
-          "count": 115424,
-          "mean_pct": 0.038,
-          "hit_rate": 47.48
-        },
-        {
-          "quantile": 1,
-          "count": 114969,
-          "mean_pct": 0.088,
-          "hit_rate": 48.91
-        },
-        {
-          "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.06,
-          "hit_rate": 48.7
-        },
-        {
-          "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.097,
-          "hit_rate": 49.08
-        },
-        {
-          "quantile": 4,
-          "count": 114887,
+          "count": 123490,
           "mean_pct": 0.077,
-          "hit_rate": 48.85
+          "hit_rate": 48.97
         },
         {
           "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.048,
-          "hit_rate": 48.95
-        },
-        {
-          "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.064,
-          "hit_rate": 48.91
-        },
-        {
-          "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.062,
+          "count": 123752,
+          "mean_pct": 0.08,
           "hit_rate": 48.79
         },
         {
-          "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.063,
-          "hit_rate": 48.46
-        },
-        {
-          "quantile": 9,
-          "count": 114652,
-          "mean_pct": -0.044,
-          "hit_rate": 46.39
-        }
-      ]
-    },
-    {
-      "signal": "run_up_days(連騰日数)",
-      "top_bottom_spread_pct": -0.098,
-      "spearman": -0.624,
-      "positive_fold_ratio": 0.286,
-      "per_quantile": [
-        {
-          "quantile": 0,
-          "count": 115424,
-          "mean_pct": 0.05,
-          "hit_rate": 48.25
-        },
-        {
-          "quantile": 1,
-          "count": 114969,
-          "mean_pct": 0.038,
-          "hit_rate": 48.0
-        },
-        {
-          "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.146,
-          "hit_rate": 49.0
-        },
-        {
-          "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.146,
-          "hit_rate": 49.24
-        },
-        {
-          "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.092,
-          "hit_rate": 48.5
-        },
-        {
-          "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.075,
-          "hit_rate": 48.78
-        },
-        {
           "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.045,
-          "hit_rate": 48.63
-        },
-        {
-          "quantile": 7,
-          "count": 114971,
-          "mean_pct": -0.002,
-          "hit_rate": 48.45
-        },
-        {
-          "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.01,
-          "hit_rate": 48.15
-        },
-        {
-          "quantile": 9,
-          "count": 114652,
-          "mean_pct": -0.048,
-          "hit_rate": 47.51
-        }
-      ]
-    },
-    {
-      "signal": "ret_20d(20日リターン)",
-      "top_bottom_spread_pct": -0.117,
-      "spearman": 0.091,
-      "positive_fold_ratio": 0.143,
-      "per_quantile": [
-        {
-          "quantile": 0,
-          "count": 115423,
-          "mean_pct": 0.03,
-          "hit_rate": 47.4
-        },
-        {
-          "quantile": 1,
-          "count": 114968,
+          "count": 123643,
           "mean_pct": 0.067,
-          "hit_rate": 48.8
-        },
-        {
-          "quantile": 2,
-          "count": 115044,
-          "mean_pct": 0.08,
-          "hit_rate": 48.95
-        },
-        {
-          "quantile": 3,
-          "count": 114973,
-          "mean_pct": 0.077,
-          "hit_rate": 49.15
-        },
-        {
-          "quantile": 4,
-          "count": 114886,
-          "mean_pct": 0.059,
-          "hit_rate": 49.19
-        },
-        {
-          "quantile": 5,
-          "count": 115145,
-          "mean_pct": 0.1,
-          "hit_rate": 49.41
-        },
-        {
-          "quantile": 6,
-          "count": 115045,
-          "mean_pct": 0.06,
-          "hit_rate": 48.94
+          "hit_rate": 48.65
         },
         {
           "quantile": 7,
-          "count": 114972,
-          "mean_pct": 0.077,
-          "hit_rate": 48.88
+          "count": 123564,
+          "mean_pct": 0.042,
+          "hit_rate": 48.4
         },
         {
           "quantile": 8,
-          "count": 115040,
-          "mean_pct": 0.089,
-          "hit_rate": 48.18
+          "count": 123652,
+          "mean_pct": 0.031,
+          "hit_rate": 47.96
         },
         {
           "quantile": 9,
-          "count": 114649,
-          "mean_pct": -0.087,
-          "hit_rate": 45.59
+          "count": 123221,
+          "mean_pct": -0.028,
+          "hit_rate": 47.1
         }
       ]
     },
     {
       "signal": "val_ratio_5d(出来高増加率)",
-      "top_bottom_spread_pct": -0.136,
-      "spearman": 0.018,
-      "positive_fold_ratio": 0.214,
+      "top_bottom_spread_pct": -0.138,
+      "spearman": 0.006,
+      "positive_fold_ratio": 0.2,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115424,
-          "mean_pct": 0.021,
-          "hit_rate": 46.75
+          "count": 124033,
+          "mean_pct": 0.016,
+          "hit_rate": 46.67
         },
         {
           "quantile": 1,
-          "count": 114969,
-          "mean_pct": 0.081,
-          "hit_rate": 48.65
+          "count": 123569,
+          "mean_pct": 0.086,
+          "hit_rate": 48.67
         },
         {
           "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.057,
+          "count": 123647,
+          "mean_pct": 0.059,
           "hit_rate": 48.92
         },
         {
           "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.081,
-          "hit_rate": 49.09
+          "count": 123560,
+          "mean_pct": 0.09,
+          "hit_rate": 49.16
         },
         {
           "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.086,
-          "hit_rate": 49.41
+          "count": 123490,
+          "mean_pct": 0.088,
+          "hit_rate": 49.47
         },
         {
           "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.111,
-          "hit_rate": 49.28
+          "count": 123752,
+          "mean_pct": 0.116,
+          "hit_rate": 49.3
         },
         {
           "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.07,
-          "hit_rate": 49.07
+          "count": 123643,
+          "mean_pct": 0.073,
+          "hit_rate": 49.12
         },
         {
           "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.094,
+          "count": 123564,
+          "mean_pct": 0.103,
           "hit_rate": 48.95
         },
         {
           "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.066,
+          "count": 123652,
+          "mean_pct": 0.067,
           "hit_rate": 48.61
         },
         {
           "quantile": 9,
-          "count": 114652,
-          "mean_pct": -0.115,
-          "hit_rate": 45.78
+          "count": 123221,
+          "mean_pct": -0.122,
+          "hit_rate": 45.65
         }
       ]
     },
     {
-      "signal": "ret_5d(5日リターン)",
-      "top_bottom_spread_pct": -0.143,
-      "spearman": -0.952,
-      "positive_fold_ratio": 0.286,
+      "signal": "run_up_days(連騰日数)",
+      "top_bottom_spread_pct": -0.141,
+      "spearman": -0.697,
+      "positive_fold_ratio": 0.267,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115424,
-          "mean_pct": 0.089,
-          "hit_rate": 47.89
+          "count": 124033,
+          "mean_pct": 0.074,
+          "hit_rate": 48.39
         },
         {
           "quantile": 1,
-          "count": 114969,
-          "mean_pct": 0.09,
-          "hit_rate": 49.12
+          "count": 123569,
+          "mean_pct": 0.046,
+          "hit_rate": 47.94
         },
         {
           "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.085,
-          "hit_rate": 49.13
-        },
-        {
-          "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.068,
-          "hit_rate": 49.24
-        },
-        {
-          "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.065,
-          "hit_rate": 48.88
-        },
-        {
-          "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.053,
+          "count": 123647,
+          "mean_pct": 0.158,
           "hit_rate": 48.99
         },
         {
+          "quantile": 3,
+          "count": 123560,
+          "mean_pct": 0.144,
+          "hit_rate": 49.19
+        },
+        {
+          "quantile": 4,
+          "count": 123490,
+          "mean_pct": 0.122,
+          "hit_rate": 48.7
+        },
+        {
+          "quantile": 5,
+          "count": 123752,
+          "mean_pct": 0.083,
+          "hit_rate": 48.92
+        },
+        {
           "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.064,
-          "hit_rate": 48.96
+          "count": 123643,
+          "mean_pct": 0.031,
+          "hit_rate": 48.54
         },
         {
           "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.059,
-          "hit_rate": 48.6
+          "count": 123564,
+          "mean_pct": -0.011,
+          "hit_rate": 48.38
         },
         {
           "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.032,
-          "hit_rate": 47.89
+          "count": 123652,
+          "mean_pct": -0.004,
+          "hit_rate": 48.02
         },
         {
           "quantile": 9,
-          "count": 114652,
-          "mean_pct": -0.054,
-          "hit_rate": 45.82
+          "count": 123221,
+          "mean_pct": -0.067,
+          "hit_rate": 47.46
         }
       ]
     },
     {
-      "signal": "sector_rs_20d(業種相対20日)",
-      "top_bottom_spread_pct": -0.162,
-      "spearman": -0.139,
-      "positive_fold_ratio": 0.286,
+      "signal": "gap_pct(寄付ギャップ)",
+      "top_bottom_spread_pct": -0.155,
+      "spearman": -0.733,
+      "positive_fold_ratio": 0.267,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115423,
-          "mean_pct": 0.053,
-          "hit_rate": 47.63
+          "count": 124033,
+          "mean_pct": 0.062,
+          "hit_rate": 47.57
         },
         {
           "quantile": 1,
-          "count": 114968,
-          "mean_pct": 0.08,
-          "hit_rate": 48.62
-        },
-        {
-          "quantile": 2,
-          "count": 115044,
-          "mean_pct": 0.096,
+          "count": 123569,
+          "mean_pct": 0.106,
           "hit_rate": 48.98
         },
         {
+          "quantile": 2,
+          "count": 123647,
+          "mean_pct": 0.088,
+          "hit_rate": 48.84
+        },
+        {
           "quantile": 3,
-          "count": 114973,
-          "mean_pct": 0.057,
-          "hit_rate": 48.75
+          "count": 123560,
+          "mean_pct": 0.108,
+          "hit_rate": 49.14
         },
         {
           "quantile": 4,
-          "count": 114886,
-          "mean_pct": 0.071,
-          "hit_rate": 49.29
+          "count": 123490,
+          "mean_pct": 0.074,
+          "hit_rate": 48.89
         },
         {
           "quantile": 5,
-          "count": 115145,
-          "mean_pct": 0.046,
-          "hit_rate": 49.11
+          "count": 123752,
+          "mean_pct": 0.058,
+          "hit_rate": 48.91
         },
         {
           "quantile": 6,
-          "count": 115045,
-          "mean_pct": 0.095,
-          "hit_rate": 49.22
+          "count": 123643,
+          "mean_pct": 0.062,
+          "hit_rate": 48.85
         },
         {
           "quantile": 7,
-          "count": 114972,
-          "mean_pct": 0.084,
-          "hit_rate": 49.06
+          "count": 123564,
+          "mean_pct": 0.06,
+          "hit_rate": 48.79
         },
         {
           "quantile": 8,
-          "count": 115040,
-          "mean_pct": 0.079,
-          "hit_rate": 48.32
+          "count": 123652,
+          "mean_pct": 0.05,
+          "hit_rate": 48.38
         },
         {
           "quantile": 9,
-          "count": 114649,
-          "mean_pct": -0.109,
-          "hit_rate": 45.52
+          "count": 123221,
+          "mean_pct": -0.093,
+          "hit_rate": 46.17
         }
       ]
     },
     {
       "signal": "gc_recent(GC直後)",
-      "top_bottom_spread_pct": -0.164,
+      "top_bottom_spread_pct": -0.163,
       "spearman": 0.006,
-      "positive_fold_ratio": 0.214,
+      "positive_fold_ratio": 0.2,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115424,
+          "count": 124033,
+          "mean_pct": 0.12,
+          "hit_rate": 49.06
+        },
+        {
+          "quantile": 1,
+          "count": 123569,
+          "mean_pct": -0.06,
+          "hit_rate": 47.09
+        },
+        {
+          "quantile": 2,
+          "count": 123647,
+          "mean_pct": -0.071,
+          "hit_rate": 46.97
+        },
+        {
+          "quantile": 3,
+          "count": 123560,
+          "mean_pct": 0.063,
+          "hit_rate": 48.14
+        },
+        {
+          "quantile": 4,
+          "count": 123490,
+          "mean_pct": 0.169,
+          "hit_rate": 49.06
+        },
+        {
+          "quantile": 5,
+          "count": 123752,
+          "mean_pct": 0.132,
+          "hit_rate": 48.87
+        },
+        {
+          "quantile": 6,
+          "count": 123643,
+          "mean_pct": 0.095,
+          "hit_rate": 49.06
+        },
+        {
+          "quantile": 7,
+          "count": 123564,
           "mean_pct": 0.119,
-          "hit_rate": 49.09
-        },
-        {
-          "quantile": 1,
-          "count": 114969,
-          "mean_pct": -0.061,
-          "hit_rate": 47.07
-        },
-        {
-          "quantile": 2,
-          "count": 115043,
-          "mean_pct": -0.073,
-          "hit_rate": 47.02
-        },
-        {
-          "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.057,
-          "hit_rate": 48.27
-        },
-        {
-          "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.196,
-          "hit_rate": 49.33
-        },
-        {
-          "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.161,
-          "hit_rate": 49.03
-        },
-        {
-          "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.076,
-          "hit_rate": 49.0
-        },
-        {
-          "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.076,
-          "hit_rate": 49.72
+          "hit_rate": 50.11
         },
         {
           "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.046,
-          "hit_rate": 48.59
+          "count": 123652,
+          "mean_pct": 0.05,
+          "hit_rate": 48.75
         },
         {
           "quantile": 9,
-          "count": 114652,
-          "mean_pct": -0.045,
-          "hit_rate": 47.37
-        }
-      ]
-    },
-    {
-      "signal": "dist_sma25(25日線乖離)",
-      "top_bottom_spread_pct": -0.166,
-      "spearman": -0.127,
-      "positive_fold_ratio": 0.214,
-      "per_quantile": [
-        {
-          "quantile": 0,
-          "count": 115423,
-          "mean_pct": 0.081,
-          "hit_rate": 47.75
-        },
-        {
-          "quantile": 1,
-          "count": 114967,
-          "mean_pct": 0.074,
-          "hit_rate": 48.81
-        },
-        {
-          "quantile": 2,
-          "count": 115044,
-          "mean_pct": 0.034,
-          "hit_rate": 48.78
-        },
-        {
-          "quantile": 3,
-          "count": 114972,
-          "mean_pct": 0.086,
-          "hit_rate": 49.4
-        },
-        {
-          "quantile": 4,
-          "count": 114886,
-          "mean_pct": 0.044,
-          "hit_rate": 49.12
-        },
-        {
-          "quantile": 5,
-          "count": 115145,
-          "mean_pct": 0.084,
-          "hit_rate": 49.21
-        },
-        {
-          "quantile": 6,
-          "count": 115044,
-          "mean_pct": 0.07,
-          "hit_rate": 49.09
-        },
-        {
-          "quantile": 7,
-          "count": 114972,
-          "mean_pct": 0.072,
-          "hit_rate": 48.74
-        },
-        {
-          "quantile": 8,
-          "count": 115039,
-          "mean_pct": 0.09,
-          "hit_rate": 47.98
-        },
-        {
-          "quantile": 9,
-          "count": 114649,
-          "mean_pct": -0.085,
-          "hit_rate": 45.61
-        }
-      ]
-    },
-    {
-      "signal": "dist_sma5(5日線乖離)",
-      "top_bottom_spread_pct": -0.178,
-      "spearman": -0.745,
-      "positive_fold_ratio": 0.286,
-      "per_quantile": [
-        {
-          "quantile": 0,
-          "count": 115424,
-          "mean_pct": 0.07,
-          "hit_rate": 47.69
-        },
-        {
-          "quantile": 1,
-          "count": 114969,
-          "mean_pct": 0.13,
-          "hit_rate": 49.34
-        },
-        {
-          "quantile": 2,
-          "count": 115043,
-          "mean_pct": 0.103,
-          "hit_rate": 49.43
-        },
-        {
-          "quantile": 3,
-          "count": 114977,
-          "mean_pct": 0.066,
-          "hit_rate": 48.92
-        },
-        {
-          "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.07,
-          "hit_rate": 48.96
-        },
-        {
-          "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.041,
-          "hit_rate": 48.84
-        },
-        {
-          "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.053,
-          "hit_rate": 48.94
-        },
-        {
-          "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.068,
-          "hit_rate": 48.82
-        },
-        {
-          "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.059,
-          "hit_rate": 47.91
-        },
-        {
-          "quantile": 9,
-          "count": 114652,
-          "mean_pct": -0.108,
-          "hit_rate": 45.66
+          "count": 123221,
+          "mean_pct": -0.043,
+          "hit_rate": 47.42
         }
       ]
     },
     {
       "signal": "weekly_trend(週足上昇)",
-      "top_bottom_spread_pct": -0.194,
-      "spearman": 0.224,
-      "positive_fold_ratio": 0.214,
+      "top_bottom_spread_pct": -0.17,
+      "spearman": 0.382,
+      "positive_fold_ratio": 0.267,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 115424,
-          "mean_pct": 0.124,
+          "count": 124033,
+          "mean_pct": 0.13,
           "hit_rate": 49.25
         },
         {
           "quantile": 1,
-          "count": 114969,
-          "mean_pct": -0.08,
-          "hit_rate": 46.87
+          "count": 123569,
+          "mean_pct": -0.07,
+          "hit_rate": 46.95
         },
         {
           "quantile": 2,
-          "count": 115043,
-          "mean_pct": -0.067,
-          "hit_rate": 47.04
+          "count": 123647,
+          "mean_pct": -0.074,
+          "hit_rate": 46.93
         },
         {
           "quantile": 3,
-          "count": 114977,
-          "mean_pct": -0.078,
-          "hit_rate": 47.09
+          "count": 123560,
+          "mean_pct": -0.059,
+          "hit_rate": 47.14
         },
         {
           "quantile": 4,
-          "count": 114887,
-          "mean_pct": 0.203,
-          "hit_rate": 49.36
+          "count": 123490,
+          "mean_pct": 0.193,
+          "hit_rate": 49.21
         },
         {
           "quantile": 5,
-          "count": 115147,
-          "mean_pct": 0.174,
-          "hit_rate": 49.15
+          "count": 123752,
+          "mean_pct": 0.138,
+          "hit_rate": 48.82
         },
         {
           "quantile": 6,
-          "count": 115049,
-          "mean_pct": 0.167,
-          "hit_rate": 49.35
+          "count": 123643,
+          "mean_pct": 0.138,
+          "hit_rate": 49.15
         },
         {
           "quantile": 7,
-          "count": 114971,
-          "mean_pct": 0.043,
-          "hit_rate": 48.28
+          "count": 123564,
+          "mean_pct": 0.059,
+          "hit_rate": 48.43
         },
         {
           "quantile": 8,
-          "count": 115041,
-          "mean_pct": 0.134,
-          "hit_rate": 50.62
+          "count": 123652,
+          "mean_pct": 0.16,
+          "hit_rate": 50.81
         },
         {
           "quantile": 9,
-          "count": 114652,
-          "mean_pct": -0.07,
-          "hit_rate": 47.49
+          "count": 123221,
+          "mean_pct": -0.04,
+          "hit_rate": 47.84
+        }
+      ]
+    },
+    {
+      "signal": "ret_20d(20日リターン)",
+      "top_bottom_spread_pct": -0.182,
+      "spearman": -0.333,
+      "positive_fold_ratio": 0.133,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 124031,
+          "mean_pct": 0.042,
+          "hit_rate": 47.5
+        },
+        {
+          "quantile": 1,
+          "count": 123568,
+          "mean_pct": 0.081,
+          "hit_rate": 48.88
+        },
+        {
+          "quantile": 2,
+          "count": 123648,
+          "mean_pct": 0.097,
+          "hit_rate": 49.06
+        },
+        {
+          "quantile": 3,
+          "count": 123553,
+          "mean_pct": 0.096,
+          "hit_rate": 49.33
+        },
+        {
+          "quantile": 4,
+          "count": 123490,
+          "mean_pct": 0.073,
+          "hit_rate": 49.33
+        },
+        {
+          "quantile": 5,
+          "count": 123754,
+          "mean_pct": 0.112,
+          "hit_rate": 49.44
+        },
+        {
+          "quantile": 6,
+          "count": 123637,
+          "mean_pct": 0.067,
+          "hit_rate": 48.96
+        },
+        {
+          "quantile": 7,
+          "count": 123564,
+          "mean_pct": 0.077,
+          "hit_rate": 48.76
+        },
+        {
+          "quantile": 8,
+          "count": 123652,
+          "mean_pct": 0.069,
+          "hit_rate": 47.97
+        },
+        {
+          "quantile": 9,
+          "count": 123219,
+          "mean_pct": -0.14,
+          "hit_rate": 45.3
+        }
+      ]
+    },
+    {
+      "signal": "sector_rs_20d(業種相対20日)",
+      "top_bottom_spread_pct": -0.22,
+      "spearman": -0.164,
+      "positive_fold_ratio": 0.267,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 124031,
+          "mean_pct": 0.061,
+          "hit_rate": 47.62
+        },
+        {
+          "quantile": 1,
+          "count": 123568,
+          "mean_pct": 0.086,
+          "hit_rate": 48.62
+        },
+        {
+          "quantile": 2,
+          "count": 123648,
+          "mean_pct": 0.103,
+          "hit_rate": 49.06
+        },
+        {
+          "quantile": 3,
+          "count": 123553,
+          "mean_pct": 0.071,
+          "hit_rate": 48.86
+        },
+        {
+          "quantile": 4,
+          "count": 123490,
+          "mean_pct": 0.089,
+          "hit_rate": 49.41
+        },
+        {
+          "quantile": 5,
+          "count": 123754,
+          "mean_pct": 0.058,
+          "hit_rate": 49.21
+        },
+        {
+          "quantile": 6,
+          "count": 123637,
+          "mean_pct": 0.104,
+          "hit_rate": 49.29
+        },
+        {
+          "quantile": 7,
+          "count": 123564,
+          "mean_pct": 0.092,
+          "hit_rate": 49.02
+        },
+        {
+          "quantile": 8,
+          "count": 123652,
+          "mean_pct": 0.07,
+          "hit_rate": 48.16
+        },
+        {
+          "quantile": 9,
+          "count": 123219,
+          "mean_pct": -0.159,
+          "hit_rate": 45.26
+        }
+      ]
+    },
+    {
+      "signal": "ret_5d(5日リターン)",
+      "top_bottom_spread_pct": -0.222,
+      "spearman": -0.964,
+      "positive_fold_ratio": 0.267,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 124033,
+          "mean_pct": 0.105,
+          "hit_rate": 47.97
+        },
+        {
+          "quantile": 1,
+          "count": 123569,
+          "mean_pct": 0.113,
+          "hit_rate": 49.24
+        },
+        {
+          "quantile": 2,
+          "count": 123647,
+          "mean_pct": 0.109,
+          "hit_rate": 49.25
+        },
+        {
+          "quantile": 3,
+          "count": 123560,
+          "mean_pct": 0.093,
+          "hit_rate": 49.33
+        },
+        {
+          "quantile": 4,
+          "count": 123490,
+          "mean_pct": 0.081,
+          "hit_rate": 48.99
+        },
+        {
+          "quantile": 5,
+          "count": 123752,
+          "mean_pct": 0.065,
+          "hit_rate": 49.01
+        },
+        {
+          "quantile": 6,
+          "count": 123643,
+          "mean_pct": 0.058,
+          "hit_rate": 48.92
+        },
+        {
+          "quantile": 7,
+          "count": 123564,
+          "mean_pct": 0.057,
+          "hit_rate": 48.58
+        },
+        {
+          "quantile": 8,
+          "count": 123652,
+          "mean_pct": 0.01,
+          "hit_rate": 47.75
+        },
+        {
+          "quantile": 9,
+          "count": 123221,
+          "mean_pct": -0.117,
+          "hit_rate": 45.47
+        }
+      ]
+    },
+    {
+      "signal": "dist_sma25(25日線乖離)",
+      "top_bottom_spread_pct": -0.228,
+      "spearman": -0.491,
+      "positive_fold_ratio": 0.2,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 124029,
+          "mean_pct": 0.087,
+          "hit_rate": 47.85
+        },
+        {
+          "quantile": 1,
+          "count": 123568,
+          "mean_pct": 0.1,
+          "hit_rate": 48.95
+        },
+        {
+          "quantile": 2,
+          "count": 123647,
+          "mean_pct": 0.057,
+          "hit_rate": 48.92
+        },
+        {
+          "quantile": 3,
+          "count": 123554,
+          "mean_pct": 0.107,
+          "hit_rate": 49.63
+        },
+        {
+          "quantile": 4,
+          "count": 123490,
+          "mean_pct": 0.057,
+          "hit_rate": 49.24
+        },
+        {
+          "quantile": 5,
+          "count": 123752,
+          "mean_pct": 0.095,
+          "hit_rate": 49.24
+        },
+        {
+          "quantile": 6,
+          "count": 123638,
+          "mean_pct": 0.081,
+          "hit_rate": 49.06
+        },
+        {
+          "quantile": 7,
+          "count": 123563,
+          "mean_pct": 0.072,
+          "hit_rate": 48.61
+        },
+        {
+          "quantile": 8,
+          "count": 123652,
+          "mean_pct": 0.06,
+          "hit_rate": 47.71
+        },
+        {
+          "quantile": 9,
+          "count": 123219,
+          "mean_pct": -0.141,
+          "hit_rate": 45.3
+        }
+      ]
+    },
+    {
+      "signal": "dist_sma5(5日線乖離)",
+      "top_bottom_spread_pct": -0.257,
+      "spearman": -0.915,
+      "positive_fold_ratio": 0.267,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 124033,
+          "mean_pct": 0.094,
+          "hit_rate": 47.81
+        },
+        {
+          "quantile": 1,
+          "count": 123569,
+          "mean_pct": 0.151,
+          "hit_rate": 49.45
+        },
+        {
+          "quantile": 2,
+          "count": 123647,
+          "mean_pct": 0.13,
+          "hit_rate": 49.6
+        },
+        {
+          "quantile": 3,
+          "count": 123560,
+          "mean_pct": 0.085,
+          "hit_rate": 48.99
+        },
+        {
+          "quantile": 4,
+          "count": 123490,
+          "mean_pct": 0.083,
+          "hit_rate": 49.03
+        },
+        {
+          "quantile": 5,
+          "count": 123752,
+          "mean_pct": 0.05,
+          "hit_rate": 48.85
+        },
+        {
+          "quantile": 6,
+          "count": 123643,
+          "mean_pct": 0.057,
+          "hit_rate": 48.92
+        },
+        {
+          "quantile": 7,
+          "count": 123564,
+          "mean_pct": 0.057,
+          "hit_rate": 48.72
+        },
+        {
+          "quantile": 8,
+          "count": 123652,
+          "mean_pct": 0.032,
+          "hit_rate": 47.77
+        },
+        {
+          "quantile": 9,
+          "count": 123221,
+          "mean_pct": -0.163,
+          "hit_rate": 45.39
         }
       ]
     }
