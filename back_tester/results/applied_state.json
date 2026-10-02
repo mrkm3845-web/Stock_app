@@ -1,8 +1,57 @@
 {
-  "applied_at": "2026-10-01T18:21:00",
-  "run_id": "20261001181910",
+  "applied_at": "2026-10-02T17:45:18",
+  "run_id": "20261002174324",
+  "tiers": {
+    "run_id": "20261002174324",
+    "items": [
+      {
+        "tier": "mid",
+        "exit_mode": "atr_trail",
+        "params": {
+          "tp_pct": 0.15,
+          "sl_pct": 0.02,
+          "atr_sl_mult": 2.5,
+          "max_hold_days": 20
+        },
+        "test": {
+          "trade_count": 668,
+          "win_rate": 46.41,
+          "ev_pct": 2.88,
+          "pf": 1.58,
+          "consec_losses": 33,
+          "max_loss_pct": -34.32,
+          "total_return_pct": 124.49,
+          "annualized_return_pct": 24.91,
+          "max_dd_pct": 40.34,
+          "sharpe": 0.83
+        }
+      },
+      {
+        "tier": "high",
+        "exit_mode": "atr_trail",
+        "params": {
+          "tp_pct": 0.15,
+          "sl_pct": 0.07,
+          "atr_sl_mult": 1.5,
+          "max_hold_days": 20
+        },
+        "test": {
+          "trade_count": 1136,
+          "win_rate": 39.88,
+          "ev_pct": 2.64,
+          "pf": 1.63,
+          "consec_losses": 49,
+          "max_loss_pct": -32.88,
+          "total_return_pct": 389.58,
+          "annualized_return_pct": 52.63,
+          "max_dd_pct": 46.56,
+          "sharpe": 1.07
+        }
+      }
+    ]
+  },
   "entry_guard": {
-    "run_id": "20261001181910",
+    "run_id": "20261002174324",
     "items": [
       {
         "group": "moderate",
@@ -25,17 +74,51 @@
           "fill_rate": 0.429
         },
         "market": {
-          "trade_count": 872,
-          "win_rate": 23.85,
-          "ev_pct": 0.1,
+          "trade_count": 871,
+          "win_rate": 23.77,
+          "ev_pct": 0.09,
           "pf": 1.04,
           "consec_losses": 29,
           "max_loss_pct": -7.28,
-          "total_return_pct": 13.11,
-          "annualized_return_pct": 3.37,
+          "total_return_pct": 5.85,
+          "annualized_return_pct": 1.54,
           "max_dd_pct": 39.49,
-          "sharpe": 0.31,
+          "sharpe": 0.21,
           "fill_rate": 0.986
+        }
+      },
+      {
+        "group": "high",
+        "key": "limit_1.5atr_3d",
+        "params": {
+          "pullback_atr_deep": 1.5,
+          "probe_wait_days": 3
+        },
+        "test": {
+          "trade_count": 320,
+          "win_rate": 29.69,
+          "ev_pct": 1.09,
+          "pf": 1.47,
+          "consec_losses": 15,
+          "max_loss_pct": -7.28,
+          "total_return_pct": 84.18,
+          "annualized_return_pct": 19.11,
+          "max_dd_pct": 12.7,
+          "sharpe": 2.26,
+          "fill_rate": 0.314
+        },
+        "market": {
+          "trade_count": 1002,
+          "win_rate": 22.85,
+          "ev_pct": -0.0,
+          "pf": 1.0,
+          "consec_losses": 35,
+          "max_loss_pct": -7.28,
+          "total_return_pct": 0.11,
+          "annualized_return_pct": 0.03,
+          "max_dd_pct": 36.03,
+          "sharpe": 0.15,
+          "fill_rate": 0.983
         }
       }
     ]
