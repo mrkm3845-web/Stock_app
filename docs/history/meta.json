@@ -1,1 +1,1 @@
-{"date": "2026-10-02", "generated_at": "2026-10-03T01:41:13", "regime": {"ticker": "1306.T", "close": 434.4, "sma": 393.1, "sma_days": 200, "risk_on": true}, "portfolio": {"max_positions": 5, "max_per_sector": 2, "risk_per_trade_pct": 1.0, "reference_capital_jpy": 1000000}}
+{"date": "2026-10-02", "generated_at": "2026-10-03T08:02:09", "regime": {"ticker": "1306.T", "close": 430.2, "sma": 393.5, "sma_days": 200, "risk_on": true}, "portfolio": {"max_positions": 5, "max_per_sector": 2, "risk_per_trade_pct": 1.0, "reference_capital_jpy": 1000000}}
