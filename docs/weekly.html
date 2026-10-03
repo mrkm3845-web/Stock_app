@@ -6,6 +6,7 @@
     <title>週次答え合わせ（週次スイング戦略）</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.88rem; padding-bottom: 60px; }
         .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
@@ -43,6 +44,7 @@
                 <div class="d-flex flex-wrap gap-2 align-items-center ms-auto">
                     <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナー</a>
                     <a href="journal.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> 取引記録</a>
+                    <a href="playbook.html" class="btn btn-outline-warning btn-sm fw-bold"><i class="bi bi-mortarboard me-1"></i> AIの学び</a>
                     <a href="guide.html" class="btn btn-outline-secondary btn-sm fw-bold"><i class="bi bi-question-circle me-1"></i> 見方ガイド</a>
                     <div class="input-group input-group-sm" style="width: auto;">
                         <span class="input-group-text bg-light fw-bold"><i class="bi bi-calendar-week me-1"></i> 対象週</span>
@@ -50,6 +52,22 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- 長期の検証トレンド（やさしい要約） -->
+        <div class="card p-3 d-none" id="trend-card">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
+                <h2 class="h6 fw-bold mb-0"><i class="bi bi-graph-up me-1"></i> 長期の検証トレンド（やさしい要約）</h2>
+                <span class="muted-small" id="trend-updated"></span>
+            </div>
+            <div id="trend-summary" class="row g-2 mb-2"></div>
+            <div id="trend-lessons" class="mb-3"></div>
+            <div class="row g-3">
+                <div class="col-12 col-lg-6"><div class="muted-small mb-1">AI『推奨』と『様子見』の平均成績（週ごと）</div><div style="height:200px"><canvas id="chartVerdict"></canvas></div></div>
+                <div class="col-12 col-lg-6"><div class="muted-small mb-1">週ごとの成績（市場平均との差）</div><div style="height:200px"><canvas id="chartWeekly"></canvas></div></div>
+                <div class="col-12"><div class="muted-small mb-1">スコア順位の効き（上位ほど上がったか）</div><div style="height:180px"><canvas id="chartScore"></canvas></div></div>
+            </div>
+            <div class="muted-small mt-2">※ サンプルが少ない間は当たり外れの判断はできません。最低週数・最低件数・信頼区間の条件を満たした項目のみ表示します。<span id="trend-inject-note"></span></div>
         </div>
 
         <div id="loading" class="alert alert-info">読み込み中...</div>
@@ -64,6 +82,7 @@
             <!-- サマリ -->
             <div class="card p-3">
                 <h2 class="h6 fw-bold mb-3"><i class="bi bi-graph-up-arrow me-1"></i> 今週の結果サマリ <span class="muted-small" id="week-label"></span></h2>
+                <div id="easy-summary" class="alert alert-light border py-2 mb-3"></div>
                 <div class="row g-3" id="summary-cards"></div>
             </div>
 
@@ -181,6 +200,7 @@ async function boot() {
         box.classList.remove('d-none');
         box.innerHTML = `<i class="bi bi-exclamation-triangle me-1"></i>週次レポートを読み込めませんでした：${esc(e.message)}<br><small>まだ週次レビューが実行されていない可能性があります（毎週土曜 09:00 に自動生成）。</small>`;
     }
+    loadTrends();
     document.getElementById('loading').classList.add('d-none');
 }
 
@@ -201,8 +221,33 @@ async function loadWeek(week) {
     document.getElementById('loading').classList.add('d-none');
 }
 
+function renderEasySummary(s) {
+    const el = document.getElementById('easy-summary');
+    if (!el) return;
+    const parts = [];
+    const filled = s.n_filled ?? 0;
+    const pending = s.n_pending ?? 0;
+    const pick = s.picks_total ?? 0;
+    parts.push(`今週は候補 <b>${pick}</b> 件のうち、実際に約定したのは <b>${filled}</b> 件（未確定 ${pending} 件）。`);
+    if (filled > 0) {
+        const avg = s.avg_return_pct, win = s.win_rate;
+        const judge = avg > 0 ? 'プラス' : (avg < 0 ? 'マイナス' : 'ほぼ横ばい');
+        parts.push(`約定分の平均は <b class="${cls(avg)}">${pct(avg)}</b> で<b>${judge}</b>、勝率は <b>${win != null ? (win*100).toFixed(0)+'%' : '-'}</b>。`);
+        const ex = s.avg_excess_pct;
+        if (ex != null) {
+            parts.push(ex >= 0
+                ? `市場平均（TOPIX）より <b class="pos">+${Number(ex).toFixed(2)}%</b> 上回りました。`
+                : `市場平均（TOPIX）より <b class="neg">${Number(ex).toFixed(2)}%</b> 下回りました。`);
+        }
+    } else {
+        parts.push('約定した取引がまだ無いため、今週の損益評価はありません（来週確定の見込み）。');
+    }
+    el.innerHTML = '<i class="bi bi-lightbulb me-1 text-warning"></i>' + parts.join(' ');
+}
+
 function render(r) {
     const s = r.summary || {};
+    renderEasySummary(s);
     document.getElementById('week-label').textContent = `${r.week}（${r.start}〜${r.end}）`;
     const rr = r.review_rule || {};
     document.getElementById('rule-box').innerHTML =
@@ -465,6 +510,108 @@ function renderNextWeekPlan(np, actions) {
     if (plan.risk_notes) html += `<div class="alert alert-warning py-2 mb-0"><b>リスク・注意:</b> ${esc(plan.risk_notes)}</div>`;
     box.innerHTML = html;
     if (meta) meta.textContent = `生成: ${np.generated_at || '-'} / provider=${np.provider || '-'} model=${np.model || '-'}`;
+}
+
+// ---------------- 長期トレンド（ledger + playbook。観測・統計統制つき） ----------------
+let _chartVerdict = null, _chartWeekly = null, _chartScore = null;
+const TREND_TEXT = (v) => (v === null || v === undefined) ? '-' : ((v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%');
+const TREND_CLS = (v) => (v === null || v === undefined) ? '' : (v > 0 ? 'pos' : (v < 0 ? 'neg' : ''));
+
+function ciText(g) {
+    if (!g || !g.win_ci95 || g.win_ci95[0] == null) return '';
+    return `勝率${(g.win_rate * 100).toFixed(0)}%（95%CI ${(g.win_ci95[0] * 100).toFixed(0)}〜${(g.win_ci95[1] * 100).toFixed(0)}%）`;
+}
+
+async function loadTrends() {
+    let ledger = null, playbook = null;
+    try { const r = await fetch('weekly/ledger.json', { cache: 'no-store' }); if (r.ok) ledger = await r.json(); } catch (e) {}
+    try { const r = await fetch('ai_playbook.json', { cache: 'no-store' }); if (r.ok) playbook = await r.json(); } catch (e) {}
+    if (!ledger && !playbook) return;
+    document.getElementById('trend-card').classList.remove('d-none');
+    if (ledger && ledger.updated_at) document.getElementById('trend-updated').textContent = '更新: ' + ledger.updated_at;
+    renderTrendSummary(playbook);
+    renderTrendLessons(playbook);
+    if (ledger && (ledger.weeks || []).length) renderTrendCharts(ledger.weeks.slice().reverse());
+    const note = document.getElementById('trend-inject-note');
+    if (note && playbook) note.textContent = ` 現在の扱い: ${playbook.inject_note || '-'}（プロンプト版 ${playbook.prompt_version || '-'}）`;
+}
+
+function trendCard(label, value, sub, clsName) {
+    return `<div class="col-6 col-md-3"><div class="border rounded-3 p-2 text-center h-100">
+        <div class="stat-label">${esc(label)}</div>
+        <div class="stat-value ${clsName || ''}">${esc(value)}</div>
+        <div class="muted-small">${esc(sub || '')}</div></div></div>`;
+}
+
+function renderTrendSummary(pb) {
+    const box = document.getElementById('trend-summary');
+    if (!pb || !pb.stats) { box.innerHTML = '<div class="col-12 muted-small">長期データがまだありません（週次レビューの実行後に表示されます）。</div>'; return; }
+    const st = pb.stats;
+    const rec = st.recommend, watch = st.watch;
+    let html = '';
+    if (rec && rec.n) {
+        html += trendCard('AI「推奨」の平均', TREND_TEXT(rec.avg), `${rec.n}件 / ${ciText(rec)}`, TREND_CLS(rec.avg));
+        html += trendCard('AI「様子見」の平均', watch ? TREND_TEXT(watch.avg) : '-', watch ? `${watch.n}件 / ${ciText(watch)}` : 'データ不足', watch ? TREND_CLS(watch.avg) : '');
+        if (watch && watch.n) {
+            const delta = rec.avg - watch.avg;
+            html += trendCard('「推奨」は様子見より', (delta >= 0 ? '+' : '') + delta.toFixed(2) + 'pt', delta >= 0 ? 'AI判定は機能' : '要調整', TREND_CLS(delta));
+        }
+    } else {
+        html += '<div class="col-12 muted-small">AI判定のサンプルがまだ不足しています。</div>';
+    }
+    if (pb.score_ranking) {
+        const sr = pb.score_ranking;
+        html += trendCard('スコア上位の効き', (sr.spearman_mean >= 0 ? '+' : '') + sr.spearman_mean.toFixed(2), `${sr.positive_weeks}/${sr.n_weeks}週でプラス`, sr.spearman_mean >= 0.1 ? 'pos' : '');
+    }
+    box.innerHTML = html;
+}
+
+function renderTrendLessons(pb) {
+    const box = document.getElementById('trend-lessons');
+    if (!pb) { box.innerHTML = ''; return; }
+    const all = [];
+    (pb.lessons || []).forEach(l => all.push(['機械的な気づき', l]));
+    (pb.ai_summary || []).forEach(l => all.push(['AI要約', l]));
+    if (!all.length) { box.innerHTML = '<div class="muted-small">まだ学びはありません（サンプル蓄積中）。</div>'; return; }
+    box.innerHTML = all.map(([tag, txt]) =>
+        `<div class="note-item"><span class="badge bg-secondary me-1" style="font-size:0.62rem">${esc(tag)}</span>${esc(txt)}</div>`).join('');
+}
+
+function renderTrendCharts(weeksAsc) {
+    const labels = weeksAsc.map(w => (w.week || '').replace(/^\d{4}-/, ''));
+    const rec = weeksAsc.map(w => { const v = ((w.ai_calibration || {}).by_verdict || {}).recommend; return v && v.n ? v.avg : null; });
+    const watch = weeksAsc.map(w => { const v = ((w.ai_calibration || {}).by_verdict || {}).watch; return v && v.n ? v.avg : null; });
+    const weekly = weeksAsc.map(w => (w.summary || {}).avg_weekly_return_pct ?? (w.summary || {}).avg_return_pct);
+    const excess = weeksAsc.map(w => (w.summary || {}).avg_excess_pct);
+    const spear = weeksAsc.map(w => (w.ranking || {}).spearman);
+
+    const base = { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: true, labels: { boxWidth: 12, font: { size: 10 } } } },
+        scales: { y: { ticks: { callback: v => v + '%', font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } };
+
+    if (_chartVerdict) _chartVerdict.destroy();
+    _chartVerdict = new Chart(document.getElementById('chartVerdict'), {
+        type: 'line',
+        data: { labels, datasets: [
+            { label: '推奨', data: rec, borderColor: '#2b8a3e', backgroundColor: 'rgba(43,138,62,.1)', spanGaps: true, tension: .2 },
+            { label: '様子見', data: watch, borderColor: '#1971c2', spanGaps: true, tension: .2 }
+        ] }, options: base });
+
+    if (_chartWeekly) _chartWeekly.destroy();
+    _chartWeekly = new Chart(document.getElementById('chartWeekly'), {
+        type: 'bar',
+        data: { labels, datasets: [
+            { label: '市場平均との差(TOPIX比)', data: excess, backgroundColor: excess.map(v => v >= 0 ? 'rgba(214,51,108,.7)' : 'rgba(25,113,194,.7)') },
+            { label: '週の騰落(参考)', data: weekly, type: 'line', borderColor: '#868e96', spanGaps: true, tension: .2 }
+        ] }, options: base });
+
+    if (_chartScore) _chartScore.destroy();
+    _chartScore = new Chart(document.getElementById('chartScore'), {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'スコア順位相関（+なら上位ほど良い）', data: spear,
+            backgroundColor: spear.map(v => (v == null ? 'rgba(150,150,150,.5)' : (v >= 0 ? 'rgba(43,138,62,.7)' : 'rgba(201,42,42,.7)'))) }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+            scales: { y: { min: -1, max: 1, ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } } });
 }
 
 boot();

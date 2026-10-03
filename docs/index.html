@@ -85,6 +85,9 @@
                     <a href="weekly.html" class="btn btn-outline-success btn-sm fw-bold">
                         <i class="bi bi-clipboard2-check me-1"></i> 週次答え合わせ
                     </a>
+                    <a href="playbook.html" class="btn btn-outline-warning btn-sm fw-bold">
+                        <i class="bi bi-mortarboard me-1"></i> AIの学び
+                    </a>
                     <a href="guide.html" class="btn btn-outline-secondary btn-sm fw-bold">
                         <i class="bi bi-question-circle me-1"></i> 見方ガイド
                     </a>
@@ -1001,7 +1004,14 @@
                 let entryCell = '<span class="text-muted">-</span>';
                 const ep = entryPlanOf(s);
                 if (ep.type) {
-                    entryCell = `${entryTypeBadge(ep.type)}<div class="text-muted mt-1" style="font-size:0.68rem;">過熱:${OVERHEAT_LABELS[ep.level] || '-'}</div>`;
+                    const epPick = PICKS[s.code];
+                    const epTarget = (epPick && epPick.entry_price) ? `¥${Number(epPick.entry_price).toLocaleString()}` : '';
+                    let buyHint = '';
+                    if (ep.type === 'breakout_chase') buyHint = '現値でOK';
+                    else if (ep.type === 'pullback_wait') buyHint = epTarget ? `${epTarget}まで待つ` : '押し目待ち';
+                    else if (ep.type === 'probe_only') buyHint = '小口のみ';
+                    else if (ep.type === 'wait') buyHint = '見送り';
+                    entryCell = `${entryTypeBadge(ep.type)}<div class="text-muted mt-1" style="font-size:0.68rem;">${buyHint ? esc(buyHint) + ' ／ ' : ''}過熱:${OVERHEAT_LABELS[ep.level] || '-'}</div>`;
                 }
 
                 let earnCell = '<span class="text-muted">-</span>';
@@ -1302,9 +1312,37 @@
                     </div>`;
             }
 
+            // ★ やさしい売買プラン（最初に結論を平易に示す）
+            const planType = etype || (entryPlanOf(s).type) || 'wait';
+            const entryRef = (pick && pick.entry_price) || (pick && pick.entry_zone_high) || null;
+            let buyLine, buyColor;
+            if (planType === 'breakout_chase') {
+                buyLine = `いまの株価（¥${p.toLocaleString()}）で買ってOK（上昇の勢いが強い）`;
+                buyColor = 'success';
+            } else if (planType === 'pullback_wait') {
+                const tgt = entryRef ? `¥${Number(entryRef).toLocaleString()}` : '押し目価格';
+                buyLine = `${tgt} まで下がったら買う（高値を追わない）`;
+                buyColor = 'primary';
+            } else if (planType === 'probe_only') {
+                buyLine = '過熱気味。まずは小口（半分程度）だけ試し買い';
+                buyColor = 'warning';
+            } else {
+                buyLine = 'いまは見送り。押し目を作るまで待つ';
+                buyColor = 'secondary';
+            }
+            const easyPlanHtml = `
+                <div class="p-3 mb-2 rounded border border-2 border-${buyColor} bg-${buyColor}-subtle">
+                    <div class="fw-bold mb-2"><i class="bi bi-signpost-2-fill me-1"></i>やさしい売買プラン（この銘柄をどう売買するか）</div>
+                    <div class="mb-1"><span class="badge bg-${buyColor} me-1">① 買い方</span>${esc(buyLine)}</div>
+                    <div class="mb-1"><span class="badge bg-danger me-1">② 利確</span><b class="text-danger">¥${takeProfit.toLocaleString()}（+${(tpPctVal*100).toFixed(1)}%）</b> になったら売る</div>
+                    <div class="mb-1"><span class="badge bg-primary me-1">③ 損切</span><b class="text-primary">¥${stopLoss.toLocaleString()}（-${(slPctVal*100).toFixed(1)}%）</b> まで下がったら損を小さくして撤退</div>
+                    <div><span class="badge bg-secondary me-1">④ 期限</span>${maxHoldDays}営業日たっても利確できなければ手仕舞い${rrVal !== null ? ` ／ 狙いとリスクの比 1:${rrVal.toFixed(1)}` : ''}</div>
+                </div>`;
+
             document.getElementById("modalTitle").innerHTML = `<span class="badge bg-primary me-2">${s.code}</span> ${esc(s.name)} ${sig.badgeHtml}`;
             document.getElementById("modalBody").innerHTML = `
                 ${alertBoxHtml}
+                ${easyPlanHtml}
 
                 <div class="row g-2 mb-2">
                     <div class="col-6"><small class="text-muted">市場 / 業種</small><div><strong>${esc(s.market)}</strong> (${esc(s.sector)})</div></div>

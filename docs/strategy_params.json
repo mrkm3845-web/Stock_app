@@ -176,7 +176,13 @@
     "feedback_min_weeks": 3,
     "feedback_min_group_trades": 8,
     "feedback_shrinkage_k": 10.0,
-    "feedback_max_delta": 3.0
+    "feedback_max_delta": 3.0,
+    "playbook_window_weeks": 12,
+    "playbook_min_weeks": 4,
+    "playbook_min_group_trades": 10,
+    "playbook_max_lessons": 5,
+    "playbook_ai_summary": true,
+    "playbook_inject_enabled": false
   },
   "weekly_feedback": {
     "enabled": true,

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIの学びノート（検証メモ）</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.9rem; padding-bottom: 60px; }
+        .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
+        .stat-value { font-size: 1.4rem; font-weight: 800; line-height: 1.1; }
+        .stat-label { font-size: 0.74rem; color: #6c757d; font-weight: 700; }
+        .pos { color: #d6336c; }   /* 上昇＝赤（日本式） */
+        .neg { color: #1971c2; }   /* 下落＝青（日本式） */
+        .note-item { border-left: 4px solid #0d6efd; background: #f1f6ff; padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; }
+        .note-item.ai { border-left-color: #ffd43b; background: #fffdf5; }
+        .term { font-weight: 700; color: #0d6efd; }
+        .warn { background: #fff5f5; border-left: 4px solid #ff6b6b; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .plain { background: #f8f9fa; border-left: 4px solid #adb5bd; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .muted-small { font-size: 0.72rem; color: #868e96; }
+        table th { background-color: #212529 !important; color: #fff !important; text-align: center; vertical-align: middle !important; font-size: 0.82rem; }
+        table td { vertical-align: middle; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+<div class="container-fluid py-3 px-md-4" style="max-width: 1000px;">
+
+    <!-- ヘッダー -->
+    <div class="card p-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-mortarboard"></i> AIの学びノート（検証メモ）</h1>
+                <small class="text-muted">過去の答え合わせ（実績）から得た「効いた／効かなかった」を、数字つきで振り返るノートです。</small>
+            </div>
+            <div class="d-flex flex-wrap gap-2 align-items-center ms-auto">
+                <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナー</a>
+                <a href="weekly.html" class="btn btn-outline-success btn-sm fw-bold"><i class="bi bi-clipboard2-check me-1"></i> 週次答え合わせ</a>
+                <a href="journal.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> 取引記録</a>
+                <a href="guide.html" class="btn btn-outline-secondary btn-sm fw-bold"><i class="bi bi-question-circle me-1"></i> 見方ガイド</a>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap gap-3 mt-2">
+            <span class="badge bg-light text-secondary border" id="updated-badge">更新: -</span>
+            <span class="badge bg-light text-secondary border" id="inject-badge">扱い: -</span>
+        </div>
+    </div>
+
+    <div id="loading" class="alert alert-info">読み込み中...</div>
+    <div id="empty-box" class="alert alert-warning d-none">
+        <i class="bi bi-hourglass-split me-1"></i> まだ検証データが十分にありません。毎週の答え合わせ（週次レビュー）が実行され、実績が貯まるとここに表示されます。
+    </div>
+
+    <div id="content" class="d-none">
+
+        <!-- やさしい結論 -->
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-2"><i class="bi bi-lightbulb me-1 text-warning"></i> やさしい結論（今のところ分かっていること）</h2>
+            <div id="summary-cards" class="row g-2 mb-2"></div>
+            <div id="summary-judge" class="plain mb-0"></div>
+        </div>
+
+        <!-- 学び -->
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-journal-text me-1"></i> 直近の学び（次に活かすこと）</h2>
+            <div id="lessons"></div>
+            <div class="muted-small mt-2">※「機械的な気づき」は実績統計から自動生成、「AI要約」はそれをAIが文章化したものです。必ず与えられた数値を引用しています。</div>
+        </div>
+
+        <!-- 推移グラフ -->
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-graph-up me-1"></i> 成績の推移（週ごと）</h2>
+            <div class="row g-3">
+                <div class="col-12 col-lg-6">
+                    <div class="muted-small mb-1">AI『推奨』と『様子見』の平均成績</div>
+                    <div style="height:210px"><canvas id="chartVerdict"></canvas></div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="muted-small mb-1">週ごとの成績（市場平均＝TOPIXとの差）</div>
+                    <div style="height:210px"><canvas id="chartWeekly"></canvas></div>
+                </div>
+                <div class="col-12">
+                    <div class="muted-small mb-1">スコア順位の効き（＋なら「上位ほど上がった」）</div>
+                    <div style="height:180px"><canvas id="chartScore"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 用語のかんたん解説 -->
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-book me-1"></i> 用語のかんたん解説（勉強用）</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle mb-0">
+                    <thead><tr><th style="width:22%">用語</th><th>かんたん解説</th></tr></thead>
+                    <tbody>
+                        <tr><td class="term">AI『推奨』</td><td>AIが「本当に買い推奨できる」と判断した銘柄。件数は無理に埋めません（0件の日もあります）。</td></tr>
+                        <tr><td class="term">AI『様子見』</td><td>AIが「今は待ち」と判断した銘柄。『推奨』より慎重な位置づけです。</td></tr>
+                        <tr><td class="term">勝率</td><td>約定した取引のうち、プラスで終わった割合。</td></tr>
+                        <tr><td class="term">95%信頼区間（CI）</td><td>「勝率は本当はこの範囲に入っていそう」という幅。データが少ないほど幅が広くなり、判断の確度が低いことが分かります。</td></tr>
+                        <tr><td class="term">順位相関（Spearman）</td><td>スコアの順位と、その後の上がり具合の関係。<b>＋なら「スコア上位ほどよく上がった」</b>、0付近なら「順位に効きが無い」、－なら「上位ほど弱かった」。</td></tr>
+                        <tr><td class="term">プラス週数</td><td>調べた週のうち、スコア順位が効いていた（相関がプラス）週の数。多いほど安定して効いています。</td></tr>
+                        <tr><td class="term">過熱度</td><td>上がりすぎの度合い（低/中/強/極）。強いほど「今追いかけると高値掴みになりやすい」。</td></tr>
+                        <tr><td class="term">押し目待ち / 追いかけ</td><td>買い方の種類。「押し目待ち」は下がるのを待って買う、「追いかけ」は現値で勢いに乗る買い方。</td></tr>
+                        <tr><td class="term">確定損益（OCO）</td><td>あらかじめ決めた利確・損切（OCO注文）で決済したときの損益。答え合わせの主指標です。</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 注意・免責 -->
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-2"><i class="bi bi-exclamation-triangle me-1 text-danger"></i> 読むときの注意</h2>
+            <div class="warn mb-0">
+                <ul class="mb-0">
+                    <li>データが少ない間は、勝ち負けに<b>偶然</b>が混ざります。断定せず「<b>仮説</b>」として読み、傾向が続くかを見てください。</li>
+                    <li>このページは<b>観測メモ</b>です。まだAIの判断に自動で反映（プロンプト注入）していません（準備中）。</li>
+                    <li>表示は<b>最低週数・最低件数・信頼区間</b>の条件を満たした項目のみです。条件を満たさない場合は「まだ判断しない」と表示します。</li>
+                    <li>投資助言・売買推奨ではありません。最終判断は必ずご自身で。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const pct = (v) => (v === null || v === undefined) ? '-' : ((v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%');
+const cls = (v) => (v === null || v === undefined) ? '' : (v > 0 ? 'pos' : (v < 0 ? 'neg' : ''));
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const TREND_TEXT = (v) => (v === null || v === undefined) ? '-' : ((v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%');
+let _chartVerdict = null, _chartWeekly = null, _chartScore = null;
+
+function ciText(g) {
+    if (!g || !g.win_ci95 || g.win_ci95[0] == null) return '';
+    return `勝率${(g.win_rate * 100).toFixed(0)}%（95%CI ${(g.win_ci95[0] * 100).toFixed(0)}〜${(g.win_ci95[1] * 100).toFixed(0)}%）`;
+}
+
+function card(label, value, sub, clsName) {
+    return `<div class="col-6 col-md-3"><div class="border rounded-3 p-2 text-center h-100">
+        <div class="stat-label">${esc(label)}</div>
+        <div class="stat-value ${clsName || ''}">${esc(value)}</div>
+        <div class="muted-small">${esc(sub || '')}</div></div></div>`;
+}
+
+async function boot() {
+    let playbook = null, ledger = null;
+    try { const r = await fetch('ai_playbook.json', { cache: 'no-store' }); if (r.ok) playbook = await r.json(); } catch (e) {}
+    try { const r = await fetch('weekly/ledger.json', { cache: 'no-store' }); if (r.ok) ledger = await r.json(); } catch (e) {}
+    document.getElementById('loading').classList.add('d-none');
+
+    if (!playbook && !(ledger && (ledger.weeks || []).length)) {
+        document.getElementById('empty-box').classList.remove('d-none');
+        return;
+    }
+    document.getElementById('content').classList.remove('d-none');
+
+    if (playbook) {
+        if (playbook.generated_at) document.getElementById('updated-badge').textContent = '更新: ' + playbook.generated_at;
+        document.getElementById('inject-badge').textContent = `扱い: ${playbook.inject_note || '-'}（プロンプト版 ${playbook.prompt_version || '-'}）`;
+    }
+    renderSummary(playbook);
+    renderLessons(playbook);
+    if (ledger && (ledger.weeks || []).length) renderCharts(ledger.weeks.slice().reverse());
+}
+
+function renderSummary(pb) {
+    const box = document.getElementById('summary-cards');
+    const judge = document.getElementById('summary-judge');
+    if (!pb || !pb.stats) {
+        box.innerHTML = '<div class="col-12 muted-small">検証データがまだありません。</div>';
+        judge.innerHTML = '';
+        return;
+    }
+    const st = pb.stats;
+    const rec = st.recommend, watch = st.watch;
+    let html = '';
+    let conclusions = [];
+    if (rec && rec.n) {
+        html += card('AI「推奨」の平均', TREND_TEXT(rec.avg), `${rec.n}件 / ${ciText(rec)}`, cls(rec.avg));
+        html += card('AI「様子見」の平均', watch ? TREND_TEXT(watch.avg) : '-', watch ? `${watch.n}件 / ${ciText(watch)}` : 'データ不足', watch ? cls(watch.avg) : '');
+        if (watch && watch.n) {
+            const delta = rec.avg - watch.avg;
+            html += card('「推奨」は様子見より', (delta >= 0 ? '+' : '') + delta.toFixed(2) + 'pt', delta >= 0 ? 'AI判定は機能' : '要調整', cls(delta));
+            conclusions.push(delta >= 0
+                ? `今のところ、AI『推奨』は『様子見』より <b class="pos">+${delta.toFixed(2)}pt</b> 良い成績です。`
+                : `今のところ、AI『推奨』は『様子見』より <b class="neg">${delta.toFixed(2)}pt</b> 低く、選定基準の見直しが必要です。`);
+        }
+    } else {
+        html += '<div class="col-12 muted-small">AI判定のサンプルがまだ不足しています。</div>';
+    }
+    if (pb.score_ranking) {
+        const sr = pb.score_ranking;
+        html += card('スコア上位の効き', (sr.spearman_mean >= 0 ? '+' : '') + sr.spearman_mean.toFixed(2), `${sr.positive_weeks}/${sr.n_weeks}週でプラス`, sr.spearman_mean >= 0.1 ? 'pos' : '');
+        conclusions.push(sr.spearman_mean >= 0.1
+            ? `スコア順位は<b class="pos">効いています</b>（上位ほどよく上がる傾向：${sr.positive_weeks}/${sr.n_weeks}週）。`
+            : `スコア順位の効きは<b>弱い/不安定</b>です（${sr.positive_weeks}/${sr.n_weeks}週のみプラス）。補助指標の併用を検討。`);
+    }
+    box.innerHTML = html;
+    judge.innerHTML = conclusions.length
+        ? '<b>まとめ：</b>' + conclusions.join(' ')
+        : 'まだ結論を出せるサンプルがありません（観測を継続します）。';
+}
+
+function renderLessons(pb) {
+    const box = document.getElementById('lessons');
+    if (!pb) { box.innerHTML = '<div class="muted-small">学びはまだありません。</div>'; return; }
+    const all = [];
+    (pb.lessons || []).forEach(l => all.push(['機械的な気づき', l, false]));
+    (pb.ai_summary || []).forEach(l => all.push(['AI要約', l, true]));
+    box.innerHTML = all.length
+        ? all.map(([tag, txt, ai]) => `<div class="note-item ${ai ? 'ai' : ''}"><span class="badge bg-secondary me-1" style="font-size:0.62rem">${esc(tag)}</span>${esc(txt)}</div>`).join('')
+        : '<div class="muted-small">まだ学びはありません（サンプル蓄積中）。</div>';
+}
+
+function renderCharts(weeksAsc) {
+    const labels = weeksAsc.map(w => (w.week || '').replace(/^\d{4}-/, ''));
+    const rec = weeksAsc.map(w => { const v = ((w.ai_calibration || {}).by_verdict || {}).recommend; return v && v.n ? v.avg : null; });
+    const watch = weeksAsc.map(w => { const v = ((w.ai_calibration || {}).by_verdict || {}).watch; return v && v.n ? v.avg : null; });
+    const weekly = weeksAsc.map(w => (w.summary || {}).avg_weekly_return_pct ?? (w.summary || {}).avg_return_pct);
+    const excess = weeksAsc.map(w => (w.summary || {}).avg_excess_pct);
+    const spear = weeksAsc.map(w => (w.ranking || {}).spearman);
+
+    const base = { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: true, labels: { boxWidth: 12, font: { size: 10 } } } },
+        scales: { y: { ticks: { callback: v => v + '%', font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } };
+
+    if (_chartVerdict) _chartVerdict.destroy();
+    _chartVerdict = new Chart(document.getElementById('chartVerdict'), {
+        type: 'line',
+        data: { labels, datasets: [
+            { label: '推奨', data: rec, borderColor: '#2b8a3e', backgroundColor: 'rgba(43,138,62,.1)', spanGaps: true, tension: .2 },
+            { label: '様子見', data: watch, borderColor: '#1971c2', spanGaps: true, tension: .2 }
+        ] }, options: base });
+
+    if (_chartWeekly) _chartWeekly.destroy();
+    _chartWeekly = new Chart(document.getElementById('chartWeekly'), {
+        type: 'bar',
+        data: { labels, datasets: [
+            { label: '市場平均との差(TOPIX比)', data: excess, backgroundColor: excess.map(v => v >= 0 ? 'rgba(214,51,108,.7)' : 'rgba(25,113,194,.7)') },
+            { label: '週の騰落(参考)', data: weekly, type: 'line', borderColor: '#868e96', spanGaps: true, tension: .2 }
+        ] }, options: base });
+
+    if (_chartScore) _chartScore.destroy();
+    _chartScore = new Chart(document.getElementById('chartScore'), {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'スコア順位相関（+なら上位ほど良い）', data: spear,
+            backgroundColor: spear.map(v => (v == null ? 'rgba(150,150,150,.5)' : (v >= 0 ? 'rgba(43,138,62,.7)' : 'rgba(201,42,42,.7)'))) }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+            scales: { y: { min: -1, max: 1, ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } } });
+}
+
+boot();
+</script>
+</body>
+</html>

@@ -48,6 +48,7 @@ sys.path.insert(0, _REPO_ROOT)  # リポジトリ直下（common/ と docs/）
 from common.config import load_strategy_params  # noqa: E402
 from common import features as F  # noqa: E402
 from common.persona import PERSONA_JA  # noqa: E402
+from common.version import PROMPT_VERSION  # noqa: E402
 
 DOCS_DIR = os.path.join(_REPO_ROOT, "docs")
 HISTORY_DIR = os.path.join(DOCS_DIR, "history")
@@ -1163,6 +1164,282 @@ def write_feedback(fb):
         print(f">> ⚠️ weekly_feedback の反映に失敗: {e}")
 
 
+# --------------------------------------------------------------------------- 長期台帳・AIプレイブック（Phase 1: 観測＋統計統制）
+LEDGER_PATH = os.path.join(WEEKLY_DIR, "ledger.json")
+PLAYBOOK_PATH = os.path.join(DOCS_DIR, "ai_playbook.json")
+
+
+def _load_prompt_versions(result):
+    """当該週のピックスナップショットに刻印されたプロンプト版を集める。"""
+    dates = sorted({t.get("signal_date") for t in (result.get("trades") or []) if t.get("signal_date")})
+    versions = set()
+    for d in dates:
+        snap = _load_json(os.path.join(PICKS_DIR, f"{d}.json"))
+        pv = (snap or {}).get("prompt_version")
+        if pv:
+            versions.add(str(pv))
+    return sorted(versions) or [PROMPT_VERSION]
+
+
+def _ledger_build_record(result, params):
+    """1週分の週次結果を、長期台帳の1レコード（コンパクトな集計）に変換する。"""
+    s = result.get("summary") or {}
+    calib = result.get("ai_calibration") or {}
+    ranking = result.get("ranking") or {}
+    np_plan = result.get("next_week_plan") or {}
+    plan = np_plan.get("plan") or {}
+    top = plan.get("top_pick") or {}
+    return {
+        "week": result.get("week"),
+        "start": result.get("start"),
+        "end": result.get("end"),
+        "generated_at": result.get("generated_at"),
+        "prompt_versions": _load_prompt_versions(result),
+        "strategy_version": (params or {}).get("version"),
+        "provider": np_plan.get("provider"),
+        "model": np_plan.get("model"),
+        "summary": {
+            "picks_total": s.get("picks_total"),
+            "n_filled": s.get("n_filled"),
+            "n_pending": s.get("n_pending"),
+            "n_not_filled": s.get("n_not_filled"),
+            "fill_rate": s.get("fill_rate"),
+            "avg_return_pct": s.get("avg_return_pct"),
+            "median_return_pct": s.get("median_return_pct"),
+            "win_rate": s.get("win_rate"),
+            "avg_excess_pct": s.get("avg_excess_pct"),
+            "avg_benchmark_pct": s.get("avg_benchmark_pct"),
+            "avg_weekly_return_pct": s.get("avg_weekly_return_pct"),
+            "weekly_win_rate": s.get("weekly_win_rate"),
+        },
+        "ai_calibration": {
+            "by_verdict": (calib.get("by_verdict") or {}),
+            "recommend_minus_watch_pct": calib.get("recommend_minus_watch_pct"),
+        },
+        "ranking": {
+            "n": ranking.get("n"),
+            "spearman": ranking.get("spearman"),
+            "top_avg_pct": ranking.get("top_avg_pct"),
+            "bottom_avg_pct": ranking.get("bottom_avg_pct"),
+            "spread_pct": ranking.get("spread_pct"),
+        },
+        "breakdown": result.get("breakdown") or {},
+        "plan": {
+            "target_week": np_plan.get("week"),
+            "top_pick_code": top.get("code"),
+            "top_pick_name": top.get("name"),
+            "confidence": top.get("confidence"),
+        } if top else None,
+    }
+
+
+def update_ledger(results, params):
+    """週次結果を docs/weekly/ledger.json に追記（週単位でupsert）する。"""
+    if not results:
+        return None
+    os.makedirs(WEEKLY_DIR, exist_ok=True)
+    ledger = _load_json(LEDGER_PATH) or {}
+    by_week = {w.get("week"): w for w in (ledger.get("weeks") or []) if w.get("week")}
+    for r in results:
+        rec = _ledger_build_record(r, params)
+        if rec.get("week"):
+            by_week[rec["week"]] = rec
+    merged = sorted(by_week.values(), key=lambda w: (w.get("week") or ""), reverse=True)
+    ledger = {"updated_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), "weeks": merged}
+    with open(LEDGER_PATH, "w", encoding="utf-8") as f:
+        json.dump(_json_safe(ledger), f, ensure_ascii=False, indent=2)
+    print(f">> 長期台帳を更新: {LEDGER_PATH}（{len(merged)} 週）")
+    return ledger
+
+
+def _wilson_ci(wins, n, z=1.96):
+    """勝率のWilson 95%信頼区間を返す（0〜1）。サンプルが小さいほど広くなる。"""
+    if not n:
+        return (None, None)
+    p = wins / n
+    denom = 1 + z * z / n
+    center = (p + z * z / (2 * n)) / denom
+    half = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5) / denom
+    return (round(max(0.0, center - half), 3), round(min(1.0, center + half), 3))
+
+
+def _pool_group(entries):
+    """[{n, avg, win_rate}] を件数で重み付けして合算する。"""
+    n = sum(int(e.get("n") or 0) for e in entries)
+    if not n:
+        return None
+    avg = sum((e.get("avg") or 0.0) * (e.get("n") or 0) for e in entries) / n
+    wins = sum(round((e.get("win_rate") or 0.0) * (e.get("n") or 0)) for e in entries)
+    lo, hi = _wilson_ci(wins, n)
+    return {
+        "n": n,
+        "avg": round(avg, 3),
+        "win_rate": round(wins / n, 3),
+        "win_ci95": [lo, hi],
+    }
+
+
+def _pool_by_verdict(weeks, verdict):
+    entries = []
+    for w in weeks:
+        bv = ((w.get("ai_calibration") or {}).get("by_verdict") or {}).get(verdict)
+        if bv:
+            entries.append(bv)
+    return _pool_group(entries)
+
+
+def _pool_breakdown(weeks, section, keys):
+    entries = []
+    for w in weeks:
+        bd = (w.get("breakdown") or {}).get(section) or {}
+        for k in keys:
+            v = bd.get(k)
+            if v:
+                entries.append(v)
+    return _pool_group(entries)
+
+
+def _summarize_playbook_with_ai(stats, lessons, params):
+    """台帳統計と決定論的な気づきをAIで要約する（数値引用必須・失敗時None）。"""
+    try:
+        from main8 import _call_deepseek, _call_gemini  # 遅延import
+    except Exception:
+        return None
+    ai = (params or {}).get("ai", {})
+    sys_prompt = (
+        PERSONA_JA + "\n"
+        "あなたは日本株スイング戦略の検証担当である。以下は直近数週の実測統計と、機械的に生成した気づきである。"
+        "これを踏まえ、次回のAI銘柄選定で『同じ失敗を繰り返さない』ための学びを最大3件、各80文字以内の日本語で簡潔にまとめる。"
+        "必ず与えられた数値を引用し、存在しない数値の捏造は禁止。"
+        "回答は必ず次のJSONのみ: {\"summary\":[\"学び1\",\"学び2\"]}"
+    )
+    user = json.dumps({"pooled_stats": stats, "deterministic_lessons": lessons}, ensure_ascii=False)
+    provider = ai.get("provider", "deepseek")
+    try:
+        res = _call_gemini(user, sys_prompt, params) if provider == "gemini" else _call_deepseek(user, sys_prompt, params)
+    except Exception:
+        return None
+    if not isinstance(res, dict):
+        return None
+    out = res.get("summary")
+    if isinstance(out, list):
+        return [str(x)[:80] for x in out if x][:3]
+    return None
+
+
+def build_ai_playbook(params, ledger):
+    """台帳から『過去検証の学び』を生成する（Phase 1は観測のみ・プロンプト未注入）。
+
+    統計統制: 最低週数・群サンプル数を満たさない場合は学びを出さない（ノイズ学習の防止）。
+    各学びは必ず数値を引用する（監査可能性）。
+    """
+    cfg = (params or {}).get("weekly_review", {})
+    window = int(cfg.get("playbook_window_weeks", 12))
+    min_weeks = int(cfg.get("playbook_min_weeks", 4))
+    min_group = int(cfg.get("playbook_min_group_trades", 10))
+    max_lessons = int(cfg.get("playbook_max_lessons", 5))
+    weeks = (ledger or {}).get("weeks") or []
+    use = weeks[:window]
+    n_weeks = len(use)
+
+    stats = {
+        "recommend": _pool_by_verdict(use, "recommend"),
+        "watch": _pool_by_verdict(use, "watch"),
+        "caution": _pool_by_verdict(use, "caution"),
+        "avoid": _pool_by_verdict(use, "avoid"),
+        "overheat_hot": _pool_breakdown(use, "by_overheat", ["強", "極"]),
+        "entry_pullback": _pool_breakdown(use, "by_entry_type", ["押し目待ち"]),
+        "entry_chase": _pool_breakdown(use, "by_entry_type", ["追いかけ"]),
+    }
+
+    sps = [(w.get("ranking") or {}).get("spearman") for w in use
+           if (w.get("ranking") or {}).get("spearman") is not None]
+    spreads = [(w.get("ranking") or {}).get("spread_pct") for w in use
+               if (w.get("ranking") or {}).get("spread_pct") is not None]
+    score_agg = None
+    if len(sps) >= min_weeks:
+        score_agg = {
+            "n_weeks": len(sps),
+            "spearman_mean": round(float(np.mean(sps)), 3),
+            "positive_weeks": int(sum(1 for s in sps if s > 0)),
+            "spread_mean": round(float(np.mean(spreads)), 3) if spreads else None,
+        }
+
+    lessons = []
+    rec, watch = stats["recommend"], stats["watch"]
+    if rec and rec["n"] >= min_group and n_weeks >= min_weeks:
+        base = f"直近{n_weeks}週: AI『推奨』平均{rec['avg']:+.2f}%（{rec['n']}件・勝率{rec['win_rate']*100:.0f}%）"
+        if watch and watch["n"] >= min_group:
+            delta = rec["avg"] - watch["avg"]
+            judge = "AI判定は機能" if delta > 0 else "要調整"
+            lessons.append(f"{base}。『様子見』との差{delta:+.2f}pt（{judge}）")
+        else:
+            lessons.append(base)
+
+    oh = stats["overheat_hot"]
+    if oh and oh["n"] >= min_group:
+        ref = rec["avg"] if (rec and rec["n"] >= min_group) else 0.0
+        if oh["avg"] < ref:
+            lessons.append(
+                f"過熱『強/極』は平均{oh['avg']:+.2f}%（{oh['n']}件）でプール平均{ref:+.2f}%を下回る。"
+                "追いかけを避け、押し目・打診を優先する"
+            )
+        else:
+            lessons.append(f"過熱『強/極』でも平均{oh['avg']:+.2f}%（{oh['n']}件）。押し目優先の運用は維持する")
+
+    ep, ec = stats["entry_pullback"], stats["entry_chase"]
+    if ep and ec and ep["n"] >= min_group and ec["n"] >= min_group:
+        diff = ep["avg"] - ec["avg"]
+        lessons.append(
+            f"『押し目待ち』{ep['avg']:+.2f}%（{ep['n']}件）vs 『追いかけ』{ec['avg']:+.2f}%（{ec['n']}件）"
+            f"＝差{diff:+.2f}pt。{'押し目優先が有効' if diff > 0 else '追いかけの優位/押し目の見直し'}"
+        )
+
+    if score_agg:
+        lessons.append(
+            f"スコア順位の効き: Spearman平均{score_agg['spearman_mean']:+.2f}"
+            f"（{score_agg['positive_weeks']}/{score_agg['n_weeks']}週でプラス）。"
+            f"{'上位ほど良い' if score_agg['spearman_mean'] >= 0.1 else '効きが弱い/不安定'}"
+        )
+
+    if not lessons:
+        lessons.append(
+            f"サンプル不足のため自動の学びは保留（週{n_weeks}/{min_weeks}・群{min_group}件基準）。観測を継続する"
+        )
+    lessons = lessons[:max_lessons]
+
+    ai_summary = None
+    if cfg.get("playbook_ai_summary", True):
+        try:
+            ai_summary = _summarize_playbook_with_ai(stats, lessons, params)
+        except Exception as e:
+            print(f">> ⚠️ AI要約の生成に失敗（決定論の学びのみ使用）: {e}")
+
+    inject = bool(cfg.get("playbook_inject_enabled", False))
+    playbook = {
+        "generated_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "window_weeks": n_weeks,
+        "min_weeks": min_weeks,
+        "min_group_trades": min_group,
+        "prompt_version": PROMPT_VERSION,
+        "enabled": inject,
+        "inject_note": "プロンプトへ注入中" if inject else "観測のみ（プロンプト未注入・Phase 1）",
+        "lessons": lessons,
+        "ai_summary": ai_summary,
+        "stats": stats,
+        "score_ranking": score_agg,
+    }
+    return playbook
+
+
+def write_playbook(playbook):
+    if not playbook:
+        return
+    with open(PLAYBOOK_PATH, "w", encoding="utf-8") as f:
+        json.dump(_json_safe(playbook), f, ensure_ascii=False, indent=2)
+    print(f">> AIプレイブックを保存: {PLAYBOOK_PATH}（学び {len(playbook.get('lessons') or [])} 件 / {playbook.get('inject_note')}）")
+
+
 # --------------------------------------------------------------------------- 来週の作戦（AI深掘り）
 def _next_week_label(based_date):
     try:
@@ -1765,6 +2042,14 @@ def main():
             r["next_week_plan"] = plan if (r is results[-1]) else None
             write_outputs(r)
         write_feedback(fb)
+        # 長期台帳とAIプレイブックを更新（Phase 1: 観測のみ。統計統制つき）
+        try:
+            ledger = update_ledger(results, params)
+            if ledger:
+                playbook = build_ai_playbook(params, ledger)
+                write_playbook(playbook)
+        except Exception as e:
+            print(f">> ⚠️ 台帳/プレイブックの生成に失敗: {e}")
     except Exception as e:
         print(f">> ⚠️ フィードバック計算に失敗（結果は出力済み）: {e}")
         import traceback

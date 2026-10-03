@@ -45,6 +45,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common.config import load_strategy_params  # noqa: E402
 from common import features as F  # noqa: E402
 from common.persona import PERSONA_JA  # noqa: E402
+from common.version import PROMPT_VERSION  # noqa: E402
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -1096,7 +1097,7 @@ def update_ai_latest(ai_map, date):
     for s in stocks:
         code = s.get("code")
         if code:
-            latest[code] = {**s, "date": date, "updated_at": now}
+            latest[code] = {**s, "date": date, "updated_at": now, "prompt_version": PROMPT_VERSION}
     with open(AI_LATEST_PATH, "w", encoding="utf-8") as f:
         json.dump(latest, f, ensure_ascii=False, indent=2)
     print(f">> 最新AI戦略インデックスを更新: {AI_LATEST_PATH}（{len(latest)} 銘柄）")
@@ -1157,6 +1158,7 @@ def save_picks_snapshot(target_date, recommendations, pool, ai_map, is_ai):
         "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"),
         "source": "ai" if is_ai else "technical",
         "version": (recommendations or {}).get("version"),
+        "prompt_version": PROMPT_VERSION,
         "regime": (recommendations or {}).get("regime"),
         "portfolio_guide": (recommendations or {}).get("portfolio_guide"),
         "overall": (recommendations or {}).get("overall"),

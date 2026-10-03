@@ -33,6 +33,7 @@
             </div>
             <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i>スクリーナーへ戻る</a>
             <a href="weekly.html" class="btn btn-outline-success btn-sm fw-bold"><i class="bi bi-clipboard2-check me-1"></i>週次答え合わせ</a>
+            <a href="playbook.html" class="btn btn-outline-warning btn-sm fw-bold"><i class="bi bi-mortarboard me-1"></i>AIの学び</a>
         </div>
     </div>
 
@@ -45,6 +46,7 @@
             <li><a href="#sort">並び替えの「スコア順」と「AI推奨順」</a></li>
             <li><a href="#modal">モーダル（詳細画面）の見方</a></li>
             <li><a href="#entry">エントリー判定の4種類（高値掴み防止）</a></li>
+            <li><a href="#loop">AIの学びノート（継続改善のしくみ）</a></li>
             <li><a href="#glossary">用語集</a></li>
             <li><a href="#caution">注意事項</a></li>
         </ol>
@@ -355,9 +357,30 @@
         </div>
     </div>
 
+    <!-- 6.5 AIの学びノート -->
+    <div class="card p-3" id="loop">
+        <h2 class="section">AIの学びノート（継続改善のしくみ）</h2>
+        <p class="mb-2">
+            このアプリは、推薦した銘柄が実際にどうなったかを<b>毎週採点</b>しています。その結果を貯めて「何が効いて、何が効かなかったか」を
+            振り返るのが <b>AIの学びノート</b> です。数字つきで自動生成されるので、<b>学習用の振り返りノート</b>として使えます。
+        </p>
+        <div class="plain">
+            <strong>しくみ（言葉で）：</strong><br>
+            1) 推薦・抽出した銘柄を週次で答え合わせ（値が決済できるまで待って正確に採点）<br>
+            2) 結果を <span class="term">長期台帳</span> に蓄積（週ごとの平均・勝率・スコアの効き）<br>
+            3) 一定のサンプルが貯まった項目だけを「<span class="term">学び</span>」として文章化（少なすぎる時は判断しない）<br>
+            4) 将来はその学びをAIの判断に反映（今はまだ<b>観測のみ</b>で、人間が確認）
+        </div>
+        <div class="tip">
+            <strong>読み方：</strong>サンプルが少ないうちは勝ち負けに<b>偶然</b>が混ざります。断定せず「仮説」として、
+            <b>傾向が続くか</b>を見てください。<b>95%信頼区間</b>が広いときは「まだ確度が低い」サインです。
+        </div>
+        <a href="playbook.html" class="btn btn-warning btn-sm fw-bold mt-1"><i class="bi bi-mortarboard me-1"></i>AIの学びノートを開く</a>
+    </div>
+
     <!-- 7 -->
     <div class="card p-3" id="glossary">
-        <h2 class="section">7. 用語集</h2>
+        <h2 class="section">8. 用語集</h2>
         <div class="table-responsive">
             <table class="table table-bordered align-middle">
                 <thead><tr><th>用語</th><th>かんたん解説</th></tr></thead>
@@ -387,7 +410,7 @@
 
     <!-- 8 -->
     <div class="card p-3" id="caution">
-        <h2 class="section">8. 注意事項</h2>
+        <h2 class="section">9. 注意事項</h2>
         <div class="warn">
             <ul class="mb-0">
                 <li>このアプリは<strong>投資助言・売買推奨ではありません</strong>。最終判断は必ずご自身で。</li>

@@ -1,0 +1,61 @@
+{
+    "generated_at":  "2026-10-04T03:08:23",
+    "window_weeks":  6,
+    "min_weeks":  4,
+    "min_group_trades":  10,
+    "prompt_version":  "2026-10-01-1",
+    "enabled":  false,
+    "inject_note":  "観測のみ（プロンプト未注入・Phase 1）",
+    "lessons":  "直近6週: AI『推奨』平均+0.723%（31件・勝率68%）。『様子見』との差-0.49pt（要調整）",
+    "ai_summary":  null,
+    "stats":  {
+                  "recommend":  {
+                                    "n":  31,
+                                    "avg":  0.723,
+                                    "win_rate":  0.677,
+                                    "win_ci95":  [
+                                                     1,
+                                                     1
+                                                 ]
+                                },
+                  "watch":  {
+                                "n":  99,
+                                "avg":  1.209,
+                                "win_rate":  0.545,
+                                "win_ci95":  [
+                                                 0,
+                                                 1
+                                             ]
+                            },
+                  "caution":  {
+                                  "n":  5,
+                                  "avg":  1.194,
+                                  "win_rate":  0.4,
+                                  "win_ci95":  [
+                                                   0,
+                                                   1
+                                               ]
+                              },
+                  "avoid":  {
+                                "n":  10,
+                                "avg":  0.259,
+                                "win_rate":  0.2,
+                                "win_ci95":  [
+                                                 0,
+                                                 1
+                                             ]
+                            },
+                  "overheat_hot":  null,
+                  "entry_pullback":  null,
+                  "entry_chase":  {
+                                      "n":  63,
+                                      "avg":  -1.322,
+                                      "win_rate":  0.333,
+                                      "win_ci95":  [
+                                                       0,
+                                                       0
+                                                   ]
+                                  }
+              },
+    "score_ranking":  null
+}
