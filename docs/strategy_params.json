@@ -1,9 +1,9 @@
 {
-  "version": "2026-10-02",
-  "generated_at": "2026-10-02T17:45:18",
+  "version": "2026-10-03",
+  "generated_at": "2026-10-03T16:02:52",
   "source_backtest": {
-    "run_id": "20261002174324",
-    "generated_at": "2026-10-02T17:43:24"
+    "run_id": "20261003160100",
+    "generated_at": "2026-10-03T16:01:00"
   },
   "price_tiers": [
     {
@@ -124,7 +124,7 @@
     "pullback_atr_shallow": 1.5,
     "pullback_atr_deep": 1.5,
     "pullback_wait_days": 10,
-    "probe_wait_days": 3,
+    "probe_wait_days": 5,
     "probe_qty_factor": 0.5
   },
   "score_weights": {
