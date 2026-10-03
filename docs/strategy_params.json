@@ -180,25 +180,29 @@
   },
   "weekly_feedback": {
     "enabled": true,
-    "generated_at": "2026-09-26T08:23:57",
+    "generated_at": "2026-10-03T03:08:40",
     "window_weeks": 6,
     "weeks": [
+      "2026-W40",
+      "2026-W40",
       "2026-W39",
       "2026-W38",
       "2026-W37",
-      "2026-W36",
-      "2026-W35",
-      "2026-W34"
+      "2026-W36"
     ],
-    "n_filled": 63,
-    "baseline_avg_pct": -1.322,
+    "n_filled": 50,
+    "baseline_avg_pct": -0.57,
     "overheat_delta": {
-      "low": 0.0
+      "low": -0.12
     },
     "overheat_stats": {
       "low": {
-        "n": 63,
-        "avg": -1.322
+        "n": 49,
+        "avg": -0.716
+      },
+      "moderate": {
+        "n": 1,
+        "avg": 6.598
       }
     },
     "max_delta": 3.0,

@@ -2,7 +2,7 @@
   "week": "2026-W38",
   "start": "2026-09-14",
   "end": "2026-09-18",
-  "generated_at": "2026-09-26T08:23:57",
+  "generated_at": "2026-10-03T03:08:32",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -13,30 +13,38 @@
   },
   "summary": {
     "picks_total": 22,
-    "n_filled": 0,
-    "n_not_filled": 1,
-    "n_pending": 21,
+    "n_filled": 5,
+    "n_not_filled": 0,
+    "n_pending": 17,
     "n_no_data": 0,
-    "n_entered": 21,
-    "fill_rate": 0.0,
-    "avg_return_pct": null,
-    "median_return_pct": null,
-    "win_rate": null,
-    "avg_benchmark_pct": null,
-    "avg_excess_pct": null,
-    "beat_benchmark_rate": null,
-    "rule_avg_return_pct": null,
-    "rule_win_rate": null,
-    "avg_weekly_return_pct": -0.205,
-    "weekly_win_rate": 0.381,
-    "n_missed_evaluated": 1,
-    "missed_avg_pct": 0.294,
-    "missed_up_count": 1,
+    "n_entered": 22,
+    "fill_rate": 1.0,
+    "avg_return_pct": -2.183,
+    "median_return_pct": -2.163,
+    "win_rate": 0.2,
+    "avg_benchmark_pct": 0.716,
+    "avg_excess_pct": -2.899,
+    "beat_benchmark_rate": 0.0,
+    "rule_avg_return_pct": -2.183,
+    "rule_win_rate": 0.2,
+    "avg_weekly_return_pct": 0.217,
+    "weekly_win_rate": 0.545,
+    "n_missed_evaluated": 0,
+    "missed_avg_pct": null,
+    "missed_up_count": 0,
     "missed_down_count": 0,
-    "missed_up_avg_pct": 0.294,
+    "missed_up_avg_pct": null,
     "missed_down_avg_pct": null,
-    "best": null,
-    "worst": null
+    "best": {
+      "code": "1414",
+      "name": "ショーボンドホールディングス",
+      "return_net_pct": 0.0182
+    },
+    "worst": {
+      "code": "4658",
+      "name": "日本空調サービス",
+      "return_net_pct": -5.513
+    }
   },
   "trades": [
     {
@@ -67,20 +75,20 @@
         "wait_days": 10
       },
       "fill_date": "2026-09-15",
-      "fill_price": 3542.0,
+      "fill_price": 3497.2024,
       "status": "pending",
       "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3594.0,
-        "return_net_pct": 1.1641,
+        "return_net_pct": 2.46,
         "source": "intraday_1130"
       },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": 1.1641,
+      "return_weekly_pct": 2.46,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -116,20 +124,20 @@
         "wait_days": 10
       },
       "fill_date": "2026-09-15",
-      "fill_price": 2090.0,
+      "fill_price": 2080.09,
       "status": "pending",
       "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 2129.0,
-        "return_net_pct": 1.5609,
+        "return_net_pct": 2.0447,
         "source": "intraday_1130"
       },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": 1.5609,
+      "return_weekly_pct": 2.0447,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -215,21 +223,31 @@
       },
       "fill_date": "2026-09-15",
       "fill_price": 1266.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-09-28",
+        "price": 1257.5,
+        "reason": "保有期限",
+        "return_net_pct": -0.9689
+      },
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 1263.5,
         "return_net_pct": -0.4964,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-09-28",
+        "price": 1257.5,
+        "reason": "保有期限",
+        "return_net_pct": -0.9689
+      },
+      "return_gross_pct": -0.6714,
+      "return_net_pct": -0.9689,
+      "return_rule_pct": -0.9689,
       "return_weekly_pct": -0.4964,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": 0.9022,
+      "excess_pct": -1.8711,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -312,20 +330,20 @@
         "wait_days": 10
       },
       "fill_date": "2026-09-16",
-      "fill_price": 3544.0,
+      "fill_price": 3499.1769,
       "status": "pending",
       "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3594.0,
-        "return_net_pct": 1.1071,
+        "return_net_pct": 2.4022,
         "source": "intraday_1130"
       },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": 1.1071,
+      "return_weekly_pct": 2.4022,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -361,20 +379,20 @@
         "wait_days": 10
       },
       "fill_date": "2026-09-16",
-      "fill_price": 2100.0,
+      "fill_price": 2090.0426,
       "status": "pending",
       "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 2129.0,
-        "return_net_pct": 1.0773,
+        "return_net_pct": 1.5588,
         "source": "intraday_1130"
       },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": 1.0773,
+      "return_weekly_pct": 1.5588,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -460,21 +478,31 @@
       },
       "fill_date": "2026-09-16",
       "fill_price": 1278.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-09-29",
+        "price": 1252.5,
+        "reason": "保有期限",
+        "return_net_pct": -2.2889
+      },
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 1263.5,
         "return_net_pct": -1.4307,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-09-29",
+        "price": 1252.5,
+        "reason": "保有期限",
+        "return_net_pct": -2.2889
+      },
+      "return_gross_pct": -1.9953,
+      "return_net_pct": -2.2889,
+      "return_rule_pct": -2.2889,
       "return_weekly_pct": -1.4307,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": 0.2898,
+      "excess_pct": -2.5787,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -557,20 +585,20 @@
         "wait_days": 10
       },
       "fill_date": "2026-09-17",
-      "fill_price": 3587.0,
+      "fill_price": 3541.6331,
       "status": "pending",
       "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3594.0,
-        "return_net_pct": -0.105,
+        "return_net_pct": 1.1746,
         "source": "intraday_1130"
       },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": -0.105,
+      "return_weekly_pct": 1.1746,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -606,20 +634,20 @@
         "wait_days": 10
       },
       "fill_date": "2026-09-17",
-      "fill_price": 2112.0,
+      "fill_price": 2101.9858,
       "status": "pending",
       "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 2129.0,
-        "return_net_pct": 0.503,
+        "return_net_pct": 0.9818,
         "source": "intraday_1130"
       },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": 0.503,
+      "return_weekly_pct": 0.9818,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -705,21 +733,31 @@
       },
       "fill_date": "2026-09-17",
       "fill_price": 1284.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-09-30",
+        "price": 1260.0,
+        "reason": "保有期限",
+        "return_net_pct": -2.1631
+      },
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 1263.5,
         "return_net_pct": -1.8913,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-09-30",
+        "price": 1260.0,
+        "reason": "保有期限",
+        "return_net_pct": -2.1631
+      },
+      "return_gross_pct": -1.8692,
+      "return_net_pct": -2.1631,
+      "return_rule_pct": -2.1631,
       "return_weekly_pct": -1.8913,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": 0.822,
+      "excess_pct": -2.9851,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -802,20 +840,20 @@
         "wait_days": 10
       },
       "fill_date": "2026-09-18",
-      "fill_price": 3624.0,
+      "fill_price": 3578.1651,
       "status": "pending",
       "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 3594.0,
-        "return_net_pct": -1.1249,
+        "return_net_pct": 0.1417,
         "source": "intraday_1130"
       },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": -1.1249,
+      "return_weekly_pct": 0.1417,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -851,20 +889,20 @@
         "wait_days": 10
       },
       "fill_date": "2026-09-18",
-      "fill_price": 2138.0,
+      "fill_price": 2127.8623,
       "status": "pending",
       "exit_oco": null,
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 2129.0,
-        "return_net_pct": -0.7192,
+        "return_net_pct": -0.2462,
         "source": "intraday_1130"
       },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": -0.7192,
+      "return_weekly_pct": -0.2462,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -950,21 +988,31 @@
       },
       "fill_date": "2026-09-18",
       "fill_price": 1255.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-01",
+        "price": 1259.0,
+        "reason": "保有期限",
+        "return_net_pct": 0.0182
+      },
       "exit_weekly": {
         "date": "2026-09-18",
         "price": 1263.5,
         "return_net_pct": 0.3757,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-01",
+        "price": 1259.0,
+        "reason": "保有期限",
+        "return_net_pct": 0.0182
+      },
+      "return_gross_pct": 0.3187,
+      "return_net_pct": 0.0182,
+      "return_rule_pct": 0.0182,
       "return_weekly_pct": 0.3757,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": 0.9319,
+      "excess_pct": -0.9137,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -1044,24 +1092,29 @@
         "entry_price": 2150.0,
         "entry_zone_low": 1968.0,
         "entry_zone_high": 2203.0,
-        "wait_days": 5
+        "wait_days": 3
       },
-      "fill_date": null,
-      "fill_price": null,
-      "status": "not_filled",
+      "fill_date": "2026-09-28",
+      "fill_price": 2150.0,
+      "status": "pending",
       "exit_oco": null,
-      "exit_weekly": null,
+      "exit_weekly": {
+        "date": "2026-10-02",
+        "price": 2162.0,
+        "return_net_pct": 0.2569,
+        "source": "intraday_1130"
+      },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": null,
+      "return_weekly_pct": 0.2569,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
-      "missed_return_pct": 0.2944,
-      "missed_entry_date": "2026-09-24",
-      "missed_exit_date": "2026-09-25"
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "4658",
@@ -1091,22 +1144,32 @@
         "wait_days": 10
       },
       "fill_date": "2026-09-24",
-      "fill_price": 1655.0,
-      "status": "pending",
-      "exit_oco": null,
+      "fill_price": 1626.0274,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-09-30",
+        "price": 1541.0,
+        "reason": "損切り",
+        "return_net_pct": -5.513
+      },
       "exit_weekly": {
         "date": "2026-09-25",
         "price": 1645.0,
-        "return_net_pct": -0.902,
+        "return_net_pct": 0.8638,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
-      "return_weekly_pct": -0.902,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "exit_rule": {
+        "date": "2026-09-30",
+        "price": 1541.0,
+        "reason": "損切り",
+        "return_net_pct": -5.513
+      },
+      "return_gross_pct": -5.2291,
+      "return_net_pct": -5.513,
+      "return_rule_pct": -5.513,
+      "return_weekly_pct": 0.8638,
+      "benchmark_pct": 0.6333,
+      "excess_pct": -6.1463,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -1116,10 +1179,10 @@
   "ranking": {
     "k": null,
     "n": 200,
-    "spearman": 0.064,
-    "top_avg_pct": 0.583,
-    "bottom_avg_pct": -0.049,
-    "spread_pct": 0.632,
+    "spearman": -0.073,
+    "top_avg_pct": 11.705,
+    "bottom_avg_pct": 1.275,
+    "spread_pct": 10.43,
     "rows": [
       {
         "signal_date": "2026-09-14",
@@ -1128,12 +1191,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 3542.0,
+        "entry_price": 3497.2024,
         "exit_date": "2026-09-18",
         "exit_price": 3594.0,
-        "return_net_pct": 1.1641,
+        "return_net_pct": 2.46,
         "benchmark_pct": 0.1953,
-        "excess_pct": 0.9688
+        "excess_pct": 2.2647
       },
       {
         "signal_date": "2026-09-14",
@@ -1142,12 +1205,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 2090.0,
+        "entry_price": 2080.09,
         "exit_date": "2026-09-18",
         "exit_price": 2129.0,
-        "return_net_pct": 1.5609,
+        "return_net_pct": 2.0447,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.3656
+        "excess_pct": 1.8494
       },
       {
         "signal_date": "2026-09-14",
@@ -1184,12 +1247,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1305.0,
+        "entry_price": 1282.5966,
         "exit_date": "2026-09-18",
         "exit_price": 1293.0,
-        "return_net_pct": -1.2163,
+        "return_net_pct": 0.5091,
         "benchmark_pct": 0.1953,
-        "excess_pct": -1.4116
+        "excess_pct": 0.3138
       },
       {
         "signal_date": "2026-09-14",
@@ -1212,12 +1275,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1173.0,
+        "entry_price": 1168.038,
         "exit_date": "2026-09-18",
         "exit_price": 1174.0,
-        "return_net_pct": -0.2146,
+        "return_net_pct": 0.2093,
         "benchmark_pct": 0.1953,
-        "excess_pct": -0.4099
+        "excess_pct": 0.014
       },
       {
         "signal_date": "2026-09-14",
@@ -1226,12 +1289,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1210.0,
+        "entry_price": 1193.1579,
         "exit_date": "2026-09-18",
         "exit_price": 1162.5,
-        "return_net_pct": -4.2134,
+        "return_net_pct": -2.8613,
         "benchmark_pct": 0.1953,
-        "excess_pct": -4.4087
+        "excess_pct": -3.0566
       },
       {
         "signal_date": "2026-09-14",
@@ -1282,12 +1345,12 @@
         "sector": "鉱業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 3260.0,
+        "entry_price": 3228.8087,
         "exit_date": "2026-09-18",
         "exit_price": 3415.0,
-        "return_net_pct": 4.4408,
+        "return_net_pct": 5.4497,
         "benchmark_pct": 0.1953,
-        "excess_pct": 4.2455
+        "excess_pct": 5.2544
       },
       {
         "signal_date": "2026-09-14",
@@ -1324,12 +1387,12 @@
         "sector": "その他製品",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 2231.0,
+        "entry_price": 2166.9191,
         "exit_date": "2026-09-18",
         "exit_price": 2271.0,
-        "return_net_pct": 1.488,
+        "return_net_pct": 4.4892,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.2927
+        "excess_pct": 4.2939
       },
       {
         "signal_date": "2026-09-14",
@@ -1338,12 +1401,12 @@
         "sector": "鉱業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1914.0,
+        "entry_price": 1890.8218,
         "exit_date": "2026-09-18",
         "exit_price": 1926.0,
-        "return_net_pct": 0.3255,
+        "return_net_pct": 1.5553,
         "benchmark_pct": 0.1953,
-        "excess_pct": 0.1302
+        "excess_pct": 1.36
       },
       {
         "signal_date": "2026-09-14",
@@ -1352,12 +1415,12 @@
         "sector": "不動産業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1072.0,
+        "entry_price": 1038.4383,
         "exit_date": "2026-09-18",
         "exit_price": 1099.0,
-        "return_net_pct": 2.2116,
+        "return_net_pct": 5.515,
         "benchmark_pct": 0.1953,
-        "excess_pct": 2.0163
+        "excess_pct": 5.3197
       },
       {
         "signal_date": "2026-09-14",
@@ -1366,12 +1429,12 @@
         "sector": "卸売業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 3200.0,
+        "entry_price": 3133.3335,
         "exit_date": "2026-09-18",
         "exit_price": 3285.0,
-        "return_net_pct": 2.3487,
+        "return_net_pct": 4.5264,
         "benchmark_pct": 0.1953,
-        "excess_pct": 2.1534
+        "excess_pct": 4.3311
       },
       {
         "signal_date": "2026-09-14",
@@ -1380,12 +1443,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 5460.0,
+        "entry_price": 5395.6484,
         "exit_date": "2026-09-18",
         "exit_price": 5677.0,
-        "return_net_pct": 3.6629,
+        "return_net_pct": 4.8992,
         "benchmark_pct": 0.1953,
-        "excess_pct": 3.4676
+        "excess_pct": 4.7039
       },
       {
         "signal_date": "2026-09-14",
@@ -1394,12 +1457,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1881.5,
+        "entry_price": 1839.9637,
         "exit_date": "2026-09-18",
         "exit_price": 1922.0,
-        "return_net_pct": 1.8465,
+        "return_net_pct": 4.1457,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.6512
+        "excess_pct": 3.9504
       },
       {
         "signal_date": "2026-09-14",
@@ -1408,12 +1471,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 4110.0,
+        "entry_price": 4039.8769,
         "exit_date": "2026-09-18",
         "exit_price": 4205.0,
-        "return_net_pct": 2.005,
+        "return_net_pct": 3.7755,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.8097
+        "excess_pct": 3.5802
       },
       {
         "signal_date": "2026-09-14",
@@ -1436,12 +1499,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1205.0,
+        "entry_price": 1184.3429,
         "exit_date": "2026-09-18",
         "exit_price": 1231.0,
-        "return_net_pct": 1.8517,
+        "return_net_pct": 3.6281,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.6564
+        "excess_pct": 3.4328
       },
       {
         "signal_date": "2026-09-14",
@@ -1450,12 +1513,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 86.0,
+        "entry_price": 85.9407,
         "exit_date": "2026-09-18",
         "exit_price": 88.0,
-        "return_net_pct": 2.0191,
+        "return_net_pct": 2.0895,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.8238
+        "excess_pct": 1.8942
       },
       {
         "signal_date": "2026-09-14",
@@ -1464,12 +1527,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1487.0,
+        "entry_price": 1469.8732,
         "exit_date": "2026-09-18",
         "exit_price": 1495.0,
-        "return_net_pct": 0.2368,
+        "return_net_pct": 1.4048,
         "benchmark_pct": 0.1953,
-        "excess_pct": 0.0415
+        "excess_pct": 1.2095
       },
       {
         "signal_date": "2026-09-14",
@@ -1478,12 +1541,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 351.0,
+        "entry_price": 344.0397,
         "exit_date": "2026-09-18",
         "exit_price": 357.0,
-        "return_net_pct": 1.4047,
+        "return_net_pct": 3.4563,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.2094
+        "excess_pct": 3.261
       },
       {
         "signal_date": "2026-09-14",
@@ -1492,12 +1555,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 12410.0,
+        "entry_price": 12219.77,
         "exit_date": "2026-09-18",
         "exit_price": 12690.0,
-        "return_net_pct": 1.9499,
+        "return_net_pct": 3.537,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.7546
+        "excess_pct": 3.3417
       },
       {
         "signal_date": "2026-09-14",
@@ -1506,12 +1569,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 2766.0,
+        "entry_price": 2715.2384,
         "exit_date": "2026-09-18",
         "exit_price": 2741.5,
-        "return_net_pct": -1.1827,
+        "return_net_pct": 0.6647,
         "benchmark_pct": 0.1953,
-        "excess_pct": -1.378
+        "excess_pct": 0.4694
       },
       {
         "signal_date": "2026-09-14",
@@ -1520,12 +1583,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 2378.0,
+        "entry_price": 2336.3851,
         "exit_date": "2026-09-18",
         "exit_price": 2385.0,
-        "return_net_pct": -0.0061,
+        "return_net_pct": 1.775,
         "benchmark_pct": 0.1953,
-        "excess_pct": -0.2014
+        "excess_pct": 1.5797
       },
       {
         "signal_date": "2026-09-14",
@@ -1534,12 +1597,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 4943.0,
+        "entry_price": 4869.1783,
         "exit_date": "2026-09-18",
         "exit_price": 5004.0,
-        "return_net_pct": 0.9308,
+        "return_net_pct": 2.461,
         "benchmark_pct": 0.1953,
-        "excess_pct": 0.7355
+        "excess_pct": 2.2657
       },
       {
         "signal_date": "2026-09-14",
@@ -1548,12 +1611,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 3083.0,
+        "entry_price": 3035.5845,
         "exit_date": "2026-09-18",
         "exit_price": 3092.0,
-        "return_net_pct": -0.0085,
+        "return_net_pct": 1.5534,
         "benchmark_pct": 0.1953,
-        "excess_pct": -0.2038
+        "excess_pct": 1.3581
       },
       {
         "signal_date": "2026-09-14",
@@ -1562,12 +1625,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 2908.0,
+        "entry_price": 2879.4436,
         "exit_date": "2026-09-18",
         "exit_price": 3015.0,
-        "return_net_pct": 3.3689,
+        "return_net_pct": 4.3941,
         "benchmark_pct": 0.1953,
-        "excess_pct": 3.1736
+        "excess_pct": 4.1988
       },
       {
         "signal_date": "2026-09-14",
@@ -1576,12 +1639,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 3545.0,
+        "entry_price": 3453.8009,
         "exit_date": "2026-09-18",
         "exit_price": 3650.0,
-        "return_net_pct": 2.6535,
+        "return_net_pct": 5.3641,
         "benchmark_pct": 0.1953,
-        "excess_pct": 2.4582
+        "excess_pct": 5.1688
       },
       {
         "signal_date": "2026-09-14",
@@ -1590,9 +1653,9 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 4475.0,
+        "entry_price": 2237.5,
         "exit_date": "2026-09-18",
-        "exit_price": 4540.0,
+        "exit_price": 2270.0,
         "return_net_pct": 1.1486,
         "benchmark_pct": 0.1953,
         "excess_pct": 0.9533
@@ -1604,12 +1667,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 5548.0,
+        "entry_price": 5439.852,
         "exit_date": "2026-09-18",
         "exit_price": 5701.0,
-        "return_net_pct": 2.4499,
+        "return_net_pct": 4.4867,
         "benchmark_pct": 0.1953,
-        "excess_pct": 2.2546
+        "excess_pct": 4.2914
       },
       {
         "signal_date": "2026-09-14",
@@ -1618,12 +1681,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 5690.0,
+        "entry_price": 5540.7865,
         "exit_date": "2026-09-18",
         "exit_price": 5800.0,
-        "return_net_pct": 1.6279,
+        "return_net_pct": 4.3647,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.4326
+        "excess_pct": 4.1694
       },
       {
         "signal_date": "2026-09-14",
@@ -1632,12 +1695,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 3870.0,
+        "entry_price": 3794.7777,
         "exit_date": "2026-09-18",
         "exit_price": 3965.0,
-        "return_net_pct": 2.1479,
+        "return_net_pct": 4.1727,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.9526
+        "excess_pct": 3.9774
       },
       {
         "signal_date": "2026-09-14",
@@ -1646,12 +1709,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 886.0,
+        "entry_price": 869.3016,
         "exit_date": "2026-09-18",
         "exit_price": 909.0,
-        "return_net_pct": 2.2886,
+        "return_net_pct": 4.2535,
         "benchmark_pct": 0.1953,
-        "excess_pct": 2.0933
+        "excess_pct": 4.0582
       },
       {
         "signal_date": "2026-09-14",
@@ -1660,12 +1723,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1488.0,
+        "entry_price": 1458.0302,
         "exit_date": "2026-09-18",
         "exit_price": 1505.0,
-        "return_net_pct": 0.8395,
+        "return_net_pct": 2.9123,
         "benchmark_pct": 0.1953,
-        "excess_pct": 0.6442
+        "excess_pct": 2.717
       },
       {
         "signal_date": "2026-09-14",
@@ -1674,12 +1737,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-15",
-        "entry_price": 1300.0,
+        "entry_price": 1275.1719,
         "exit_date": "2026-09-18",
         "exit_price": 1321.0,
-        "return_net_pct": 1.311,
+        "return_net_pct": 3.2836,
         "benchmark_pct": 0.1953,
-        "excess_pct": 1.1157
+        "excess_pct": 3.0883
       },
       {
         "signal_date": "2026-09-15",
@@ -1688,12 +1751,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 3544.0,
+        "entry_price": 3499.1769,
         "exit_date": "2026-09-18",
         "exit_price": 3594.0,
-        "return_net_pct": 1.1071,
+        "return_net_pct": 2.4022,
         "benchmark_pct": 0.2427,
-        "excess_pct": 0.8644
+        "excess_pct": 2.1595
       },
       {
         "signal_date": "2026-09-15",
@@ -1702,12 +1765,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 2100.0,
+        "entry_price": 2090.0426,
         "exit_date": "2026-09-18",
         "exit_price": 2129.0,
-        "return_net_pct": 1.0773,
+        "return_net_pct": 1.5588,
         "benchmark_pct": 0.2427,
-        "excess_pct": 0.8346
+        "excess_pct": 1.3161
       },
       {
         "signal_date": "2026-09-15",
@@ -1744,12 +1807,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1299.0,
+        "entry_price": 1276.6995,
         "exit_date": "2026-09-18",
         "exit_price": 1293.0,
-        "return_net_pct": -0.7601,
+        "return_net_pct": 0.9734,
         "benchmark_pct": 0.2427,
-        "excess_pct": -1.0027
+        "excess_pct": 0.7307
       },
       {
         "signal_date": "2026-09-15",
@@ -1772,12 +1835,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1175.0,
+        "entry_price": 1170.0296,
         "exit_date": "2026-09-18",
         "exit_price": 1174.0,
-        "return_net_pct": -0.3844,
+        "return_net_pct": 0.0388,
         "benchmark_pct": 0.2427,
-        "excess_pct": -0.6271
+        "excess_pct": -0.2039
       },
       {
         "signal_date": "2026-09-15",
@@ -1786,12 +1849,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1191.0,
+        "entry_price": 1174.4223,
         "exit_date": "2026-09-18",
         "exit_price": 1162.5,
-        "return_net_pct": -2.6853,
+        "return_net_pct": -1.3117,
         "benchmark_pct": 0.2427,
-        "excess_pct": -2.928
+        "excess_pct": -1.5544
       },
       {
         "signal_date": "2026-09-15",
@@ -1842,12 +1905,12 @@
         "sector": "鉱業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 3335.0,
+        "entry_price": 3303.0909,
         "exit_date": "2026-09-18",
         "exit_price": 3415.0,
-        "return_net_pct": 2.0921,
+        "return_net_pct": 3.0783,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.8494
+        "excess_pct": 2.8356
       },
       {
         "signal_date": "2026-09-15",
@@ -1884,12 +1947,12 @@
         "sector": "その他製品",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 2221.0,
+        "entry_price": 2157.2063,
         "exit_date": "2026-09-18",
         "exit_price": 2271.0,
-        "return_net_pct": 1.9449,
+        "return_net_pct": 4.9597,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.7023
+        "excess_pct": 4.717
       },
       {
         "signal_date": "2026-09-15",
@@ -1898,12 +1961,12 @@
         "sector": "鉱業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1950.0,
+        "entry_price": 1926.3858,
         "exit_date": "2026-09-18",
         "exit_price": 1926.0,
-        "return_net_pct": -1.5266,
+        "return_net_pct": -0.3195,
         "benchmark_pct": 0.2427,
-        "excess_pct": -1.7693
+        "excess_pct": -0.5622
       },
       {
         "signal_date": "2026-09-15",
@@ -1912,12 +1975,12 @@
         "sector": "不動産業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1070.0,
+        "entry_price": 1036.5009,
         "exit_date": "2026-09-18",
         "exit_price": 1099.0,
-        "return_net_pct": 2.4026,
+        "return_net_pct": 5.7122,
         "benchmark_pct": 0.2427,
-        "excess_pct": 2.1599
+        "excess_pct": 5.4695
       },
       {
         "signal_date": "2026-09-15",
@@ -1926,12 +1989,12 @@
         "sector": "卸売業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 3240.0,
+        "entry_price": 3172.5002,
         "exit_date": "2026-09-18",
         "exit_price": 3285.0,
-        "return_net_pct": 1.0852,
+        "return_net_pct": 3.2359,
         "benchmark_pct": 0.2427,
-        "excess_pct": 0.8425
+        "excess_pct": 2.9932
       },
       {
         "signal_date": "2026-09-15",
@@ -1940,12 +2003,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 5470.0,
+        "entry_price": 5405.5304,
         "exit_date": "2026-09-18",
         "exit_price": 5677.0,
-        "return_net_pct": 3.4734,
+        "return_net_pct": 4.7075,
         "benchmark_pct": 0.2427,
-        "excess_pct": 3.2307
+        "excess_pct": 4.4648
       },
       {
         "signal_date": "2026-09-15",
@@ -1954,12 +2017,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1879.0,
+        "entry_price": 1837.5188,
         "exit_date": "2026-09-18",
         "exit_price": 1922.0,
-        "return_net_pct": 1.982,
+        "return_net_pct": 4.2842,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.7394
+        "excess_pct": 4.0416
       },
       {
         "signal_date": "2026-09-15",
@@ -1968,12 +2031,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 4090.0,
+        "entry_price": 4020.2181,
         "exit_date": "2026-09-18",
         "exit_price": 4205.0,
-        "return_net_pct": 2.5038,
+        "return_net_pct": 4.283,
         "benchmark_pct": 0.2427,
-        "excess_pct": 2.2611
+        "excess_pct": 4.0403
       },
       {
         "signal_date": "2026-09-15",
@@ -1996,12 +2059,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1212.0,
+        "entry_price": 1191.2229,
         "exit_date": "2026-09-18",
         "exit_price": 1231.0,
-        "return_net_pct": 1.2634,
+        "return_net_pct": 3.0296,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.0207
+        "excess_pct": 2.7869
       },
       {
         "signal_date": "2026-09-15",
@@ -2010,12 +2073,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 86.0,
+        "entry_price": 85.9407,
         "exit_date": "2026-09-18",
         "exit_price": 88.0,
-        "return_net_pct": 2.0191,
+        "return_net_pct": 2.0895,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.7764
+        "excess_pct": 1.8468
       },
       {
         "signal_date": "2026-09-15",
@@ -2024,12 +2087,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1485.0,
+        "entry_price": 1467.8963,
         "exit_date": "2026-09-18",
         "exit_price": 1495.0,
-        "return_net_pct": 0.3718,
+        "return_net_pct": 1.5414,
         "benchmark_pct": 0.2427,
-        "excess_pct": 0.1291
+        "excess_pct": 1.2987
       },
       {
         "signal_date": "2026-09-15",
@@ -2038,12 +2101,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 350.0,
+        "entry_price": 343.0595,
         "exit_date": "2026-09-18",
         "exit_price": 357.0,
-        "return_net_pct": 1.6945,
+        "return_net_pct": 3.7519,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.4518
+        "excess_pct": 3.5092
       },
       {
         "signal_date": "2026-09-15",
@@ -2052,12 +2115,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 12425.0,
+        "entry_price": 12234.5401,
         "exit_date": "2026-09-18",
         "exit_price": 12690.0,
-        "return_net_pct": 1.8269,
+        "return_net_pct": 3.412,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.5842
+        "excess_pct": 3.1693
       },
       {
         "signal_date": "2026-09-15",
@@ -2066,12 +2129,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 2741.0,
+        "entry_price": 2690.6973,
         "exit_date": "2026-09-18",
         "exit_price": 2741.5,
-        "return_net_pct": -0.2814,
+        "return_net_pct": 1.5829,
         "benchmark_pct": 0.2427,
-        "excess_pct": -0.5241
+        "excess_pct": 1.3402
       },
       {
         "signal_date": "2026-09-15",
@@ -2080,12 +2143,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 2335.0,
+        "entry_price": 2294.1375,
         "exit_date": "2026-09-18",
         "exit_price": 2385.0,
-        "return_net_pct": 1.8354,
+        "return_net_pct": 3.6492,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.5927
+        "excess_pct": 3.4065
       },
       {
         "signal_date": "2026-09-15",
@@ -2094,12 +2157,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 4940.0,
+        "entry_price": 4866.2236,
         "exit_date": "2026-09-18",
         "exit_price": 5004.0,
-        "return_net_pct": 0.9921,
+        "return_net_pct": 2.5232,
         "benchmark_pct": 0.2427,
-        "excess_pct": 0.7494
+        "excess_pct": 2.2806
       },
       {
         "signal_date": "2026-09-15",
@@ -2108,12 +2171,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 3063.0,
+        "entry_price": 3015.8923,
         "exit_date": "2026-09-18",
         "exit_price": 3092.0,
-        "return_net_pct": 0.6444,
+        "return_net_pct": 2.2164,
         "benchmark_pct": 0.2427,
-        "excess_pct": 0.4017
+        "excess_pct": 1.9738
       },
       {
         "signal_date": "2026-09-15",
@@ -2122,12 +2185,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 2956.0,
+        "entry_price": 2926.9722,
         "exit_date": "2026-09-18",
         "exit_price": 3015.0,
-        "return_net_pct": 1.6904,
+        "return_net_pct": 2.6989,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.4477
+        "excess_pct": 2.4562
       },
       {
         "signal_date": "2026-09-15",
@@ -2136,12 +2199,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 3555.0,
+        "entry_price": 3463.5436,
         "exit_date": "2026-09-18",
         "exit_price": 3650.0,
-        "return_net_pct": 2.3647,
+        "return_net_pct": 5.0677,
         "benchmark_pct": 0.2427,
-        "excess_pct": 2.122
+        "excess_pct": 4.825
       },
       {
         "signal_date": "2026-09-15",
@@ -2150,9 +2213,9 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 4500.0,
+        "entry_price": 2250.0,
         "exit_date": "2026-09-18",
-        "exit_price": 4540.0,
+        "exit_price": 2270.0,
         "return_net_pct": 0.5867,
         "benchmark_pct": 0.2427,
         "excess_pct": 0.344
@@ -2164,12 +2227,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 5570.0,
+        "entry_price": 5461.4231,
         "exit_date": "2026-09-18",
         "exit_price": 5701.0,
-        "return_net_pct": 2.0453,
+        "return_net_pct": 4.074,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.8026
+        "excess_pct": 3.8313
       },
       {
         "signal_date": "2026-09-15",
@@ -2178,12 +2241,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 5680.0,
+        "entry_price": 5531.049,
         "exit_date": "2026-09-18",
         "exit_price": 5800.0,
-        "return_net_pct": 1.8068,
+        "return_net_pct": 4.5485,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.5641
+        "excess_pct": 4.3058
       },
       {
         "signal_date": "2026-09-15",
@@ -2192,12 +2255,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 3915.0,
+        "entry_price": 3838.9029,
         "exit_date": "2026-09-18",
         "exit_price": 3965.0,
-        "return_net_pct": 0.9738,
+        "return_net_pct": 2.9753,
         "benchmark_pct": 0.2427,
-        "excess_pct": 0.7311
+        "excess_pct": 2.7326
       },
       {
         "signal_date": "2026-09-15",
@@ -2206,12 +2269,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 893.0,
+        "entry_price": 876.1696,
         "exit_date": "2026-09-18",
         "exit_price": 909.0,
-        "return_net_pct": 1.4868,
+        "return_net_pct": 3.4363,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.2441
+        "excess_pct": 3.1936
       },
       {
         "signal_date": "2026-09-15",
@@ -2220,12 +2283,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1488.5,
+        "entry_price": 1458.5201,
         "exit_date": "2026-09-18",
         "exit_price": 1505.0,
-        "return_net_pct": 0.8056,
+        "return_net_pct": 2.8777,
         "benchmark_pct": 0.2427,
-        "excess_pct": 0.5629
+        "excess_pct": 2.635
       },
       {
         "signal_date": "2026-09-15",
@@ -2234,12 +2297,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-16",
-        "entry_price": 1300.0,
+        "entry_price": 1275.1719,
         "exit_date": "2026-09-18",
         "exit_price": 1321.0,
-        "return_net_pct": 1.311,
+        "return_net_pct": 3.2836,
         "benchmark_pct": 0.2427,
-        "excess_pct": 1.0683
+        "excess_pct": 3.0409
       },
       {
         "signal_date": "2026-09-16",
@@ -2248,12 +2311,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 3587.0,
+        "entry_price": 3541.6331,
         "exit_date": "2026-09-18",
         "exit_price": 3594.0,
-        "return_net_pct": -0.105,
+        "return_net_pct": 1.1746,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.545
+        "excess_pct": 1.8247
       },
       {
         "signal_date": "2026-09-16",
@@ -2262,12 +2325,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 2112.0,
+        "entry_price": 2101.9858,
         "exit_date": "2026-09-18",
         "exit_price": 2129.0,
-        "return_net_pct": 0.503,
+        "return_net_pct": 0.9818,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.153
+        "excess_pct": 1.6318
       },
       {
         "signal_date": "2026-09-16",
@@ -2304,12 +2367,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1290.5,
+        "entry_price": 1268.3454,
         "exit_date": "2026-09-18",
         "exit_price": 1293.0,
-        "return_net_pct": -0.1064,
+        "return_net_pct": 1.6385,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.5436
+        "excess_pct": 2.2885
       },
       {
         "signal_date": "2026-09-16",
@@ -2332,12 +2395,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1170.0,
+        "entry_price": 1165.0507,
         "exit_date": "2026-09-18",
         "exit_price": 1174.0,
-        "return_net_pct": 0.0413,
+        "return_net_pct": 0.4663,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.6913
+        "excess_pct": 1.1163
       },
       {
         "signal_date": "2026-09-16",
@@ -2346,12 +2409,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1190.0,
+        "entry_price": 1173.4362,
         "exit_date": "2026-09-18",
         "exit_price": 1162.5,
-        "return_net_pct": -2.6036,
+        "return_net_pct": -1.2287,
         "benchmark_pct": -0.65,
-        "excess_pct": -1.9535
+        "excess_pct": -0.5787
       },
       {
         "signal_date": "2026-09-16",
@@ -2402,12 +2465,12 @@
         "sector": "鉱業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 3370.0,
+        "entry_price": 3337.7561,
         "exit_date": "2026-09-18",
         "exit_price": 3415.0,
-        "return_net_pct": 1.0318,
+        "return_net_pct": 2.0078,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.6818
+        "excess_pct": 2.6578
       },
       {
         "signal_date": "2026-09-16",
@@ -2444,12 +2507,12 @@
         "sector": "その他製品",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 2280.0,
+        "entry_price": 2214.5118,
         "exit_date": "2026-09-18",
         "exit_price": 2271.0,
-        "return_net_pct": -0.6931,
+        "return_net_pct": 2.2436,
         "benchmark_pct": -0.65,
-        "excess_pct": -0.0431
+        "excess_pct": 2.8937
       },
       {
         "signal_date": "2026-09-16",
@@ -2458,12 +2521,12 @@
         "sector": "鉱業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1930.0,
+        "entry_price": 1906.628,
         "exit_date": "2026-09-18",
         "exit_price": 1926.0,
-        "return_net_pct": -0.5062,
+        "return_net_pct": 0.7134,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.1438
+        "excess_pct": 1.3635
       },
       {
         "signal_date": "2026-09-16",
@@ -2472,12 +2535,12 @@
         "sector": "不動産業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1076.0,
+        "entry_price": 1042.313,
         "exit_date": "2026-09-18",
         "exit_price": 1099.0,
-        "return_net_pct": 1.8316,
+        "return_net_pct": 5.1227,
         "benchmark_pct": -0.65,
-        "excess_pct": 2.4816
+        "excess_pct": 5.7728
       },
       {
         "signal_date": "2026-09-16",
@@ -2486,12 +2549,12 @@
         "sector": "卸売業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 3280.0,
+        "entry_price": 3211.6668,
         "exit_date": "2026-09-18",
         "exit_price": 3285.0,
-        "return_net_pct": -0.1476,
+        "return_net_pct": 1.9769,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.5025
+        "excess_pct": 2.627
       },
       {
         "signal_date": "2026-09-16",
@@ -2500,12 +2563,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 5547.0,
+        "entry_price": 5481.623,
         "exit_date": "2026-09-18",
         "exit_price": 5677.0,
-        "return_net_pct": 2.037,
+        "return_net_pct": 3.254,
         "benchmark_pct": -0.65,
-        "excess_pct": 2.6871
+        "excess_pct": 3.904
       },
       {
         "signal_date": "2026-09-16",
@@ -2514,12 +2577,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1899.5,
+        "entry_price": 1857.5663,
         "exit_date": "2026-09-18",
         "exit_price": 1922.0,
-        "return_net_pct": 0.8814,
+        "return_net_pct": 3.1588,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.5315
+        "excess_pct": 3.8088
       },
       {
         "signal_date": "2026-09-16",
@@ -2528,12 +2591,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 4190.0,
+        "entry_price": 4118.5121,
         "exit_date": "2026-09-18",
         "exit_price": 4205.0,
-        "return_net_pct": 0.0574,
+        "return_net_pct": 1.7941,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.7074
+        "excess_pct": 2.4442
       },
       {
         "signal_date": "2026-09-16",
@@ -2556,12 +2619,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1226.0,
+        "entry_price": 1204.9829,
         "exit_date": "2026-09-18",
         "exit_price": 1231.0,
-        "return_net_pct": 0.1071,
+        "return_net_pct": 1.8531,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.7571
+        "excess_pct": 2.5031
       },
       {
         "signal_date": "2026-09-16",
@@ -2570,12 +2633,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 87.0,
+        "entry_price": 86.94,
         "exit_date": "2026-09-18",
         "exit_price": 88.0,
-        "return_net_pct": 0.8464,
+        "return_net_pct": 0.916,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.4965
+        "excess_pct": 1.5661
       },
       {
         "signal_date": "2026-09-16",
@@ -2584,12 +2647,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1487.0,
+        "entry_price": 1469.8733,
         "exit_date": "2026-09-18",
         "exit_price": 1495.0,
-        "return_net_pct": 0.2368,
+        "return_net_pct": 1.4048,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.8869
+        "excess_pct": 2.0548
       },
       {
         "signal_date": "2026-09-16",
@@ -2598,12 +2661,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 352.0,
+        "entry_price": 345.0198,
         "exit_date": "2026-09-18",
         "exit_price": 357.0,
-        "return_net_pct": 1.1166,
+        "return_net_pct": 3.1624,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.7667
+        "excess_pct": 3.8124
       },
       {
         "signal_date": "2026-09-16",
@@ -2612,12 +2675,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 12705.0,
+        "entry_price": 12510.2485,
         "exit_date": "2026-09-18",
         "exit_price": 12690.0,
-        "return_net_pct": -0.4173,
+        "return_net_pct": 1.133,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.2328
+        "excess_pct": 1.783
       },
       {
         "signal_date": "2026-09-16",
@@ -2626,12 +2689,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 2748.0,
+        "entry_price": 2697.5688,
         "exit_date": "2026-09-18",
         "exit_price": 2741.5,
-        "return_net_pct": -0.5354,
+        "return_net_pct": 1.3241,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.1147
+        "excess_pct": 1.9742
       },
       {
         "signal_date": "2026-09-16",
@@ -2640,12 +2703,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 2415.5,
+        "entry_price": 2373.2287,
         "exit_date": "2026-09-18",
         "exit_price": 2385.0,
-        "return_net_pct": -1.5584,
+        "return_net_pct": 0.195,
         "benchmark_pct": -0.65,
-        "excess_pct": -0.9084
+        "excess_pct": 0.845
       },
       {
         "signal_date": "2026-09-16",
@@ -2654,12 +2717,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 4993.0,
+        "entry_price": 4918.4319,
         "exit_date": "2026-09-18",
         "exit_price": 5004.0,
-        "return_net_pct": -0.0799,
+        "return_net_pct": 1.435,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.5701
+        "excess_pct": 2.085
       },
       {
         "signal_date": "2026-09-16",
@@ -2668,12 +2731,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 3121.0,
+        "entry_price": 3073.0002,
         "exit_date": "2026-09-18",
         "exit_price": 3092.0,
-        "return_net_pct": -1.226,
+        "return_net_pct": 0.3169,
         "benchmark_pct": -0.65,
-        "excess_pct": -0.5759
+        "excess_pct": 0.9669
       },
       {
         "signal_date": "2026-09-16",
@@ -2682,12 +2745,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 2982.0,
+        "entry_price": 2952.7169,
         "exit_date": "2026-09-18",
         "exit_price": 3015.0,
-        "return_net_pct": 0.8038,
+        "return_net_pct": 1.8035,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.4538
+        "excess_pct": 2.4535
       },
       {
         "signal_date": "2026-09-16",
@@ -2696,12 +2759,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 3615.0,
+        "entry_price": 3522.0,
         "exit_date": "2026-09-18",
         "exit_price": 3650.0,
-        "return_net_pct": 0.6657,
+        "return_net_pct": 3.3239,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.3158
+        "excess_pct": 3.9739
       },
       {
         "signal_date": "2026-09-16",
@@ -2710,9 +2773,9 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 4520.0,
+        "entry_price": 2260.0,
         "exit_date": "2026-09-18",
-        "exit_price": 4540.0,
+        "exit_price": 2270.0,
         "return_net_pct": 0.1416,
         "benchmark_pct": -0.65,
         "excess_pct": 0.7916
@@ -2724,12 +2787,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 5663.0,
+        "entry_price": 5552.6103,
         "exit_date": "2026-09-18",
         "exit_price": 5701.0,
-        "return_net_pct": 0.3695,
+        "return_net_pct": 2.3649,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.0195
+        "excess_pct": 3.0149
       },
       {
         "signal_date": "2026-09-16",
@@ -2738,12 +2801,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 5740.0,
+        "entry_price": 5589.4754,
         "exit_date": "2026-09-18",
         "exit_price": 5800.0,
-        "return_net_pct": 0.7426,
+        "return_net_pct": 3.4556,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.3926
+        "excess_pct": 4.1056
       },
       {
         "signal_date": "2026-09-16",
@@ -2752,12 +2815,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 3935.0,
+        "entry_price": 3858.5143,
         "exit_date": "2026-09-18",
         "exit_price": 3965.0,
-        "return_net_pct": 0.4606,
+        "return_net_pct": 2.4519,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.1106
+        "excess_pct": 3.102
       },
       {
         "signal_date": "2026-09-16",
@@ -2766,12 +2829,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 901.0,
+        "entry_price": 884.0188,
         "exit_date": "2026-09-18",
         "exit_price": 909.0,
-        "return_net_pct": 0.5857,
+        "return_net_pct": 2.5178,
         "benchmark_pct": -0.65,
-        "excess_pct": 1.2357
+        "excess_pct": 3.1679
       },
       {
         "signal_date": "2026-09-16",
@@ -2780,12 +2843,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1515.0,
+        "entry_price": 1484.4863,
         "exit_date": "2026-09-18",
         "exit_price": 1505.0,
-        "return_net_pct": -0.9576,
+        "return_net_pct": 1.0782,
         "benchmark_pct": -0.65,
-        "excess_pct": -0.3076
+        "excess_pct": 1.7282
       },
       {
         "signal_date": "2026-09-16",
@@ -2794,12 +2857,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-17",
-        "entry_price": 1323.0,
+        "entry_price": 1297.7326,
         "exit_date": "2026-09-18",
         "exit_price": 1321.0,
-        "return_net_pct": -0.4503,
+        "return_net_pct": 1.488,
         "benchmark_pct": -0.65,
-        "excess_pct": 0.1998
+        "excess_pct": 2.138
       },
       {
         "signal_date": "2026-09-17",
@@ -2808,12 +2871,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 3624.0,
+        "entry_price": 3578.1651,
         "exit_date": "2026-09-18",
         "exit_price": 3594.0,
-        "return_net_pct": -1.1249,
+        "return_net_pct": 0.1417,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.0808
+        "excess_pct": 1.3474
       },
       {
         "signal_date": "2026-09-17",
@@ -2822,12 +2885,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 2138.0,
+        "entry_price": 2127.8623,
         "exit_date": "2026-09-18",
         "exit_price": 2129.0,
-        "return_net_pct": -0.7192,
+        "return_net_pct": -0.2462,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.4865
+        "excess_pct": 0.9595
       },
       {
         "signal_date": "2026-09-17",
@@ -2864,12 +2927,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1310.0,
+        "entry_price": 1287.5107,
         "exit_date": "2026-09-18",
         "exit_price": 1293.0,
-        "return_net_pct": -1.5934,
+        "return_net_pct": 0.1255,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.3877
+        "excess_pct": 1.3312
       },
       {
         "signal_date": "2026-09-17",
@@ -2892,12 +2955,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1179.0,
+        "entry_price": 1174.0127,
         "exit_date": "2026-09-18",
         "exit_price": 1174.0,
-        "return_net_pct": -0.7224,
+        "return_net_pct": -0.3006,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.4833
+        "excess_pct": 0.9051
       },
       {
         "signal_date": "2026-09-17",
@@ -2906,12 +2969,12 @@
         "sector": "水産・農林業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1185.0,
+        "entry_price": 1168.5058,
         "exit_date": "2026-09-18",
         "exit_price": 1162.5,
-        "return_net_pct": -2.1926,
+        "return_net_pct": -0.812,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.9869
+        "excess_pct": 0.3937
       },
       {
         "signal_date": "2026-09-17",
@@ -2962,12 +3025,12 @@
         "sector": "鉱業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 3320.0,
+        "entry_price": 3288.2345,
         "exit_date": "2026-09-18",
         "exit_price": 3415.0,
-        "return_net_pct": 2.5533,
+        "return_net_pct": 3.544,
         "benchmark_pct": -1.2057,
-        "excess_pct": 3.759
+        "excess_pct": 4.7497
       },
       {
         "signal_date": "2026-09-17",
@@ -3004,12 +3067,12 @@
         "sector": "その他製品",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 2295.0,
+        "entry_price": 2229.081,
         "exit_date": "2026-09-18",
         "exit_price": 2271.0,
-        "return_net_pct": -1.3422,
+        "return_net_pct": 1.5754,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.1365
+        "excess_pct": 2.7811
       },
       {
         "signal_date": "2026-09-17",
@@ -3018,12 +3081,12 @@
         "sector": "鉱業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1936.0,
+        "entry_price": 1912.5554,
         "exit_date": "2026-09-18",
         "exit_price": 1926.0,
-        "return_net_pct": -0.8145,
+        "return_net_pct": 0.4013,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.3912
+        "excess_pct": 1.607
       },
       {
         "signal_date": "2026-09-17",
@@ -3032,12 +3095,12 @@
         "sector": "不動産業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1087.0,
+        "entry_price": 1052.9686,
         "exit_date": "2026-09-18",
         "exit_price": 1099.0,
-        "return_net_pct": 0.8011,
+        "return_net_pct": 4.0589,
         "benchmark_pct": -1.2057,
-        "excess_pct": 2.0068
+        "excess_pct": 5.2646
       },
       {
         "signal_date": "2026-09-17",
@@ -3046,12 +3109,12 @@
         "sector": "卸売業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 3310.0,
+        "entry_price": 3241.0417,
         "exit_date": "2026-09-18",
         "exit_price": 3285.0,
-        "return_net_pct": -1.0526,
+        "return_net_pct": 1.0527,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.1531
+        "excess_pct": 2.2584
       },
       {
         "signal_date": "2026-09-17",
@@ -3060,12 +3123,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 5630.0,
+        "entry_price": 5563.6444,
         "exit_date": "2026-09-18",
         "exit_price": 5677.0,
-        "return_net_pct": 0.5328,
+        "return_net_pct": 1.7318,
         "benchmark_pct": -1.2057,
-        "excess_pct": 1.7385
+        "excess_pct": 2.9375
       },
       {
         "signal_date": "2026-09-17",
@@ -3074,12 +3137,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1932.0,
+        "entry_price": 1889.3488,
         "exit_date": "2026-09-18",
         "exit_price": 1922.0,
-        "return_net_pct": -0.8156,
+        "return_net_pct": 1.4234,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.3901
+        "excess_pct": 2.6292
       },
       {
         "signal_date": "2026-09-17",
@@ -3088,12 +3151,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 4275.0,
+        "entry_price": 4202.0615,
         "exit_date": "2026-09-18",
         "exit_price": 4205.0,
-        "return_net_pct": -1.9321,
+        "return_net_pct": -0.2298,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.7264
+        "excess_pct": 0.9759
       },
       {
         "signal_date": "2026-09-17",
@@ -3116,12 +3179,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1238.0,
+        "entry_price": 1216.7771,
         "exit_date": "2026-09-18",
         "exit_price": 1231.0,
-        "return_net_pct": -0.8633,
+        "return_net_pct": 0.8658,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.3424
+        "excess_pct": 2.0715
       },
       {
         "signal_date": "2026-09-17",
@@ -3130,12 +3193,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 86.0,
+        "entry_price": 85.9407,
         "exit_date": "2026-09-18",
         "exit_price": 88.0,
-        "return_net_pct": 2.0191,
+        "return_net_pct": 2.0895,
         "benchmark_pct": -1.2057,
-        "excess_pct": 3.2248
+        "excess_pct": 3.2952
       },
       {
         "signal_date": "2026-09-17",
@@ -3144,12 +3207,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1496.0,
+        "entry_price": 1478.7696,
         "exit_date": "2026-09-18",
         "exit_price": 1495.0,
-        "return_net_pct": -0.3662,
+        "return_net_pct": 0.7947,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.8395
+        "excess_pct": 2.0004
       },
       {
         "signal_date": "2026-09-17",
@@ -3158,12 +3221,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 357.0,
+        "entry_price": 349.9207,
         "exit_date": "2026-09-18",
         "exit_price": 357.0,
-        "return_net_pct": -0.2996,
+        "return_net_pct": 1.7175,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.9062
+        "excess_pct": 2.9232
       },
       {
         "signal_date": "2026-09-17",
@@ -3172,12 +3235,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 12830.0,
+        "entry_price": 12633.3317,
         "exit_date": "2026-09-18",
         "exit_price": 12690.0,
-        "return_net_pct": -1.3875,
+        "return_net_pct": 0.1477,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.1818
+        "excess_pct": 1.3534
       },
       {
         "signal_date": "2026-09-17",
@@ -3186,12 +3249,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 2777.0,
+        "entry_price": 2726.0365,
         "exit_date": "2026-09-18",
         "exit_price": 2741.5,
-        "return_net_pct": -1.5741,
+        "return_net_pct": 0.266,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.3684
+        "excess_pct": 1.4717
       },
       {
         "signal_date": "2026-09-17",
@@ -3200,12 +3263,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 2410.0,
+        "entry_price": 2367.8251,
         "exit_date": "2026-09-18",
         "exit_price": 2385.0,
-        "return_net_pct": -1.3338,
+        "return_net_pct": 0.4236,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.1281
+        "excess_pct": 1.6293
       },
       {
         "signal_date": "2026-09-17",
@@ -3214,12 +3277,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 5082.0,
+        "entry_price": 5006.1029,
         "exit_date": "2026-09-18",
         "exit_price": 5004.0,
-        "return_net_pct": -1.8298,
+        "return_net_pct": -0.3414,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.6241
+        "excess_pct": 0.8643
       },
       {
         "signal_date": "2026-09-17",
@@ -3228,12 +3291,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 3138.0,
+        "entry_price": 3089.7388,
         "exit_date": "2026-09-18",
         "exit_price": 3092.0,
-        "return_net_pct": -1.7611,
+        "return_net_pct": -0.2266,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.5554
+        "excess_pct": 0.9791
       },
       {
         "signal_date": "2026-09-17",
@@ -3242,12 +3305,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 3035.0,
+        "entry_price": 3005.1964,
         "exit_date": "2026-09-18",
         "exit_price": 3015.0,
-        "return_net_pct": -0.9566,
+        "return_net_pct": 0.0257,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.2492
+        "excess_pct": 1.2314
       },
       {
         "signal_date": "2026-09-17",
@@ -3256,12 +3319,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 3670.0,
+        "entry_price": 3575.5852,
         "exit_date": "2026-09-18",
         "exit_price": 3650.0,
-        "return_net_pct": -0.8429,
+        "return_net_pct": 1.7754,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.3628
+        "excess_pct": 2.9811
       },
       {
         "signal_date": "2026-09-17",
@@ -3270,9 +3333,9 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 4585.0,
+        "entry_price": 2292.5,
         "exit_date": "2026-09-18",
-        "exit_price": 4540.0,
+        "exit_price": 2270.0,
         "return_net_pct": -1.2781,
         "benchmark_pct": -1.2057,
         "excess_pct": -0.0724
@@ -3284,12 +3347,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 5737.0,
+        "entry_price": 5625.1675,
         "exit_date": "2026-09-18",
         "exit_price": 5701.0,
-        "return_net_pct": -0.9252,
+        "return_net_pct": 1.0445,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.2805
+        "excess_pct": 2.2502
       },
       {
         "signal_date": "2026-09-17",
@@ -3298,12 +3361,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 5840.0,
+        "entry_price": 5686.8533,
         "exit_date": "2026-09-18",
         "exit_price": 5800.0,
-        "return_net_pct": -0.9824,
+        "return_net_pct": 1.6841,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.2233
+        "excess_pct": 2.8898
       },
       {
         "signal_date": "2026-09-17",
@@ -3312,12 +3375,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 3955.0,
+        "entry_price": 3878.1255,
         "exit_date": "2026-09-18",
         "exit_price": 3965.0,
-        "return_net_pct": -0.0475,
+        "return_net_pct": 1.9339,
         "benchmark_pct": -1.2057,
-        "excess_pct": 1.1582
+        "excess_pct": 3.1396
       },
       {
         "signal_date": "2026-09-17",
@@ -3326,12 +3389,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 909.0,
+        "entry_price": 891.8681,
         "exit_date": "2026-09-18",
         "exit_price": 909.0,
-        "return_net_pct": -0.2996,
+        "return_net_pct": 1.6156,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.9062
+        "excess_pct": 2.8213
       },
       {
         "signal_date": "2026-09-17",
@@ -3340,12 +3403,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1524.5,
+        "entry_price": 1493.795,
         "exit_date": "2026-09-18",
         "exit_price": 1505.0,
-        "return_net_pct": -1.5748,
+        "return_net_pct": 0.4483,
         "benchmark_pct": -1.2057,
-        "excess_pct": -0.3691
+        "excess_pct": 1.654
       },
       {
         "signal_date": "2026-09-17",
@@ -3354,12 +3417,12 @@
         "sector": "建設業",
         "score": null,
         "entry_date": "2026-09-18",
-        "entry_price": 1322.0,
+        "entry_price": 1296.7517,
         "exit_date": "2026-09-18",
         "exit_price": 1321.0,
-        "return_net_pct": -0.375,
+        "return_net_pct": 1.5648,
         "benchmark_pct": -1.2057,
-        "excess_pct": 0.8307
+        "excess_pct": 2.7705
       },
       {
         "signal_date": "2026-09-18",
@@ -3396,12 +3459,12 @@
         "sector": "情報・通信業",
         "score": 100.0,
         "entry_date": "2026-09-24",
-        "entry_price": 2179.0,
+        "entry_price": 2147.9715,
         "exit_date": "2026-09-25",
         "exit_price": 2196.0,
-        "return_net_pct": 0.4783,
+        "return_net_pct": 1.9297,
         "benchmark_pct": 0.2602,
-        "excess_pct": 0.2181
+        "excess_pct": 1.6696
       },
       {
         "signal_date": "2026-09-18",
@@ -3452,12 +3515,12 @@
         "sector": "パルプ・紙",
         "score": 100.0,
         "entry_date": "2026-09-24",
-        "entry_price": 1024.0,
+        "entry_price": 1016.8319,
         "exit_date": "2026-09-25",
         "exit_price": 1023.0,
-        "return_net_pct": -0.3969,
+        "return_net_pct": 0.3052,
         "benchmark_pct": 0.2602,
-        "excess_pct": -0.6571
+        "excess_pct": 0.0451
       },
       {
         "signal_date": "2026-09-18",
@@ -3466,12 +3529,12 @@
         "sector": "化学",
         "score": 100.0,
         "entry_date": "2026-09-24",
-        "entry_price": 2102.0,
+        "entry_price": 2068.9372,
         "exit_date": "2026-09-25",
         "exit_price": 2131.0,
-        "return_net_pct": 1.076,
+        "return_net_pct": 2.6912,
         "benchmark_pct": 0.2602,
-        "excess_pct": 0.8158
+        "excess_pct": 2.431
       },
       {
         "signal_date": "2026-09-18",
@@ -3508,12 +3571,12 @@
         "sector": "機械",
         "score": 100.0,
         "entry_date": "2026-09-24",
-        "entry_price": 2590.0,
+        "entry_price": 2539.2357,
         "exit_date": "2026-09-25",
         "exit_price": 2549.0,
-        "return_net_pct": -1.8778,
+        "return_net_pct": 0.0838,
         "benchmark_pct": 0.2602,
-        "excess_pct": -2.138
+        "excess_pct": -0.1763
       },
       {
         "signal_date": "2026-09-18",
@@ -3522,12 +3585,12 @@
         "sector": "電気機器",
         "score": 100.0,
         "entry_date": "2026-09-24",
-        "entry_price": 5030.0,
+        "entry_price": 4956.1743,
         "exit_date": "2026-09-25",
         "exit_price": 5120.0,
-        "return_net_pct": 1.4844,
+        "return_net_pct": 2.996,
         "benchmark_pct": 0.2602,
-        "excess_pct": 1.2242
+        "excess_pct": 2.7359
       },
       {
         "signal_date": "2026-09-18",
@@ -3578,12 +3641,12 @@
         "sector": "不動産業",
         "score": 98.6,
         "entry_date": "2026-09-24",
-        "entry_price": 1119.0,
+        "entry_price": 1103.4439,
         "exit_date": "2026-09-25",
         "exit_price": 1082.0,
-        "return_net_pct": -3.5962,
+        "return_net_pct": -2.2371,
         "benchmark_pct": 0.2602,
-        "excess_pct": -3.8563
+        "excess_pct": -2.4973
       },
       {
         "signal_date": "2026-09-18",
@@ -3592,12 +3655,12 @@
         "sector": "医薬品",
         "score": 97.0,
         "entry_date": "2026-09-24",
-        "entry_price": 3840.0,
+        "entry_price": 3761.3481,
         "exit_date": "2026-09-25",
         "exit_price": 3860.0,
-        "return_net_pct": 0.2197,
+        "return_net_pct": 2.3154,
         "benchmark_pct": 0.2602,
-        "excess_pct": -0.0404
+        "excess_pct": 2.0552
       },
       {
         "signal_date": "2026-09-18",
@@ -3606,12 +3669,12 @@
         "sector": "サービス業",
         "score": 96.9,
         "entry_date": "2026-09-24",
-        "entry_price": 2282.0,
+        "entry_price": 2247.9917,
         "exit_date": "2026-09-25",
         "exit_price": 2329.0,
-        "return_net_pct": 1.7539,
+        "return_net_pct": 3.2932,
         "benchmark_pct": 0.2602,
-        "excess_pct": 1.4937
+        "excess_pct": 3.0331
       },
       {
         "signal_date": "2026-09-18",
@@ -3620,12 +3683,12 @@
         "sector": "海運業",
         "score": 96.8,
         "entry_date": "2026-09-24",
-        "entry_price": 2341.0,
+        "entry_price": 2335.2388,
         "exit_date": "2026-09-25",
         "exit_price": 2416.0,
-        "return_net_pct": 2.8946,
+        "return_net_pct": 3.1485,
         "benchmark_pct": 0.2602,
-        "excess_pct": 2.6344
+        "excess_pct": 2.8883
       },
       {
         "signal_date": "2026-09-18",
@@ -3634,12 +3697,12 @@
         "sector": "電気機器",
         "score": 96.5,
         "entry_date": "2026-09-24",
-        "entry_price": 3335.0,
+        "entry_price": 3285.5193,
         "exit_date": "2026-09-25",
         "exit_price": 3340.0,
-        "return_net_pct": -0.1501,
+        "return_net_pct": 1.3537,
         "benchmark_pct": 0.2602,
-        "excess_pct": -0.4102
+        "excess_pct": 1.0935
       },
       {
         "signal_date": "2026-09-18",
@@ -3648,12 +3711,12 @@
         "sector": "化学",
         "score": 96.3,
         "entry_date": "2026-09-24",
-        "entry_price": 3460.0,
+        "entry_price": 3409.7092,
         "exit_date": "2026-09-25",
         "exit_price": 3470.0,
-        "return_net_pct": -0.0114,
+        "return_net_pct": 1.4634,
         "benchmark_pct": 0.2602,
-        "excess_pct": -0.2716
+        "excess_pct": 1.2032
       },
       {
         "signal_date": "2026-09-18",
@@ -3662,12 +3725,12 @@
         "sector": "電気機器",
         "score": 96.2,
         "entry_date": "2026-09-24",
-        "entry_price": 7400.0,
+        "entry_price": 7340.5622,
         "exit_date": "2026-09-25",
         "exit_price": 7570.0,
-        "return_net_pct": 1.9909,
+        "return_net_pct": 2.8167,
         "benchmark_pct": 0.2602,
-        "excess_pct": 1.7307
+        "excess_pct": 2.5565
       },
       {
         "signal_date": "2026-09-18",
@@ -3676,12 +3739,12 @@
         "sector": "輸送用機器",
         "score": 96.2,
         "entry_date": "2026-09-24",
-        "entry_price": 2816.0,
+        "entry_price": 2770.5806,
         "exit_date": "2026-09-25",
         "exit_price": 2797.0,
-        "return_net_pct": -0.9722,
+        "return_net_pct": 0.6512,
         "benchmark_pct": 0.2602,
-        "excess_pct": -1.2324
+        "excess_pct": 0.391
       },
       {
         "signal_date": "2026-09-18",
@@ -3704,12 +3767,12 @@
         "sector": "小売業",
         "score": 95.9,
         "entry_date": "2026-09-24",
-        "entry_price": 1080.0,
+        "entry_price": 1060.5181,
         "exit_date": "2026-09-25",
         "exit_price": 1095.0,
-        "return_net_pct": 1.0852,
+        "return_net_pct": 2.9421,
         "benchmark_pct": 0.2602,
-        "excess_pct": 0.825
+        "excess_pct": 2.682
       },
       {
         "signal_date": "2026-09-18",
@@ -3718,12 +3781,12 @@
         "sector": "陸運業",
         "score": 95.8,
         "entry_date": "2026-09-24",
-        "entry_price": 3567.0,
+        "entry_price": 3531.4822,
         "exit_date": "2026-09-25",
         "exit_price": 3546.0,
-        "return_net_pct": -0.8865,
+        "return_net_pct": 0.1103,
         "benchmark_pct": 0.2602,
-        "excess_pct": -1.1467
+        "excess_pct": -0.1499
       },
       {
         "signal_date": "2026-09-18",
@@ -3732,12 +3795,12 @@
         "sector": "精密機器",
         "score": 95.7,
         "entry_date": "2026-09-24",
-        "entry_price": 898.0,
+        "entry_price": 884.1083,
         "exit_date": "2026-09-25",
         "exit_price": 935.0,
-        "return_net_pct": 3.8084,
+        "return_net_pct": 5.4395,
         "benchmark_pct": 0.2602,
-        "excess_pct": 3.5482
+        "excess_pct": 5.1793
       },
       {
         "signal_date": "2026-09-18",
@@ -3760,12 +3823,12 @@
         "sector": "サービス業",
         "score": 95.0,
         "entry_date": "2026-09-24",
-        "entry_price": 4305.0,
+        "entry_price": 4231.3323,
         "exit_date": "2026-09-25",
         "exit_price": 4270.0,
-        "return_net_pct": -1.1101,
+        "return_net_pct": 0.6116,
         "benchmark_pct": 0.2602,
-        "excess_pct": -1.3703
+        "excess_pct": 0.3514
       },
       {
         "signal_date": "2026-09-18",
@@ -3774,12 +3837,12 @@
         "sector": "サービス業",
         "score": 94.8,
         "entry_date": "2026-09-24",
-        "entry_price": 1312.5,
+        "entry_price": 1296.7224,
         "exit_date": "2026-09-25",
         "exit_price": 1327.0,
-        "return_net_pct": 0.8019,
+        "return_net_pct": 2.0284,
         "benchmark_pct": 0.2602,
-        "excess_pct": 0.5417
+        "excess_pct": 1.7682
       },
       {
         "signal_date": "2026-09-18",
@@ -3788,12 +3851,12 @@
         "sector": "卸売業",
         "score": 94.3,
         "entry_date": "2026-09-24",
-        "entry_price": 1889.0,
+        "entry_price": 1854.8645,
         "exit_date": "2026-09-25",
         "exit_price": 1904.5,
-        "return_net_pct": 0.5185,
+        "return_net_pct": 2.3684,
         "benchmark_pct": 0.2602,
-        "excess_pct": 0.2584
+        "excess_pct": 2.1082
       },
       {
         "signal_date": "2026-09-18",
@@ -3802,12 +3865,12 @@
         "sector": "小売業",
         "score": 94.3,
         "entry_date": "2026-09-24",
-        "entry_price": 4385.0,
+        "entry_price": 4335.1707,
         "exit_date": "2026-09-25",
         "exit_price": 4450.0,
-        "return_net_pct": 1.1783,
+        "return_net_pct": 2.3413,
         "benchmark_pct": 0.2602,
-        "excess_pct": 0.9182
+        "excess_pct": 2.0811
       },
       {
         "signal_date": "2026-09-18",
@@ -3830,12 +3893,12 @@
         "sector": "電気機器",
         "score": 94.2,
         "entry_date": "2026-09-24",
-        "entry_price": 3850.0,
+        "entry_price": 3784.6605,
         "exit_date": "2026-09-25",
         "exit_price": 3820.0,
-        "return_net_pct": -1.0764,
+        "return_net_pct": 0.6314,
         "benchmark_pct": 0.2602,
-        "excess_pct": -1.3366
+        "excess_pct": 0.3712
       },
       {
         "signal_date": "2026-09-18",
@@ -3844,12 +3907,12 @@
         "sector": "サービス業",
         "score": 94.1,
         "entry_date": "2026-09-24",
-        "entry_price": 1655.0,
+        "entry_price": 1626.0274,
         "exit_date": "2026-09-25",
         "exit_price": 1645.0,
-        "return_net_pct": -0.902,
+        "return_net_pct": 0.8638,
         "benchmark_pct": 0.2602,
-        "excess_pct": -1.1621
+        "excess_pct": 0.6036
       },
       {
         "signal_date": "2026-09-18",
@@ -3886,12 +3949,12 @@
         "sector": "食料品",
         "score": 93.5,
         "entry_date": "2026-09-24",
-        "entry_price": 3375.0,
+        "entry_price": 3319.0889,
         "exit_date": "2026-09-25",
         "exit_price": 3335.0,
-        "return_net_pct": -1.4812,
+        "return_net_pct": 0.1784,
         "benchmark_pct": 0.2602,
-        "excess_pct": -1.7414
+        "excess_pct": -0.0818
       },
       {
         "signal_date": "2026-09-18",
@@ -3900,12 +3963,12 @@
         "sector": "サービス業",
         "score": 93.4,
         "entry_date": "2026-09-24",
-        "entry_price": 286.8,
+        "entry_price": 280.3739,
         "exit_date": "2026-09-25",
         "exit_price": 292.9,
-        "return_net_pct": 1.821,
+        "return_net_pct": 4.1547,
         "benchmark_pct": 0.2602,
-        "excess_pct": 1.5608
+        "excess_pct": 3.8945
       },
       {
         "signal_date": "2026-09-18",
@@ -3914,12 +3977,12 @@
         "sector": "銀行業",
         "score": 93.3,
         "entry_date": "2026-09-24",
-        "entry_price": 8605.0,
+        "entry_price": 787.1119,
         "exit_date": "2026-09-25",
         "exit_price": 8738.0,
-        "return_net_pct": 1.2414,
+        "return_net_pct": 1006.809,
         "benchmark_pct": 0.2602,
-        "excess_pct": 0.9813
+        "excess_pct": 1006.5488
       }
     ]
   },
@@ -3927,30 +3990,30 @@
     "by_verdict": {
       "recommend": {
         "n": 26,
-        "avg": 0.132,
-        "median": 0.51,
-        "win_rate": 0.615
+        "avg": 1.953,
+        "median": 1.208,
+        "win_rate": 0.692
       },
       "neutral": {
         "n": 55,
-        "avg": -0.283,
-        "median": -0.176,
-        "win_rate": 0.491
+        "avg": 0.581,
+        "median": 1.301,
+        "win_rate": 0.6
       },
       "avoid": {
         "n": 9,
-        "avg": -0.739,
-        "median": -0.59,
-        "win_rate": 0.111
+        "avg": -0.373,
+        "median": -0.528,
+        "win_rate": 0.222
       },
       "watch": {
         "n": 70,
-        "avg": 0.622,
-        "median": -0.108,
-        "win_rate": 0.457
+        "avg": 1.481,
+        "median": 0.954,
+        "win_rate": 0.686
       }
     },
-    "recommend_minus_watch_pct": -0.49,
+    "recommend_minus_watch_pct": 0.472,
     "rows": [
       {
         "signal_date": "2026-09-14",
@@ -3978,7 +4041,7 @@
         "code": "6191",
         "verdict": "recommend",
         "rank": null,
-        "return_net_pct": -1.9465
+        "return_net_pct": 10.3102
       },
       {
         "signal_date": "2026-09-14",
@@ -3992,7 +4055,7 @@
         "code": "6492",
         "verdict": "recommend",
         "rank": null,
-        "return_net_pct": -5.2782
+        "return_net_pct": -5.0291
       },
       {
         "signal_date": "2026-09-14",
@@ -4027,7 +4090,7 @@
         "code": "9902",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 2.3696
+        "return_net_pct": 4.292
       },
       {
         "signal_date": "2026-09-14",
@@ -4048,42 +4111,42 @@
         "code": "5076",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 1.1843
+        "return_net_pct": 3.5232
       },
       {
         "signal_date": "2026-09-14",
         "code": "6849",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 0.3375
+        "return_net_pct": 1.3412
       },
       {
         "signal_date": "2026-09-14",
         "code": "8399",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -0.9011
+        "return_net_pct": 0.5502
       },
       {
         "signal_date": "2026-09-14",
         "code": "4203",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 1.1792
+        "return_net_pct": 1.9311
       },
       {
         "signal_date": "2026-09-14",
         "code": "9956",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 1.6292
+        "return_net_pct": 4.0744
       },
       {
         "signal_date": "2026-09-14",
         "code": "3132",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 7.7952
+        "return_net_pct": 8.8258
       },
       {
         "signal_date": "2026-09-14",
@@ -4118,28 +4181,28 @@
         "code": "8218",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -0.933
+        "return_net_pct": -0.185
       },
       {
         "signal_date": "2026-09-14",
         "code": "9470",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 0.929
+        "return_net_pct": 2.3103
       },
       {
         "signal_date": "2026-09-14",
         "code": "8285",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 4.6411
+        "return_net_pct": 5.28
       },
       {
         "signal_date": "2026-09-14",
         "code": "3864",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 4.3872
+        "return_net_pct": 4.9823
       },
       {
         "signal_date": "2026-09-14",
@@ -4153,35 +4216,35 @@
         "code": "7480",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 4.0733
+        "return_net_pct": 6.6276
       },
       {
         "signal_date": "2026-09-14",
         "code": "2871",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -2.4218
+        "return_net_pct": -1.3084
       },
       {
         "signal_date": "2026-09-14",
         "code": "2767",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 0.1931
+        "return_net_pct": 3.0154
       },
       {
         "signal_date": "2026-09-14",
         "code": "2002",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -2.7754
+        "return_net_pct": -1.2136
       },
       {
         "signal_date": "2026-09-14",
         "code": "9005",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -2.4898
+        "return_net_pct": -1.5315
       },
       {
         "signal_date": "2026-09-14",
@@ -4209,14 +4272,14 @@
         "code": "4761",
         "verdict": "avoid",
         "rank": null,
-        "return_net_pct": -1.1648
+        "return_net_pct": 0.9483
       },
       {
         "signal_date": "2026-09-14",
         "code": "5983",
         "verdict": "avoid",
         "rank": null,
-        "return_net_pct": -1.9224
+        "return_net_pct": -0.7459
       },
       {
         "signal_date": "2026-09-14",
@@ -4237,7 +4300,7 @@
         "code": "3393",
         "verdict": "recommend",
         "rank": null,
-        "return_net_pct": 3.8414
+        "return_net_pct": 6.0799
       },
       {
         "signal_date": "2026-09-15",
@@ -4251,7 +4314,7 @@
         "code": "3762",
         "verdict": "recommend",
         "rank": null,
-        "return_net_pct": 0.2548
+        "return_net_pct": 1.1449
       },
       {
         "signal_date": "2026-09-15",
@@ -4265,7 +4328,7 @@
         "code": "4464",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -0.1763
+        "return_net_pct": 0.6667
       },
       {
         "signal_date": "2026-09-15",
@@ -4293,7 +4356,7 @@
         "code": "6191",
         "verdict": "recommend",
         "rank": null,
-        "return_net_pct": 1.3419
+        "return_net_pct": 14.0096
       },
       {
         "signal_date": "2026-09-15",
@@ -4307,14 +4370,14 @@
         "code": "6317",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 3.5731
+        "return_net_pct": 5.6437
       },
       {
         "signal_date": "2026-09-15",
         "code": "6356",
         "verdict": "recommend",
         "rank": null,
-        "return_net_pct": -4.6711
+        "return_net_pct": -4.3235
       },
       {
         "signal_date": "2026-09-15",
@@ -4349,7 +4412,7 @@
         "code": "6779",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 3.95
+        "return_net_pct": 4.4283
       },
       {
         "signal_date": "2026-09-15",
@@ -4363,7 +4426,7 @@
         "code": "9956",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -0.5898
+        "return_net_pct": 1.802
       },
       {
         "signal_date": "2026-09-15",
@@ -4384,28 +4447,28 @@
         "code": "2326",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 1.6513
+        "return_net_pct": 2.7014
       },
       {
         "signal_date": "2026-09-15",
         "code": "7433",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -1.5593
+        "return_net_pct": 5.2167
       },
       {
         "signal_date": "2026-09-15",
         "code": "8750",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -0.5081
+        "return_net_pct": 1.3696
       },
       {
         "signal_date": "2026-09-15",
         "code": "9902",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 1.8882
+        "return_net_pct": 3.8016
       },
       {
         "signal_date": "2026-09-15",
@@ -4419,14 +4482,14 @@
         "code": "4203",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": -0.3379
+        "return_net_pct": 0.4027
       },
       {
         "signal_date": "2026-09-15",
         "code": "8424",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 0.5645
+        "return_net_pct": 2.5106
       },
       {
         "signal_date": "2026-09-15",
@@ -4440,7 +4503,7 @@
         "code": "8285",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 2.4286
+        "return_net_pct": 3.0539
       },
       {
         "signal_date": "2026-09-15",
@@ -4454,14 +4517,14 @@
         "code": "5076",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 1.0053
+        "return_net_pct": 3.3401
       },
       {
         "signal_date": "2026-09-15",
         "code": "7867",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 1.5364
+        "return_net_pct": 2.4108
       },
       {
         "signal_date": "2026-09-15",
@@ -4482,7 +4545,7 @@
         "code": "9308",
         "verdict": "neutral",
         "rank": null,
-        "return_net_pct": 8.9064
+        "return_net_pct": 9.1751
       },
       {
         "signal_date": "2026-09-15",
@@ -4517,7 +4580,7 @@
         "code": "3762",
         "verdict": "recommend",
         "rank": 1,
-        "return_net_pct": 1.1384
+        "return_net_pct": 2.0364
       },
       {
         "signal_date": "2026-09-16",
@@ -4538,21 +4601,21 @@
         "code": "6191",
         "verdict": "recommend",
         "rank": 4,
-        "return_net_pct": 1.9636
+        "return_net_pct": 14.709
       },
       {
         "signal_date": "2026-09-16",
         "code": "6317",
         "verdict": "recommend",
         "rank": 5,
-        "return_net_pct": 3.0621
+        "return_net_pct": 5.1225
       },
       {
         "signal_date": "2026-09-16",
         "code": "3393",
         "verdict": "watch",
         "rank": 6,
-        "return_net_pct": 4.5092
+        "return_net_pct": 6.7621
       },
       {
         "signal_date": "2026-09-16",
@@ -4566,7 +4629,7 @@
         "code": "4464",
         "verdict": "watch",
         "rank": 8,
-        "return_net_pct": -0.2996
+        "return_net_pct": 0.5424
       },
       {
         "signal_date": "2026-09-16",
@@ -4594,7 +4657,7 @@
         "code": "6356",
         "verdict": "watch",
         "rank": 12,
-        "return_net_pct": -5.6057
+        "return_net_pct": -5.2615
       },
       {
         "signal_date": "2026-09-16",
@@ -4629,7 +4692,7 @@
         "code": "6779",
         "verdict": "watch",
         "rank": 17,
-        "return_net_pct": -1.5381
+        "return_net_pct": -1.085
       },
       {
         "signal_date": "2026-09-16",
@@ -4643,7 +4706,7 @@
         "code": "9956",
         "verdict": "watch",
         "rank": 19,
-        "return_net_pct": 0.5815
+        "return_net_pct": 3.0015
       },
       {
         "signal_date": "2026-09-16",
@@ -4664,28 +4727,28 @@
         "code": "2326",
         "verdict": "watch",
         "rank": 22,
-        "return_net_pct": 1.5468
+        "return_net_pct": 2.5958
       },
       {
         "signal_date": "2026-09-16",
         "code": "7433",
         "verdict": "watch",
         "rank": 23,
-        "return_net_pct": -0.8434
+        "return_net_pct": 5.9819
       },
       {
         "signal_date": "2026-09-16",
         "code": "8750",
         "verdict": "watch",
         "rank": 24,
-        "return_net_pct": -0.1949
+        "return_net_pct": 1.6887
       },
       {
         "signal_date": "2026-09-16",
         "code": "9902",
         "verdict": "watch",
         "rank": 25,
-        "return_net_pct": -0.1464
+        "return_net_pct": 1.7288
       },
       {
         "signal_date": "2026-09-16",
@@ -4699,14 +4762,14 @@
         "code": "4203",
         "verdict": "watch",
         "rank": 27,
-        "return_net_pct": -2.8528
+        "return_net_pct": -2.1309
       },
       {
         "signal_date": "2026-09-16",
         "code": "8424",
         "verdict": "watch",
         "rank": 28,
-        "return_net_pct": -0.0794
+        "return_net_pct": 1.8542
       },
       {
         "signal_date": "2026-09-16",
@@ -4720,7 +4783,7 @@
         "code": "8285",
         "verdict": "watch",
         "rank": 30,
-        "return_net_pct": 1.2947
+        "return_net_pct": 1.9131
       },
       {
         "signal_date": "2026-09-16",
@@ -4734,14 +4797,14 @@
         "code": "5076",
         "verdict": "watch",
         "rank": 32,
-        "return_net_pct": -0.681
+        "return_net_pct": 1.6148
       },
       {
         "signal_date": "2026-09-16",
         "code": "7867",
         "verdict": "watch",
         "rank": 33,
-        "return_net_pct": 1.7967
+        "return_net_pct": 2.6734
       },
       {
         "signal_date": "2026-09-16",
@@ -4762,7 +4825,7 @@
         "code": "9308",
         "verdict": "watch",
         "rank": 36,
-        "return_net_pct": 4.8406
+        "return_net_pct": 5.0992
       },
       {
         "signal_date": "2026-09-16",
@@ -4797,14 +4860,14 @@
         "code": "6356",
         "verdict": "recommend",
         "rank": 1,
-        "return_net_pct": -1.1716
+        "return_net_pct": -0.8111
       },
       {
         "signal_date": "2026-09-18",
         "code": "7867",
         "verdict": "recommend",
         "rank": 2,
-        "return_net_pct": 0.7369
+        "return_net_pct": 1.6045
       },
       {
         "signal_date": "2026-09-18",
@@ -4825,21 +4888,21 @@
         "code": "4658",
         "verdict": "recommend",
         "rank": 5,
-        "return_net_pct": -0.902
+        "return_net_pct": 0.8638
       },
       {
         "signal_date": "2026-09-18",
         "code": "2326",
         "verdict": "watch",
         "rank": 6,
-        "return_net_pct": -0.9075
+        "return_net_pct": 0.1162
       },
       {
         "signal_date": "2026-09-18",
         "code": "6317",
         "verdict": "watch",
         "rank": 7,
-        "return_net_pct": -1.8778
+        "return_net_pct": 0.0838
       },
       {
         "signal_date": "2026-09-18",
@@ -4853,70 +4916,70 @@
         "code": "8550",
         "verdict": "watch",
         "rank": 9,
-        "return_net_pct": 4.637
+        "return_net_pct": 5.9626
       },
       {
         "signal_date": "2026-09-18",
         "code": "7458",
         "verdict": "watch",
         "rank": 10,
-        "return_net_pct": 0.5185
+        "return_net_pct": 2.3684
       },
       {
         "signal_date": "2026-09-18",
         "code": "6080",
         "verdict": "watch",
         "rank": 11,
-        "return_net_pct": -1.1101
+        "return_net_pct": 0.6116
       },
       {
         "signal_date": "2026-09-18",
         "code": "4665",
         "verdict": "watch",
         "rank": 12,
-        "return_net_pct": 0.8803
+        "return_net_pct": 2.1773
       },
       {
         "signal_date": "2026-09-18",
         "code": "8157",
         "verdict": "watch",
         "rank": 13,
-        "return_net_pct": -0.4153
+        "return_net_pct": 1.8507
       },
       {
         "signal_date": "2026-09-18",
         "code": "9308",
         "verdict": "watch",
         "rank": 14,
-        "return_net_pct": 2.8946
+        "return_net_pct": 3.1485
       },
       {
         "signal_date": "2026-09-18",
         "code": "9274",
         "verdict": "watch",
         "rank": 15,
-        "return_net_pct": 2.6146
+        "return_net_pct": 4.4165
       },
       {
         "signal_date": "2026-09-18",
         "code": "4958",
         "verdict": "watch",
         "rank": 16,
-        "return_net_pct": -0.0114
+        "return_net_pct": 1.4634
       },
       {
         "signal_date": "2026-09-18",
         "code": "9902",
         "verdict": "watch",
         "rank": 17,
-        "return_net_pct": -0.9093
+        "return_net_pct": 0.9515
       },
       {
         "signal_date": "2026-09-18",
         "code": "5121",
         "verdict": "watch",
         "rank": 18,
-        "return_net_pct": 3.0238
+        "return_net_pct": 4.5291
       },
       {
         "signal_date": "2026-09-18",
@@ -4930,14 +4993,14 @@
         "code": "3880",
         "verdict": "watch",
         "rank": 20,
-        "return_net_pct": -0.3969
+        "return_net_pct": 0.3052
       },
       {
         "signal_date": "2026-09-18",
         "code": "9997",
         "verdict": "watch",
         "rank": 21,
-        "return_net_pct": 1.0852
+        "return_net_pct": 2.9421
       },
       {
         "signal_date": "2026-09-18",
@@ -4986,7 +5049,7 @@
         "code": "1904",
         "verdict": "watch",
         "rank": 28,
-        "return_net_pct": -0.4928
+        "return_net_pct": 7.8663
       },
       {
         "signal_date": "2026-09-18",
@@ -5021,14 +5084,14 @@
         "code": "7727",
         "verdict": "watch",
         "rank": 33,
-        "return_net_pct": 3.8084
+        "return_net_pct": 5.4395
       },
       {
         "signal_date": "2026-09-18",
         "code": "4464",
         "verdict": "watch",
         "rank": 34,
-        "return_net_pct": -0.0534
+        "return_net_pct": 0.7907
       },
       {
         "signal_date": "2026-09-18",
@@ -5042,7 +5105,7 @@
         "code": "4318",
         "verdict": "watch",
         "rank": 36,
-        "return_net_pct": -0.7617
+        "return_net_pct": 1.4645
       },
       {
         "signal_date": "2026-09-18",
@@ -5070,7 +5133,7 @@
         "code": "4951",
         "verdict": "watch",
         "rank": 40,
-        "return_net_pct": 0.3521
+        "return_net_pct": 1.8857
       }
     ]
   },
@@ -5079,8 +5142,8 @@
       "n_per_day": 1,
       "picks": 5,
       "n_filled": 0,
-      "n_pending": 4,
-      "fill_rate": 0.0,
+      "n_pending": 5,
+      "fill_rate": null,
       "avg_return_pct": null,
       "median_return_pct": null,
       "win_rate": null,
@@ -5091,56 +5154,119 @@
     "3": {
       "n_per_day": 3,
       "picks": 14,
-      "n_filled": 0,
+      "n_filled": 1,
       "n_pending": 13,
-      "fill_rate": 0.0,
-      "avg_return_pct": null,
-      "median_return_pct": null,
-      "win_rate": null,
-      "avg_excess_pct": null,
-      "best": null,
-      "worst": null
+      "fill_rate": 1.0,
+      "avg_return_pct": -5.513,
+      "median_return_pct": -5.513,
+      "win_rate": 0.0,
+      "avg_excess_pct": -6.146,
+      "best": {
+        "code": "4658",
+        "name": "日本空調サービス",
+        "return_net_pct": -5.513
+      },
+      "worst": {
+        "code": "4658",
+        "name": "日本空調サービス",
+        "return_net_pct": -5.513
+      }
     },
     "5": {
       "n_per_day": 5,
       "picks": 22,
-      "n_filled": 0,
-      "n_pending": 21,
-      "fill_rate": 0.0,
-      "avg_return_pct": null,
-      "median_return_pct": null,
-      "win_rate": null,
-      "avg_excess_pct": null,
-      "best": null,
-      "worst": null
+      "n_filled": 5,
+      "n_pending": 17,
+      "fill_rate": 1.0,
+      "avg_return_pct": -2.183,
+      "median_return_pct": -2.163,
+      "win_rate": 0.2,
+      "avg_excess_pct": -2.899,
+      "best": {
+        "code": "1414",
+        "name": "ショーボンドホールディングス",
+        "return_net_pct": 0.0182
+      },
+      "worst": {
+        "code": "4658",
+        "name": "日本空調サービス",
+        "return_net_pct": -5.513
+      }
     }
   },
   "breakdown": {
-    "by_entry_type": {},
-    "by_overheat": {},
-    "by_sector": {},
-    "by_verdict": {}
+    "by_entry_type": {
+      "追いかけ": {
+        "n": 5,
+        "avg": -2.183,
+        "median": -2.163,
+        "win_rate": 0.2
+      }
+    },
+    "by_overheat": {
+      "低": {
+        "n": 5,
+        "avg": -2.183,
+        "median": -2.163,
+        "win_rate": 0.2
+      }
+    },
+    "by_sector": {
+      "建設業": {
+        "n": 4,
+        "avg": -1.351,
+        "median": -1.566,
+        "win_rate": 0.25
+      },
+      "サービス業": {
+        "n": 1,
+        "avg": -5.513,
+        "median": -5.513,
+        "win_rate": 0.0
+      }
+    },
+    "by_verdict": {
+      "スコア順": {
+        "n": 4,
+        "avg": -1.351,
+        "median": -1.566,
+        "win_rate": 0.25
+      },
+      "推奨": {
+        "n": 1,
+        "avg": -5.513,
+        "median": -5.513,
+        "win_rate": 0.0
+      }
+    }
   },
   "notes": [
-    "未確定（データ不足で来週確定）が 21件あります。翌週のレビューで確定します。",
-    "見送り 1件を成行追随していたら平均 +0.29%（機会損失）。うち上昇 1件（平均 +0.29%）/ 下落 0件（平均 +0.00%）。",
-    "OCO決済が未確定です（最大保有日数に未到達）。翌週以降のレビューで確定します。"
+    "未確定（データ不足で来週確定）が 17件あります。翌週のレビューで確定します。",
+    "推奨の平均リターンは -2.18% で、TOPIX（+0.72%）を下回りました。",
+    "スコアとリターンの関係はほぼ中立でした（順位相関 -0.07）。",
+    "AIの「推奨」は「様子見」を平均 +0.47% 上回りました。",
+    "エントリー「追いかけ」は 5件・平均 -2.18%。",
+    "過熱度「低」は 5件・平均 -2.18%。"
   ],
   "actions": [
-    "過熱度『低』（63件・平均-1.322%）は 減点 +0.00。"
+    "過熱度『低』（49件・平均-0.716%）は 減点 -0.12。"
   ],
   "feedback": {
     "enabled": true,
     "window_weeks": 6,
-    "n_filled": 63,
-    "baseline_avg_pct": -1.322,
+    "n_filled": 50,
+    "baseline_avg_pct": -0.57,
     "overheat_delta": {
-      "low": 0.0
+      "low": -0.12
     },
     "overheat_stats": {
       "low": {
-        "n": 63,
-        "avg": -1.322
+        "n": 49,
+        "avg": -0.716
+      },
+      "moderate": {
+        "n": 1,
+        "avg": 6.598
       }
     },
     "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
