@@ -104,6 +104,15 @@
             </div>
         </div>
 
+        <!-- モード切替（目的が違うので分離） -->
+        <div class="card p-2 bg-white mb-2">
+            <ul class="nav nav-pills gap-2">
+                <li class="nav-item"><button class="nav-link active fw-bold" id="mode-swing-btn" onclick="switchScreenerMode('swing')"><i class="bi bi-graph-up-arrow me-1"></i>スイング（短期・値動き）</button></li>
+                <li class="nav-item"><button class="nav-link fw-bold" id="mode-value-btn" onclick="switchScreenerMode('value')"><i class="bi bi-bank me-1"></i>優良株・配当（中長期）</button></li>
+            </ul>
+        </div>
+
+        <div id="view-swing">
         <!-- AI推奨アラート -->
         <div id="rec-alert" class="mb-0"></div>
 
@@ -313,6 +322,96 @@
                 </table>
             </div>
         </div>
+        </div><!-- /view-swing -->
+
+        <!-- view-value: 優良株・配当（中長期向け。値動きスコアは使わない） -->
+        <div id="view-value" class="d-none">
+            <div class="card p-3 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="filter-label mb-0"><i class="bi bi-bank text-success me-1"></i> 優良株・配当ランキング（中長期向け）:</div>
+                    <span class="badge bg-light text-secondary border" style="font-size:0.7rem;">短期の値動きスコアは使いません（目的が別）</span>
+                </div>
+                <p class="text-muted small mb-2">
+                    会社の質（<b>ROE</b>・<b>営業利益率</b>）と割安度（<b>グレアム割安度</b>／<b>PER×PBR</b>）、<b>配当利回り</b>で並べます。
+                    短期の過熱・勢いは評価しません。<b>数値は参考</b>で、最終判断はご自身で（PER異常などの「参考外」はEPSがほぼゼロ等のデータ由来）。
+                </p>
+                <div class="row g-2 align-items-end">
+                    <div class="col-6 col-md-2">
+                        <div class="filter-label">市場区分</div>
+                        <select id="value-market" class="form-select form-select-sm" onchange="renderValueList()">
+                            <option value="ALL">全市場</option>
+                            <option value="プライム">プライム</option>
+                            <option value="スタンダード">スタンダード</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <div class="filter-label">業種</div>
+                        <select id="value-sector" class="form-select form-select-sm" onchange="renderValueList()"><option value="ALL">全業種</option></select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <div class="filter-label">ROE (最小 %)</div>
+                        <input type="number" id="value-min-roe" class="form-control form-control-sm" step="1" value="7" oninput="renderValueList()">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <div class="filter-label">営業利益率 (最小 %)</div>
+                        <input type="number" id="value-min-op" class="form-control form-control-sm" step="1" value="6" oninput="renderValueList()">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <div class="filter-label text-warning fw-bold">配当利回り (最小 %)</div>
+                        <input type="number" id="value-min-div" class="form-control form-control-sm border-warning" step="0.5" value="0" oninput="renderValueList()">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <div class="filter-label">PER (最大)</div>
+                        <input type="number" id="value-max-per" class="form-control form-control-sm" step="10" value="100" oninput="renderValueList()">
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="filter-label">並び替え</div>
+                        <select id="value-sort" class="form-select form-select-sm fw-bold text-success" onchange="renderValueList()">
+                            <option value="mix">割安（ミックス係数が小さい順）</option>
+                            <option value="discount">グレアム割安度（高い順）</option>
+                            <option value="div">配当利回り（高い順）</option>
+                            <option value="roe">ROE（高い順）</option>
+                            <option value="per">PER（低い順）</option>
+                            <option value="pbr">PBR（低い順）</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" id="value-exclude-anomaly" checked onchange="renderValueList()">
+                            <label class="form-check-label small" for="value-exclude-anomaly">データ異常を除外</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 ms-auto">
+                        <button class="btn btn-light btn-sm border text-muted w-100" onclick="resetValueFilters()"><i class="bi bi-arrow-counterclockwise"></i> リセット</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-3 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-dark">該当件数: <span id="value-count" class="text-success fs-5">0</span> 件</span>
+                    <span class="text-muted small">💡 社名クリックで詳細 / 「参考外」はEPSほぼゼロ等の異常値</span>
+                </div>
+                <div class="table-container">
+                    <table class="table table-hover table-striped table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 35px;">No</th>
+                                <th class="text-start th-sticky">銘柄 (コード / 社名 / 市場・業種)</th>
+                                <th class="text-warning">配当利回り</th>
+                                <th>PER</th>
+                                <th>PBR</th>
+                                <th>ROE</th>
+                                <th class="d-none d-md-table-cell">営業利益率</th>
+                                <th class="d-none d-md-table-cell">割安度</th>
+                                <th class="d-none d-lg-table-cell">ミックス係数</th>
+                                <th class="d-none d-lg-table-cell">参考:スイング強度</th>
+                            </tr>
+                        </thead>
+                        <tbody id="value-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!-- /view-value -->
     </div>
 
     <!-- 銘柄詳細モーダル -->
@@ -355,6 +454,7 @@
         let scoreThreshold = 70;
         let sortKey = "score";
         let sortDir = "desc";
+        let screenerMode = "swing";
         const SORT_DEFAULT_DIR = { score: "desc", ai: "asc", entry: "asc", earn: "asc", ai_order: "asc", valratio: "desc", gc: "asc", discount: "desc", avgval: "desc", mix: "asc", div: "desc", roe: "desc", per: "asc", pbr: "asc" };
         const ENTRY_TYPE_ORDER = { breakout_chase: 0, pullback_wait: 1, probe_only: 2, wait: 3 };
         const OVERHEAT_ORDER = { low: 0, moderate: 1, strong: 2, extreme: 3 };
@@ -558,6 +658,7 @@
                 document.getElementById("total-count").textContent = STOCKS.length;
                 updateSectorOptions();
                 applyScoreMode();
+                if (screenerMode === 'value') renderValueList();
             } catch (err) {
                 console.error(err);
             }
@@ -565,8 +666,11 @@
 
         function updateSectorOptions() {
             const sectors = [...new Set(STOCKS.map(s => s.sector))].filter(Boolean).sort();
+            const options = '<option value="ALL">全業種</option>' + sectors.map(s => `<option value="${s}">${s}</option>`).join('');
             const sectorSelect = document.getElementById('filter-sector');
-            sectorSelect.innerHTML = '<option value="ALL">全業種</option>' + sectors.map(s => `<option value="${s}">${s}</option>`).join('');
+            if (sectorSelect) sectorSelect.innerHTML = options;
+            const valueSector = document.getElementById('value-sector');
+            if (valueSector) valueSector.innerHTML = options;
         }
 
         function checkMini(s) {
@@ -1064,6 +1168,117 @@
                 </tr>`;
             });
             tbody.innerHTML = html;
+        }
+
+        // ================= モード切替（スイング / 優良株・配当） =================
+        function switchScreenerMode(mode) {
+            screenerMode = mode;
+            const swing = document.getElementById('view-swing');
+            const value = document.getElementById('view-value');
+            const bs = document.getElementById('mode-swing-btn');
+            const bv = document.getElementById('mode-value-btn');
+            if (mode === 'value') {
+                swing.classList.add('d-none');
+                value.classList.remove('d-none');
+                bv.classList.add('active');
+                bs.classList.remove('active');
+                renderValueList();
+            } else {
+                value.classList.add('d-none');
+                swing.classList.remove('d-none');
+                bs.classList.add('active');
+                bv.classList.remove('active');
+                applyFilters();
+            }
+        }
+
+        function valueGate(s) {
+            const market = document.getElementById('value-market').value;
+            const sector = document.getElementById('value-sector').value;
+            const minRoe = parseFloat(document.getElementById('value-min-roe').value);
+            const minOp = parseFloat(document.getElementById('value-min-op').value);
+            const minDiv = parseFloat(document.getElementById('value-min-div').value);
+            const maxPer = parseFloat(document.getElementById('value-max-per').value);
+            const excludeAnomaly = document.getElementById('value-exclude-anomaly').checked;
+            if (market !== 'ALL' && s.market !== market) return false;
+            if (sector !== 'ALL' && s.sector !== sector) return false;
+            const per = num(s.per), roe = num(s.roe), op = num(s.op_margin), div = num(s.div_yield), graham = num(s.graham_price);
+            if (excludeAnomaly && (!(per > 0) || !(graham > 0))) return false;
+            if (!isNaN(minRoe) && roe < minRoe) return false;
+            if (!isNaN(minOp) && op < minOp) return false;
+            if (!isNaN(minDiv) && div < minDiv) return false;
+            if (!isNaN(maxPer) && per > maxPer) return false;
+            return true;
+        }
+
+        function renderValueList() {
+            const tbody = document.getElementById('value-table-body');
+            if (!tbody) return;
+            const key = document.getElementById('value-sort').value;
+            const dir = { mix: 'asc', discount: 'desc', div: 'desc', roe: 'desc', per: 'asc', pbr: 'asc' }[key] || 'desc';
+            const valOf = (s) => {
+                if (key === 'mix') return num(s.mix_index);
+                if (key === 'discount') return num(s.discount_rate);
+                if (key === 'div') return num(s.div_yield);
+                if (key === 'roe') return num(s.roe);
+                if (key === 'per') return num(s.per) || 1e9;
+                if (key === 'pbr') return num(s.pbr) || 1e9;
+                return 0;
+            };
+            const rows = STOCKS.filter(valueGate).sort((a, b) => {
+                const r = valOf(a) - valOf(b);
+                return dir === 'asc' ? r : -r;
+            });
+            document.getElementById('value-count').textContent = rows.length;
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-muted p-3">条件に一致する優良株はありません。</td></tr>';
+                return;
+            }
+            let html = '';
+            rows.slice(0, 200).forEach((s, idx) => {
+                const per = num(s.per), pbr = num(s.pbr), roe = num(s.roe), op = num(s.op_margin);
+                const div = num(s.div_yield), disc = num(s.discount_rate), mix = num(s.mix_index), graham = num(s.graham_price);
+                const anomaly = !(per > 0) || !(graham > 0) || per > 1000;
+                const divTxt = (div > 0)
+                    ? `<span class="fw-bold text-warning">${div.toFixed(2)}%</span>`
+                    : '<span class="text-muted">0.00%</span>';
+                const discCls = disc >= 0 ? 'text-danger' : 'text-primary';
+                html += `<tr>
+                    <td>${idx + 1}</td>
+                    <td class="stock-main-cell td-sticky">
+                        <div class="d-flex align-items-center flex-wrap">
+                            <span onclick="openRakuten('${s.code}')" class="rakuten-link me-1" title="タップでiSPEEDを開く">${s.code}</span>
+                            <span class="company-name" onclick="showStockDetail('${s.code}')" title="${esc(s.name)}（タップで詳細）">${s.name}</span>
+                            ${anomaly ? '<span class="badge bg-secondary ms-1" style="font-size:0.6rem">参考外</span>' : ''}
+                        </div>
+                        <div class="stock-sub-info">
+                            <span class="badge ${s.market === 'プライム' ? 'bg-primary' : 'bg-secondary'} p-0 px-1" style="font-size:0.65rem;">${s.market === 'プライム' ? 'PRM' : 'STD'}</span>
+                            <span>${esc(s.sector)}</span>
+                        </div>
+                    </td>
+                    <td>${divTxt}</td>
+                    <td>${(s.per != null) ? Number(s.per).toFixed(1) : '-'}</td>
+                    <td>${(s.pbr != null) ? Number(s.pbr).toFixed(2) : '-'}</td>
+                    <td>${(s.roe != null) ? Number(s.roe).toFixed(1) + '%' : '-'}</td>
+                    <td class="d-none d-md-table-cell">${(s.op_margin != null) ? Number(s.op_margin).toFixed(1) + '%' : '-'}</td>
+                    <td class="d-none d-md-table-cell ${discCls}">${(s.discount_rate != null) ? (disc >= 0 ? '+' : '') + Number(s.discount_rate).toFixed(1) + '%' : '-'}</td>
+                    <td class="d-none d-lg-table-cell">${(s.mix_index != null) ? Number(s.mix_index).toFixed(2) : '-'}</td>
+                    <td class="d-none d-lg-table-cell text-muted">${scoreOf(s)}</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function resetValueFilters() {
+            document.getElementById('value-market').value = 'ALL';
+            document.getElementById('value-sector').value = 'ALL';
+            document.getElementById('value-min-roe').value = 7;
+            document.getElementById('value-min-op').value = 6;
+            document.getElementById('value-min-div').value = 0;
+            document.getElementById('value-max-per').value = 100;
+            document.getElementById('value-sort').value = 'mix';
+            document.getElementById('value-exclude-anomaly').checked = true;
+            renderValueList();
         }
 
         function toggleFundamentalPreset(type) {
