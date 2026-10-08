@@ -1649,14 +1649,29 @@ def main():
     if range_pool:
         range_rec = build_recommendations(range_pool, fund_map, range_ai_map, news_map, params, date, regime, earnings_items)
         recommendations["picks_in_range"] = range_rec.get("picks") or []
+        # レンジAIが返した全候補（順位順）をフロントに渡す（推奨＋様子見を確実性順で表示するため）
+        range_stocks = []
+        if isinstance(range_ai_map, dict):
+            for s in (range_ai_map.get("stocks") or []):
+                if s.get("code"):
+                    range_stocks.append({
+                        "code": s.get("code"),
+                        "rank": s.get("rank"),
+                        "verdict": s.get("verdict"),
+                        "entry_type": s.get("entry_type"),
+                        "reason": s.get("reason"),
+                    })
+            range_stocks.sort(key=lambda x: (x.get("rank") is None, x.get("rank") if x.get("rank") is not None else 10 ** 9))
         recommendations["range"] = {
             "enabled": True,
             "min_price": pf.get("min_price"),
             "max_price": pf.get("max_price"),
             "count": len(recommendations["picks_in_range"]),
             "overall": range_rec.get("overall"),
+            "date": date,
+            "stocks": range_stocks,
         }
-        print(f">> 価格レンジ内の推奨: {len(recommendations['picks_in_range'])} 件（{pf.get('min_price')}〜{pf.get('max_price')}円）")
+        print(f">> 価格レンジ内の推奨: {len(recommendations['picks_in_range'])} 件（レンジAI候補 {len(range_stocks)} 件 / {pf.get('min_price')}〜{pf.get('max_price')}円）")
     else:
         recommendations["picks_in_range"] = []
         recommendations["range"] = {"enabled": False}

@@ -107,7 +107,7 @@ flowchart LR
   - **検証済みスコアを主軸**にし、AI順位は同スコア帯のタイブレーク（AIは補助）。判定優先度（`recommend`優先）のみAIで先頭に寄せる。
   - 判定優先度: `recommend`(0) → `watch`(1) → `neutral`(2) → `hold`(3) → `caution`(4) → `avoid`/`sell`(5) → AIなし(9)。
   - **AI実行時は `verdict=recommend` のみを「推奨」として採用**。件数は無理に埋めず**0件もあり得る**（上限 `ai.max_picks`、旧キー `weekly_top_picks` も後方互換）。
-  - **価格レンジの第2推奨**: `price_filter` が有効なとき、全体プールとは別にレンジ内プールを作り、AIで別途順位付けして `picks_in_range` に出力（値がさ回避・そのレンジ内での確実性順）。
+  - **価格レンジの第2推奨**: `price_filter` が有効なとき、全体プールとは別にレンジ内プールを作り、AIで別途順位付けして `picks_in_range` と `range.stocks`（全候補・順位順）を出力。フロントの「全体 / ◯円未満」トグルは、レンジ選択時に**レンジAIの「推奨＋様子見」を確実性順で表示し、AI判定列もレンジAIに差し替える**（値がさ回避）。
   - **技術実行（AIなし）**はスコア上位を技術候補として `recommendations_technical.json` に出力（`verdict=technical_only`）。
   - **業種集中の上限**: `portfolio.max_per_sector`（既定2）を守り、同一業種は最大2銘柄まで採用。
 - **エグジットは「ルール基本」**: 利確 = 価格×(1+`price_tiers.tp_pct`)、損切 = 価格 − `price_tiers.atr_sl_mult`×ATR14。**AIの tp/sl は `advice` に参照保持**（表示上はルール優先）。
@@ -132,6 +132,7 @@ flowchart LR
   - 銘柄モーダル: 銘柄詳細（**決算日**・**需給/水準: サポート20日/レジスタンス20日/ATR14(円・%)/52週高値位置/200日線乖離/レンジ位置**・**過熱警戒バッジ**）＋**価格帯別ルールの利確/損切（ATR損切。利確=赤・損切=青）**＋**推奨株数**＋決算警告。AI戦略は**参考情報（売買指示には未採用）**と明示。AI判定が注意/回避/様子見のときは**「注意の理由」コールアウト**を表示し、バッジにも理由ツールチップを付与。「最新AI実行」ボタンは**常時有効**（プロンプトをコピーしてGeminiへ）。モーダル内の順序は**検証済み（基本情報/需給・水準/モメンタム/エントリー判定/推奨ポジション/スイング戦略）→ AI参考（下部）→ ファンダ**とし、AIは補助として後ろに配置。
 - [`docs/guide.html`](docs/guide.html): **はじめての人向け見方ガイド**。一覧・バッジ・並び替え・モーダル（決算日/需給水準/エントリー判定）・用語集・注意を平易に解説。index.html / journal.html のヘッダからリンク。
 - [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示（決算日・需給水準・過熱警戒も同様）。`strategy_params` / `recommendations` / `earnings` / `meta` を読み、利確/損切・推奨株数を index と統一。OCO既定値とCSV取込も価格帯別ルールで算出。
+- **推奨の母集団トグル**: index.html のスイング画面に「全体 / ◯円未満（`price_filter`）」トグル。レンジ選択時は `recommendations.json` の `range.stocks` を使い、**推奨＋様子見をレンジAI順位順**で表示し、AI判定列もレンジAIに差し替える（`currentAI`/`aiRankOf`/`aiVerdictPriority` を表示中母集団に応じて切替）。全体選択時は従来どおり `ai_strategy_latest.json`。
 - 旧 `main7.html` / `index_main6_backup.html` は退避。
 
 ---
@@ -204,7 +205,7 @@ flowchart LR
 - `score_weights`: `{pos_52w:30, dist_sma200:25, sma200_slope:25, ret_120d:20}`
 - `price_tiers`: 価格帯ごとの `tp_pct` / `sl_pct` / `max_hold_days` / `atr_sl_mult`（バックテストが自動更新）
 - `portfolio`: `{max_positions:5, max_per_sector:2, risk_per_trade_pct:1.0, reference_capital_jpy:1000000}`（`max_per_sector` は同一業種の同時採用上限）
-- `price_filter`: `{enabled, min_price, max_price}`。**第2母集団（価格レンジ）の定義**。全体推奨（無制限）とは別に、レンジ内だけを母集団としてAIが順位付けし、`recommendations.json` の `picks_in_range` に「その中での確実性順の推奨」を併記する（値がさ回避・1取引リスク抑制が狙い）。CLI `--min-price`/`--max-price` で上書き可（指定時は有効化）。
+- `price_filter`: `{enabled, min_price, max_price}`。**第2母集団（価格レンジ）の定義**。全体推奨（無制限）とは別に、レンジ内だけを母集団としてAIが順位付けし、`recommendations.json` の `picks_in_range` に「その中での確実性順の推奨」を併記する（値がさ回避・1取引リスク抑制が狙い）。フロントはレンジ選択時、**レンジAIの「推奨＋様子見」を順位順で表示し、AI判定列もレンジAIに差し替える**。CLI `--min-price`/`--max-price` で上書き可（指定時は有効化）。
 - `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
 - `entry_guard`: 過熱判定と押し目算出の閾値（`dist_sma25_moderate/strong/extreme`・`rsi_watch/hot`・`ret5_watch/hot`・`pullback_atr_shallow/deep`・`pullback_wait_days`（moderate用）・`probe_wait_days`（high=strong+extreme用）・`probe_qty_factor`）。押し目深さ/待機日数はバックテストの成行比較で**過熱度別に**更新されうる。
@@ -220,7 +221,7 @@ flowchart LR
 - `docs/history/{date}.json.gz` / `latest.json.gz`: 全銘柄レコード（スコア付き、gzip）。読み手は `.json` にフォールバック（移行期・旧ファイル対応）。
 - `docs/history/dates.json` / `meta.json`: 日付一覧 / データ鮮度メタ（小さいので平文）。
 - `docs/recommendations.json`（AI時）/ `recommendations_technical.json`（技術のみ）: `{regime, portfolio_guide, picks[], picks_in_range[], range}`。
-  - `picks[]`: 全体母集団（無制限）の推奨。`picks_in_range[]`: 価格レンジ母集団（`price_filter`）内の推奨。`range`: `{enabled, min_price, max_price, count, overall}`。AIは母集団ごとに1回ずつ呼ぶ（全体=`ai_analysis/{date}.json` / レンジ=`ai_analysis/{date}_range.json`）。
+  - `picks[]`: 全体母集団（無制限）の推奨。`picks_in_range[]`: 価格レンジ母集団（`price_filter`）内の推奨。`range`: `{enabled, min_price, max_price, count, overall, date, stocks[]}`。`stocks[]` は**レンジAIが返した全候補**（`{code,rank,verdict,entry_type,reason}` の順位順。フロントのレンジ表示で「推奨＋様子見」を確実性順に出すため）。AIは母集団ごとに1回ずつ呼ぶ（全体=`ai_analysis/{date}.json` / レンジ=`ai_analysis/{date}_range.json`）。
   - `picks[]`（`picks_in_range[]` も同形）の各要素: `code,name,price,score,verdict,rank,tp_price,sl_price,ai_tp_price,ai_sl_price,atr_sl_mult,stop_distance,suggested_qty,trailing_plan,earnings_date,earnings_soon,entry_type,entry_type_label,entry_zone_low,entry_zone_high,overheat_level,overheat_flags,rsi14,dist_sma5_pct,dist_sma25_pct,pos_52w,run_up_days,gap_pct,atr_pct,...`
 - `docs/earnings.json`: `{date, horizon_days:14, items:{code:{date,days_until,soon}}}`。
 - `docs/ai_analysis/{date}.json`（全体母集団）/ `{date}_range.json`（価格レンジ母集団） / `ai_strategy_latest.json`。
@@ -310,3 +311,4 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **運用ツール**: `tools/cleanup_git_history.md` / `.ps1` を追加（`.git` の年次掃除＝git履歴の書き換え手順。削除では `.git` は減らないため）。**`journal.html` に「預かり金（買付余力）」の手入力欄**を追加（`localStorage` のみ・非公開、モーダルに「買付目安」を表示）。
 - **履歴のgzip化**: 日別履歴を `.json.gz` で保存（実測 約2.97MB→約0.45MB、約85%削減）。フロント（`index.html`/`journal.html`）は `DecompressionStream` で解凍＋`.json`フォールバック、`weekly_review` は `.json.gz`/`.json` 二重読み、`main8` は書き込み時に解凍検証（失敗時は平文）。Pagesは `.gz` を `Content-Encoding` なしで配信することを実機確認済み。
 - **単純な株価フィルター** → **価格レンジの第2推奨（母集団を分ける）**: `strategy_params.json` の `price_filter`（`enabled`/`min_price`/`max_price`）と CLI `--min-price`/`--max-price` を追加。**全体推奨（無制限）はそのまま**とし、**価格レンジ内だけを母集団**とするAI順位付けを別途行い、`recommendations.json` の `picks_in_range` に「その中での確実性順の推奨」を併記（値がさ回避）。`index.html` に「全体 / ◯円未満」トグルを追加し、Discordにもレンジ推奨を追記。判定は `common/features.is_price_excluded` に集約。AIは母集団ごとに1回呼ぶ。
+- **レンジ表示の本実装**: レンジ選択時に「レンジ内を価格で絞るだけ」から、**レンジAIの「推奨＋様子見」をレンジ順位順で表示し、AI判定列もレンジAIへ差し替える**方式に変更。`main8` は `range.stocks`（レンジAIの全候補・順位順）を出力、`index.html` は表示中母集団に応じて `currentAI`/`aiRankOf`/`aiVerdictPriority` を切替（`ai_strategy_latest.json` は全体ビュー専用）。
