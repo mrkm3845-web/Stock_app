@@ -166,6 +166,36 @@ def tier_for_price(price, tiers):
     return tiers[-1] if tiers else None
 
 
+def is_price_excluded(price, params, min_price=None, max_price=None):
+    """単純な株価フィルター。params['price_filter'] の範囲外なら True。
+
+    - `price_filter.enabled` が True のときだけ機能する。
+    - min_price / max_price を引数で渡すと設定を上書きし、有効化する（CLI用）。
+    - 値がさ回避・1取引リスク抑制のための入口フィルター。
+    """
+    pf = (params or {}).get("price_filter") or {}
+    enabled = bool(pf.get("enabled"))
+    lo = pf.get("min_price")
+    hi = pf.get("max_price")
+    if min_price is not None:
+        lo = min_price
+        enabled = True
+    if max_price is not None:
+        hi = max_price
+        enabled = True
+    if not enabled or price is None:
+        return False
+    try:
+        p = float(price)
+    except (TypeError, ValueError):
+        return False
+    if lo is not None and p < float(lo):
+        return True
+    if hi is not None and p > float(hi):
+        return True
+    return False
+
+
 def _clamp01(x):
     """NaN/None を 0 とし、0〜1 に収める。"""
     try:

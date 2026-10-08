@@ -113,6 +113,16 @@
         </div>
 
         <div id="view-swing">
+        <!-- 推奨の母集団トグル（全体 / 価格レンジ） -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+            <span class="filter-label mb-0"><i class="bi bi-robot text-primary"></i> 推奨の母集団:</span>
+            <div class="btn-group btn-group-sm" role="group" aria-label="推奨ビュー">
+                <button type="button" class="btn btn-primary fw-bold" id="recview-all" onclick="setRecView('all')">全体</button>
+                <button type="button" class="btn btn-outline-primary fw-bold" id="recview-range" onclick="setRecView('range')">価格レンジ</button>
+            </div>
+            <span id="rec-range-note" class="small text-muted"></span>
+        </div>
+
         <!-- AI推奨アラート -->
         <div id="rec-alert" class="mb-0"></div>
 
@@ -450,6 +460,10 @@
         let currentDataDate = null;
         let EARNINGS = {};
         let PICKS = {};
+        let REC_ALL = [];
+        let REC_RANGE = [];
+        let REC_RANGE_META = null;
+        let recView = 'all';
         let PARAMS = null;
         let scoreThreshold = 70;
         let sortKey = "score";
@@ -467,12 +481,55 @@
             await initDates();
         });
 
+        function recListFor(view) {
+            return view === 'range' ? REC_RANGE : REC_ALL;
+        }
+
+        function applyRecView() {
+            const list = recListFor(recView);
+            PICKS = {};
+            list.forEach(p => { if (p && p.code) PICKS[p.code] = p; });
+        }
+
+        function updateRangeLabel() {
+            const btn = document.getElementById('recview-range');
+            const note = document.getElementById('rec-range-note');
+            const m = REC_RANGE_META || {};
+            let label = '価格レンジ';
+            if (m && m.enabled) {
+                const lo = m.min_price, hi = m.max_price;
+                if (lo && hi) label = `¥${Number(lo).toLocaleString()}〜¥${Number(hi).toLocaleString()}`;
+                else if (hi) label = `¥${Number(hi).toLocaleString()}未満`;
+                else if (lo) label = `¥${Number(lo).toLocaleString()}以上`;
+            }
+            if (btn) {
+                btn.textContent = label;
+                btn.style.display = (m && m.enabled) ? '' : 'none';
+            }
+            if (note) {
+                note.textContent = (m && m.enabled) ? `（レンジ内 ${REC_RANGE.length}件）` : '';
+            }
+        }
+
+        function setRecView(view) {
+            recView = view;
+            applyRecView();
+            const a = document.getElementById('recview-all');
+            const r = document.getElementById('recview-range');
+            if (a) a.className = (view === 'all') ? 'btn btn-primary fw-bold' : 'btn btn-outline-primary fw-bold';
+            if (r) r.className = (view === 'range') ? 'btn btn-primary fw-bold' : 'btn btn-outline-primary fw-bold';
+            renderRecAlert();
+            if (typeof applyFilters === 'function') applyFilters();
+        }
+
         function renderRecAlert() {
             const el = document.getElementById('rec-alert');
             if (!el) return;
-            if (Object.keys(PICKS).length === 0) {
+            const list = recListFor(recView);
+            if (list.length === 0) {
+                const scope = (recView === 'range') ? '選択中の価格レンジ内の' : '本日の';
                 el.innerHTML = `<div class="alert alert-secondary py-2 mb-2 small fw-bold" role="alert">
-                    <i class="bi bi-robot me-1"></i> 本日のAI推奨（recommend）はありません（様子見）。</div>`;
+                    <i class="bi bi-robot me-1"></i> ${scope}AI推奨（recommend）はありません（様子見）。</div>`;
             } else {
                 el.innerHTML = '';
             }
@@ -490,9 +547,14 @@
             try {
                 const res = await fetch('recommendations.json');
                 const d = await res.json();
-                PICKS = {};
-                (d.picks || []).forEach(p => { if (p && p.code) PICKS[p.code] = p; });
-            } catch (e) { PICKS = {}; }
+                REC_ALL = d.picks || [];
+                REC_RANGE = d.picks_in_range || [];
+                REC_RANGE_META = d.range || null;
+            } catch (e) {
+                REC_ALL = []; REC_RANGE = []; REC_RANGE_META = null;
+            }
+            applyRecView();
+            updateRangeLabel();
         }
 
         async function loadParams() {

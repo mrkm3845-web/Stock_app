@@ -471,6 +471,21 @@ def build_pool(results, params):
     return pool
 
 
+def build_price_range_pool(results, params):
+    """価格レンジ内（price_filter）だけの候補プール＝第2母集団を作る。
+
+    全体プール（build_pool）とは別に、レンジ内をスコア順に並べたプールを返す。
+    レンジ内を専用の母集団としてAIに順位付けさせることで「その中での確実性順」を得る。
+    price_filter が無効、またはレンジ内が空なら [] を返す。
+    """
+    pf = params.get("price_filter") or {}
+    if not pf.get("enabled"):
+        return []
+    pool_max = params.get("ai", {}).get("stage1_pool_max", 40)
+    eligible = [r for r in results if not r["excluded"] and not F.is_price_excluded(r["price"], params)]
+    return sorted(eligible, key=lambda r: -r["score"])[:pool_max]
+
+
 # ---------------------------------------------------------------- ニュース（プール分のみ）
 _SEARCH_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
@@ -764,6 +779,40 @@ def call_ai(pool, fund_map, news_map, params, base_date=None):
             return res
         print(f">> AI応答が得られませんでした（候補数 {c}）→ 候補を絞って再試行します")
     return None
+
+
+def analyze_pool_with_ai(pool, fund_map, news_map, params, date, force_ai=False, cache_suffix=""):
+    """1つの母集団（全体 or 価格レンジ）をAIで順位付けする。
+
+    母集団ごとにキャッシュ・保存する（全体=`{date}.json`、レンジ=`{date}_range.json`）。
+    母集団を分けることで「その中での確実性順」を素直に得られる。
+    """
+    if not pool:
+        return None
+    os.makedirs(AI_ANALYSIS_DIR, exist_ok=True)
+    ai_file = os.path.join(AI_ANALYSIS_DIR, f"{date}{cache_suffix}.json")
+    label = cache_suffix.lstrip("_") or "global"
+    if os.path.exists(ai_file) and not force_ai:
+        try:
+            with open(ai_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            ai_map = sanitize_ai_map(cached, pool)
+            if ai_map:
+                print(f">> 当日のAI分析キャッシュを再利用（{label}）: {ai_file}")
+                return ai_map
+            print(f">> 当日のAI分析キャッシュが無効のため再取得します（{label}）: {ai_file}")
+        except Exception:
+            pass
+
+    ai_map = call_ai(pool, fund_map, news_map, params, date)
+    ai_map = sanitize_ai_map(ai_map, pool)
+    if ai_map:
+        with open(ai_file, "w", encoding="utf-8") as f:
+            json.dump(ai_map, f, ensure_ascii=False)
+        print(f">> 当日のAI分析結果を保存（{label}）: {ai_file}")
+    else:
+        print(f">> ⚠️ AI応答が無効のため技術スコアでフォールバックします（{label}）")
+    return ai_map
 
 
 def _extract_json(text):
@@ -1163,6 +1212,8 @@ def save_picks_snapshot(target_date, recommendations, pool, ai_map, is_ai):
         "portfolio_guide": (recommendations or {}).get("portfolio_guide"),
         "overall": (recommendations or {}).get("overall"),
         "picks": (recommendations or {}).get("picks") or [],
+        "picks_in_range": (recommendations or {}).get("picks_in_range") or [],
+        "range": (recommendations or {}).get("range"),
         "pool": pool_records,
         "ai_stocks": ai_records,
     }
@@ -1380,6 +1431,8 @@ def send_recommendations_to_discord(recommendations, added_count, updated_count,
     now_str = _jst_now().strftime("%Y-%m-%d %H:%M")
     rec = recommendations or {}
     picks = rec.get("picks") or []
+    range_picks = rec.get("picks_in_range") or []
+    range_meta = rec.get("range") or {}
     regime = rec.get("regime") or {}
     state = "risk-on" if regime.get("risk_on") else ("risk-off" if regime else "-")
     overall = rec.get("overall")
@@ -1391,8 +1444,56 @@ def send_recommendations_to_discord(recommendations, added_count, updated_count,
         except Exception:
             pass
 
-    # AI実行で推奨0件の日は「本日は推奨なし」を明示して通知する
-    if not picks:
+    def _range_label():
+        lo, hi = range_meta.get("min_price"), range_meta.get("max_price")
+        try:
+            lo = float(lo) if lo not in (None, "") else None
+            hi = float(hi) if hi not in (None, "") else None
+        except (TypeError, ValueError):
+            lo = hi = None
+        if lo and hi:
+            return f"¥{int(lo):,}〜¥{int(hi):,}"
+        if hi:
+            return f"¥{int(hi):,}未満"
+        if lo:
+            return f"¥{int(lo):,}以上"
+        return "価格レンジ内"
+
+    def _pick_block(p, i):
+        advice = p.get("advice") or {}
+        rank = p.get("rank")
+        rank_label = f"{rank}位" if rank is not None else f"{i}位"
+        verdict = VERDICT_LABELS.get(p.get("verdict"), p.get("verdict") or "-")
+        et = p.get("entry_type_label") or ENTRY_TYPE_LABELS.get(p.get("entry_type"), "")
+        header = f"{verdict} (score {p.get('score')})"
+        if et:
+            header += f" / {et}"
+        if p.get("overheat_level") and p.get("overheat_level") != "low":
+            header += f" / 過熱:{p.get('overheat_label')}"
+        s = (f"\n**{rank_label} `{p.get('code')}` {_truncate_text(p.get('name'), 12)}** {header}\n")
+        line = f"　株価 {_fmt_yen(p.get('price'))}"
+        if p.get("entry_price") is not None:
+            if p.get("entry_type") == "pullback_wait":
+                line += f" → 押し目 {_fmt_yen(p.get('entry_price'))} 待ち"
+            elif p.get("entry_type") == "probe_only":
+                line += f" → 打診 {_fmt_yen(p.get('entry_price'))}"
+            elif p.get("entry_type") == "wait":
+                line += f" → 様子見（押し目 {_fmt_yen(p.get('entry_price'))}）"
+            else:
+                line += f" → エントリー {_fmt_yen(p.get('entry_price'))}"
+        line += f" / 利確 {_fmt_yen(p.get('tp_price'))} / 損切 {_fmt_yen(p.get('sl_price'))}"
+        if p.get("suggested_qty"):
+            line += f" / 推奨 {int(p['suggested_qty'])}株"
+        s += line + "\n"
+        reason = advice.get("reason") or p.get("news_note")
+        if reason:
+            s += f"　{_truncate_text(reason, 90)}\n"
+        if p.get("earnings_soon"):
+            s += f"　⚠️ 決算接近 ({p.get('earnings_date')})\n"
+        return s
+
+    # 全体・レンジとも推奨0件の日は「本日は推奨なし」を明示して通知する
+    if not picks and not range_picks:
         if is_ai:
             msg = f"📊 **【AI推奨（本日）】** ({now_str})\n"
             msg += f"📅 対象営業日: **`{target_date}`** (地合い: {state})\n"
@@ -1417,41 +1518,16 @@ def send_recommendations_to_discord(recommendations, added_count, updated_count,
     msg += f"📅 対象営業日: **`{target_date}`** (新規: +{added_count} / 更新: {updated_count} / 地合い: {state})\n"
     if overall:
         msg += f"🤖 総評: {_truncate_text(overall, 180)}\n"
+    if not picks:
+        msg += "🤖 全体の推奨（recommend）はありません。\n"
 
     for i, p in enumerate(picks, start=1):
-        advice = p.get("advice") or {}
-        rank = p.get("rank")
-        rank_label = f"{rank}位" if rank is not None else f"{i}位"
-        verdict = VERDICT_LABELS.get(p.get("verdict"), p.get("verdict") or "-")
-        et = p.get("entry_type_label") or ENTRY_TYPE_LABELS.get(p.get("entry_type"), "")
-        header = f"{verdict} (score {p.get('score')})"
-        if et:
-            header += f" / {et}"
-        if p.get("overheat_level") and p.get("overheat_level") != "low":
-            header += f" / 過熱:{p.get('overheat_label')}"
-        msg += (
-            f"\n**{rank_label} `{p.get('code')}` {_truncate_text(p.get('name'), 12)}** "
-            f"{header}\n"
-        )
-        line = f"　株価 {_fmt_yen(p.get('price'))}"
-        if p.get("entry_price") is not None:
-            if p.get("entry_type") == "pullback_wait":
-                line += f" → 押し目 {_fmt_yen(p.get('entry_price'))} 待ち"
-            elif p.get("entry_type") == "probe_only":
-                line += f" → 打診 {_fmt_yen(p.get('entry_price'))}"
-            elif p.get("entry_type") == "wait":
-                line += f" → 様子見（押し目 {_fmt_yen(p.get('entry_price'))}）"
-            else:
-                line += f" → エントリー {_fmt_yen(p.get('entry_price'))}"
-        line += f" / 利確 {_fmt_yen(p.get('tp_price'))} / 損切 {_fmt_yen(p.get('sl_price'))}"
-        if p.get("suggested_qty"):
-            line += f" / 推奨 {int(p['suggested_qty'])}株"
-        msg += line + "\n"
-        reason = advice.get("reason") or p.get("news_note")
-        if reason:
-            msg += f"　{_truncate_text(reason, 90)}\n"
-        if p.get("earnings_soon"):
-            msg += f"　⚠️ 決算接近 ({p.get('earnings_date')})\n"
+        msg += _pick_block(p, i)
+
+    if range_picks:
+        msg += f"\n---\n🎯 **{_range_label()} の推奨（{len(range_picks)}件）**\n"
+        for i, p in enumerate(range_picks[:5], start=1):
+            msg += _pick_block(p, i)
 
     msg += f"\n{web}"
     if len(msg) > 1900:
@@ -1492,9 +1568,20 @@ def main():
     parser.add_argument("--ai", action="store_true", help="AI分析を実行する（AI専用実行でのみ指定）")
     parser.add_argument("--force-ai", action="store_true", help="既存の当日AI分析を無視して再実行・上書きする")
     parser.add_argument("--no-discord", action="store_true", help="Discord通知をスキップ")
+    parser.add_argument("--min-price", type=float, default=None, help="株価フィルターの下限（指定時は有効化）")
+    parser.add_argument("--max-price", type=float, default=None, help="株価フィルターの上限（指定時は有効化）")
     args = parser.parse_args()
 
     params = load_strategy_params()
+    # 株価フィルターのCLI上書き（strategy_params.json を編集せずに試せる）
+    if args.min_price is not None or args.max_price is not None:
+        pf = params.setdefault("price_filter", {})
+        if args.min_price is not None:
+            pf["min_price"] = args.min_price
+        if args.max_price is not None:
+            pf["max_price"] = args.max_price
+        pf["enabled"] = True
+        print(f">> 株価フィルター（CLI上書き）: {pf.get('min_price')}〜{pf.get('max_price')}円")
     stock_list = fetch_jpx_stock_list(args.markets)
     if not stock_list:
         print("❌ 銘柄リストが取得できませんでした。")
@@ -1522,55 +1609,63 @@ def main():
         print(f">> 地合い: {state} ({regime['ticker']} {regime['close']} vs SMA{regime['sma_days']} {regime['sma']})")
     save_history_json(results, date, regime, params.get("portfolio"), params.get("history_keep_days"))
 
-    # ---- AI ステージ ----
+    # ---- AI ステージ（母集団ごとに順位付け） ----
     pool = build_pool(results, params)
-    print(f">> AI候補プール: {len(pool)} 銘柄")
+    range_pool = build_price_range_pool(results, params)
+    if range_pool:
+        pf = params.get("price_filter") or {}
+        print(f">> AI候補プール: 全体 {len(pool)} 銘柄 / 価格レンジ {pf.get('min_price')}〜{pf.get('max_price')}円 {len(range_pool)} 銘柄")
+    else:
+        print(f">> AI候補プール: {len(pool)} 銘柄")
 
+    # fund_map は両母集団のコードを網羅する（レンジ専用プールの銘柄も含む）
+    pool_codes = {r["code"] for r in pool} | {r["code"] for r in range_pool}
     fund_map = {
         r["code"]: {"per": r["per"], "pbr": r["pbr"], "roe": r["roe"],
                     "op_margin": r["op_margin"], "div_yield": r["div_yield"]}
-        for r in pool
+        for r in results if r["code"] in pool_codes
     }
 
     ai_map = None
+    range_ai_map = None
     news_map = {}
-    ai_file = os.path.join(AI_ANALYSIS_DIR, f"{date}.json")
     if args.ai and params.get("ai", {}).get("enabled"):
-        if os.path.exists(ai_file) and not args.force_ai:
-            try:
-                with open(ai_file, "r", encoding="utf-8") as f:
-                    ai_map = json.load(f)
-                ai_map = sanitize_ai_map(ai_map, pool)
-                if ai_map:
-                    print(f">> 当日のAI分析キャッシュを再利用: {ai_file}")
-                else:
-                    print(f">> 当日のAI分析キャッシュが無効のため再取得します: {ai_file}")
-            except Exception:
-                ai_map = None
-
-        if ai_map is None:
-            news_map = fetch_news_for_pool(pool, params)
-            ai_map = call_ai(pool, fund_map, news_map, params, date)
-            ai_map = sanitize_ai_map(ai_map, pool)
-            if ai_map:
-                os.makedirs(AI_ANALYSIS_DIR, exist_ok=True)
-                with open(ai_file, "w", encoding="utf-8") as f:
-                    json.dump(ai_map, f, ensure_ascii=False)
-                print(f">> 当日のAI分析結果を保存: {ai_file}")
-                update_ai_latest(ai_map, date)
-            else:
-                print(">> ⚠️ AI応答が無効（プレースホルダ等）のため技術スコアでフォールバックします")
+        # ニュースは両母集団ぶんを一度に取得（コードで重複排除）
+        news_pool = list({r["code"]: r for r in (pool + range_pool)}.values())
+        news_map = fetch_news_for_pool(news_pool, params)
+        ai_map = analyze_pool_with_ai(pool, fund_map, news_map, params, date, args.force_ai, "")
+        if ai_map:
+            update_ai_latest(ai_map, date)
+        if range_pool:
+            range_ai_map = analyze_pool_with_ai(range_pool, fund_map, news_map, params, date, args.force_ai, "_range")
 
     # 決算日はスキャン時に取得した info から抽出済み（追加通信なし）。プール限定でなく全銘柄を対象にする。
     earnings_map = {r["code"]: r["earnings_date"] for r in results if r.get("earnings_date")}
     earnings_items = save_earnings_json(earnings_map, date)["items"] if earnings_map else {}
 
     recommendations = build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime, earnings_items)
+    # 第2母集団（価格レンジ内）の推奨を併記する
+    pf = params.get("price_filter") or {}
+    if range_pool:
+        range_rec = build_recommendations(range_pool, fund_map, range_ai_map, news_map, params, date, regime, earnings_items)
+        recommendations["picks_in_range"] = range_rec.get("picks") or []
+        recommendations["range"] = {
+            "enabled": True,
+            "min_price": pf.get("min_price"),
+            "max_price": pf.get("max_price"),
+            "count": len(recommendations["picks_in_range"]),
+            "overall": range_rec.get("overall"),
+        }
+        print(f">> 価格レンジ内の推奨: {len(recommendations['picks_in_range'])} 件（{pf.get('min_price')}〜{pf.get('max_price')}円）")
+    else:
+        recommendations["picks_in_range"] = []
+        recommendations["range"] = {"enabled": False}
+
     rec_path = RECOMMENDATIONS_PATH if args.ai else TECHNICAL_REC_PATH
     # 推奨0件でも書き出し、前回の推奨が残らないようにする
     with open(rec_path, "w", encoding="utf-8") as f:
         json.dump(recommendations, f, ensure_ascii=False)
-    print(f">> おすすめ出力: {rec_path}（{len(recommendations.get('picks') or [])} 件）")
+    print(f">> おすすめ出力: {rec_path}（全体 {len(recommendations.get('picks') or [])} 件 / レンジ {len(recommendations.get('picks_in_range') or [])} 件）")
 
     is_ai = bool(args.ai and params.get("ai", {}).get("enabled") and ai_map)
     save_picks_snapshot(date, recommendations, pool, ai_map, is_ai)

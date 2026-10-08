@@ -139,6 +139,12 @@
     "risk_per_trade_pct": 1.0,
     "reference_capital_jpy": 1000000
   },
+  "price_filter": {
+    "enabled": true,
+    "min_price": 0,
+    "max_price": 3000,
+    "note": "価格レンジの第2推奨（母集団を分ける）。全体推奨はそのままに、このレンジ内だけを母集団としてAIが別途順位付けし recommendations.json の picks_in_range に出力する（値がさ回避・そのレンジ内での確実性順）。enabled=false で無効。"
+  },
   "ai": {
     "enabled": true,
     "provider": "deepseek",
