@@ -1036,6 +1036,12 @@
 
             let filtered = STOCKS.filter(s => {
                 if (s.excluded) return false;  // 週足トレンド下向き等の除外銘柄は表示しない
+                // 推奨の母集団トグル（価格レンジ）: レンジ内だけに一覧を絞る
+                if (recView === 'range' && REC_RANGE_META && REC_RANGE_META.enabled) {
+                    const lo = (REC_RANGE_META.min_price != null) ? REC_RANGE_META.min_price : -Infinity;
+                    const hi = (REC_RANGE_META.max_price != null) ? REC_RANGE_META.max_price : Infinity;
+                    if (s.price < lo || s.price > hi) return false;
+                }
                 const isMini = checkMini(s);
                 if (market !== "ALL" && s.market !== market) return false;
                 if (kabumini === "ONLY" && !isMini) return false;
