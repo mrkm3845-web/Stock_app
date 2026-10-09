@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T00:23:03",
+  "generated_at": "2026-10-10T02:32:52",
   "date": "2026-10-09",
   "horizon_days": 14,
   "items": {
@@ -106,11 +106,6 @@
     "1434": {
       "date": "2025-07-10",
       "days_until": -456,
-      "soon": false
-    },
-    "1435": {
-      "date": "2025-08-07",
-      "days_until": -428,
       "soon": false
     },
     "1438": {
@@ -3368,11 +3363,6 @@
       "days_until": -480,
       "soon": false
     },
-    "3569": {
-      "date": "2025-08-06",
-      "days_until": -429,
-      "soon": false
-    },
     "3571": {
       "date": "2025-08-05",
       "days_until": -430,
@@ -3626,91 +3616,6 @@
     "3733": {
       "date": "2025-09-04",
       "days_until": -400,
-      "soon": false
-    },
-    "3741": {
-      "date": "2025-08-06",
-      "days_until": -429,
-      "soon": false
-    },
-    "3744": {
-      "date": "2025-08-06",
-      "days_until": -429,
-      "soon": false
-    },
-    "3747": {
-      "date": "2025-08-07",
-      "days_until": -428,
-      "soon": false
-    },
-    "3753": {
-      "date": "2025-08-07",
-      "days_until": -428,
-      "soon": false
-    },
-    "3758": {
-      "date": "2025-08-12",
-      "days_until": -423,
-      "soon": false
-    },
-    "3762": {
-      "date": "2025-07-29",
-      "days_until": -437,
-      "soon": false
-    },
-    "3763": {
-      "date": "2025-08-07",
-      "days_until": -428,
-      "soon": false
-    },
-    "3765": {
-      "date": "2026-11-13",
-      "days_until": 35,
-      "soon": false
-    },
-    "3766": {
-      "date": "2025-05-09",
-      "days_until": -518,
-      "soon": false
-    },
-    "3768": {
-      "date": "2025-05-09",
-      "days_until": -518,
-      "soon": false
-    },
-    "3769": {
-      "date": "2026-11-12",
-      "days_until": 34,
-      "soon": false
-    },
-    "3771": {
-      "date": "2025-07-24",
-      "days_until": -442,
-      "soon": false
-    },
-    "3772": {
-      "date": "2025-08-12",
-      "days_until": -423,
-      "soon": false
-    },
-    "3774": {
-      "date": "2026-11-06",
-      "days_until": 28,
-      "soon": false
-    },
-    "3776": {
-      "date": "2025-08-05",
-      "days_until": -430,
-      "soon": false
-    },
-    "3778": {
-      "date": "2025-07-28",
-      "days_until": -438,
-      "soon": false
-    },
-    "3787": {
-      "date": "2025-05-14",
-      "days_until": -513,
       "soon": false
     }
   }
