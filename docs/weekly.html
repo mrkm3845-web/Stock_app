@@ -61,7 +61,8 @@
                 <span class="muted-small" id="trend-updated"></span>
             </div>
             <div id="trend-summary" class="row g-2 mb-2"></div>
-            <div id="trend-lessons" class="mb-3"></div>
+            <div id="trend-lessons" class="mb-1"></div>
+            <div class="muted-small mb-2">※「機械的な気づき」は実績データから自動計算したもの、「AI要約」はその気づきをAIが文章化したものです（数値は引用のみ）。</div>
             <div class="row g-3">
                 <div class="col-12 col-lg-6"><div class="muted-small mb-1">AI『推奨』と『様子見』の平均成績（週ごと）</div><div style="height:200px"><canvas id="chartVerdict"></canvas></div></div>
                 <div class="col-12 col-lg-6"><div class="muted-small mb-1">週ごとの成績（市場平均との差）</div><div style="height:200px"><canvas id="chartWeekly"></canvas></div></div>
@@ -467,7 +468,7 @@ function renderActions(actions, fb) {
     }
     const meta = document.getElementById('feedback-meta');
     if (fb && fb.n_filled != null) {
-        meta.textContent = `直近${fb.window_weeks || '-'}週・約定${fb.n_filled}件・基準平均${fb.baseline_avg_pct != null ? fb.baseline_avg_pct + '%' : '-'}。補正は縮小推定＋上限クランプでランキングに反映（${fb.enabled ? '適用中' : '観測のみ'}）。`;
+        meta.textContent = `直近${fb.window_weeks || '-'}週の実績（約定${fb.n_filled}件・全体の平均${fb.baseline_avg_pct != null ? fb.baseline_avg_pct + '%' : '-'}）をもとに、サンプルが少ないうちは控えめに補正します（現在: ${fb.enabled ? '適用中' : '観測のみ'}）。`;
     } else {
         meta.textContent = '';
     }
@@ -488,7 +489,11 @@ function renderNextWeekPlan(np, actions) {
     if (weekEl) weekEl.textContent = np.week ? `（対象: ${np.week} / 基準日 ${np.based_on_date}）` : '';
     const top = plan.top_pick || {};
     let html = '';
-    if (plan.market_view) html += `<div class="alert alert-light border py-2 mb-2"><b>見立て:</b> ${esc(plan.market_view)}</div>`;
+    if (plan.market_view) html += `<div class="alert alert-light border py-2 mb-1"><b>見立て:</b> ${esc(plan.market_view)}</div>`;
+    const ss = (CURRENT && CURRENT.summary) || {};
+    if (ss.n_filled != null) {
+        html += `<div class="muted-small mb-2">根拠（直近週の答え合わせ）: OCO確定 ${ss.n_filled}件・平均損益 ${pct(ss.avg_return_pct)}・市場（TOPIX）との差 ${pct(ss.avg_excess_pct)}。</div>`;
+    }
     if (top.code) {
         html += `<div class="card p-3 mb-2 best-card">
             <div class="stat-label text-success">一番のおすすめ（自信度: ${esc(top.confidence || '-')}）</div>
@@ -550,11 +555,11 @@ function renderTrendSummary(pb) {
     const rec = st.recommend, watch = st.watch;
     let html = '';
     if (rec && rec.n) {
-        html += trendCard('AI「推奨」の平均', TREND_TEXT(rec.avg), `${rec.n}件 / ${ciText(rec)}`, TREND_CLS(rec.avg));
-        html += trendCard('AI「様子見」の平均', watch ? TREND_TEXT(watch.avg) : '-', watch ? `${watch.n}件 / ${ciText(watch)}` : 'データ不足', watch ? TREND_CLS(watch.avg) : '');
+        html += trendCard('AI「推奨」の平均損益（1件あたり）', TREND_TEXT(rec.avg), `${rec.n}件 / ${ciText(rec)}`, TREND_CLS(rec.avg));
+        html += trendCard('AI「様子見」の平均損益（1件あたり）', watch ? TREND_TEXT(watch.avg) : '-', watch ? `${watch.n}件 / ${ciText(watch)}` : 'データ不足', watch ? TREND_CLS(watch.avg) : '');
         if (watch && watch.n) {
             const delta = rec.avg - watch.avg;
-            html += trendCard('「推奨」は様子見より', (delta >= 0 ? '+' : '') + delta.toFixed(2) + 'pt', delta >= 0 ? 'AI判定は機能' : '要調整', TREND_CLS(delta));
+            html += trendCard('「推奨」−「様子見」の差', (delta >= 0 ? '+' : '') + delta.toFixed(2) + '%pt', delta >= 0 ? 'AI判定は機能' : '要調整', TREND_CLS(delta));
         }
     } else {
         html += '<div class="col-12 muted-small">AI判定のサンプルがまだ不足しています。</div>';

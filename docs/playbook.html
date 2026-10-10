@@ -176,14 +176,14 @@ function renderSummary(pb) {
     let html = '';
     let conclusions = [];
     if (rec && rec.n) {
-        html += card('AI「推奨」の平均', TREND_TEXT(rec.avg), `${rec.n}件 / ${ciText(rec)}`, cls(rec.avg));
-        html += card('AI「様子見」の平均', watch ? TREND_TEXT(watch.avg) : '-', watch ? `${watch.n}件 / ${ciText(watch)}` : 'データ不足', watch ? cls(watch.avg) : '');
+        html += card('AI「推奨」の平均損益（1件あたり）', TREND_TEXT(rec.avg), `${rec.n}件 / ${ciText(rec)}`, cls(rec.avg));
+        html += card('AI「様子見」の平均損益（1件あたり）', watch ? TREND_TEXT(watch.avg) : '-', watch ? `${watch.n}件 / ${ciText(watch)}` : 'データ不足', watch ? cls(watch.avg) : '');
         if (watch && watch.n) {
             const delta = rec.avg - watch.avg;
-            html += card('「推奨」は様子見より', (delta >= 0 ? '+' : '') + delta.toFixed(2) + 'pt', delta >= 0 ? 'AI判定は機能' : '要調整', cls(delta));
+            html += card('「推奨」−「様子見」の差', (delta >= 0 ? '+' : '') + delta.toFixed(2) + '%pt', delta >= 0 ? 'AI判定は機能' : '要調整', cls(delta));
             conclusions.push(delta >= 0
-                ? `今のところ、AI『推奨』は『様子見』より <b class="pos">+${delta.toFixed(2)}pt</b> 良い成績です。`
-                : `今のところ、AI『推奨』は『様子見』より <b class="neg">${delta.toFixed(2)}pt</b> 低く、選定基準の見直しが必要です。`);
+                ? `今のところ、AI『推奨』とした銘柄は『様子見』より <b class="pos">1件あたり平均 +${delta.toFixed(2)}%ポイント</b> 良い成績です。`
+                : `今のところ、AI『推奨』とした銘柄は『様子見』より <b class="neg">1件あたり平均 ${delta.toFixed(2)}%ポイント</b> 低く、選定基準の見直しが必要です。`);
         }
     } else {
         html += '<div class="col-12 muted-small">AI判定のサンプルがまだ不足しています。</div>';

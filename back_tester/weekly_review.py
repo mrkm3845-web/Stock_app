@@ -982,64 +982,91 @@ def analyze_top_n(trades, ns):
 
 
 def build_notes(summary, ranking, calib, breakdown):
+    """その週の結果を、初心者にも意味が分かる日本語の「気づき」にまとめる。
+
+    各メモは「何を見たか → 数値 → 意味 → 来週どうする」が読み取れるように書く。
+    専門用語は残しつつ、括弧で短い言い換えを添える。網羅より要点に絞る。
+    """
     notes = []
-    # 未確定（OCOの最大保有日数にデータが届かず来週以降に確定）
+
+    # 未確定（OCOの決済がまだ確定していない建玉）
     n_pending = summary.get("n_pending") or 0
     if n_pending:
-        notes.append(f"未確定（データ不足で来週確定）が {n_pending}件あります。翌週のレビューで確定します。")
-    # 見送り（押し目未到達など）の機会損益
+        notes.append(
+            f"まだ決済が確定していない建玉（未確定）が{n_pending}件あります。"
+            "決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。"
+        )
+
+    # 見送り（買えなかった銘柄）を成行で買っていた場合の損得
     n_missed = summary.get("n_missed_evaluated") or 0
     if n_missed > 0:
         m_avg = summary.get("missed_avg_pct")
         up = summary.get("missed_up_count") or 0
         down = summary.get("missed_down_count") or 0
-        m_up = summary.get("missed_up_avg_pct")
-        m_dn = summary.get("missed_down_avg_pct")
         if m_avg is not None:
-            tag = "機会損失" if m_avg > 0 else "回避できた"
-            notes.append(
-                f"見送り {n_missed}件を成行追随していたら平均 {m_avg:+.2f}%（{tag}）。"
-                f"うち上昇 {up}件（平均 {(m_up or 0.0):+.2f}%）/ 下落 {down}件（平均 {(m_dn or 0.0):+.2f}%）。"
-            )
+            if m_avg > 0:
+                notes.append(
+                    f"買わずに見送った{n_missed}件は、翌日に成行で買っていれば平均{m_avg:+.2f}%でした（上昇{up}件/下落{down}件）。"
+                    "押し目を待つあまり、上がった銘柄に乗れなかった（機会損失）ことを意味します。"
+                )
+            else:
+                notes.append(
+                    f"買わずに見送った{n_missed}件は、翌日に成行で買っていれば平均{m_avg:+.2f}%でした（上昇{up}件/下落{down}件）。"
+                    "待ったことで、下がる銘柄を避けられた（回避できた）ことを意味します。"
+                )
+
     if summary.get("n_filled", 0) == 0:
         if (summary.get("n_pending") or 0) > 0:
-            notes.append("OCO決済が未確定です（最大保有日数に未到達）。翌週以降のレビューで確定します。")
+            notes.append("今週は利確・損切りまで確定した取引がまだありません。翌週以降に順次確定します。")
         elif (summary.get("n_entered") or 0) > 0:
-            notes.append("建玉はありますが、まだ確定した決済がありません。")
+            notes.append("建玉はありますが、まだ決済が確定していません。")
         else:
-            notes.append("今週は約定した推奨がありませんでした（押し目・ブレイク未到達、または相場急変）。")
+            notes.append("今週は約定まで至った推奨がありませんでした（押し目・ブレイク未到達、または相場急変）。")
         return notes
+
     avg = summary.get("avg_return_pct")
     bench = summary.get("avg_benchmark_pct")
+    n_filled = summary.get("n_filled")
     if avg is not None and bench is not None:
-        if avg > bench:
-            notes.append(f"推奨の平均リターンは {avg:+.2f}% で、TOPIX（{bench:+.2f}%）を上回りました。")
-        else:
-            notes.append(f"推奨の平均リターンは {avg:+.2f}% で、TOPIX（{bench:+.2f}%）を下回りました。")
+        cmp_word = "上回りました" if avg > bench else "下回りました"
+        notes.append(
+            f"約定して決済まで確定した{n_filled}件の1件あたり平均損益は{avg:+.2f}%でした。"
+            f"同じ期間の市場平均（TOPIX）は{bench:+.2f}%なので、市場を{abs(avg - bench):.2f}%ポイント{cmp_word}。"
+            "件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。"
+        )
+
+    # スコアの効き（技術スコア上位ほど上がったか）
     sp = ranking.get("spearman")
     if sp is not None:
         if sp >= 0.2:
-            notes.append(f"スコア上位ほどよく上がる関係が確認できました（順位相関 {sp:+.2f}）。")
+            notes.append(
+                f"技術スコアの順位と、その後の上がり具合はゆるやかに一致しました（順位相関 {sp:+.2f}）。"
+                "スコア上位ほどよく上がる傾向が、今週は見られました。"
+            )
         elif sp <= -0.2:
-            notes.append(f"スコア上位ほど弱い逆相関でした（順位相関 {sp:+.2f}）。ランキングの見直し候補です。")
+            notes.append(
+                f"今週は技術スコアが逆に効きました（順位相関 {sp:+.2f}）。"
+                "スコア上位ほどむしろ弱かった週で、ランキングの見直し候補です。"
+            )
         else:
-            notes.append(f"スコアとリターンの関係はほぼ中立でした（順位相関 {sp:+.2f}）。")
+            notes.append(
+                f"技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 {sp:+.2f}）。"
+                "スコアが高い＝上がる、とは言えない週でした。"
+            )
+
+    # AI判定の効き
     delta = calib.get("recommend_minus_watch_pct")
     if delta is not None:
         if delta > 0:
-            notes.append(f"AIの「推奨」は「様子見」を平均 {delta:+.2f}% 上回りました。")
+            notes.append(
+                f"AIが『推奨』とした銘柄は、『様子見』より1件あたり平均{delta:+.2f}%ポイント良い結果でした。"
+                "AIの強気判定がある程度機能したことを示します。"
+            )
         else:
-            notes.append(f"AIの「推奨」は「様子見」に平均 {abs(delta):.2f}% 劣後しました。")
-    et = breakdown.get("by_entry_type", {})
-    for key in ("追いかけ", "押し目待ち", "打診のみ"):
-        st = et.get(key)
-        if st and st.get("n", 0) > 0 and st.get("avg") is not None:
-            notes.append(f"エントリー「{key}」は {st['n']}件・平均 {st['avg']:+.2f}%。")
-    oh = breakdown.get("by_overheat", {})
-    for key in ("低", "中", "強", "極"):
-        st = oh.get(key)
-        if st and st.get("n", 0) > 0 and st.get("avg") is not None:
-            notes.append(f"過熱度「{key}」は {st['n']}件・平均 {st['avg']:+.2f}%。")
+            notes.append(
+                f"AIが『推奨』とした銘柄は、『様子見』より1件あたり平均{abs(delta):.2f}%ポイント悪い結果でした。"
+                "AIの強気判定が裏目に出た週なので、次回は慎重に見ます。"
+            )
     return notes
 
 
@@ -1309,8 +1336,11 @@ def _summarize_playbook_with_ai(stats, lessons, params):
     sys_prompt = (
         PERSONA_JA + "\n"
         "あなたは日本株スイング戦略の検証担当である。以下は直近数週の実測統計と、機械的に生成した気づきである。"
-        "これを踏まえ、次回のAI銘柄選定で『同じ失敗を繰り返さない』ための学びを最大3件、各80文字以内の日本語で簡潔にまとめる。"
-        "必ず与えられた数値を引用し、存在しない数値の捏造は禁止。"
+        "これを見て、次回の銘柄選びで同じ失敗を繰り返さないための学びを最大3件、各120文字以内の日本語でまとめる。"
+        "必ず守ること: (1)各文に『何と何を比べた結果か』を書く（例: 『推奨』と『様子見』の比較）。"
+        "(2)専門用語（n、pt、Spearman等）を使うときは括弧で短い言い換えを添える。"
+        "(3)与えられた数値だけを引用し、存在しない数値の捏造は禁止。"
+        "(4)投資初心者でも意味が分かる平易な日本語で書く。"
         "回答は必ず次のJSONのみ: {\"summary\":[\"学び1\",\"学び2\"]}"
     )
     user = json.dumps({"pooled_stats": stats, "deterministic_lessons": lessons}, ensure_ascii=False)
@@ -1323,7 +1353,7 @@ def _summarize_playbook_with_ai(stats, lessons, params):
         return None
     out = res.get("summary")
     if isinstance(out, list):
-        return [str(x)[:80] for x in out if x][:3]
+        return [str(x)[:120] for x in out if x][:3]
     return None
 
 
@@ -1368,38 +1398,63 @@ def build_ai_playbook(params, ledger):
     lessons = []
     rec, watch = stats["recommend"], stats["watch"]
     if rec and rec["n"] >= min_group and n_weeks >= min_weeks:
-        base = f"直近{n_weeks}週: AI『推奨』平均{rec['avg']:+.2f}%（{rec['n']}件・勝率{rec['win_rate']*100:.0f}%）"
+        ci = rec.get("win_ci95")
+        ci_txt = ""
+        if ci and ci[0] is not None:
+            ci_txt = f"・勝率の95%信頼区間{ci[0] * 100:.0f}〜{ci[1] * 100:.0f}%"
+        base = (
+            f"直近{n_weeks}週でAI『推奨』は{rec['n']}件・1件あたり平均{rec['avg']:+.2f}%"
+            f"・勝率{rec['win_rate'] * 100:.0f}%{ci_txt}"
+        )
         if watch and watch["n"] >= min_group:
             delta = rec["avg"] - watch["avg"]
-            judge = "AI判定は機能" if delta > 0 else "要調整"
-            lessons.append(f"{base}。『様子見』との差{delta:+.2f}pt（{judge}）")
+            if delta >= 0.3:
+                judge = "『推奨』が優位"
+            elif delta > 0:
+                judge = "『推奨』がわずかに優位（誤差の可能性あり）"
+            else:
+                judge = "『推奨』と『様子見』の差はほぼ無し"
+            lessons.append(
+                f"{base}。同時期の『様子見』は{watch['n']}件・平均{watch['avg']:+.2f}%で、"
+                f"その差は{delta:+.2f}%ポイント（{judge}）。件数が少ないうちは断定せず、傾向として見る。"
+            )
         else:
-            lessons.append(base)
+            lessons.append(base + "。")
 
     oh = stats["overheat_hot"]
     if oh and oh["n"] >= min_group:
         ref = rec["avg"] if (rec and rec["n"] >= min_group) else 0.0
         if oh["avg"] < ref:
             lessons.append(
-                f"過熱『強/極』は平均{oh['avg']:+.2f}%（{oh['n']}件）でプール平均{ref:+.2f}%を下回る。"
-                "追いかけを避け、押し目・打診を優先する"
+                f"上がりすぎ（過熱『強/極』）の銘柄は{oh['n']}件・平均{oh['avg']:+.2f}%で、"
+                f"全体平均{ref:+.2f}%を下回りました。過熱した銘柄は追いかけず、押し目や打診を優先する。"
             )
         else:
-            lessons.append(f"過熱『強/極』でも平均{oh['avg']:+.2f}%（{oh['n']}件）。押し目優先の運用は維持する")
+            lessons.append(
+                f"上がりすぎ（過熱『強/極』）でも{oh['n']}件・平均{oh['avg']:+.2f}%。押し目優先の運用は維持する。"
+            )
 
     ep, ec = stats["entry_pullback"], stats["entry_chase"]
     if ep and ec and ep["n"] >= min_group and ec["n"] >= min_group:
         diff = ep["avg"] - ec["avg"]
         lessons.append(
-            f"『押し目待ち』{ep['avg']:+.2f}%（{ep['n']}件）vs 『追いかけ』{ec['avg']:+.2f}%（{ec['n']}件）"
-            f"＝差{diff:+.2f}pt。{'押し目優先が有効' if diff > 0 else '追いかけの優位/押し目の見直し'}"
+            f"買い方の比較: 『押し目待ち』（下がるのを待って買う）は{ep['n']}件・平均{ep['avg']:+.2f}%、"
+            f"『追いかけ』（勢いで買う）は{ec['n']}件・平均{ec['avg']:+.2f}%。差は{diff:+.2f}%ポイントで、"
+            f"{'押し目優先が有効' if diff > 0 else '追いかけが優位／押し目は見直し'}。"
         )
 
     if score_agg:
+        mean = score_agg["spearman_mean"]
+        if mean >= 0.1:
+            judge = "スコア上位ほど上がる傾向がみられる"
+        elif mean <= -0.1:
+            judge = "スコア上位ほどむしろ弱い（逆行）傾向"
+        else:
+            judge = "順位と結果はほぼ無関係（効きが弱い）"
         lessons.append(
-            f"スコア順位の効き: Spearman平均{score_agg['spearman_mean']:+.2f}"
-            f"（{score_agg['positive_weeks']}/{score_agg['n_weeks']}週でプラス）。"
-            f"{'上位ほど良い' if score_agg['spearman_mean'] >= 0.1 else '効きが弱い/不安定'}"
+            f"技術スコアの順位と“その後の上がり具合”の関係（順位相関＝Spearman、-1〜+1）は平均{mean:+.2f}"
+            f"（調べた{score_agg['n_weeks']}週のうちプラスは{score_agg['positive_weeks']}週）。{judge}。"
+            "スコア上位だから必ず上がる、と過信しない。"
         )
 
     if not lessons:
@@ -1565,15 +1620,18 @@ def _plan_system_prompt():
         "入口・OCO（利確指値/損切逆指値）・想定シナリオ・リスクを具体的に示す。"
         "イナゴ買い・高値掴みの防止を最優先し、過熱が強い銘柄は追いかけず押し目・打診に留める。"
         "答え合わせ結果には必ずしも従わなくてよいが、同じ失敗を繰り返さない工夫を示す。"
+        "文章は投資初心者にも分かる平易な日本語で書き、専門用語（RSI、25日乖離、ATR、PBR等）には括弧で短い意味を添える。"
+        "market_view は『直近の結果（数値）→ 地合い → 来週の構え』の順で書く。"
+        "各 reason は『どこが良いか（指標・材料）』と『なぜ今が買い時か』が分かるように書く。"
         "回答は必ず次のJSONのみ（Markdown/コードフェンスなし）:"
         '{"market_view":"来週の地合い・テーマの見立て(2〜3文)",'
-        '"top_pick":{"code":"候補一覧の実コード","name":"銘柄名","reason":"なぜ一番か","entry_strategy":"買い方(寄成/押し目指値と価格)",'
+        '"top_pick":{"code":"候補一覧の実コード","name":"銘柄名","reason":"なぜ一番か(100文字以内)","entry_strategy":"買い方(寄成/押し目指値と価格)",'
         '"entry_price":数値,"tp_price":数値,"sl_price":数値,"scenario":"想定シナリオ","confidence":"高/中/低"},'
-        '"backups":[{"code":"実コード","name":"銘柄名","reason":"補欠理由","entry_strategy":"買い方","entry_price":数値}],'
+        '"backups":[{"code":"実コード","name":"銘柄名","reason":"補欠理由(100文字以内)","entry_strategy":"買い方","entry_price":数値}],'
         '"avoid":[{"code":"実コード","reason":"避ける理由"}],'
         '"risk_notes":"リスク・注意(2〜3文)"}'
-        " codeは必ず候補一覧に記載の実際のコードをコピーすること。reason 等は各80文字以内で簡潔に。"
-        "confidence は 高/中/低 のいずれか。最終判断は人間が行う前提。"
+        " codeは必ず候補一覧に記載の実際のコードをコピーすること。reason 等は簡潔に。"
+        "confidence は 高/中/低 のいずれか（高＝材料・需給とも強い／中＝どちらか／低＝不確実）。最終判断は人間が行う前提。"
     )
 
 
