@@ -1,69 +1,89 @@
 {
-    "generated_at":  "2026-10-04T08:53:07",
-    "window_weeks":  7,
-    "min_weeks":  4,
-    "min_group_trades":  10,
-    "prompt_version":  "2026-10-01-1",
-    "enabled":  false,
-    "inject_note":  "観測のみ（プロンプト未注入・Phase 1）",
-    "lessons":  "直近7週: AI『推奨』平均+1.958%（56件・勝率73%）。『様子見』との差+0.34pt（AI判定は機能）",
-    "ai_summary":  null,
-    "stats":  {
-                  "recommend":  {
-                                    "n":  56,
-                                    "avg":  1.958,
-                                    "win_rate":  0.732,
-                                    "win_ci95":  [
-                                                     1,
-                                                     1
-                                                 ]
-                                },
-                  "watch":  {
-                                "n":  139,
-                                "avg":  1.613,
-                                "win_rate":  0.712,
-                                "win_ci95":  [
-                                                 1,
-                                                 1
-                                             ]
-                            },
-                  "caution":  {
-                                  "n":  15,
-                                  "avg":  -0.940,
-                                  "win_rate":  0.467,
-                                  "win_ci95":  [
-                                                   0,
-                                                   1
-                                               ]
-                              },
-                  "avoid":  {
-                                "n":  10,
-                                "avg":  0.588,
-                                "win_rate":  0.3,
-                                "win_ci95":  [
-                                                 0,
-                                                 1
-                                             ]
-                            },
-                  "overheat_hot":  null,
-                  "entry_pullback":  {
-                                         "n":  1,
-                                         "avg":  6.598,
-                                         "win_rate":  1,
-                                         "win_ci95":  [
-                                                          0,
-                                                          1
-                                                      ]
-                                     },
-                  "entry_chase":  {
-                                      "n":  93,
-                                      "avg":  -1.003,
-                                      "win_rate":  0.301,
-                                      "win_ci95":  [
-                                                       0,
-                                                       0
-                                                   ]
-                                  }
-              },
-    "score_ranking":  null
+  "generated_at": "2026-10-10T03:38:53",
+  "window_weeks": 8,
+  "min_weeks": 4,
+  "min_group_trades": 10,
+  "prompt_version": "2026-10-01-1",
+  "enabled": false,
+  "inject_note": "観測のみ（プロンプト未注入・Phase 1）",
+  "lessons": [
+    "直近8週: AI『推奨』平均+0.45%（81件・勝率60%）。『様子見』との差+0.31pt（AI判定は機能）",
+    "スコア順位の効き: Spearman平均-0.07（2/4週でプラス）。効きが弱い/不安定"
+  ],
+  "ai_summary": [
+    "entry_chaseはn=113で平均-1.78%・勝率25.7%。飛び乗りを避け、押し目待ちを優先する。",
+    "cautionはn=26で平均-2.249%・勝率42.3%。慎重判定は見送り、推奨・様子見を優先。",
+    "推奨はn=81平均+0.452%勝率60.5%、様子見+0.14%勝率60.8%。スコア順位Spearman-0.07は弱く過信禁物。"
+  ],
+  "stats": {
+    "recommend": {
+      "n": 81,
+      "avg": 0.452,
+      "win_rate": 0.605,
+      "win_ci95": [
+        0.496,
+        0.704
+      ]
+    },
+    "watch": {
+      "n": 181,
+      "avg": 0.14,
+      "win_rate": 0.608,
+      "win_ci95": [
+        0.535,
+        0.676
+      ]
+    },
+    "caution": {
+      "n": 26,
+      "avg": -2.249,
+      "win_rate": 0.423,
+      "win_ci95": [
+        0.255,
+        0.611
+      ]
+    },
+    "avoid": {
+      "n": 10,
+      "avg": 0.589,
+      "win_rate": 0.3,
+      "win_ci95": [
+        0.108,
+        0.603
+      ]
+    },
+    "overheat_hot": {
+      "n": 1,
+      "avg": -3.035,
+      "win_rate": 0.0,
+      "win_ci95": [
+        0.0,
+        0.793
+      ]
+    },
+    "entry_pullback": {
+      "n": 5,
+      "avg": 0.478,
+      "win_rate": 0.4,
+      "win_ci95": [
+        0.118,
+        0.769
+      ]
+    },
+    "entry_chase": {
+      "n": 113,
+      "avg": -1.78,
+      "win_rate": 0.257,
+      "win_ci95": [
+        0.185,
+        0.344
+      ]
+    }
+  },
+  "score_ranking": {
+    "n_weeks": 4,
+    "spearman_mean": -0.071,
+    "positive_weeks": 2,
+    "spread_mean": -0.57
+  }
 }

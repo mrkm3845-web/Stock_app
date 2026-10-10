@@ -1,151 +1,156 @@
 {
-  "generated_at": "2026-10-03T03:09:27",
-  "week": "2026-W41",
-  "based_on_date": "2026-10-02",
+  "generated_at": "2026-10-10T03:38:41",
+  "week": "2026-W42",
+  "based_on_date": "2026-10-09",
   "provider": "deepseek",
   "model": "deepseek-flash",
   "candidates": [
     {
-      "code": "7826",
-      "name": "フルヤ金属",
-      "score": 100.0,
-      "verdict": "recommend"
-    },
-    {
       "code": "3131",
       "name": "シンデン・ハイテックス",
-      "score": 100.0,
+      "score": 99.4,
       "verdict": "recommend"
     },
     {
-      "code": "6668",
-      "name": "アドテック　プラズマ　テクノロジー",
-      "score": 100.0,
+      "code": "7826",
+      "name": "フルヤ金属",
+      "score": 98.4,
       "verdict": "recommend"
     },
     {
-      "code": "8392",
-      "name": "大分銀行",
-      "score": 99.6,
+      "code": "7384",
+      "name": "プロクレアホールディングス",
+      "score": 97.5,
+      "verdict": "recommend"
+    },
+    {
+      "code": "5301",
+      "name": "東海カーボン",
+      "score": 97.1,
       "verdict": "recommend"
     },
     {
       "code": "2737",
       "name": "トーメンデバイス",
-      "score": 98.1,
+      "score": 96.1,
       "verdict": "recommend"
     },
     {
-      "code": "2962",
-      "name": "テクニスコ",
+      "code": "7480",
+      "name": "スズデン",
       "score": 100.0,
+      "verdict": null
+    },
+    {
+      "code": "3156",
+      "name": "レスター",
+      "score": 99.5,
       "verdict": null
     },
     {
       "code": "6570",
       "name": "共和コーポレーション",
-      "score": 100.0,
-      "verdict": null
-    },
-    {
-      "code": "7384",
-      "name": "プロクレアホールディングス",
-      "score": 100.0,
-      "verdict": null
-    },
-    {
-      "code": "8362",
-      "name": "福井銀行",
-      "score": 100.0,
-      "verdict": null
-    },
-    {
-      "code": "1948",
-      "name": "弘電社",
-      "score": 99.9,
-      "verdict": null
-    },
-    {
-      "code": "8343",
-      "name": "秋田銀行",
-      "score": 99.8,
-      "verdict": null
-    },
-    {
-      "code": "8388",
-      "name": "阿波銀行",
-      "score": 99.6,
-      "verdict": null
-    },
-    {
-      "code": "6998",
-      "name": "日本タングステン",
-      "score": 99.5,
-      "verdict": null
-    },
-    {
-      "code": "8387",
-      "name": "四国銀行",
       "score": 99.4,
+      "verdict": null
+    },
+    {
+      "code": "6668",
+      "name": "アドテック　プラズマ　テクノロジー",
+      "score": 99.4,
+      "verdict": null
+    },
+    {
+      "code": "2612",
+      "name": "かどや製油",
+      "score": 98.9,
       "verdict": null
     },
     {
       "code": "3077",
       "name": "ホリイフードサービス",
-      "score": 99.3,
+      "score": 98.7,
+      "verdict": null
+    },
+    {
+      "code": "6191",
+      "name": "エアトリ",
+      "score": 98.7,
+      "verdict": null
+    },
+    {
+      "code": "3374",
+      "name": "内外テック",
+      "score": 98.2,
+      "verdict": null
+    },
+    {
+      "code": "6998",
+      "name": "日本タングステン",
+      "score": 98.1,
+      "verdict": null
+    },
+    {
+      "code": "8388",
+      "name": "阿波銀行",
+      "score": 97.4,
       "verdict": null
     }
   ],
   "plan": {
-    "market_view": "来週は半導体・メモリ関連と地銀再編が主導。指数は堅調だが高値圏で過熱も混在し、押し目待ち・打診が有効。決算直前の過熱銘柄は避け、上方修正・出遅れを選別。",
+    "market_view": "直近OCO全敗かつTOPIX超過-7%でリスクオフ。金曜急落の反動は期待できるが戻り売り圧力が強く、買いは押し目限定。半導体メモリ・素材は物色継続も、過熱銘柄は反落注意。",
     "top_pick": {
-      "code": "6668",
-      "name": "アドテック　プラズマ　テクノロジー",
-      "reason": "半導体プラズマ電源の上方修正期待。RSI69・乖離18%で押し目待ち推奨、4420円ならリスクリワード良好。",
-      "entry_strategy": "4420円に押し目指値。寄り付きで届かなければ見送り、反落時に分割打診。",
-      "entry_price": 4420,
-      "tp_price": 5393,
-      "sl_price": 4120,
-      "scenario": "半導体物色継続、押し目形成後に上方修正発表。出来高増で5393円を試す。",
+      "code": "7826",
+      "name": "フルヤ金属",
+      "reason": "半導体素材で過熱低・RSI55台、押し目待ち。流動性大でOCO設計しやすく、高値掴み回避しやすい。",
+      "entry_strategy": "寄成は避け、10900円指値。急落時は10289円まで分割打診し、反発確認で追加。",
+      "entry_price": 10900.0,
+      "tp_price": 12937.0,
+      "sl_price": 10289.0,
+      "scenario": "半導体素材物色が続けば押し目から反発し12937円を試す。割れば10289円で損切し下放れを回避。",
       "confidence": "中"
     },
     "backups": [
       {
-        "code": "8392",
-        "name": "大分銀行",
-        "reason": "純利益上方修正が材料。RSI65.7・乖離7.6%と過熱軽度、地銀再編思惑。",
-        "entry_strategy": "3200円押し目指値、3250円以下なら打診。",
-        "entry_price": 3200
-      },
-      {
-        "code": "7826",
-        "name": "フルヤ金属",
-        "reason": "貴金属・半導体材料で週月足上昇。RSI64と過熱軽度、流動性十分。",
-        "entry_strategy": "11400円押し目指値、11600円割れで分割。",
-        "entry_price": 11400
-      },
-      {
         "code": "2737",
         "name": "トーメンデバイス",
-        "reason": "DRAM価格高騰の恩恵、ROE39.3。RSI62.9と低過熱で上昇余地。",
-        "entry_strategy": "40200円押し目指値、41000円超え追いはしない。",
-        "entry_price": 40200
+        "reason": "メモリ相場主力、過熱低くROE39%。高ATRで押し目限定。",
+        "entry_strategy": "37610円指値、33648円損切厳守。",
+        "entry_price": 37610.0
+      },
+      {
+        "code": "7384",
+        "name": "プロクレアホールディングス",
+        "reason": "北東北3行統合材料、低過熱。PBR0.86で下値限定的。",
+        "entry_strategy": "5200円指値、4826円損切。",
+        "entry_price": 5200.0
       }
     ],
     "avoid": [
       {
-        "code": "2962",
-        "reason": "RSI76.4・乖離46%・PER4967倍で完全な過熱。高値掴みリスク大。"
-      },
-      {
         "code": "3131",
-        "reason": "RSI74.3と過熱、5/12決算直前。材料出尽くしや急変リスク。"
+        "reason": "RSI73・25日乖離18.7%で過熱。押し目8304でも高値掴みリスク。"
       },
       {
-        "code": "1948",
-        "reason": "ATR0.06%と値動き異常に乏しく流動性懸念、OCO約定リスク。"
+        "code": "5301",
+        "reason": "AI追いかけ推奨だが52週位置0.965、寄り付き追いは危険。"
+      },
+      {
+        "code": "3156",
+        "reason": "52週位置1.0・乖離13.4%、入口未設定で見送り。"
+      },
+      {
+        "code": "3374",
+        "reason": "RSI73・乖離21.8%と過熱、52週高値圏。"
+      },
+      {
+        "code": "6191",
+        "reason": "乖離20.6%と過熱、材料不明で持続性不透明。"
+      },
+      {
+        "code": "2612",
+        "reason": "RSI78.7で過熱、ATR1.14%で値幅薄く週次不向き。"
       }
     ],
-    "risk_notes": "半導体・地銀は短期的に過熱気味で、指数反落時は押し目が深くなる可能性。決算前の3131等はギャップ注意、指値未約定なら見送りを徹底。"
+    "risk_notes": "直近OCO全敗で地合い悪く、TOPIX急落後の戻り売り警戒。買いは指値のみ、損切は機械的に。半導体・メモリは海外市況次第で窓開けリスク。"
   }
 }

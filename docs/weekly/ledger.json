@@ -1,699 +1,842 @@
 {
-    "updated_at":  "2026-10-04T08:52:59",
-    "weeks":  [
-                  {
-                      "week":  "2026-W40",
-                      "start":  "2026-09-28",
-                      "end":  "2026-10-02",
-                      "generated_at":  "2026-10-03T03:08:40",
-                      "prompt_versions":  [
-                                              "2026-10-01-1"
-                                          ],
-                      "strategy_version":  "2026-10-01",
-                      "provider":  "deepseek",
-                      "model":  "deepseek-flash",
-                      "summary":  {
-                                      "picks_total":  21,
-                                      "n_filled":  4,
-                                      "n_pending":  9,
-                                      "n_not_filled":  3,
-                                      "fill_rate":  0.571,
-                                      "avg_return_pct":  4.112,
-                                      "median_return_pct":  3.918,
-                                      "win_rate":  0.5,
-                                      "avg_excess_pct":  4.295,
-                                      "avg_benchmark_pct":  -0.183,
-                                      "avg_weekly_return_pct":  1.884,
-                                      "weekly_win_rate":  0.769
-                                  },
-                      "ai_calibration":  {
-                                             "by_verdict":  {
-                                                                "recommend":  {
-                                                                                  "n":  20,
-                                                                                  "avg":  1.927,
-                                                                                  "median":  1.156,
-                                                                                  "win_rate":  0.8
-                                                                              },
-                                                                "watch":  {
-                                                                              "n":  31,
-                                                                              "avg":  0.687,
-                                                                              "median":  0.568,
-                                                                              "win_rate":  0.71
-                                                                          },
-                                                                "caution":  {
-                                                                                "n":  9,
-                                                                                "avg":  -2.682,
-                                                                                "median":  -0.255,
-                                                                                "win_rate":  0.444
-                                                                            }
-                                                            },
-                                             "recommend_minus_watch_pct":  1.24
-                                         },
-                      "ranking":  {
-                                      "n":  158,
-                                      "spearman":  0.084,
-                                      "top_avg_pct":  1.309,
-                                      "bottom_avg_pct":  1.839,
-                                      "spread_pct":  -0.53
-                                  },
-                      "breakdown":  {
-                                        "by_entry_type":  {
-                                                              "追いかけ":  {
-                                                                           "n":  4,
-                                                                           "avg":  4.112,
-                                                                           "median":  3.918,
-                                                                           "win_rate":  0.5
-                                                                       }
-                                                          },
-                                        "by_overheat":  {
-                                                            "低":  {
-                                                                      "n":  4,
-                                                                      "avg":  4.112,
-                                                                      "median":  3.918,
-                                                                      "win_rate":  0.5
-                                                                  }
-                                                        },
-                                        "by_sector":  {
-                                                          "電気機器":  {
-                                                                       "n":  2,
-                                                                       "avg":  8.524,
-                                                                       "median":  8.524,
-                                                                       "win_rate":  1.0
-                                                                   },
-                                                          "銀行業":  {
-                                                                      "n":  2,
-                                                                      "avg":  -0.3,
-                                                                      "median":  -0.3,
-                                                                      "win_rate":  0.0
-                                                                  }
-                                                      },
-                                        "by_verdict":  {
-                                                           "推奨":  {
-                                                                      "n":  4,
-                                                                      "avg":  4.112,
-                                                                      "median":  3.918,
-                                                                      "win_rate":  0.5
-                                                                  }
-                                                       }
-                                    },
-                      "plan":  {
-                                   "target_week":  "2026-W41",
-                                   "top_pick_code":  "6668",
-                                   "top_pick_name":  "アドテック　プラズマ　テクノロジー",
-                                   "confidence":  "中"
-                               }
-                  },
-                  {
-                      "week":  "2026-W39",
-                      "start":  "2026-09-21",
-                      "end":  "2026-09-25",
-                      "generated_at":  "2026-10-03T03:08:38",
-                      "prompt_versions":  [
-                                              "2026-10-01-1"
-                                          ],
-                      "strategy_version":  "2026-10-01",
-                      "provider":  null,
-                      "model":  null,
-                      "summary":  {
-                                      "picks_total":  10,
-                                      "n_filled":  5,
-                                      "n_pending":  4,
-                                      "n_not_filled":  1,
-                                      "fill_rate":  0.833,
-                                      "avg_return_pct":  8.101,
-                                      "median_return_pct":  8.628,
-                                      "win_rate":  0.8,
-                                      "avg_excess_pct":  7.943,
-                                      "avg_benchmark_pct":  0.158,
-                                      "avg_weekly_return_pct":  3.977,
-                                      "weekly_win_rate":  0.778
-                                  },
-                      "ai_calibration":  {
-                                             "by_verdict":  {
-                                                                "recommend":  {
-                                                                                  "n":  10,
-                                                                                  "avg":  2.033,
-                                                                                  "median":  2.821,
-                                                                                  "win_rate":  0.7
-                                                                              },
-                                                                "watch":  {
-                                                                              "n":  38,
-                                                                              "avg":  2.611,
-                                                                              "median":  2.515,
-                                                                              "win_rate":  0.763
-                                                                          },
-                                                                "caution":  {
-                                                                                "n":  6,
-                                                                                "avg":  1.673,
-                                                                                "median":  1.567,
-                                                                                "win_rate":  0.5
-                                                                            },
-                                                                "avoid":  {
-                                                                              "n":  1,
-                                                                              "avg":  9.242,
-                                                                              "median":  9.242,
-                                                                              "win_rate":  1.0
-                                                                          }
-                                                            },
-                                             "recommend_minus_watch_pct":  -0.578
-                                         },
-                      "ranking":  {
-                                      "n":  80,
-                                      "spearman":  0.137,
-                                      "top_avg_pct":  3.105,
-                                      "bottom_avg_pct":  1.777,
-                                      "spread_pct":  1.328
-                                  },
-                      "breakdown":  {
-                                        "by_entry_type":  {
-                                                              "追いかけ":  {
-                                                                           "n":  4,
-                                                                           "avg":  8.476,
-                                                                           "median":  10.538,
-                                                                           "win_rate":  0.75
-                                                                       },
-                                                              "押し目待ち":  {
-                                                                            "n":  1,
-                                                                            "avg":  6.598,
-                                                                            "median":  6.598,
-                                                                            "win_rate":  1.0
-                                                                        }
-                                                          },
-                                        "by_overheat":  {
-                                                            "低":  {
-                                                                      "n":  4,
-                                                                      "avg":  8.476,
-                                                                      "median":  10.538,
-                                                                      "win_rate":  0.75
-                                                                  },
-                                                            "中":  {
-                                                                      "n":  1,
-                                                                      "avg":  6.598,
-                                                                      "median":  6.598,
-                                                                      "win_rate":  1.0
-                                                                  }
-                                                        },
-                                        "by_sector":  {
-                                                          "電気機器":  {
-                                                                       "n":  2,
-                                                                       "avg":  10.878,
-                                                                       "median":  10.878,
-                                                                       "win_rate":  1.0
-                                                                   },
-                                                          "その他製品":  {
-                                                                        "n":  1,
-                                                                        "avg":  12.449,
-                                                                        "median":  12.449,
-                                                                        "win_rate":  1.0
-                                                                    },
-                                                          "卸売業":  {
-                                                                      "n":  1,
-                                                                      "avg":  6.598,
-                                                                      "median":  6.598,
-                                                                      "win_rate":  1.0
-                                                                  },
-                                                          "銀行業":  {
-                                                                      "n":  1,
-                                                                      "avg":  -0.3,
-                                                                      "median":  -0.3,
-                                                                      "win_rate":  0.0
-                                                                  }
-                                                      },
-                                        "by_verdict":  {
-                                                           "推奨":  {
-                                                                      "n":  5,
-                                                                      "avg":  8.101,
-                                                                      "median":  8.628,
-                                                                      "win_rate":  0.8
-                                                                  }
-                                                       }
-                                    },
-                      "plan":  null
-                  },
-                  {
-                      "week":  "2026-W38",
-                      "start":  "2026-09-14",
-                      "end":  "2026-09-18",
-                      "generated_at":  "2026-10-03T03:08:32",
-                      "prompt_versions":  [
-                                              "2026-10-01-1"
-                                          ],
-                      "strategy_version":  "2026-10-01",
-                      "provider":  null,
-                      "model":  null,
-                      "summary":  {
-                                      "picks_total":  22,
-                                      "n_filled":  5,
-                                      "n_pending":  17,
-                                      "n_not_filled":  0,
-                                      "fill_rate":  1.0,
-                                      "avg_return_pct":  -2.183,
-                                      "median_return_pct":  -2.163,
-                                      "win_rate":  0.2,
-                                      "avg_excess_pct":  -2.899,
-                                      "avg_benchmark_pct":  0.716,
-                                      "avg_weekly_return_pct":  0.217,
-                                      "weekly_win_rate":  0.545
-                                  },
-                      "ai_calibration":  {
-                                             "by_verdict":  {
-                                                                "recommend":  {
-                                                                                  "n":  26,
-                                                                                  "avg":  1.953,
-                                                                                  "median":  1.208,
-                                                                                  "win_rate":  0.692
-                                                                              },
-                                                                "neutral":  {
-                                                                                "n":  55,
-                                                                                "avg":  0.581,
-                                                                                "median":  1.301,
-                                                                                "win_rate":  0.6
-                                                                            },
-                                                                "avoid":  {
-                                                                              "n":  9,
-                                                                              "avg":  -0.373,
-                                                                              "median":  -0.528,
-                                                                              "win_rate":  0.222
-                                                                          },
-                                                                "watch":  {
-                                                                              "n":  70,
-                                                                              "avg":  1.481,
-                                                                              "median":  0.954,
-                                                                              "win_rate":  0.686
-                                                                          }
-                                                            },
-                                             "recommend_minus_watch_pct":  0.472
-                                         },
-                      "ranking":  {
-                                      "n":  200,
-                                      "spearman":  -0.073,
-                                      "top_avg_pct":  11.705,
-                                      "bottom_avg_pct":  1.275,
-                                      "spread_pct":  10.43
-                                  },
-                      "breakdown":  {
-                                        "by_entry_type":  {
-                                                              "追いかけ":  {
-                                                                           "n":  5,
-                                                                           "avg":  -2.183,
-                                                                           "median":  -2.163,
-                                                                           "win_rate":  0.2
-                                                                       }
-                                                          },
-                                        "by_overheat":  {
-                                                            "低":  {
-                                                                      "n":  5,
-                                                                      "avg":  -2.183,
-                                                                      "median":  -2.163,
-                                                                      "win_rate":  0.2
-                                                                  }
-                                                        },
-                                        "by_sector":  {
-                                                          "建設業":  {
-                                                                      "n":  4,
-                                                                      "avg":  -1.351,
-                                                                      "median":  -1.566,
-                                                                      "win_rate":  0.25
-                                                                  },
-                                                          "サービス業":  {
-                                                                        "n":  1,
-                                                                        "avg":  -5.513,
-                                                                        "median":  -5.513,
-                                                                        "win_rate":  0.0
-                                                                    }
-                                                      },
-                                        "by_verdict":  {
-                                                           "スコア順":  {
-                                                                        "n":  4,
-                                                                        "avg":  -1.351,
-                                                                        "median":  -1.566,
-                                                                        "win_rate":  0.25
-                                                                    },
-                                                           "推奨":  {
-                                                                      "n":  1,
-                                                                      "avg":  -5.513,
-                                                                      "median":  -5.513,
-                                                                      "win_rate":  0.0
-                                                                  }
-                                                       }
-                                    },
-                      "plan":  null
-                  },
-                  {
-                      "week":  "2026-W37",
-                      "start":  "2026-09-07",
-                      "end":  "2026-09-11",
-                      "generated_at":  "2026-10-03T03:08:15",
-                      "prompt_versions":  [
-                                              "2026-10-01-1"
-                                          ],
-                      "strategy_version":  "2026-10-01",
-                      "provider":  null,
-                      "model":  null,
-                      "summary":  {
-                                      "picks_total":  25,
-                                      "n_filled":  14,
-                                      "n_pending":  11,
-                                      "n_not_filled":  0,
-                                      "fill_rate":  1.0,
-                                      "avg_return_pct":  -1.407,
-                                      "median_return_pct":  -0.968,
-                                      "win_rate":  0.357,
-                                      "avg_excess_pct":  -3.193,
-                                      "avg_benchmark_pct":  1.786,
-                                      "avg_weekly_return_pct":  0.515,
-                                      "weekly_win_rate":  0.72
-                                  },
-                      "ai_calibration":  {
-                                             "by_verdict":  {
-
-                                                            },
-                                             "recommend_minus_watch_pct":  null
-                                         },
-                      "ranking":  {
-                                      "n":  200,
-                                      "spearman":  null,
-                                      "top_avg_pct":  -0.261,
-                                      "bottom_avg_pct":  1.919,
-                                      "spread_pct":  -2.18
-                                  },
-                      "breakdown":  {
-                                        "by_entry_type":  {
-                                                              "追いかけ":  {
-                                                                           "n":  14,
-                                                                           "avg":  -1.407,
-                                                                           "median":  -0.968,
-                                                                           "win_rate":  0.357
-                                                                       }
-                                                          },
-                                        "by_overheat":  {
-                                                            "低":  {
-                                                                      "n":  14,
-                                                                      "avg":  -1.407,
-                                                                      "median":  -0.968,
-                                                                      "win_rate":  0.357
-                                                                  }
-                                                        },
-                                        "by_sector":  {
-                                                          "建設業":  {
-                                                                      "n":  8,
-                                                                      "avg":  0.435,
-                                                                      "median":  0.517,
-                                                                      "win_rate":  0.625
-                                                                  },
-                                                          "水産・農林業":  {
-                                                                         "n":  3,
-                                                                         "avg":  -1.593,
-                                                                         "median":  -1.8,
-                                                                         "win_rate":  0.0
-                                                                     },
-                                                          "鉱業":  {
-                                                                     "n":  3,
-                                                                     "avg":  -6.134,
-                                                                     "median":  -6.474,
-                                                                     "win_rate":  0.0
-                                                                 }
-                                                      },
-                                        "by_verdict":  {
-                                                           "スコア順":  {
-                                                                        "n":  14,
-                                                                        "avg":  -1.407,
-                                                                        "median":  -0.968,
-                                                                        "win_rate":  0.357
-                                                                    }
-                                                       }
-                                    },
-                      "plan":  null
-                  },
-                  {
-                      "week":  "2026-W36",
-                      "start":  "2026-08-31",
-                      "end":  "2026-09-04",
-                      "generated_at":  "2026-10-03T03:08:14",
-                      "prompt_versions":  [
-                                              "2026-10-01-1"
-                                          ],
-                      "strategy_version":  "2026-10-01",
-                      "provider":  null,
-                      "model":  null,
-                      "summary":  {
-                                      "picks_total":  25,
-                                      "n_filled":  22,
-                                      "n_pending":  3,
-                                      "n_not_filled":  0,
-                                      "fill_rate":  1.0,
-                                      "avg_return_pct":  -2.492,
-                                      "median_return_pct":  -1.96,
-                                      "win_rate":  0.136,
-                                      "avg_excess_pct":  -1.399,
-                                      "avg_benchmark_pct":  -1.093,
-                                      "avg_weekly_return_pct":  -1.576,
-                                      "weekly_win_rate":  0.12
-                                  },
-                      "ai_calibration":  {
-                                             "by_verdict":  {
-
-                                                            },
-                                             "recommend_minus_watch_pct":  null
-                                         },
-                      "ranking":  {
-                                      "n":  200,
-                                      "spearman":  null,
-                                      "top_avg_pct":  -0.744,
-                                      "bottom_avg_pct":  -0.021,
-                                      "spread_pct":  -0.723
-                                  },
-                      "breakdown":  {
-                                        "by_entry_type":  {
-                                                              "追いかけ":  {
-                                                                           "n":  22,
-                                                                           "avg":  -2.492,
-                                                                           "median":  -1.96,
-                                                                           "win_rate":  0.136
-                                                                       }
-                                                          },
-                                        "by_overheat":  {
-                                                            "低":  {
-                                                                      "n":  22,
-                                                                      "avg":  -2.492,
-                                                                      "median":  -1.96,
-                                                                      "win_rate":  0.136
-                                                                  }
-                                                        },
-                                        "by_sector":  {
-                                                          "水産・農林業":  {
-                                                                         "n":  7,
-                                                                         "avg":  -2.322,
-                                                                         "median":  -1.689,
-                                                                         "win_rate":  0.286
-                                                                     },
-                                                          "建設業":  {
-                                                                      "n":  10,
-                                                                      "avg":  -1.427,
-                                                                      "median":  -1.417,
-                                                                      "win_rate":  0.1
-                                                                  },
-                                                          "鉱業":  {
-                                                                     "n":  5,
-                                                                     "avg":  -4.86,
-                                                                     "median":  -3.455,
-                                                                     "win_rate":  0.0
-                                                                 }
-                                                      },
-                                        "by_verdict":  {
-                                                           "スコア順":  {
-                                                                        "n":  22,
-                                                                        "avg":  -2.492,
-                                                                        "median":  -1.96,
-                                                                        "win_rate":  0.136
-                                                                    }
-                                                       }
-                                    },
-                      "plan":  null
-                  },
-                  {
-                      "week":  "2026-W35",
-                      "start":  "2026-08-24",
-                      "end":  "2026-08-28",
-                      "generated_at":  "2026-09-26T08:23:55",
-                      "prompt_versions":  [
-                                              "2026-10-01-1"
-                                          ],
-                      "strategy_version":  "2026-10-01",
-                      "provider":  null,
-                      "model":  null,
-                      "summary":  {
-                                      "picks_total":  25,
-                                      "n_filled":  24,
-                                      "n_pending":  1,
-                                      "n_not_filled":  0,
-                                      "fill_rate":  1.0,
-                                      "avg_return_pct":  -2.783,
-                                      "median_return_pct":  -1.479,
-                                      "win_rate":  0.125,
-                                      "avg_excess_pct":  -1.985,
-                                      "avg_benchmark_pct":  -0.799,
-                                      "avg_weekly_return_pct":  -1.11,
-                                      "weekly_win_rate":  0.16
-                                  },
-                      "ai_calibration":  {
-                                             "by_verdict":  {
-
-                                                            },
-                                             "recommend_minus_watch_pct":  null
-                                         },
-                      "ranking":  {
-                                      "n":  200,
-                                      "spearman":  null,
-                                      "top_avg_pct":  0.196,
-                                      "bottom_avg_pct":  -0.811,
-                                      "spread_pct":  1.007
-                                  },
-                      "breakdown":  {
-                                        "by_entry_type":  {
-                                                              "追いかけ":  {
-                                                                           "n":  24,
-                                                                           "avg":  -2.783,
-                                                                           "median":  -1.479,
-                                                                           "win_rate":  0.125
-                                                                       }
-                                                          },
-                                        "by_overheat":  {
-                                                            "低":  {
-                                                                      "n":  24,
-                                                                      "avg":  -2.783,
-                                                                      "median":  -1.479,
-                                                                      "win_rate":  0.125
-                                                                  }
-                                                        },
-                                        "by_sector":  {
-                                                          "水産・農林業":  {
-                                                                         "n":  10,
-                                                                         "avg":  -1.888,
-                                                                         "median":  -1.419,
-                                                                         "win_rate":  0.1
-                                                                     },
-                                                          "建設業":  {
-                                                                      "n":  10,
-                                                                      "avg":  -2.008,
-                                                                      "median":  -1.566,
-                                                                      "win_rate":  0.0
-                                                                  },
-                                                          "その他製品":  {
-                                                                        "n":  2,
-                                                                        "avg":  0.291,
-                                                                        "median":  0.291,
-                                                                        "win_rate":  1.0
-                                                                    },
-                                                          "鉱業":  {
-                                                                     "n":  2,
-                                                                     "avg":  -14.211,
-                                                                     "median":  -14.211,
-                                                                     "win_rate":  0.0
-                                                                 }
-                                                      },
-                                        "by_verdict":  {
-                                                           "スコア順":  {
-                                                                        "n":  24,
-                                                                        "avg":  -2.783,
-                                                                        "median":  -1.479,
-                                                                        "win_rate":  0.125
-                                                                    }
-                                                       }
-                                    },
-                      "plan":  null
-                  },
-                  {
-                      "week":  "2026-W34",
-                      "start":  "2026-08-17",
-                      "end":  "2026-08-21",
-                      "generated_at":  "2026-09-26T08:23:54",
-                      "prompt_versions":  [
-                                              "2026-10-01-1"
-                                          ],
-                      "strategy_version":  "2026-10-01",
-                      "provider":  null,
-                      "model":  null,
-                      "summary":  {
-                                      "picks_total":  20,
-                                      "n_filled":  20,
-                                      "n_pending":  0,
-                                      "n_not_filled":  0,
-                                      "fill_rate":  1.0,
-                                      "avg_return_pct":  0.429,
-                                      "median_return_pct":  0.487,
-                                      "win_rate":  0.55,
-                                      "avg_excess_pct":  -0.514,
-                                      "avg_benchmark_pct":  0.943,
-                                      "avg_weekly_return_pct":  0.324,
-                                      "weekly_win_rate":  0.5
-                                  },
-                      "ai_calibration":  {
-                                             "by_verdict":  {
-
-                                                            },
-                                             "recommend_minus_watch_pct":  null
-                                         },
-                      "ranking":  {
-                                      "n":  160,
-                                      "spearman":  null,
-                                      "top_avg_pct":  0.16,
-                                      "bottom_avg_pct":  0.491,
-                                      "spread_pct":  -0.331
-                                  },
-                      "breakdown":  {
-                                        "by_entry_type":  {
-                                                              "追いかけ":  {
-                                                                           "n":  20,
-                                                                           "avg":  0.429,
-                                                                           "median":  0.487,
-                                                                           "win_rate":  0.55
-                                                                       }
-                                                          },
-                                        "by_overheat":  {
-                                                            "低":  {
-                                                                      "n":  20,
-                                                                      "avg":  0.429,
-                                                                      "median":  0.487,
-                                                                      "win_rate":  0.55
-                                                                  }
-                                                        },
-                                        "by_sector":  {
-                                                          "建設業":  {
-                                                                      "n":  8,
-                                                                      "avg":  1.275,
-                                                                      "median":  1.236,
-                                                                      "win_rate":  0.875
-                                                                  },
-                                                          "水産・農林業":  {
-                                                                         "n":  8,
-                                                                         "avg":  -1.02,
-                                                                         "median":  -1.389,
-                                                                         "win_rate":  0.25
-                                                                     },
-                                                          "その他製品":  {
-                                                                        "n":  2,
-                                                                        "avg":  -0.696,
-                                                                        "median":  -0.696,
-                                                                        "win_rate":  0.5
-                                                                    },
-                                                          "鉱業":  {
-                                                                     "n":  2,
-                                                                     "avg":  3.968,
-                                                                     "median":  3.968,
-                                                                     "win_rate":  0.5
-                                                                 }
-                                                      },
-                                        "by_verdict":  {
-                                                           "スコア順":  {
-                                                                        "n":  20,
-                                                                        "avg":  0.429,
-                                                                        "median":  0.487,
-                                                                        "win_rate":  0.55
-                                                                    }
-                                                       }
-                                    },
-                      "plan":  null
-                  }
-              ]
+  "updated_at": "2026-10-10T03:38:41",
+  "weeks": [
+    {
+      "week": "2026-W41",
+      "start": "2026-10-05",
+      "end": "2026-10-09",
+      "generated_at": "2026-10-10T03:38:22",
+      "prompt_versions": [
+        "2026-10-01-1"
+      ],
+      "strategy_version": "2026-10-07",
+      "provider": "deepseek",
+      "model": "deepseek-flash",
+      "summary": {
+        "picks_total": 23,
+        "n_filled": 4,
+        "n_pending": 8,
+        "n_not_filled": 6,
+        "fill_rate": 0.4,
+        "avg_return_pct": -8.219,
+        "median_return_pct": -8.334,
+        "win_rate": 0.0,
+        "avg_excess_pct": -7.05,
+        "avg_benchmark_pct": -1.169,
+        "avg_weekly_return_pct": -5.01,
+        "weekly_win_rate": 0.167
+      },
+      "ai_calibration": {
+        "by_verdict": {
+          "recommend": {
+            "n": 20,
+            "avg": -3.197,
+            "median": -4.214,
+            "win_rate": 0.3
+          },
+          "watch": {
+            "n": 33,
+            "avg": -4.641,
+            "median": -4.666,
+            "win_rate": 0.273
+          },
+          "caution": {
+            "n": 8,
+            "avg": -4.184,
+            "median": 0.078,
+            "win_rate": 0.5
+          }
+        },
+        "recommend_minus_watch_pct": 1.444
+      },
+      "ranking": {
+        "n": 160,
+        "spearman": -0.371,
+        "top_avg_pct": -4.425,
+        "bottom_avg_pct": -1.433,
+        "spread_pct": -2.992
+      },
+      "breakdown": {
+        "by_entry_type": {
+          "押し目待ち": {
+            "n": 2,
+            "avg": -8.334,
+            "median": -8.334,
+            "win_rate": 0.0
+          },
+          "追いかけ": {
+            "n": 2,
+            "avg": -8.104,
+            "median": -8.104,
+            "win_rate": 0.0
+          }
+        },
+        "by_overheat": {
+          "中": {
+            "n": 2,
+            "avg": -8.334,
+            "median": -8.334,
+            "win_rate": 0.0
+          },
+          "低": {
+            "n": 2,
+            "avg": -8.104,
+            "median": -8.104,
+            "win_rate": 0.0
+          }
+        },
+        "by_sector": {
+          "銀行業": {
+            "n": 4,
+            "avg": -8.219,
+            "median": -8.334,
+            "win_rate": 0.0
+          }
+        },
+        "by_verdict": {
+          "推奨": {
+            "n": 4,
+            "avg": -8.219,
+            "median": -8.334,
+            "win_rate": 0.0
+          }
+        }
+      },
+      "plan": {
+        "target_week": "2026-W42",
+        "top_pick_code": "7826",
+        "top_pick_name": "フルヤ金属",
+        "confidence": "中"
+      }
+    },
+    {
+      "week": "2026-W40",
+      "start": "2026-09-28",
+      "end": "2026-10-02",
+      "generated_at": "2026-10-10T03:38:20",
+      "prompt_versions": [
+        "2026-10-01-1"
+      ],
+      "strategy_version": "2026-10-07",
+      "provider": null,
+      "model": null,
+      "summary": {
+        "picks_total": 21,
+        "n_filled": 6,
+        "n_pending": 11,
+        "n_not_filled": 4,
+        "fill_rate": 0.6,
+        "avg_return_pct": 3.48,
+        "median_return_pct": 3.918,
+        "win_rate": 0.5,
+        "avg_excess_pct": 3.566,
+        "avg_benchmark_pct": -0.086,
+        "avg_weekly_return_pct": -0.005,
+        "weekly_win_rate": 0.588
+      },
+      "ai_calibration": {
+        "by_verdict": {
+          "recommend": {
+            "n": 25,
+            "avg": 1.179,
+            "median": 1.071,
+            "win_rate": 0.72
+          },
+          "watch": {
+            "n": 40,
+            "avg": -0.61,
+            "median": 0.326,
+            "win_rate": 0.6
+          },
+          "caution": {
+            "n": 12,
+            "avg": -2.921,
+            "median": -0.551,
+            "win_rate": 0.333
+          }
+        },
+        "recommend_minus_watch_pct": 1.789
+      },
+      "ranking": {
+        "n": 197,
+        "spearman": 0.017,
+        "top_avg_pct": -0.104,
+        "bottom_avg_pct": 1.033,
+        "spread_pct": -1.137
+      },
+      "breakdown": {
+        "by_entry_type": {
+          "追いかけ": {
+            "n": 5,
+            "avg": 1.529,
+            "median": -0.3,
+            "win_rate": 0.4
+          },
+          "押し目待ち": {
+            "n": 1,
+            "avg": 13.231,
+            "median": 13.231,
+            "win_rate": 1.0
+          }
+        },
+        "by_overheat": {
+          "低": {
+            "n": 5,
+            "avg": 1.529,
+            "median": -0.3,
+            "win_rate": 0.4
+          },
+          "中": {
+            "n": 1,
+            "avg": 13.231,
+            "median": 13.231,
+            "win_rate": 1.0
+          }
+        },
+        "by_sector": {
+          "電気機器": {
+            "n": 2,
+            "avg": 8.524,
+            "median": 8.524,
+            "win_rate": 1.0
+          },
+          "銀行業": {
+            "n": 3,
+            "avg": -3.134,
+            "median": -0.3,
+            "win_rate": 0.0
+          },
+          "卸売業": {
+            "n": 1,
+            "avg": 13.231,
+            "median": 13.231,
+            "win_rate": 1.0
+          }
+        },
+        "by_verdict": {
+          "推奨": {
+            "n": 6,
+            "avg": 3.48,
+            "median": 3.918,
+            "win_rate": 0.5
+          }
+        }
+      },
+      "plan": null
+    },
+    {
+      "week": "2026-W39",
+      "start": "2026-09-21",
+      "end": "2026-09-25",
+      "generated_at": "2026-10-10T03:38:19",
+      "prompt_versions": [
+        "2026-10-01-1"
+      ],
+      "strategy_version": "2026-10-07",
+      "provider": null,
+      "model": null,
+      "summary": {
+        "picks_total": 10,
+        "n_filled": 6,
+        "n_pending": 4,
+        "n_not_filled": 0,
+        "fill_rate": 1.0,
+        "avg_return_pct": 6.622,
+        "median_return_pct": 7.613,
+        "win_rate": 0.667,
+        "avg_excess_pct": 6.75,
+        "avg_benchmark_pct": -0.128,
+        "avg_weekly_return_pct": 3.159,
+        "weekly_win_rate": 0.7
+      },
+      "ai_calibration": {
+        "by_verdict": {
+          "recommend": {
+            "n": 10,
+            "avg": 2.033,
+            "median": 2.821,
+            "win_rate": 0.7
+          },
+          "watch": {
+            "n": 38,
+            "avg": 2.611,
+            "median": 2.515,
+            "win_rate": 0.763
+          },
+          "caution": {
+            "n": 6,
+            "avg": 1.673,
+            "median": 1.567,
+            "win_rate": 0.5
+          },
+          "avoid": {
+            "n": 1,
+            "avg": 9.242,
+            "median": 9.242,
+            "win_rate": 1.0
+          }
+        },
+        "recommend_minus_watch_pct": -0.578
+      },
+      "ranking": {
+        "n": 80,
+        "spearman": 0.137,
+        "top_avg_pct": 3.105,
+        "bottom_avg_pct": 1.777,
+        "spread_pct": 1.328
+      },
+      "breakdown": {
+        "by_entry_type": {
+          "追いかけ": {
+            "n": 4,
+            "avg": 8.476,
+            "median": 10.538,
+            "win_rate": 0.75
+          },
+          "押し目待ち": {
+            "n": 2,
+            "avg": 2.913,
+            "median": 2.913,
+            "win_rate": 0.5
+          }
+        },
+        "by_overheat": {
+          "低": {
+            "n": 4,
+            "avg": 8.476,
+            "median": 10.538,
+            "win_rate": 0.75
+          },
+          "中": {
+            "n": 2,
+            "avg": 2.913,
+            "median": 2.913,
+            "win_rate": 0.5
+          }
+        },
+        "by_sector": {
+          "電気機器": {
+            "n": 2,
+            "avg": 10.878,
+            "median": 10.878,
+            "win_rate": 1.0
+          },
+          "その他製品": {
+            "n": 1,
+            "avg": 12.449,
+            "median": 12.449,
+            "win_rate": 1.0
+          },
+          "卸売業": {
+            "n": 1,
+            "avg": 6.598,
+            "median": 6.598,
+            "win_rate": 1.0
+          },
+          "銀行業": {
+            "n": 2,
+            "avg": -0.536,
+            "median": -0.536,
+            "win_rate": 0.0
+          }
+        },
+        "by_verdict": {
+          "推奨": {
+            "n": 6,
+            "avg": 6.622,
+            "median": 7.613,
+            "win_rate": 0.667
+          }
+        }
+      },
+      "plan": null
+    },
+    {
+      "week": "2026-W38",
+      "start": "2026-09-14",
+      "end": "2026-09-18",
+      "generated_at": "2026-10-10T03:38:12",
+      "prompt_versions": [
+        "2026-10-01-1"
+      ],
+      "strategy_version": "2026-10-07",
+      "provider": null,
+      "model": null,
+      "summary": {
+        "picks_total": 22,
+        "n_filled": 15,
+        "n_pending": 7,
+        "n_not_filled": 0,
+        "fill_rate": 1.0,
+        "avg_return_pct": -4.521,
+        "median_return_pct": -4.851,
+        "win_rate": 0.067,
+        "avg_excess_pct": -5.875,
+        "avg_benchmark_pct": 1.353,
+        "avg_weekly_return_pct": 0.217,
+        "weekly_win_rate": 0.545
+      },
+      "ai_calibration": {
+        "by_verdict": {
+          "recommend": {
+            "n": 26,
+            "avg": 1.953,
+            "median": 1.208,
+            "win_rate": 0.692
+          },
+          "neutral": {
+            "n": 55,
+            "avg": 0.581,
+            "median": 1.301,
+            "win_rate": 0.6
+          },
+          "avoid": {
+            "n": 9,
+            "avg": -0.373,
+            "median": -0.528,
+            "win_rate": 0.222
+          },
+          "watch": {
+            "n": 70,
+            "avg": 1.481,
+            "median": 0.954,
+            "win_rate": 0.686
+          }
+        },
+        "recommend_minus_watch_pct": 0.472
+      },
+      "ranking": {
+        "n": 200,
+        "spearman": -0.067,
+        "top_avg_pct": 1.743,
+        "bottom_avg_pct": 1.275,
+        "spread_pct": 0.468
+      },
+      "breakdown": {
+        "by_entry_type": {
+          "追いかけ": {
+            "n": 14,
+            "avg": -4.628,
+            "median": -4.928,
+            "win_rate": 0.071
+          },
+          "打診のみ": {
+            "n": 1,
+            "avg": -3.035,
+            "median": -3.035,
+            "win_rate": 0.0
+          }
+        },
+        "by_overheat": {
+          "低": {
+            "n": 14,
+            "avg": -4.628,
+            "median": -4.928,
+            "win_rate": 0.071
+          },
+          "強": {
+            "n": 1,
+            "avg": -3.035,
+            "median": -3.035,
+            "win_rate": 0.0
+          }
+        },
+        "by_sector": {
+          "建設業": {
+            "n": 7,
+            "avg": -2.787,
+            "median": -2.289,
+            "win_rate": 0.143
+          },
+          "水産・農林業": {
+            "n": 3,
+            "avg": -4.871,
+            "median": -4.851,
+            "win_rate": 0.0
+          },
+          "鉱業": {
+            "n": 3,
+            "avg": -8.383,
+            "median": -7.868,
+            "win_rate": 0.0
+          },
+          "化学": {
+            "n": 1,
+            "avg": -3.035,
+            "median": -3.035,
+            "win_rate": 0.0
+          },
+          "サービス業": {
+            "n": 1,
+            "avg": -5.513,
+            "median": -5.513,
+            "win_rate": 0.0
+          }
+        },
+        "by_verdict": {
+          "スコア順": {
+            "n": 13,
+            "avg": -4.56,
+            "median": -4.851,
+            "win_rate": 0.077
+          },
+          "推奨": {
+            "n": 2,
+            "avg": -4.274,
+            "median": -4.274,
+            "win_rate": 0.0
+          }
+        }
+      },
+      "plan": null
+    },
+    {
+      "week": "2026-W37",
+      "start": "2026-09-07",
+      "end": "2026-09-11",
+      "generated_at": "2026-10-10T03:37:55",
+      "prompt_versions": [
+        "2026-10-01-1"
+      ],
+      "strategy_version": "2026-10-07",
+      "provider": null,
+      "model": null,
+      "summary": {
+        "picks_total": 25,
+        "n_filled": 22,
+        "n_pending": 3,
+        "n_not_filled": 0,
+        "fill_rate": 1.0,
+        "avg_return_pct": -2.214,
+        "median_return_pct": -1.652,
+        "win_rate": 0.273,
+        "avg_excess_pct": -4.894,
+        "avg_benchmark_pct": 2.68,
+        "avg_weekly_return_pct": 0.515,
+        "weekly_win_rate": 0.72
+      },
+      "ai_calibration": {
+        "by_verdict": {},
+        "recommend_minus_watch_pct": null
+      },
+      "ranking": {
+        "n": 200,
+        "spearman": null,
+        "top_avg_pct": -0.261,
+        "bottom_avg_pct": 1.919,
+        "spread_pct": -2.18
+      },
+      "breakdown": {
+        "by_entry_type": {
+          "追いかけ": {
+            "n": 22,
+            "avg": -2.214,
+            "median": -1.652,
+            "win_rate": 0.273
+          }
+        },
+        "by_overheat": {
+          "低": {
+            "n": 22,
+            "avg": -2.214,
+            "median": -1.652,
+            "win_rate": 0.273
+          }
+        },
+        "by_sector": {
+          "建設業": {
+            "n": 10,
+            "avg": 0.326,
+            "median": 0.517,
+            "win_rate": 0.6
+          },
+          "水産・農林業": {
+            "n": 7,
+            "avg": -2.45,
+            "median": -2.684,
+            "win_rate": 0.0
+          },
+          "鉱業": {
+            "n": 5,
+            "avg": -6.965,
+            "median": -7.524,
+            "win_rate": 0.0
+          }
+        },
+        "by_verdict": {
+          "スコア順": {
+            "n": 22,
+            "avg": -2.214,
+            "median": -1.652,
+            "win_rate": 0.273
+          }
+        }
+      },
+      "plan": null
+    },
+    {
+      "week": "2026-W36",
+      "start": "2026-08-31",
+      "end": "2026-09-04",
+      "generated_at": "2026-10-03T03:08:14",
+      "prompt_versions": [
+        "2026-10-01-1"
+      ],
+      "strategy_version": "2026-10-01",
+      "provider": null,
+      "model": null,
+      "summary": {
+        "picks_total": 25,
+        "n_filled": 22,
+        "n_pending": 3,
+        "n_not_filled": 0,
+        "fill_rate": 1.0,
+        "avg_return_pct": -2.492,
+        "median_return_pct": -1.96,
+        "win_rate": 0.136,
+        "avg_excess_pct": -1.399,
+        "avg_benchmark_pct": -1.093,
+        "avg_weekly_return_pct": -1.576,
+        "weekly_win_rate": 0.12
+      },
+      "ai_calibration": {
+        "by_verdict": {},
+        "recommend_minus_watch_pct": null
+      },
+      "ranking": {
+        "n": 200,
+        "spearman": null,
+        "top_avg_pct": -0.744,
+        "bottom_avg_pct": -0.021,
+        "spread_pct": -0.723
+      },
+      "breakdown": {
+        "by_entry_type": {
+          "追いかけ": {
+            "n": 22,
+            "avg": -2.492,
+            "median": -1.96,
+            "win_rate": 0.136
+          }
+        },
+        "by_overheat": {
+          "低": {
+            "n": 22,
+            "avg": -2.492,
+            "median": -1.96,
+            "win_rate": 0.136
+          }
+        },
+        "by_sector": {
+          "水産・農林業": {
+            "n": 7,
+            "avg": -2.322,
+            "median": -1.689,
+            "win_rate": 0.286
+          },
+          "建設業": {
+            "n": 10,
+            "avg": -1.427,
+            "median": -1.417,
+            "win_rate": 0.1
+          },
+          "鉱業": {
+            "n": 5,
+            "avg": -4.86,
+            "median": -3.455,
+            "win_rate": 0.0
+          }
+        },
+        "by_verdict": {
+          "スコア順": {
+            "n": 22,
+            "avg": -2.492,
+            "median": -1.96,
+            "win_rate": 0.136
+          }
+        }
+      },
+      "plan": null
+    },
+    {
+      "week": "2026-W35",
+      "start": "2026-08-24",
+      "end": "2026-08-28",
+      "generated_at": "2026-09-26T08:23:55",
+      "prompt_versions": [
+        "2026-10-01-1"
+      ],
+      "strategy_version": "2026-10-01",
+      "provider": null,
+      "model": null,
+      "summary": {
+        "picks_total": 25,
+        "n_filled": 24,
+        "n_pending": 1,
+        "n_not_filled": 0,
+        "fill_rate": 1.0,
+        "avg_return_pct": -2.783,
+        "median_return_pct": -1.479,
+        "win_rate": 0.125,
+        "avg_excess_pct": -1.985,
+        "avg_benchmark_pct": -0.799,
+        "avg_weekly_return_pct": -1.11,
+        "weekly_win_rate": 0.16
+      },
+      "ai_calibration": {
+        "by_verdict": {},
+        "recommend_minus_watch_pct": null
+      },
+      "ranking": {
+        "n": 200,
+        "spearman": null,
+        "top_avg_pct": 0.196,
+        "bottom_avg_pct": -0.811,
+        "spread_pct": 1.007
+      },
+      "breakdown": {
+        "by_entry_type": {
+          "追いかけ": {
+            "n": 24,
+            "avg": -2.783,
+            "median": -1.479,
+            "win_rate": 0.125
+          }
+        },
+        "by_overheat": {
+          "低": {
+            "n": 24,
+            "avg": -2.783,
+            "median": -1.479,
+            "win_rate": 0.125
+          }
+        },
+        "by_sector": {
+          "水産・農林業": {
+            "n": 10,
+            "avg": -1.888,
+            "median": -1.419,
+            "win_rate": 0.1
+          },
+          "建設業": {
+            "n": 10,
+            "avg": -2.008,
+            "median": -1.566,
+            "win_rate": 0.0
+          },
+          "その他製品": {
+            "n": 2,
+            "avg": 0.291,
+            "median": 0.291,
+            "win_rate": 1.0
+          },
+          "鉱業": {
+            "n": 2,
+            "avg": -14.211,
+            "median": -14.211,
+            "win_rate": 0.0
+          }
+        },
+        "by_verdict": {
+          "スコア順": {
+            "n": 24,
+            "avg": -2.783,
+            "median": -1.479,
+            "win_rate": 0.125
+          }
+        }
+      },
+      "plan": null
+    },
+    {
+      "week": "2026-W34",
+      "start": "2026-08-17",
+      "end": "2026-08-21",
+      "generated_at": "2026-09-26T08:23:54",
+      "prompt_versions": [
+        "2026-10-01-1"
+      ],
+      "strategy_version": "2026-10-01",
+      "provider": null,
+      "model": null,
+      "summary": {
+        "picks_total": 20,
+        "n_filled": 20,
+        "n_pending": 0,
+        "n_not_filled": 0,
+        "fill_rate": 1.0,
+        "avg_return_pct": 0.429,
+        "median_return_pct": 0.487,
+        "win_rate": 0.55,
+        "avg_excess_pct": -0.514,
+        "avg_benchmark_pct": 0.943,
+        "avg_weekly_return_pct": 0.324,
+        "weekly_win_rate": 0.5
+      },
+      "ai_calibration": {
+        "by_verdict": {},
+        "recommend_minus_watch_pct": null
+      },
+      "ranking": {
+        "n": 160,
+        "spearman": null,
+        "top_avg_pct": 0.16,
+        "bottom_avg_pct": 0.491,
+        "spread_pct": -0.331
+      },
+      "breakdown": {
+        "by_entry_type": {
+          "追いかけ": {
+            "n": 20,
+            "avg": 0.429,
+            "median": 0.487,
+            "win_rate": 0.55
+          }
+        },
+        "by_overheat": {
+          "低": {
+            "n": 20,
+            "avg": 0.429,
+            "median": 0.487,
+            "win_rate": 0.55
+          }
+        },
+        "by_sector": {
+          "建設業": {
+            "n": 8,
+            "avg": 1.275,
+            "median": 1.236,
+            "win_rate": 0.875
+          },
+          "水産・農林業": {
+            "n": 8,
+            "avg": -1.02,
+            "median": -1.389,
+            "win_rate": 0.25
+          },
+          "その他製品": {
+            "n": 2,
+            "avg": -0.696,
+            "median": -0.696,
+            "win_rate": 0.5
+          },
+          "鉱業": {
+            "n": 2,
+            "avg": 3.968,
+            "median": 3.968,
+            "win_rate": 0.5
+          }
+        },
+        "by_verdict": {
+          "スコア順": {
+            "n": 20,
+            "avg": 0.429,
+            "median": 0.487,
+            "win_rate": 0.55
+          }
+        }
+      },
+      "plan": null
+    }
+  ]
 }
