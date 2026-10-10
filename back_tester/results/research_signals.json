@@ -1,72 +1,72 @@
 {
-  "generated_at": "2026-10-07T18:50:04",
+  "generated_at": "2026-10-10T17:17:42",
   "walk_end": "2026-09-30",
   "n_quantiles": 10,
   "hold_days": 5,
   "candidates": [
     {
       "signal": "sma200_slope(200日線傾き)",
-      "top_bottom_spread_pct": 0.304,
+      "top_bottom_spread_pct": 0.305,
       "spearman": 0.903,
       "positive_fold_ratio": 0.467,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123646,
-          "mean_pct": -0.171,
+          "count": 123639,
+          "mean_pct": -0.172,
           "hit_rate": 45.9
         },
         {
           "quantile": 1,
-          "count": 123186,
+          "count": 123176,
           "mean_pct": -0.069,
           "hit_rate": 47.48
         },
         {
           "quantile": 2,
-          "count": 123292,
+          "count": 123280,
           "mean_pct": 0.078,
           "hit_rate": 48.34
         },
         {
           "quantile": 3,
-          "count": 123195,
-          "mean_pct": 0.054,
-          "hit_rate": 48.6
+          "count": 123173,
+          "mean_pct": 0.055,
+          "hit_rate": 48.61
         },
         {
           "quantile": 4,
-          "count": 123108,
-          "mean_pct": 0.045,
-          "hit_rate": 48.84
+          "count": 123092,
+          "mean_pct": 0.044,
+          "hit_rate": 48.85
         },
         {
           "quantile": 5,
-          "count": 123376,
+          "count": 123371,
           "mean_pct": 0.057,
-          "hit_rate": 49.11
+          "hit_rate": 49.1
         },
         {
           "quantile": 6,
-          "count": 123295,
+          "count": 123273,
           "mean_pct": 0.115,
-          "hit_rate": 49.4
+          "hit_rate": 49.41
         },
         {
           "quantile": 7,
-          "count": 123192,
+          "count": 123180,
           "mean_pct": 0.129,
-          "hit_rate": 49.44
+          "hit_rate": 49.43
         },
         {
           "quantile": 8,
-          "count": 123286,
+          "count": 123276,
           "mean_pct": 0.187,
           "hit_rate": 49.41
         },
         {
           "quantile": 9,
-          "count": 122827,
+          "count": 122816,
           "mean_pct": 0.133,
           "hit_rate": 47.93
         }
@@ -75,66 +75,66 @@
     {
       "signal": "現行スコア(score)",
       "top_bottom_spread_pct": 0.209,
-      "spearman": 0.552,
+      "spearman": 0.612,
       "positive_fold_ratio": 0.6,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
+          "count": 123729,
           "mean_pct": -0.134,
           "hit_rate": 46.01
         },
         {
           "quantile": 1,
-          "count": 123289,
-          "mean_pct": -0.021,
+          "count": 123281,
+          "mean_pct": -0.02,
           "hit_rate": 47.99
         },
         {
           "quantile": 2,
-          "count": 123380,
-          "mean_pct": 0.018,
+          "count": 123359,
+          "mean_pct": 0.017,
           "hit_rate": 48.47
         },
         {
           "quantile": 3,
-          "count": 123294,
-          "mean_pct": 0.086,
-          "hit_rate": 48.71
+          "count": 123285,
+          "mean_pct": 0.084,
+          "hit_rate": 48.7
         },
         {
           "quantile": 4,
-          "count": 123214,
-          "mean_pct": 0.111,
-          "hit_rate": 49.02
+          "count": 123188,
+          "mean_pct": 0.113,
+          "hit_rate": 49.04
         },
         {
           "quantile": 5,
-          "count": 123457,
+          "count": 123461,
           "mean_pct": 0.08,
           "hit_rate": 49.21
         },
         {
           "quantile": 6,
-          "count": 123397,
+          "count": 123383,
           "mean_pct": 0.149,
-          "hit_rate": 49.75
+          "hit_rate": 49.74
         },
         {
           "quantile": 7,
-          "count": 123277,
+          "count": 123261,
           "mean_pct": 0.114,
-          "hit_rate": 49.12
+          "hit_rate": 49.13
         },
         {
           "quantile": 8,
-          "count": 123392,
+          "count": 123379,
           "mean_pct": 0.084,
-          "hit_rate": 48.4
+          "hit_rate": 48.41
         },
         {
           "quantile": 9,
-          "count": 122918,
+          "count": 122904,
           "mean_pct": 0.075,
           "hit_rate": 47.76
         }
@@ -142,203 +142,203 @@
     },
     {
       "signal": "pos_52w(52週高値位置)",
-      "top_bottom_spread_pct": 0.163,
+      "top_bottom_spread_pct": 0.164,
       "spearman": 0.479,
       "positive_fold_ratio": 0.733,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
+          "count": 123729,
           "mean_pct": -0.178,
           "hit_rate": 44.65
         },
         {
           "quantile": 1,
-          "count": 123289,
+          "count": 123281,
           "mean_pct": -0.05,
-          "hit_rate": 47.12
+          "hit_rate": 47.11
         },
         {
           "quantile": 2,
-          "count": 123380,
+          "count": 123359,
           "mean_pct": 0.065,
           "hit_rate": 48.24
         },
         {
           "quantile": 3,
-          "count": 123294,
-          "mean_pct": 0.098,
+          "count": 123285,
+          "mean_pct": 0.097,
           "hit_rate": 48.88
         },
         {
           "quantile": 4,
-          "count": 123214,
-          "mean_pct": 0.125,
-          "hit_rate": 49.55
+          "count": 123188,
+          "mean_pct": 0.127,
+          "hit_rate": 49.56
         },
         {
           "quantile": 5,
-          "count": 123457,
-          "mean_pct": 0.136,
-          "hit_rate": 49.59
+          "count": 123461,
+          "mean_pct": 0.134,
+          "hit_rate": 49.58
         },
         {
           "quantile": 6,
-          "count": 123397,
-          "mean_pct": 0.151,
-          "hit_rate": 49.97
+          "count": 123383,
+          "mean_pct": 0.15,
+          "hit_rate": 49.96
         },
         {
           "quantile": 7,
-          "count": 123277,
-          "mean_pct": 0.159,
-          "hit_rate": 49.6
+          "count": 123261,
+          "mean_pct": 0.16,
+          "hit_rate": 49.61
         },
         {
           "quantile": 8,
-          "count": 123392,
+          "count": 123379,
           "mean_pct": 0.07,
           "hit_rate": 48.96
         },
         {
           "quantile": 9,
-          "count": 122918,
-          "mean_pct": -0.015,
-          "hit_rate": 47.89
+          "count": 122904,
+          "mean_pct": -0.014,
+          "hit_rate": 47.91
         }
       ]
     },
     {
       "signal": "dist_sma200(200日線乖離)",
       "top_bottom_spread_pct": 0.12,
-      "spearman": 0.43,
+      "spearman": 0.467,
       "positive_fold_ratio": 0.533,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123735,
+          "count": 123725,
           "mean_pct": -0.127,
           "hit_rate": 46.42
         },
         {
           "quantile": 1,
-          "count": 123276,
-          "mean_pct": -0.001,
+          "count": 123269,
+          "mean_pct": -0.0,
           "hit_rate": 48.11
         },
         {
           "quantile": 2,
-          "count": 123374,
+          "count": 123355,
           "mean_pct": 0.036,
           "hit_rate": 48.59
         },
         {
           "quantile": 3,
-          "count": 123276,
+          "count": 123265,
           "mean_pct": 0.074,
-          "hit_rate": 48.7
+          "hit_rate": 48.69
         },
         {
           "quantile": 4,
-          "count": 123210,
+          "count": 123180,
           "mean_pct": 0.11,
           "hit_rate": 49.18
         },
         {
           "quantile": 5,
-          "count": 123438,
-          "mean_pct": 0.106,
-          "hit_rate": 49.35
+          "count": 123446,
+          "mean_pct": 0.105,
+          "hit_rate": 49.34
         },
         {
           "quantile": 6,
-          "count": 123384,
-          "mean_pct": 0.122,
-          "hit_rate": 49.59
+          "count": 123364,
+          "mean_pct": 0.123,
+          "hit_rate": 49.6
         },
         {
           "quantile": 7,
-          "count": 123266,
-          "mean_pct": 0.143,
+          "count": 123256,
+          "mean_pct": 0.142,
           "hit_rate": 49.16
         },
         {
           "quantile": 8,
-          "count": 123384,
+          "count": 123368,
           "mean_pct": 0.105,
-          "hit_rate": 48.59
+          "hit_rate": 48.6
         },
         {
           "quantile": 9,
-          "count": 122908,
+          "count": 122896,
           "mean_pct": -0.007,
-          "hit_rate": 46.77
+          "hit_rate": 46.78
         }
       ]
     },
     {
       "signal": "log_avg_val(流動性)",
-      "top_bottom_spread_pct": 0.104,
-      "spearman": 0.418,
+      "top_bottom_spread_pct": 0.103,
+      "spearman": 0.297,
       "positive_fold_ratio": 0.467,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
-          "mean_pct": 0.038,
+          "count": 123729,
+          "mean_pct": 0.039,
           "hit_rate": 46.29
         },
         {
           "quantile": 1,
-          "count": 123289,
+          "count": 123281,
           "mean_pct": 0.049,
-          "hit_rate": 47.16
+          "hit_rate": 47.17
         },
         {
           "quantile": 2,
-          "count": 123380,
+          "count": 123359,
           "mean_pct": 0.042,
-          "hit_rate": 47.56
+          "hit_rate": 47.55
         },
         {
           "quantile": 3,
-          "count": 123294,
-          "mean_pct": 0.072,
-          "hit_rate": 48.48
+          "count": 123285,
+          "mean_pct": 0.07,
+          "hit_rate": 48.47
         },
         {
           "quantile": 4,
-          "count": 123214,
-          "mean_pct": 0.022,
-          "hit_rate": 48.75
+          "count": 123188,
+          "mean_pct": 0.023,
+          "hit_rate": 48.76
         },
         {
           "quantile": 5,
-          "count": 123457,
-          "mean_pct": 0.049,
+          "count": 123461,
+          "mean_pct": 0.048,
           "hit_rate": 49.26
         },
         {
           "quantile": 6,
-          "count": 123397,
-          "mean_pct": 0.034,
-          "hit_rate": 48.95
+          "count": 123383,
+          "mean_pct": 0.033,
+          "hit_rate": 48.96
         },
         {
           "quantile": 7,
-          "count": 123277,
-          "mean_pct": 0.072,
+          "count": 123261,
+          "mean_pct": 0.073,
           "hit_rate": 49.45
         },
         {
           "quantile": 8,
-          "count": 123392,
-          "mean_pct": 0.042,
-          "hit_rate": 48.71
+          "count": 123379,
+          "mean_pct": 0.041,
+          "hit_rate": 48.7
         },
         {
           "quantile": 9,
-          "count": 122918,
+          "count": 122904,
           "mean_pct": 0.142,
           "hit_rate": 49.85
         }
@@ -352,61 +352,61 @@
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123735,
+          "count": 123725,
           "mean_pct": -0.114,
           "hit_rate": 46.59
         },
         {
           "quantile": 1,
-          "count": 123276,
+          "count": 123269,
           "mean_pct": -0.003,
-          "hit_rate": 47.71
+          "hit_rate": 47.7
         },
         {
           "quantile": 2,
-          "count": 123374,
-          "mean_pct": 0.065,
+          "count": 123355,
+          "mean_pct": 0.064,
           "hit_rate": 48.63
         },
         {
           "quantile": 3,
-          "count": 123276,
+          "count": 123265,
           "mean_pct": 0.087,
-          "hit_rate": 49.18
+          "hit_rate": 49.19
         },
         {
           "quantile": 4,
-          "count": 123210,
-          "mean_pct": 0.071,
+          "count": 123180,
+          "mean_pct": 0.072,
           "hit_rate": 48.86
         },
         {
           "quantile": 5,
-          "count": 123438,
-          "mean_pct": 0.123,
+          "count": 123446,
+          "mean_pct": 0.124,
           "hit_rate": 49.38
         },
         {
           "quantile": 6,
-          "count": 123384,
+          "count": 123364,
           "mean_pct": 0.129,
           "hit_rate": 49.62
         },
         {
           "quantile": 7,
-          "count": 123266,
-          "mean_pct": 0.137,
-          "hit_rate": 49.15
+          "count": 123256,
+          "mean_pct": 0.139,
+          "hit_rate": 49.16
         },
         {
           "quantile": 8,
-          "count": 123384,
-          "mean_pct": 0.079,
+          "count": 123368,
+          "mean_pct": 0.078,
           "hit_rate": 48.67
         },
         {
           "quantile": 9,
-          "count": 122908,
+          "count": 122896,
           "mean_pct": -0.014,
           "hit_rate": 46.67
         }
@@ -414,69 +414,69 @@
     },
     {
       "signal": "atr_pct(ボラティリティ)",
-      "top_bottom_spread_pct": -0.015,
+      "top_bottom_spread_pct": -0.013,
       "spearman": -0.224,
       "positive_fold_ratio": 0.533,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
-          "mean_pct": -0.059,
-          "hit_rate": 47.25
+          "count": 123729,
+          "mean_pct": -0.06,
+          "hit_rate": 47.26
         },
         {
           "quantile": 1,
-          "count": 123289,
-          "mean_pct": 0.048,
-          "hit_rate": 49.62
+          "count": 123281,
+          "mean_pct": 0.047,
+          "hit_rate": 49.61
         },
         {
           "quantile": 2,
-          "count": 123380,
+          "count": 123359,
           "mean_pct": 0.119,
-          "hit_rate": 50.41
+          "hit_rate": 50.42
         },
         {
           "quantile": 3,
-          "count": 123294,
-          "mean_pct": 0.109,
+          "count": 123285,
+          "mean_pct": 0.11,
           "hit_rate": 49.98
         },
         {
           "quantile": 4,
-          "count": 123214,
+          "count": 123188,
           "mean_pct": 0.122,
           "hit_rate": 49.95
         },
         {
           "quantile": 5,
-          "count": 123457,
-          "mean_pct": 0.118,
-          "hit_rate": 49.46
+          "count": 123461,
+          "mean_pct": 0.116,
+          "hit_rate": 49.45
         },
         {
           "quantile": 6,
-          "count": 123397,
+          "count": 123383,
           "mean_pct": 0.094,
-          "hit_rate": 49.14
+          "hit_rate": 49.15
         },
         {
           "quantile": 7,
-          "count": 123277,
+          "count": 123261,
           "mean_pct": 0.032,
-          "hit_rate": 47.74
+          "hit_rate": 47.73
         },
         {
           "quantile": 8,
-          "count": 123392,
+          "count": 123379,
           "mean_pct": 0.052,
           "hit_rate": 47.31
         },
         {
           "quantile": 9,
-          "count": 122918,
-          "mean_pct": -0.074,
-          "hit_rate": 43.58
+          "count": 122904,
+          "mean_pct": -0.073,
+          "hit_rate": 43.59
         }
       ]
     },
@@ -488,199 +488,131 @@
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123737,
+          "count": 123727,
           "mean_pct": -0.02,
           "hit_rate": 47.23
         },
         {
           "quantile": 1,
-          "count": 123281,
-          "mean_pct": 0.041,
-          "hit_rate": 48.36
+          "count": 123273,
+          "mean_pct": 0.04,
+          "hit_rate": 48.35
         },
         {
           "quantile": 2,
-          "count": 123376,
-          "mean_pct": 0.031,
+          "count": 123358,
+          "mean_pct": 0.032,
           "hit_rate": 48.6
         },
         {
           "quantile": 3,
-          "count": 123291,
+          "count": 123278,
           "mean_pct": 0.067,
           "hit_rate": 48.77
         },
         {
           "quantile": 4,
-          "count": 123208,
+          "count": 123180,
           "mean_pct": 0.063,
-          "hit_rate": 49.03
+          "hit_rate": 49.04
         },
         {
           "quantile": 5,
-          "count": 123443,
-          "mean_pct": 0.091,
-          "hit_rate": 49.23
+          "count": 123451,
+          "mean_pct": 0.092,
+          "hit_rate": 49.24
         },
         {
           "quantile": 6,
-          "count": 123398,
+          "count": 123378,
           "mean_pct": 0.119,
           "hit_rate": 49.35
         },
         {
           "quantile": 7,
-          "count": 123269,
+          "count": 123258,
           "mean_pct": 0.104,
           "hit_rate": 49.01
         },
         {
           "quantile": 8,
-          "count": 123388,
+          "count": 123373,
           "mean_pct": 0.131,
-          "hit_rate": 48.59
+          "hit_rate": 48.6
         },
         {
           "quantile": 9,
-          "count": 122911,
+          "count": 122899,
           "mean_pct": -0.069,
-          "hit_rate": 46.25
+          "hit_rate": 46.26
         }
       ]
     },
     {
       "signal": "rsi14(RSI14)",
-      "top_bottom_spread_pct": -0.098,
+      "top_bottom_spread_pct": -0.097,
       "spearman": -0.636,
       "positive_fold_ratio": 0.533,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
+          "count": 123729,
           "mean_pct": 0.064,
           "hit_rate": 48.26
         },
         {
           "quantile": 1,
-          "count": 123289,
+          "count": 123281,
           "mean_pct": 0.093,
           "hit_rate": 48.86
         },
         {
           "quantile": 2,
-          "count": 123380,
+          "count": 123359,
           "mean_pct": 0.069,
           "hit_rate": 48.65
         },
         {
           "quantile": 3,
-          "count": 123294,
-          "mean_pct": 0.076,
+          "count": 123285,
+          "mean_pct": 0.077,
           "hit_rate": 48.79
         },
         {
           "quantile": 4,
-          "count": 123214,
+          "count": 123188,
           "mean_pct": 0.075,
           "hit_rate": 48.96
         },
         {
           "quantile": 5,
-          "count": 123457,
-          "mean_pct": 0.081,
-          "hit_rate": 48.8
+          "count": 123461,
+          "mean_pct": 0.082,
+          "hit_rate": 48.81
         },
         {
           "quantile": 6,
-          "count": 123397,
-          "mean_pct": 0.066,
-          "hit_rate": 48.63
+          "count": 123383,
+          "mean_pct": 0.065,
+          "hit_rate": 48.62
         },
         {
           "quantile": 7,
-          "count": 123277,
+          "count": 123261,
           "mean_pct": 0.042,
-          "hit_rate": 48.4
+          "hit_rate": 48.41
         },
         {
           "quantile": 8,
-          "count": 123392,
+          "count": 123379,
           "mean_pct": 0.028,
           "hit_rate": 47.96
         },
         {
           "quantile": 9,
-          "count": 122918,
-          "mean_pct": -0.034,
-          "hit_rate": 47.12
-        }
-      ]
-    },
-    {
-      "signal": "run_up_days(連騰日数)",
-      "top_bottom_spread_pct": -0.141,
-      "spearman": -0.697,
-      "positive_fold_ratio": 0.267,
-      "per_quantile": [
-        {
-          "quantile": 0,
-          "count": 123739,
-          "mean_pct": 0.07,
-          "hit_rate": 48.37
-        },
-        {
-          "quantile": 1,
-          "count": 123289,
-          "mean_pct": 0.048,
-          "hit_rate": 47.97
-        },
-        {
-          "quantile": 2,
-          "count": 123380,
-          "mean_pct": 0.154,
-          "hit_rate": 48.97
-        },
-        {
-          "quantile": 3,
-          "count": 123294,
-          "mean_pct": 0.143,
-          "hit_rate": 49.17
-        },
-        {
-          "quantile": 4,
-          "count": 123214,
-          "mean_pct": 0.123,
-          "hit_rate": 48.7
-        },
-        {
-          "quantile": 5,
-          "count": 123457,
-          "mean_pct": 0.085,
-          "hit_rate": 48.91
-        },
-        {
-          "quantile": 6,
-          "count": 123397,
-          "mean_pct": 0.027,
-          "hit_rate": 48.5
-        },
-        {
-          "quantile": 7,
-          "count": 123277,
-          "mean_pct": -0.011,
-          "hit_rate": 48.38
-        },
-        {
-          "quantile": 8,
-          "count": 123392,
-          "mean_pct": -0.008,
-          "hit_rate": 48.01
-        },
-        {
-          "quantile": 9,
-          "count": 122918,
-          "mean_pct": -0.071,
-          "hit_rate": 47.45
+          "count": 122904,
+          "mean_pct": -0.033,
+          "hit_rate": 47.13
         }
       ]
     },
@@ -692,63 +624,199 @@
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
+          "count": 123729,
           "mean_pct": 0.014,
           "hit_rate": 46.67
         },
         {
           "quantile": 1,
-          "count": 123289,
+          "count": 123281,
           "mean_pct": 0.085,
           "hit_rate": 48.66
         },
         {
           "quantile": 2,
-          "count": 123380,
-          "mean_pct": 0.059,
-          "hit_rate": 48.91
+          "count": 123359,
+          "mean_pct": 0.06,
+          "hit_rate": 48.92
         },
         {
           "quantile": 3,
-          "count": 123294,
+          "count": 123285,
           "mean_pct": 0.09,
           "hit_rate": 49.14
         },
         {
           "quantile": 4,
-          "count": 123214,
-          "mean_pct": 0.086,
+          "count": 123188,
+          "mean_pct": 0.087,
           "hit_rate": 49.47
         },
         {
           "quantile": 5,
-          "count": 123457,
+          "count": 123461,
           "mean_pct": 0.111,
-          "hit_rate": 49.28
+          "hit_rate": 49.27
         },
         {
           "quantile": 6,
-          "count": 123397,
+          "count": 123383,
           "mean_pct": 0.076,
           "hit_rate": 49.11
         },
         {
           "quantile": 7,
-          "count": 123277,
+          "count": 123261,
           "mean_pct": 0.099,
           "hit_rate": 48.94
         },
         {
           "quantile": 8,
-          "count": 123392,
+          "count": 123379,
           "mean_pct": 0.066,
-          "hit_rate": 48.62
+          "hit_rate": 48.61
         },
         {
           "quantile": 9,
-          "count": 122918,
+          "count": 122904,
           "mean_pct": -0.127,
-          "hit_rate": 45.63
+          "hit_rate": 45.64
+        }
+      ]
+    },
+    {
+      "signal": "run_up_days(連騰日数)",
+      "top_bottom_spread_pct": -0.142,
+      "spearman": -0.697,
+      "positive_fold_ratio": 0.267,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 123729,
+          "mean_pct": 0.07,
+          "hit_rate": 48.37
+        },
+        {
+          "quantile": 1,
+          "count": 123281,
+          "mean_pct": 0.048,
+          "hit_rate": 47.97
+        },
+        {
+          "quantile": 2,
+          "count": 123359,
+          "mean_pct": 0.154,
+          "hit_rate": 48.97
+        },
+        {
+          "quantile": 3,
+          "count": 123285,
+          "mean_pct": 0.143,
+          "hit_rate": 49.19
+        },
+        {
+          "quantile": 4,
+          "count": 123188,
+          "mean_pct": 0.123,
+          "hit_rate": 48.7
+        },
+        {
+          "quantile": 5,
+          "count": 123461,
+          "mean_pct": 0.086,
+          "hit_rate": 48.91
+        },
+        {
+          "quantile": 6,
+          "count": 123383,
+          "mean_pct": 0.028,
+          "hit_rate": 48.52
+        },
+        {
+          "quantile": 7,
+          "count": 123261,
+          "mean_pct": -0.012,
+          "hit_rate": 48.37
+        },
+        {
+          "quantile": 8,
+          "count": 123379,
+          "mean_pct": -0.006,
+          "hit_rate": 48.01
+        },
+        {
+          "quantile": 9,
+          "count": 122904,
+          "mean_pct": -0.072,
+          "hit_rate": 47.45
+        }
+      ]
+    },
+    {
+      "signal": "gap_pct(寄付ギャップ)",
+      "top_bottom_spread_pct": -0.153,
+      "spearman": -0.733,
+      "positive_fold_ratio": 0.333,
+      "per_quantile": [
+        {
+          "quantile": 0,
+          "count": 123729,
+          "mean_pct": 0.06,
+          "hit_rate": 47.55
+        },
+        {
+          "quantile": 1,
+          "count": 123281,
+          "mean_pct": 0.106,
+          "hit_rate": 49.02
+        },
+        {
+          "quantile": 2,
+          "count": 123359,
+          "mean_pct": 0.082,
+          "hit_rate": 48.81
+        },
+        {
+          "quantile": 3,
+          "count": 123285,
+          "mean_pct": 0.113,
+          "hit_rate": 49.18
+        },
+        {
+          "quantile": 4,
+          "count": 123188,
+          "mean_pct": 0.071,
+          "hit_rate": 48.89
+        },
+        {
+          "quantile": 5,
+          "count": 123461,
+          "mean_pct": 0.057,
+          "hit_rate": 48.9
+        },
+        {
+          "quantile": 6,
+          "count": 123383,
+          "mean_pct": 0.06,
+          "hit_rate": 48.84
+        },
+        {
+          "quantile": 7,
+          "count": 123261,
+          "mean_pct": 0.058,
+          "hit_rate": 48.75
+        },
+        {
+          "quantile": 8,
+          "count": 123379,
+          "mean_pct": 0.047,
+          "hit_rate": 48.37
+        },
+        {
+          "quantile": 9,
+          "count": 122904,
+          "mean_pct": -0.093,
+          "hit_rate": 46.15
         }
       ]
     },
@@ -760,131 +828,63 @@
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
+          "count": 123729,
           "mean_pct": 0.112,
-          "hit_rate": 49.04
+          "hit_rate": 49.03
         },
         {
           "quantile": 1,
-          "count": 123289,
+          "count": 123281,
           "mean_pct": -0.057,
-          "hit_rate": 47.1
+          "hit_rate": 47.11
         },
         {
           "quantile": 2,
-          "count": 123380,
-          "mean_pct": -0.081,
+          "count": 123359,
+          "mean_pct": -0.08,
           "hit_rate": 46.95
         },
         {
           "quantile": 3,
-          "count": 123294,
-          "mean_pct": 0.07,
+          "count": 123285,
+          "mean_pct": 0.069,
           "hit_rate": 48.19
         },
         {
           "quantile": 4,
-          "count": 123214,
+          "count": 123188,
           "mean_pct": 0.164,
-          "hit_rate": 49.03
+          "hit_rate": 49.02
         },
         {
           "quantile": 5,
-          "count": 123457,
-          "mean_pct": 0.127,
-          "hit_rate": 48.83
+          "count": 123461,
+          "mean_pct": 0.13,
+          "hit_rate": 48.85
         },
         {
           "quantile": 6,
-          "count": 123397,
-          "mean_pct": 0.099,
-          "hit_rate": 49.06
+          "count": 123383,
+          "mean_pct": 0.097,
+          "hit_rate": 49.05
         },
         {
           "quantile": 7,
-          "count": 123277,
-          "mean_pct": 0.116,
-          "hit_rate": 50.1
+          "count": 123261,
+          "mean_pct": 0.117,
+          "hit_rate": 50.11
         },
         {
           "quantile": 8,
-          "count": 123392,
+          "count": 123379,
           "mean_pct": 0.05,
-          "hit_rate": 48.73
-        },
-        {
-          "quantile": 9,
-          "count": 122918,
-          "mean_pct": -0.041,
-          "hit_rate": 47.41
-        }
-      ]
-    },
-    {
-      "signal": "gap_pct(寄付ギャップ)",
-      "top_bottom_spread_pct": -0.155,
-      "spearman": -0.709,
-      "positive_fold_ratio": 0.267,
-      "per_quantile": [
-        {
-          "quantile": 0,
-          "count": 123739,
-          "mean_pct": 0.06,
-          "hit_rate": 47.56
-        },
-        {
-          "quantile": 1,
-          "count": 123289,
-          "mean_pct": 0.105,
-          "hit_rate": 48.98
-        },
-        {
-          "quantile": 2,
-          "count": 123380,
-          "mean_pct": 0.083,
-          "hit_rate": 48.83
-        },
-        {
-          "quantile": 3,
-          "count": 123294,
-          "mean_pct": 0.109,
-          "hit_rate": 49.14
-        },
-        {
-          "quantile": 4,
-          "count": 123214,
-          "mean_pct": 0.068,
-          "hit_rate": 48.84
-        },
-        {
-          "quantile": 5,
-          "count": 123457,
-          "mean_pct": 0.062,
-          "hit_rate": 48.9
-        },
-        {
-          "quantile": 6,
-          "count": 123397,
-          "mean_pct": 0.061,
-          "hit_rate": 48.9
-        },
-        {
-          "quantile": 7,
-          "count": 123277,
-          "mean_pct": 0.057,
           "hit_rate": 48.74
         },
         {
-          "quantile": 8,
-          "count": 123392,
-          "mean_pct": 0.049,
-          "hit_rate": 48.39
-        },
-        {
           "quantile": 9,
-          "count": 122918,
-          "mean_pct": -0.095,
-          "hit_rate": 46.14
+          "count": 122904,
+          "mean_pct": -0.041,
+          "hit_rate": 47.4
         }
       ]
     },
@@ -896,61 +896,61 @@
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
+          "count": 123729,
           "mean_pct": 0.122,
           "hit_rate": 49.24
         },
         {
           "quantile": 1,
-          "count": 123289,
+          "count": 123281,
           "mean_pct": -0.068,
-          "hit_rate": 46.95
+          "hit_rate": 46.96
         },
         {
           "quantile": 2,
-          "count": 123380,
+          "count": 123359,
           "mean_pct": -0.084,
           "hit_rate": 46.9
         },
         {
           "quantile": 3,
-          "count": 123294,
+          "count": 123285,
           "mean_pct": -0.054,
-          "hit_rate": 47.19
+          "hit_rate": 47.18
         },
         {
           "quantile": 4,
-          "count": 123214,
+          "count": 123188,
           "mean_pct": 0.189,
           "hit_rate": 49.18
         },
         {
           "quantile": 5,
-          "count": 123457,
-          "mean_pct": 0.136,
+          "count": 123461,
+          "mean_pct": 0.135,
           "hit_rate": 48.79
         },
         {
           "quantile": 6,
-          "count": 123397,
-          "mean_pct": 0.142,
-          "hit_rate": 49.13
+          "count": 123383,
+          "mean_pct": 0.144,
+          "hit_rate": 49.15
         },
         {
           "quantile": 7,
-          "count": 123277,
+          "count": 123261,
           "mean_pct": 0.058,
-          "hit_rate": 48.42
+          "hit_rate": 48.43
         },
         {
           "quantile": 8,
-          "count": 123392,
+          "count": 123379,
           "mean_pct": 0.161,
           "hit_rate": 50.83
         },
         {
           "quantile": 9,
-          "count": 122918,
+          "count": 122904,
           "mean_pct": -0.042,
           "hit_rate": 47.79
         }
@@ -958,69 +958,69 @@
     },
     {
       "signal": "ret_20d(20日リターン)",
-      "top_bottom_spread_pct": -0.183,
+      "top_bottom_spread_pct": -0.182,
       "spearman": -0.321,
       "positive_fold_ratio": 0.133,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
-          "mean_pct": 0.041,
-          "hit_rate": 47.49
+          "count": 123729,
+          "mean_pct": 0.04,
+          "hit_rate": 47.48
         },
         {
           "quantile": 1,
-          "count": 123287,
-          "mean_pct": 0.082,
-          "hit_rate": 48.9
+          "count": 123276,
+          "mean_pct": 0.083,
+          "hit_rate": 48.91
         },
         {
           "quantile": 2,
-          "count": 123378,
-          "mean_pct": 0.095,
+          "count": 123362,
+          "mean_pct": 0.094,
           "hit_rate": 49.06
         },
         {
           "quantile": 3,
-          "count": 123295,
+          "count": 123280,
           "mean_pct": 0.096,
-          "hit_rate": 49.31
+          "hit_rate": 49.3
         },
         {
           "quantile": 4,
-          "count": 123208,
+          "count": 123190,
           "mean_pct": 0.072,
-          "hit_rate": 49.3
+          "hit_rate": 49.31
         },
         {
           "quantile": 5,
           "count": 123455,
-          "mean_pct": 0.112,
+          "mean_pct": 0.113,
           "hit_rate": 49.43
         },
         {
           "quantile": 6,
-          "count": 123397,
-          "mean_pct": 0.064,
-          "hit_rate": 48.96
+          "count": 123382,
+          "mean_pct": 0.063,
+          "hit_rate": 48.95
         },
         {
           "quantile": 7,
-          "count": 123276,
+          "count": 123260,
           "mean_pct": 0.075,
           "hit_rate": 48.74
         },
         {
           "quantile": 8,
-          "count": 123389,
-          "mean_pct": 0.065,
-          "hit_rate": 47.94
+          "count": 123378,
+          "mean_pct": 0.066,
+          "hit_rate": 47.95
         },
         {
           "quantile": 9,
-          "count": 122918,
+          "count": 122903,
           "mean_pct": -0.142,
-          "hit_rate": 45.31
+          "hit_rate": 45.32
         }
       ]
     },
@@ -1032,61 +1032,61 @@
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
+          "count": 123729,
           "mean_pct": 0.06,
-          "hit_rate": 47.63
+          "hit_rate": 47.62
         },
         {
           "quantile": 1,
-          "count": 123287,
+          "count": 123276,
           "mean_pct": 0.087,
-          "hit_rate": 48.62
+          "hit_rate": 48.63
         },
         {
           "quantile": 2,
-          "count": 123378,
-          "mean_pct": 0.097,
+          "count": 123362,
+          "mean_pct": 0.098,
           "hit_rate": 49.03
         },
         {
           "quantile": 3,
-          "count": 123295,
+          "count": 123280,
           "mean_pct": 0.076,
           "hit_rate": 48.92
         },
         {
           "quantile": 4,
-          "count": 123208,
+          "count": 123190,
           "mean_pct": 0.083,
-          "hit_rate": 49.32
+          "hit_rate": 49.31
         },
         {
           "quantile": 5,
           "count": 123455,
-          "mean_pct": 0.055,
-          "hit_rate": 49.22
+          "mean_pct": 0.056,
+          "hit_rate": 49.23
         },
         {
           "quantile": 6,
-          "count": 123397,
+          "count": 123382,
           "mean_pct": 0.104,
-          "hit_rate": 49.28
+          "hit_rate": 49.26
         },
         {
           "quantile": 7,
-          "count": 123276,
-          "mean_pct": 0.093,
-          "hit_rate": 48.99
+          "count": 123260,
+          "mean_pct": 0.092,
+          "hit_rate": 49.0
         },
         {
           "quantile": 8,
-          "count": 123389,
+          "count": 123378,
           "mean_pct": 0.067,
-          "hit_rate": 48.16
+          "hit_rate": 48.17
         },
         {
           "quantile": 9,
-          "count": 122918,
+          "count": 122903,
           "mean_pct": -0.162,
           "hit_rate": 45.28
         }
@@ -1094,106 +1094,106 @@
     },
     {
       "signal": "ret_5d(5日リターン)",
-      "top_bottom_spread_pct": -0.225,
-      "spearman": -0.952,
+      "top_bottom_spread_pct": -0.223,
+      "spearman": -0.939,
       "positive_fold_ratio": 0.2,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
-          "mean_pct": 0.103,
+          "count": 123729,
+          "mean_pct": 0.102,
           "hit_rate": 47.95
         },
         {
           "quantile": 1,
-          "count": 123289,
+          "count": 123281,
           "mean_pct": 0.111,
           "hit_rate": 49.2
         },
         {
           "quantile": 2,
-          "count": 123380,
+          "count": 123359,
           "mean_pct": 0.111,
           "hit_rate": 49.29
         },
         {
           "quantile": 3,
-          "count": 123294,
+          "count": 123285,
           "mean_pct": 0.091,
-          "hit_rate": 49.31
+          "hit_rate": 49.32
         },
         {
           "quantile": 4,
-          "count": 123214,
-          "mean_pct": 0.08,
+          "count": 123188,
+          "mean_pct": 0.081,
           "hit_rate": 49.0
         },
         {
           "quantile": 5,
-          "count": 123457,
+          "count": 123461,
           "mean_pct": 0.063,
           "hit_rate": 48.99
         },
         {
           "quantile": 6,
-          "count": 123397,
+          "count": 123383,
           "mean_pct": 0.055,
           "hit_rate": 48.92
         },
         {
           "quantile": 7,
-          "count": 123277,
-          "mean_pct": 0.054,
-          "hit_rate": 48.54
+          "count": 123261,
+          "mean_pct": 0.055,
+          "hit_rate": 48.55
         },
         {
           "quantile": 8,
-          "count": 123392,
+          "count": 123379,
           "mean_pct": 0.013,
-          "hit_rate": 47.79
+          "hit_rate": 47.78
         },
         {
           "quantile": 9,
-          "count": 122918,
-          "mean_pct": -0.122,
-          "hit_rate": 45.44
+          "count": 122904,
+          "mean_pct": -0.121,
+          "hit_rate": 45.45
         }
       ]
     },
     {
       "signal": "dist_sma25(25日線乖離)",
       "top_bottom_spread_pct": -0.23,
-      "spearman": -0.491,
+      "spearman": -0.515,
       "positive_fold_ratio": 0.2,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123738,
+          "count": 123728,
           "mean_pct": 0.086,
-          "hit_rate": 47.84
+          "hit_rate": 47.85
         },
         {
           "quantile": 1,
-          "count": 123287,
-          "mean_pct": 0.099,
+          "count": 123276,
+          "mean_pct": 0.098,
           "hit_rate": 48.95
         },
         {
           "quantile": 2,
-          "count": 123378,
-          "mean_pct": 0.056,
-          "hit_rate": 48.89
+          "count": 123362,
+          "mean_pct": 0.057,
+          "hit_rate": 48.88
         },
         {
           "quantile": 3,
-          "count": 123292,
-          "mean_pct": 0.107,
+          "count": 123277,
+          "mean_pct": 0.108,
           "hit_rate": 49.64
         },
         {
           "quantile": 4,
-          "count": 123211,
-          "mean_pct": 0.056,
+          "count": 123193,
+          "mean_pct": 0.055,
           "hit_rate": 49.22
         },
         {
@@ -1204,25 +1204,25 @@
         },
         {
           "quantile": 6,
-          "count": 123394,
+          "count": 123379,
           "mean_pct": 0.077,
-          "hit_rate": 49.04
+          "hit_rate": 49.05
         },
         {
           "quantile": 7,
-          "count": 123276,
+          "count": 123260,
           "mean_pct": 0.071,
           "hit_rate": 48.62
         },
         {
           "quantile": 8,
-          "count": 123389,
+          "count": 123378,
           "mean_pct": 0.059,
           "hit_rate": 47.71
         },
         {
           "quantile": 9,
-          "count": 122918,
+          "count": 122903,
           "mean_pct": -0.144,
           "hit_rate": 45.3
         }
@@ -1230,69 +1230,69 @@
     },
     {
       "signal": "dist_sma5(5日線乖離)",
-      "top_bottom_spread_pct": -0.263,
+      "top_bottom_spread_pct": -0.262,
       "spearman": -0.915,
       "positive_fold_ratio": 0.267,
       "per_quantile": [
         {
           "quantile": 0,
-          "count": 123739,
-          "mean_pct": 0.093,
-          "hit_rate": 47.79
+          "count": 123729,
+          "mean_pct": 0.092,
+          "hit_rate": 47.78
         },
         {
           "quantile": 1,
-          "count": 123289,
+          "count": 123281,
           "mean_pct": 0.153,
           "hit_rate": 49.46
         },
         {
           "quantile": 2,
-          "count": 123380,
+          "count": 123359,
           "mean_pct": 0.126,
           "hit_rate": 49.57
         },
         {
           "quantile": 3,
-          "count": 123294,
+          "count": 123285,
           "mean_pct": 0.086,
           "hit_rate": 49.02
         },
         {
           "quantile": 4,
-          "count": 123214,
-          "mean_pct": 0.081,
+          "count": 123188,
+          "mean_pct": 0.082,
           "hit_rate": 49.02
         },
         {
           "quantile": 5,
-          "count": 123457,
-          "mean_pct": 0.049,
+          "count": 123461,
+          "mean_pct": 0.048,
           "hit_rate": 48.83
         },
         {
           "quantile": 6,
-          "count": 123397,
-          "mean_pct": 0.053,
-          "hit_rate": 48.89
+          "count": 123383,
+          "mean_pct": 0.054,
+          "hit_rate": 48.9
         },
         {
           "quantile": 7,
-          "count": 123277,
-          "mean_pct": 0.059,
-          "hit_rate": 48.74
+          "count": 123261,
+          "mean_pct": 0.058,
+          "hit_rate": 48.73
         },
         {
           "quantile": 8,
-          "count": 123392,
+          "count": 123379,
           "mean_pct": 0.031,
-          "hit_rate": 47.76
+          "hit_rate": 47.77
         },
         {
           "quantile": 9,
-          "count": 122918,
+          "count": 122904,
           "mean_pct": -0.17,
-          "hit_rate": 45.35
+          "hit_rate": 45.36
         }
       ]
     }

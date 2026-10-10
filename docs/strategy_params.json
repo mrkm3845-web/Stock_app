@@ -1,9 +1,9 @@
 {
-  "version": "2026-10-07",
-  "generated_at": "2026-10-07T18:47:33",
+  "version": "2026-10-10",
+  "generated_at": "2026-10-10T17:15:01",
   "source_backtest": {
-    "run_id": "20261007184548",
-    "generated_at": "2026-10-07T18:45:48"
+    "run_id": "20261010171309",
+    "generated_at": "2026-10-10T17:13:09"
   },
   "price_tiers": [
     {
