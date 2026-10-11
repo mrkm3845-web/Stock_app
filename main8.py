@@ -490,9 +490,93 @@ def build_price_range_pool(results, params):
 _SEARCH_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
+# まとめ・転載・UGC（アグリゲータ）とみなす出典（source名/ドメインの部分一致）。strategy_params で上書き可。
+_DEFAULT_NEWS_BLOCK_SOURCES = [
+    "note.com", "note", "minkabu.jp", "みんかぶ", "moomoo", "unisba",
+]
+# 見出しに含まれていたらノイズとみなす語（まとめ・ランキング・掲示板系）。strategy_params で上書き可。
+_DEFAULT_NEWS_BLOCK_KEYWORDS = [
+    "まとめ", "ランキング", "注目銘柄", "銘柄まとめ", "なのか", "掲示板", "知恵袋", "噂",
+]
+
+
+def _news_cfg(params):
+    """ノイズ除去の設定（除外する出典・見出しキーワード）を返す。"""
+    ai = (params or {}).get("ai", {})
+    block_sources = ai.get("news_block_sources")
+    if not isinstance(block_sources, list):
+        block_sources = _DEFAULT_NEWS_BLOCK_SOURCES
+    block_words = ai.get("news_block_keywords")
+    if not isinstance(block_words, list):
+        block_words = _DEFAULT_NEWS_BLOCK_KEYWORDS
+    return ([str(x).lower() for x in block_sources if x],
+            [str(x) for x in block_words if x])
+
+
+def _to_jst_date(dt):
+    """datetime を JST の YYYY-MM-DD 文字列にする（None は None）。"""
+    if dt is None:
+        return None
+    try:
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
+    except Exception:
+        return None
+
+
+def _domain_of(url):
+    try:
+        host = urllib.parse.urlparse(url or "").netloc.lower()
+        if host.startswith("www."):
+            host = host[4:]
+        return host
+    except Exception:
+        return ""
+
+
+def _norm_headline(title):
+    """重複判定用に空白を除いた見出しキー。"""
+    return re.sub(r"\s+", "", str(title or ""))
+
+
+def _strip_source_suffix(title, source):
+    """Google News 見出し末尾の『 - 媒体名』を落とす（あれば）。"""
+    t = str(title or "").strip()
+    if source:
+        suffix = " - " + str(source).strip()
+        if t.endswith(suffix):
+            t = t[: -len(suffix)].strip()
+    return t
+
+
+def _is_noise_news(item, block_sources, block_words):
+    """まとめ/転載/UGC（アグリゲータ）由来の見出しかどうかを判定する。"""
+    title = str(item.get("title") or "")
+    hay = (str(item.get("source") or "") + " " + str(item.get("domain") or "")).lower()
+    for b in block_sources:
+        if b and b in hay:
+            return True
+    for w in block_words:
+        if w and w in title:
+            return True
+    return False
+
+
+def _news_line(item):
+    """AIプロンプト用の1行表記: 『YYYY-MM-DD 出典: 見出し』（文字列はそのまま）。"""
+    if isinstance(item, str):
+        return item
+    date = item.get("date") or "日付不明"
+    src = item.get("source") or item.get("domain") or "出典不明"
+    return f"{date} {src}: {item.get('title') or ''}".strip()
+
 
 def _fetch_gnews_rss(name, days, max_items):
-    """Google News RSS から直近 days 日の見出しを新しい順に返す（重複除去）。"""
+    """Google News RSS から直近 days 日の見出しを新しい順に返す。
+
+    返り値: [{title, source, domain, date, url}] のリスト（出典・日付つき）。
+    """
     url = ("https://news.google.com/rss/search?q=" + urllib.parse.quote(name)
            + "&hl=ja&gl=JP&ceid=JP:ja")
     try:
@@ -508,6 +592,9 @@ def _fetch_gnews_rss(name, days, max_items):
         title = (it.findtext("title") or "").strip()
         if not title:
             continue
+        src_el = it.find("source")
+        source = (src_el.text or "").strip() if src_el is not None else ""
+        sdomain = _domain_of(src_el.get("url") if src_el is not None else "")
         try:
             pdt = parsedate_to_datetime((it.findtext("pubDate") or "").strip())
             if pdt is not None and pdt.tzinfo is None:
@@ -516,18 +603,22 @@ def _fetch_gnews_rss(name, days, max_items):
             pdt = None
         if pdt is not None and pdt < cutoff:
             continue
-        rows.append((pdt, title))
+        rows.append((pdt, {
+            "title": _strip_source_suffix(title, source),
+            "source": source,
+            "domain": sdomain,
+            "date": _to_jst_date(pdt),
+            "url": (it.findtext("link") or "").strip(),
+        }))
     rows.sort(key=lambda x: (x[0] is None, x[0] if x[0] is not None else datetime.min.replace(tzinfo=timezone.utc)),
               reverse=True)
     out, seen = [], set()
-    for _pdt, title in rows:
-        key = re.sub(r"\s+", "", title)
+    for _pdt, item in rows:
+        key = _norm_headline(item["title"])
         if key in seen:
             continue
         seen.add(key)
-        out.append(title)
-        if len(out) >= max_items:
-            break
+        out.append(item)
     return out
 
 
@@ -537,16 +628,43 @@ def _fetch_yf_news(code, max_items):
         items = yf.Ticker(f"{code}.T").news or []
     except Exception:
         return []
-    heads = []
+    out = []
     for n in items:
-        title = n.get("title")
-        if not title and isinstance(n.get("content"), dict):
-            title = n["content"].get("title")
-        if title:
-            heads.append(str(title).strip())
-        if len(heads) >= max_items:
+        content = n.get("content") if isinstance(n.get("content"), dict) else None
+        if content:
+            title = content.get("title")
+            provider = (content.get("provider") or {}).get("displayName") if isinstance(content.get("provider"), dict) else None
+            url = None
+            for k in ("canonicalUrl", "clickThroughUrl"):
+                if isinstance(content.get(k), dict) and content[k].get("url"):
+                    url = content[k]["url"]
+                    break
+            pdate = content.get("pubDate") or content.get("displayTime")
+            try:
+                pdt = datetime.fromisoformat(str(pdate).replace("Z", "+00:00")) if pdate else None
+            except Exception:
+                pdt = None
+        else:
+            title = n.get("title")
+            provider = n.get("publisher")
+            url = n.get("link")
+            ts = n.get("providerPublishTime")
+            try:
+                pdt = datetime.fromtimestamp(float(ts), tz=timezone.utc) if ts else None
+            except Exception:
+                pdt = None
+        if not title:
+            continue
+        out.append({
+            "title": str(title).strip(),
+            "source": str(provider).strip() if provider else "",
+            "domain": _domain_of(url),
+            "date": _to_jst_date(pdt),
+            "url": url or "",
+        })
+        if len(out) >= max_items:
             break
-    return heads
+    return out
 
 
 def fetch_news_for_pool(pool, params=None):
@@ -556,32 +674,46 @@ def fetch_news_for_pool(pool, params=None):
       - "gnews"    : Google News RSS（既定。失敗時は yfinance にフォールバック）
       - "yfinance" : 従来の yfinance .news
       - "hybrid"   : Google News RSS を優先し、yfinance を重複除外して併用
+    まとめ/転載/UGC（アグリゲータ）は除外し、各見出しに「出典・日付・URL」を付ける。
     """
     ai = (params or {}).get("ai", {})
     source = ai.get("news_source", "gnews")
     days = int(ai.get("news_days", 14))
     max_items = int(ai.get("news_max", 5))
+    block_sources, block_words = _news_cfg(params)
     news_map = {}
     total = len(pool)
     for i, r in enumerate(pool):
         code = r["code"]
         name = r.get("name") or ""
-        headlines = []
+        items = []
         if source in ("gnews", "hybrid") and name:
-            headlines = _fetch_gnews_rss(name, days, max_items)
-        use_yf = source == "yfinance" or (source in ("gnews", "hybrid") and not headlines)
+            items = _fetch_gnews_rss(name, days, max_items * 2)
+        use_yf = source == "yfinance" or (source in ("gnews", "hybrid") and not items)
         if use_yf:
-            yf_heads = _fetch_yf_news(code, max_items)
-            headlines = yf_heads or headlines
+            yf_items = _fetch_yf_news(code, max_items * 2)
+            items = yf_items or items
         elif source == "hybrid":
-            seen = set(headlines)
-            for h in _fetch_yf_news(code, max_items):
-                if h not in seen:
-                    headlines.append(h)
-                    seen.add(h)
-            headlines = headlines[:max_items]
-        if headlines:
-            news_map[code] = headlines
+            seen = {_norm_headline(x["title"]) for x in items}
+            for h in _fetch_yf_news(code, max_items * 2):
+                k = _norm_headline(h["title"])
+                if k not in seen:
+                    items.append(h)
+                    seen.add(k)
+        # ノイズ（アグリゲータ/まとめ）除去 → 重複除去 → 上限
+        cleaned, seen = [], set()
+        for h in items:
+            if _is_noise_news(h, block_sources, block_words):
+                continue
+            k = _norm_headline(h["title"])
+            if not k or k in seen:
+                continue
+            seen.add(k)
+            cleaned.append(h)
+            if len(cleaned) >= max_items:
+                break
+        if cleaned:
+            news_map[code] = cleaned
         if i < total - 1:
             time.sleep(0.2)
     return news_map
@@ -632,7 +764,7 @@ def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None)
                 parts.append(f"決算:{ed}")
         headlines = news_map.get(r["code"]) or []
         if headlines:
-            parts.append("ニュース:" + " / ".join(headlines[:3]))
+            parts.append("ニュース:" + " / ".join(_news_line(h) for h in headlines[:3]))
         lines.append(" | ".join(str(x) for x in parts))
     return "\n".join(lines)
 
@@ -663,6 +795,8 @@ def _ai_system_prompt(max_picks=5, max_output=15):
         "verdict は recommend（推奨）/ watch（様子見）/ neutral（中立）/ caution（注意）/ avoid（回避）のいずれか1つだけを使ってください。"
         "code は必ず候補一覧に記載された実際のコードをそのままコピーし、「...」や省略形は使わないでください。"
         "news_note は直近の決算・ニュース・材料を具体的に記述し、見出しや確度が無い銘柄は『要確認』と付記してください。"
+        "ニュースは『日付 出典: 見出し』の形式で与えられます。日付が古い情報や出所が不明な情報は材料として扱わず、"
+        "怪しい場合は『要確認』としてください。"
         "JSONが長すぎると途中で切れて無効になるため、reason / news_note / entry_strategy / trailing_plan は各60文字以内で簡潔にまとめてください。"
         f"stocks 配列には、あなたが選んだ上位{max_output}銘柄程度と、verdict=recommend を付けた全銘柄のみを含めてください（全候補を返す必要はありません。迷ったら上位を優先）。"
         "画像は使用しない。数値は与えられたデータに基づく。最終判断は人間が行う前提。"
@@ -1129,12 +1263,13 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
     }
 
 
-def update_ai_latest(ai_map, date):
+def update_ai_latest(ai_map, date, news_map=None):
     if not isinstance(ai_map, dict):
         return
     stocks = ai_map.get("stocks") or []
     if not stocks:
         return
+    news_map = news_map or {}
     latest = {}
     if os.path.exists(AI_LATEST_PATH):
         try:
@@ -1146,7 +1281,8 @@ def update_ai_latest(ai_map, date):
     for s in stocks:
         code = s.get("code")
         if code:
-            latest[code] = {**s, "date": date, "updated_at": now, "prompt_version": PROMPT_VERSION}
+            latest[code] = {**s, "date": date, "updated_at": now, "prompt_version": PROMPT_VERSION,
+                            "news_headlines": news_map.get(code) or []}
     with open(AI_LATEST_PATH, "w", encoding="utf-8") as f:
         json.dump(latest, f, ensure_ascii=False, indent=2)
     print(f">> 最新AI戦略インデックスを更新: {AI_LATEST_PATH}（{len(latest)} 銘柄）")
@@ -1635,7 +1771,7 @@ def main():
         news_map = fetch_news_for_pool(news_pool, params)
         ai_map = analyze_pool_with_ai(pool, fund_map, news_map, params, date, args.force_ai, "")
         if ai_map:
-            update_ai_latest(ai_map, date)
+            update_ai_latest(ai_map, date, news_map)
         if range_pool:
             range_ai_map = analyze_pool_with_ai(range_pool, fund_map, news_map, params, date, args.force_ai, "_range")
 

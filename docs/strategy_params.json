@@ -158,7 +158,9 @@
     "max_output_stocks": 15,
     "news_source": "gnews",
     "news_days": 14,
-    "news_max": 5
+    "news_max": 5,
+    "news_block_sources": ["note.com", "note", "minkabu.jp", "みんかぶ", "moomoo", "unisba"],
+    "news_block_keywords": ["まとめ", "ランキング", "注目銘柄", "銘柄まとめ", "なのか", "掲示板", "知恵袋", "噂"]
   },
   "history_keep_days": 90,
   "weekly_review": {

@@ -913,6 +913,22 @@
             return Number(ai.rank);
         }
 
+        // AIが参照したニュース見出し（出典・日付つき）を表示する。無ければ空。
+        function newsListHtml(ai) {
+            const items = (ai && Array.isArray(ai.news_headlines)) ? ai.news_headlines : [];
+            if (!items.length) return '';
+            const rows = items.slice(0, 4).map(function (h) {
+                if (typeof h === 'string') return `<li>${esc(h)}</li>`;
+                const meta = [h.date, h.source].filter(Boolean).join(' ');
+                const title = h.url
+                    ? `<a href="${esc(h.url)}" target="_blank" rel="noopener">${esc(h.title || '')}</a>`
+                    : esc(h.title || '');
+                const m = meta ? ` <span class="text-muted" style="font-size:0.7rem">${esc(meta)}</span>` : '';
+                return `<li>${title}${m}</li>`;
+            }).join('');
+            return `<div class="strategy-item"><small class="text-muted">参照ニュース（出典・日付）</small><ul class="mb-0 ps-3" style="font-size:0.82rem">${rows}</ul></div>`;
+        }
+
         // 警告判定: 現行の strategy_params.warnings（過熱ルール）に一本化
         // ※旧バックテストの「最高期待値」等の固定PFバッジは、現行検証と矛盾するため廃止
         function evaluateSignal(s) {
@@ -1605,9 +1621,10 @@
                             ${verdictBadge(ai.verdict, ai.reason)}
                         </div>
                         ${verdictReasonHtml(ai.verdict, ai.reason)}
-                        <div class="strategy-desc">※ AIの水準は参考情報です。実際の売買指示は上記「スイング売買戦略（価格帯別ルール）」を使用。</div>
+                        <div class="strategy-desc">※ AIの水準は参考情報です。実際の売買指示は上記「やさしい売買プラン」を使用。</div>
                         <div class="strategy-item"><small class="text-muted">根拠</small><div>${esc(ai.reason || '-')}</div></div>
                         <div class="strategy-item"><small class="text-muted">直近の材料・ニュース</small><div>${esc(ai.news_note || '-')}</div></div>
+                        ${newsListHtml(ai)}
                         <div class="strategy-item"><small class="text-muted">エントリー戦略</small><div>${esc(ai.entry_strategy || '-')}</div></div>
                         <div class="strategy-item"><small class="text-muted">トレーリング計画</small><div>${esc(ai.trailing_plan || '-')}</div></div>
                     </div>
