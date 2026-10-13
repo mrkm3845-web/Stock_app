@@ -124,56 +124,56 @@
   },
   "6191": {
     "code": "6191",
-    "rank": 14,
-    "verdict": "caution",
+    "rank": 8,
+    "verdict": "watch",
     "entry_type": "wait",
-    "reason": "20日2倍の急騰、高値掴み警戒",
-    "news_note": "ピカパカ子会社化、増収材料",
-    "entry_strategy": "押し目1309円まで待ち小口のみ",
-    "entry_price": 1309,
-    "support": 1309,
+    "reason": "九州割材料はあるが20日+108%で過熱。押し目必須。",
+    "news_note": "2026-10-13 トラベルWatch: 九州ふっこう応援割を12時販売開始",
+    "entry_strategy": "見送り、5日線1440円近辺までの押し目待ち",
+    "entry_price": 1453,
+    "support": 1356,
     "resistance": 1571.6,
-    "tp_price": 1500,
-    "sl_price": 1200,
-    "trailing_plan": "反転確認まで見送り、1309割れ回避",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "tp_price": 1571.6,
+    "sl_price": 1356,
+    "trailing_plan": "1571円突破後は5日線トレール、過熱再燃は利確",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
+      {
+        "title": "エアトリ「九州ふっこう応援割」12時販売スタート。福岡・長崎の「航空券＋宿泊」が最大50％オフに",
+        "source": "トラベル Watch",
+        "domain": "travel.watch.impress.co.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE0wbzQxcEN4SFkxTVBqNHJVN3RIQTl3RHlHYXFwMmE2Vm5tZjQ0NEJ5djNENmtIeXd6WkdQSkpJSWU1VEQtMzE2N0dLNjZ0QUtpWUdNbW9MYXVmYUZzU2NQeGk3MFMzdnpL?oc=5"
+      },
+      {
+        "title": "エアトリ「九州ふっこう応援割」12時販売スタート。福岡・長崎の「航空券＋宿泊」が最大50％オフに (トラベル Watch)",
+        "source": "Yahoo!ニュース",
+        "domain": "news.yahoo.co.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNaWYyVUctZURvTkR2RkdvNkY0Znh6QnBXdGpjSUsxd2VlblFreGRnelZ4cTFHeG5fSDNReVpRZkZ4REZaUVlpWXo0cW9DcmFMR2lfbmtYQlZieGlNcDlYUUtUTXVIaTlXMmFnMjZpbzdSb01XdmdnNlFyWktubElPSGhjeEtjb3hsVW00VHp3?oc=5"
+      },
+      {
+        "title": "2026年10月13日より、 「九州ふっこう応援割ふくおかキャンペーン」 「九州ふっこう応援割ながさきキャンペーン」を開始",
+        "source": "アットプレス",
+        "domain": "atpress.ne.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1kMzdwWFAxUFZZUmhWZ0lKcXI4SkJJajJBWERvX0tVR3cwYTFRYnVOeVd5ZVRCVGlZNzJycFFCRW9lYk9rbV9KY0k3NURKRjg?oc=5"
+      },
+      {
+        "title": "エアトリ、「九州ふっこう応援割」を10月13日正午販売開始 福岡・長崎県対象",
+        "source": "TRAICY（トライシー）",
+        "domain": "traicy.com",
+        "date": "2026-10-12",
+        "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE5pNHVFbzFXektxdFlERlkyaTVUekpzTlVKS3lBNEdUdTlCOFlST25hNGlUVV96T2FQRmJ0S3p2b05OVG1VV0hSSTdzWG4zWENianNMZmUzRQ?oc=5"
+      },
       {
         "title": "エアトリCXOサロン、有料会員900社を達成 サービス開始から約2年",
         "source": "ツーリズムメディアサービス",
         "domain": "tms-media.jp",
         "date": "2026-10-11",
         "url": "https://news.google.com/rss/articles/CBMiSEFVX3lxTFBzMDZVWVp4M1psSFg4TEhnWUQtb0hsa0lxdTZIeWZsa09TSkZTejNFUDZ4OVhqR3V0ZFdyMDNQMmM0cThCOU5OcA?oc=5"
-      },
-      {
-        "title": "(株)エアトリ【6191】：株価・株式情報（夜間PTS含む）",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-10",
-        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9Mc0o4bHhVVlZySGw1QnhuOHVNQXBnUXItQ0toODRjQkN6NE5lWE1HRjBxWF95UmVCeVhPVFo3T3B4ZlhzNXlrZnFwdWhGWDZlZGc?oc=5"
-      },
-      {
-        "title": "「エアトリ お客様体験向上キャンペーン第三弾」を実施中！2026年7月～9月のご意見とその対応の報告",
-        "source": "アットプレス",
-        "domain": "atpress.ne.jp",
-        "date": "2026-10-08",
-        "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5qRUJYVk10UndNRFhzblE5N3ZHcXdJbklZNnJ5cXJIc1Z2d0xCU2d2YXY1QnNuc0Ytc3MtRlpwdnMtMGYyU1ZPN0E0cng3alE?oc=5"
-      },
-      {
-        "title": "総合旅行プラットフォーム「エアトリ」が顧客体験向上キャンペーンでサービスを改善",
-        "source": "J-CAST ニュース",
-        "domain": "j-cast.com",
-        "date": "2026-10-08",
-        "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5fMHM2MWVSWjNxUUVrYlFrSTUyQWlrWUpTd3NtNDNsVVdlajl2b0pCSVlieXFZNmE0SG9OR0tCUE5KdTJiSmdDRnltWjZRRVpEVnBrYXdhazVHUHV1VUtEb1QtSUxHSGM?oc=5"
-      },
-      {
-        "title": "エアトリ、ピカパカを連結子会社化 『出張DX』など法人事業を強化",
-        "source": "トラベルビジョン",
-        "domain": "travelvision.jp",
-        "date": "2026-10-06",
-        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE9uNDBucjZPSnEwMUJTM1lmYUd0bEVFRDQyLWwxODE2NmhLX1RISWk0X1NnMk1OSFA0NDNEbS14eEMzb0NpNVZpbUJ1QlRFYm9OS2NYMWE5bHplMkhLdFA3bQ?oc=5"
       }
     ]
   },
@@ -4078,20 +4078,20 @@
   },
   "6862": {
     "code": "6862",
-    "rank": 5,
+    "rank": 4,
     "verdict": "recommend",
     "entry_type": "breakout_chase",
-    "reason": "メモリ商社でROE60.8%、PER15.8。25日乖離+15.2%、RSI62.9で過熱軽度。",
-    "news_note": "メモリ・スーパーサイクル関連本命候補。高値更新継続との記事。要確認",
-    "entry_strategy": "現値〜5238円で分割、5882円突破で追加",
-    "entry_price": 5260,
-    "support": 5238,
+    "reason": "ROE60%超の高収益、半導体関連。過熱軽く追い許容。",
+    "news_note": "2026-10-10 ニコニコ: 2Q決算説明会ライブ。10/9 動意株",
+    "entry_strategy": "5160円から浅く追い、5日線5155円を損切り基準",
+    "entry_price": 5160,
+    "support": 4768,
     "resistance": 5882,
-    "tp_price": 6200,
-    "sl_price": 4900,
-    "trailing_plan": "5日線5238円割れで半分手仕舞い、ATR2倍でトレール",
-    "date": "2026-10-06",
-    "updated_at": "2026-10-06T22:49:16",
+    "tp_price": 5882,
+    "sl_price": 4768,
+    "trailing_plan": "5882円到達で利確半分、残り5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -4100,13 +4100,6 @@
         "domain": "news.nicovideo.jp",
         "date": "2026-10-10",
         "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE1UODhvZ0wwMlAtWUplaGZHUmdDbS15M3pfOTBmMU81LWpwQ3pCMjZqTWJ0OGRZX0cxOWNGMFRLeGpCTURBUXM2bEhBRDl2NU14NkI2Qg?oc=5"
-      },
-      {
-        "title": "ミナトホールディングス(株)【6862】：今の株価の理由は？値動きの背景をAIが解説",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-09",
-        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1jQXlMSTBrN1h4N2ZKeEZ2MFhmcm03c254N2FOeHdJMTVzUUJWOWxKNFZyWkFGb0RXb2RBWnNrUWlSMXNNOWs1YlVjNHlqbURFV0czc2NVOWEtRURUbXBv?oc=5"
       },
       {
         "title": "ミナトエレクトロニクス(株)【6862】：株価・株式情報",
@@ -4121,136 +4114,157 @@
         "domain": "finance.yahoo.co.jp",
         "date": "2026-10-09",
         "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQc1RaZ01jbWNDYVkyT05hcmpWRmdCRUl3V2ZOb1lrUTVBZ3RjLW9zdXVmYVdsUGgwRjd4VDYwTFlrN09ZYWtqdHFDejZFSVR4Umo4MDhLT1Jha0JydWZ0cHdoSDAxN2NDZ0RnN0ZQVlFuMDR2eTYtaXJ1MVlkeHJVSFlnRk82RnM?oc=5"
+      },
+      {
+        "title": "ミナトＨＤが反落、メディア・トラストとの資本業務提携解除を嫌気(ウエルスアドバイザー)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-08",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQLU9WN0xJek5rekc2WnFTZ2toUE1mTmZ1anpIVlgzNTRGTE0wZldNVlhEZjMwNFhqX3pvYzNhZmpIS1YtMm10cFZlMnpkZFZQQ0Rkb2ZFQ0lZbHFreEpkN3lRbHNHSjdpVkhRNXlGZEpYNU91cWRVTU13MllkVDdUM1B3U1dvN2s?oc=5"
+      },
+      {
+        "title": "ミナトホールディングス[6862]：株式会社メディア・トラスト等との資本業務提携契約の解除及び連結子会社の代表取締役の異動に関するお知らせ 2026年10月7日(適時開示) ：日経会社情報DIGITAL",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-10-07",
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5yN0lZSWNLdmFDOUpyUFBmMnloYWRIaVlZdHNjVHFScHVhTVFjQ21SX3hGaDFIR3A4VkJIYnN2VlItcEVnelROZGV1ZlNYUVNwRm1wRjhXR1hnTHFfY0ZVTHdGS2JhUnZRVWc?oc=5"
       }
     ]
   },
   "7826": {
     "code": "7826",
-    "rank": 4,
-    "verdict": "recommend",
-    "entry_type": "pullback_wait",
-    "reason": "半導体素材、過熱低く押し目妙味、流動性大",
-    "news_note": "自己株処分・ガバナンス報告、材料は要確認",
-    "entry_strategy": "10900円まで押したら分割、11694円回復で追加",
-    "entry_price": 10900,
-    "support": 10289,
+    "rank": 10,
+    "verdict": "watch",
+    "entry_type": "wait",
+    "reason": "高流動性で押し目形成。材料散発で急ぎ不要。",
+    "news_note": "2026-10-13 日経: 訂正有価証券報告書。材料は要確認",
+    "entry_strategy": "見送り、10610-11646円の押し目待ち",
+    "entry_price": 11600,
+    "support": 10610,
     "resistance": 12380,
     "tp_price": 12380,
-    "sl_price": 10289,
-    "trailing_plan": "12380到達で一部利確、10289割れ撤退",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "sl_price": 10610,
+    "trailing_plan": "12380円突破後は5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
+      {
+        "title": "フルヤ金属[7826]：訂正有価証券報告書－第58期(2025/07/01－2026/06/30) (有価証券報告書) ：日経会社情報DIGITAL",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBWbU5VcGM2a1IxT3NSbE5sZk0zeHFWNkZjaWhRNzd3TFgyWDZkNEt0ekE3MzBQaXlHSXB0Um5DR1QzQi1EOWU4OEdGRER1Z21VMEhyVi04dmlUNkNyMmNqOHB0WkJYZnVURU9sbA?oc=5"
+      },
+      {
+        "title": "マーケット速報",
+        "source": "北國新聞",
+        "domain": "hokkoku.co.jp",
+        "date": "2026-10-12",
+        "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQdDJlcnd1T3NWa21kd282a2RXdExoWnZUS3FwUzlmb3I3cFhHaVhJVkR2bmNlYzNYUG1zdjU1d1ZXQl8tb0JFalBjTXpZVERYV0M4cVhCbXpCT21weEt3R1plNXgzQ1FpTjl3UFJqYjNvNjVORnVOSnpfdV9wMWdJUHF6U2c5dE1yZHBsZlk5QWh1QWozOEJtUkVCNFY2MzRONlB6WTFjMjQ3OHd5ajREWE13cks?oc=5"
+      },
+      {
+        "title": "(株)フルヤ金属【7826】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-11",
+        "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9YMlktcExxak05TTFoZFFOaGZWSE1ocGNCUnp0blhfajBCTk9BN3JmZGV2T3UwSnNhVzViMXQ4ZzJ5QXYxZVJfdDlvNGdTOG4yVVVpYlRqblZOQTJsdndJNlRLMjRxR0pWVldadmNhQll4WlAtMmc?oc=5"
+      },
       {
         "title": "フルヤ金属[7826]：コーポレート・ガバナンスに関する報告書 2026/10/09 2026年10月9日(適時開示) ：日経会社情報DIGITAL",
         "source": "日本経済新聞",
         "domain": "nikkei.com",
         "date": "2026-10-09",
         "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBNSGpMZHEwR3I1eVhWRWRaSGNGT2FEbkYyMTJnUWhHTDlYU3FYcjdTcVRkdzVSaXRaSmlHLXRnbEhvRTYzZHZSV25NdEtzcUZxdFZWNkptaThGNFFxUGJhdFJUUzFRWmktV0E?oc=5"
-      },
-      {
-        "title": "フルヤ金属[7826]：支配株主等に関する事項について 2026年9月29日(適時開示) ：日経会社情報DIGITAL",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-09-29",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBVbmxNRmNreUkyRTE4MU5lMDNWdFNiUG9KbGNDWWhXN2tDNWxOaHF4RFZHWXhDeTJWNzgtU2s4aDVvUjNlTWU4MUpmVnU3WEwxZ0Jxb2dXN2xtTVI4dUduWERKUko4SGRkOGc?oc=5"
-      },
-      {
-        "title": "フルヤ金属[7826]：譲渡制限付株式報酬としての自己株式の処分に関するお知らせ 2026年9月29日(適時開示) ：日経会社情報DIGITAL",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-09-29",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFA0cTVqSFFaSy1pNk1PQTY0OUpJYlFYUk9jczlWTUEzckNiY09Wb19oTjZKcHdXQ3hLSy0wZEdFVEhRMkFoSzdQbklpX0FNdFNDZ0ZaZW5Yc2ptbm1YcW8tUWhxcFRrUjZYY2c?oc=5"
-      },
-      {
-        "title": "フルヤ金属[7826]：有価証券報告書－第58期(2025/07/01－2026/06/30) (有価証券報告書) ：日経会社情報DIGITAL",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-09-28",
-        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9idDdQYlR2Z3puOVFtVHI0WUNZaXI5RDcxanpGRTJKQ3RsY0stZkN6cmk0SE9lX3dTOUNNX1RrZzJncHpPenNyTDhfWjZNdGUxaHZUWGJCbzRDSjlCRkhQaW5BUzE5Zl8tM3JURQ?oc=5"
-      },
-      {
-        "title": "前日に動いた銘柄 part1 GMOコマース、小林製薬、フルヤ金属など 執筆： Fisco",
-        "source": "Investing.com 日本",
-        "domain": "jp.investing.com",
-        "date": "2026-09-28",
-        "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE91Rl9xb29sYUY3VWtOT2UtVHNGUzFNdGFTeE96YnJZODdhdzJzOWlSZmFJSF9CSk5RWUVwbk13MVJkNHhWQXlkalBlWEtKVFZzcmItZERQUElMcFZxeXpZRHJidHhsWWMyaHRVM3NSdmU?oc=5"
       }
     ]
   },
   "2737": {
     "code": "2737",
-    "rank": 2,
+    "rank": 3,
     "verdict": "recommend",
     "entry_type": "pullback_wait",
-    "reason": "メモリ相場の主力、過熱低く流動性十分",
-    "news_note": "DRAM価格高騰、メモリ・スーパーサイクル特集",
-    "entry_strategy": "5日線37610円近辺まで待ち分割",
-    "entry_price": 37610,
-    "support": 36618,
+    "reason": "高ROE・高流動性の半導体商社。NPU材料で上昇余地。",
+    "news_note": "2026-10-10 財経新聞: Rebellionsの推論NPUをトーメンデバイスとai&が日本展開",
+    "entry_strategy": "5日線38320円までの押し目待ち、36161円割れ回避",
+    "entry_price": 38320,
+    "support": 36161,
     "resistance": 44200,
-    "tp_price": 42000,
-    "sl_price": 36000,
-    "trailing_plan": "40000超えでトレール、36600割れ撤退",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "tp_price": 44200,
+    "sl_price": 36161,
+    "trailing_plan": "44200円突破後は5日線で引き上げ",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
+      {
+        "title": "(株)トーメンデバイス【2737】：株つぶやき",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-12",
+        "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBPQllnYzctZThiNUU2a1dtVlpSTHd5T0d0U3VsVXNWTXYtSU5CZzJiSXcwcjB1bjNDRXRYWmJsRFIwNUhKTTRkYmhkb2xYVHZrYWNabnpnMks?oc=5"
+      },
       {
         "title": "Rebellionsの推論NPU、日本で実証と導入計画が進む　トーメンデバイスとai&が展開",
         "source": "財経新聞",
         "domain": "zaikei.co.jp",
         "date": "2026-10-10",
-        "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1LYmFxMTF5TmRVZU91SUZtdkZOS09qRW12QjY4Qk9Bc0laOXFSUmpnNTNDcFptcVpWNWowS3NtUks0V3IzQUVkTldmMjF0SEpYeFB6WkVzSkZiTUc5UVpVX25PNGRWd0hr0gFoQVVfeXFMTUtiYXExMXlOZFVlT3VJRm12Rk5LT2pFbXZCNjhCT0FzSVo5cVJSamc1M0NwWm1xWlY1ajBLc21SSzRXcjNBRWROV2YyMXRISlh4UHpaRXNKRmJNRzlRWlVfbk80ZFZ3SGs?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFBlTFBhdXVxaGk0eXJqeEk2dk1WV3lMV3JQODVQV1YtWVM4NjFUaE11U3dsN0hGR1N2bkRYanN4ZDFvWDRVYl9sMnZsSFcxbGM4OGU0YnVZZzRoRzl3V1JEUEtzWdIBaEFVX3lxTE1LYmFxMTF5TmRVZU91SUZtdkZOS09qRW12QjY4Qk9Bc0laOXFSUmpnNTNDcFptcVpWNWowS3NtUks0V3IzQUVkTldmMjF0SEpYeFB6WkVzSkZiTUc5UVpVX25PNGRWd0hr?oc=5"
       }
     ]
   },
   "6098": {
     "code": "6098",
-    "rank": 6,
+    "rank": 15,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "業績好調だが高PBR、押し目待ちが無難",
-    "news_note": "純利益52%増、Indeed好調",
-    "entry_strategy": "16433円近辺まで押したら検討",
-    "entry_price": 16433,
-    "support": 16433,
-    "resistance": 17600,
+    "reason": "大型で上昇継続も寄付+2.5%、現値追い危険。",
+    "news_note": "2026-10-13 日経: 東証後場寄り、トヨタやリクルートは高い",
+    "entry_strategy": "見送り、16978-17113円の押し目待ち",
+    "entry_price": 17755,
+    "support": 16978,
+    "resistance": 17810,
     "tp_price": 18500,
-    "sl_price": 16000,
-    "trailing_plan": "17600突破で追随、16433割れ見送り",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "sl_price": 16978,
+    "trailing_plan": "17810円突破後は5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
+      {
+        "title": "(株)リクルートホールディングス【6098】：今の株価の理由は？値動きの背景をAIが解説",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9tWXUtelI5RVhoV0RidkNVM0ZZVGRHeE1zNUt5U2pfQ0N3V2hXalhHelVPSXQ3U0xfOEJnUGgyejF2RkVIUHhxQk5xRnBjOEl4eF9JZ25kNExwT0pObEVF?oc=5"
+      },
+      {
+        "title": "東証後場寄り 日経平均やや下げ渋り トヨタやリクルートは高い",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9TSXVKTWl6U0E4RF9BNmg0X0FLdmJ5b3F4dDVBWHA2SE56Q1k1ZkVUR0RpTHR1b05MNjBUQVJNTVF2dWV2a0pzYnBqbnRXUV8zeGg3ZU5FS2w3WjdCUEgwUnFaeENlWm94Y0haVQ?oc=5"
+      },
       {
         "title": "(株)リクルートホールディングス【RCRUY】：株価・株式情報",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-11",
+        "date": "2026-10-13",
         "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE5rVkFTTG5IZDRBZm1zV0gxQmF0T2VvcHZTN0JCQi1PaE5vbnRhczhqMkYxQ0l4Y1dqRGlkLW13TU9DWmJTZ0pWb2FkV2ItVlgz?oc=5"
       },
       {
-        "title": "【純利益予想が52％増】リクルートHDの本業利益の上積みを丸ごと稼いだ「Indeed事業」の存在感 円安を除いても残る“単価”の力はどこまで続くか（マネーポストWEB）",
-        "source": "Yahoo!ニュース",
-        "domain": "news.yahoo.co.jp",
-        "date": "2026-10-08",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBMVHNhRUJMbThDNzJnQXdEbUZGc3Y1N0tKTzUwZlhJb2gwem5IOWdPaGROWnN6cU1MZG5YMWF5Wlp6WmJLTS16NE9TWWNYb3dEd0o4VVh6SlYwUThNTlZZUFVSeV8ybHJrVWpTZmpmRVFnNmNZRUNYNW96eUJhR1U?oc=5"
+        "title": "(株)リクルートホールディングス【6098】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-09",
+        "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBTV2xqZU5jVllNek5ENjhIX2REQjNPYnh0ZUlKdXhaRnVHTU5WSnF4OFhMMHZTWGdLbnZyWnEwUjhrZndseGdtNlY0Y2FwZlhWeVc5QzBmRldVbGNfTkNzX0dFTUFPM0xCdjdWNHVBa002MVM0RXc?oc=5"
       },
       {
-        "title": "買収後も成長したインディード、リクルートの買収戦略にみる従来型M&Aとの「決定的な違い」",
-        "source": "JBpress",
-        "domain": "jbpress.ismedia.jp",
-        "date": "2026-10-08",
-        "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5kU1c3RW95a1R0aHZMN3BDSFZJczRYS3E0MkdKVXpKZGpwd01fMjN1ZzVxSnpVTWN1LUZiam1fbjFDWGs2QzdsX3daTlZ1dkVqQjkxcFNR?oc=5"
-      },
-      {
-        "title": "リクルートホールディングス[6098]：自己株式の取得状況について 2026年10月1日(適時開示) ：日経会社情報DIGITAL",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-10-01",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1rMFRsM0I5OEtPajBzOFJWTG1tbEx4V050OUlwR3lBc1RNMDZ0QmxLS3JkT0ZsdU1yeDRScVlPYXJ3NEhMRFVlS18wWjRIaDJQOHRpZjVuVmpfRUhSNGVhcnh5XzZtWlY1RWc?oc=5"
+        "title": "リクルートホールディングス (6098) の株価・株式",
+        "source": "QUICK Money World",
+        "domain": "moneyworld.jp",
+        "date": "2026-10-09",
+        "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE1GcVZ4RDdWN1dGYm04Y21CbjlXd294QUVDeXZwU2tJZVRtcEFNQWtDUmVSeDdYUnc5Mk5YYmszV21mUW5vNHFlUi1xZzg2SDkzMExGUFdsMA?oc=5"
       }
     ]
   },
@@ -4311,62 +4325,76 @@
   },
   "5301": {
     "code": "5301",
-    "rank": 3,
-    "verdict": "recommend",
-    "entry_type": "breakout_chase",
-    "reason": "半導体カーボン、利益2〜3倍計画、出来高厚い",
-    "news_note": "社長「半導体関連、利益2〜3倍」30年度に",
-    "entry_strategy": "現値2297円近辺、2423突破で追加",
-    "entry_price": 2297.5,
-    "support": 2165,
+    "rank": 6,
+    "verdict": "watch",
+    "entry_type": "wait",
+    "reason": "ファインカーボン成長期待。ただし5日線下で押し目待ち。",
+    "news_note": "2026-10-02 日刊産業新聞: ファインカーボン・工業炉事業を成長ドライバー期待",
+    "entry_strategy": "見送り、2149-2200円の押し目形成を待つ",
+    "entry_price": 2277.5,
+    "support": 2149,
     "resistance": 2423,
-    "tp_price": 2500,
-    "sl_price": 2165,
-    "trailing_plan": "2423突破後は2350を損切りに引上げ",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "tp_price": 2423,
+    "sl_price": 2149,
+    "trailing_plan": "押し目拾い後、2423円突破で5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
+      {
+        "title": "東海カーボン(株)【5301】：今の株価の理由は？値動きの背景をAIが解説",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE44TUtwdkx3WG10R3E2Y0FYSzh0MkdaMlFmc2FmaEhHZ3dhcGNDQVF2T2VnTl9DQURUYXI4WmNZQTZUUXZWQmJCd2MtZnE5bF9wX2RtaFJtTlZzaC14eWF3?oc=5"
+      },
+      {
+        "title": "東海カーボン(株)【5301】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-12",
+        "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9OcEdjaDBHOXgyVDNPZEQ3QXhjbnlKbDFIcE14Zi1QUW9KR2RIZ3d1c2Z3OFdXVFVYZFhGaTZYemtjNHoxeHJFR2RaMXNveWxXcW9BTWl0X2dvN0FUTnFqYkRzSFhvX1R3OGo1b3QxQUNiTjExemc?oc=5"
+      },
       {
         "title": "東海カーボン ファインカーボン・工業炉事業 成長ドライバーに期待（日刊産業新聞）",
         "source": "Yahoo!ニュース",
         "domain": "news.yahoo.co.jp",
         "date": "2026-10-02",
         "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE52Rk45dUFqdGxfQnhLQTdjUmxiRWM1M3JjWm1HN0J1NElCUXFxUmZyNHRkSjhXbl9yanEtSDNfMFdwUXhFVmg5QzRST2tZQWVRalZ6aFhSSkNodDNkb3JRNUdmcGxTRTZUSW5NOHBHa1RzNzBtZEpTZC11ZTNSS0U?oc=5"
-      },
-      {
-        "title": "東海カーボン社長「半導体関連、利益2～3倍」 30年度に 部材の生産能力強化",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-09-29",
-        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE51ZHlyd0ZYbGR4cDEtN3lSOWE1Uk1oemI2SmN1bGRpc2VfckM3UTFBQmdLelFOYXdvN2pCNld0TmxXeU9UcEhmeXRCV3RBYkFFUTVxSC1HYzVldUpDaEd1TmhrcEVJdHpLQjFNNg?oc=5"
       }
     ]
   },
   "3156": {
     "code": "3156",
-    "rank": 8,
+    "rank": 7,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "トレンド良好も材料不明、6470突破待ち",
-    "news_note": "半導体商社との関連は要確認、ニュース混在",
-    "entry_strategy": "6470円突破確認まで見送り",
-    "entry_price": 6470,
-    "support": 5839,
-    "resistance": 6470,
+    "reason": "週月足上昇だが高値圏。材料不透明で追い不適。",
+    "news_note": "直近ニュースはレスター戦など誤配信。材料は要確認",
+    "entry_strategy": "見送り、6117-6348円の押し目待ち",
+    "entry_price": 6500,
+    "support": 6117,
+    "resistance": 6520,
     "tp_price": 6800,
-    "sl_price": 5839,
-    "trailing_plan": "6470突破で買い、6264割れ撤退",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "sl_price": 6117,
+    "trailing_plan": "押し目後6520円突破なら5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
-        "title": "シェフィールド vs レスター : 第4節 (10/12) 【SLBカップ】",
-        "source": "ABEMA",
-        "domain": "abema.tv",
-        "date": "2026-10-11",
-        "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5ieWd5eG5NQ2tCQ1FNemFJbmFiclJNXzZHVE5xZVNxNmRiUGY2bkhGWERqVlEweFVmeWFjS2JoRHJjYktnS0FZT2FrVzlwVnBxRWRqaUI2VG9FUU9ISzJIalNVUGtYTHVmaUxSbV9aelhxdw?oc=5"
+        "title": "レスター・シティが売りに出される。買収期限の金曜日が迫る中、キング・パワーが売却希望額を2億2500万ポンドに設定",
+        "source": "Goal.com",
+        "domain": "goal.com",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMinAZBVV95cUxNNnFJSElUQXV5VHVFUUp4ckxuTTN6bkZMdnVaRnBIY2RiNklpQkxKdHlVeXpGbnlsMHNSbm8ycDF4cWk3X2ZKWWNZOTB0T2lSdnhxdHd2WXVmeC1XSDRfd3UxZTZlalJHYkI5VVV0MzlDdWJIQUpOTUUwYk5lTGtPeFU3em5DX1RnWVJ5b3lBakNlUWMxWnhrbDNpR0x1cDg5ZFhJSTAtd3JoTS1SMHp3NEYzcUhHcDZScWZpdjdBa0Q4S05hcjFlN3I2OThKNVNxemJadWtWSkVJNTlISDJ0NVdYRU8tbFhJWnQ1RHFDSHMxMlQ0RmRsZ19NUlBNb3Npa2hRUEdkdFFzbDF2a19nU2xhY2RNemQwMlh2dE5xbmMzbnA3aDY5ODZ3bGI2WklYVnR0YWVBRjIyQ210SlM2UmpUR1RTQkE0VDJocVJBbGttVkx6Ul96eFQ5VXRYeWs3RGZxWTltbkZGaV9oS1RIbzJjeEpEY3hMV2Nnc25PVElvbXVWLWRFOXhkSndhdk5XVjd6anFtdWxxZEMxc1R5RWllM2w2bGd6QzZqZUZibkVFN0ktb29CaUNsU1pjV1BJLXhBVU85NHB4LXY0cVFJREJmR1AzY2RQSW5iOTh6d1NQeXZaRW9zTXNhWEJlTUhicFFmUmVxQ0gwVWNsMjdablBOQ1p0eHE2bVRHdnAtaURheGhrWDUtdjMzelQ2SGdpenptYVhsNktrVjZMejlzNS1DMlVaRWlyYkVmZl9tOTlWR1Zia1FkVFNKdGF3STlSSUxtY3d4amNaLXgweUpmeFlXN04ta0M1ZkJKVHk3bWhkd2hVcm5HRTNnalc1QVR4NXVsWlE3Z21Hd2pnZHZLQnJNVVBvdTdTUldQdlpXSWFyNTNYc2lZYjV0Q3RQVGpPeEE1d3l3UUJ2VE9ld2hjaVdhelFPbFpXT0RqTFg0UmNlRnA2OVFUMUxrVGJGTUlTS1dSUVJUSDFhSHRWLXdRdnJSVkFnemt2cFVGTVdVOHlhSjduM3h6LWFERmNZVUtQNVRhVXB3TUxtRXJ4?oc=5"
+      },
+      {
+        "title": "＜レスリング＞【2026年アジア大会・特集】負けても、「応援してくださる人たちがいて、うれしかった」…藤波朱理（レスター）",
+        "source": "千葉テレビ放送",
+        "domain": "chiba-tv.com",
+        "date": "2026-10-12",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9OT2lZTGU5ZEhrNmlVc1pVNE9XZVQ4NFBzTW8wSFpyTy10VU9vMFY5b0JBNzN3ZTFyZk14eW5BcTZ0UFFtek54VkdGNDYxeXlSMGR5SWdZVjRCSy12Vm5R?oc=5"
       },
       {
         "title": "55年前の名画「小さな恋のメロディ」 主演2人がやって来る 高崎電気館で来月5日にトーク付き上映",
@@ -4388,13 +4416,6 @@
         "domain": "news.yahoo.co.jp",
         "date": "2026-10-01",
         "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1mREd6ZGJfcHltVjA1NHNLMS15VDRLREpQa0hyemRIT2lqeDhwaXEwMElXWG9UZzktUVVTOFlUSmNOd01JS2h1NVJndFJOTjFWYWtIdEdRM3NzaFhlc2Q2cGdQQWdYMmt5Z3J6Z2Zjanp0Nl9iczdRN0hpcXZxYnc?oc=5"
-      },
-      {
-        "title": "レスターでプレミアを制したカスパー・シュマイケル、フルタイムのUberドライバーに「こんなことになるとは」",
-        "source": "Yahoo!ニュース",
-        "domain": "news.yahoo.co.jp",
-        "date": "2026-09-30",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1qVUF4U0E4UmRWSHdURHVzakZjRmVhdnFQanFLNWpfaUJvOXFmYlpiUktTYjdNcjlRcTkyTjVqVTVTeEVnY3pLS3U5UUdZS2Q2WGNJY3p3YWpSUDdxbVN2blZTTUpuLXlnUWEzTFZPOGFtRmMxODByQnNHWHRvUHM?oc=5"
       }
     ]
   },
@@ -4728,77 +4749,84 @@
   },
   "6668": {
     "code": "6668",
-    "rank": 8,
-    "verdict": "watch",
-    "entry_type": "wait",
-    "reason": "SMBC日興強気もSBI保有減、5日線下",
-    "news_note": "SBIアセット保有減少、プルバック終了指摘",
-    "entry_strategy": "4400円前後まで待つ",
-    "entry_price": 4400,
-    "support": 3450,
+    "rank": 1,
+    "verdict": "recommend",
+    "entry_type": "pullback_wait",
+    "reason": "想定超業績・増配で出来高急増。RSI64と過熱軽く、押し目妙味。",
+    "news_note": "2026-10-13 フィスコ: アドテックプラズマ---ストップ高買い気配、想定以上の業績拡大や増配見通し受け",
+    "entry_strategy": "ストップ高は追わず、5日線4911円までの押し目待ち",
+    "entry_price": 4911,
+    "support": 4534,
     "resistance": 5150,
-    "tp_price": 5150,
-    "sl_price": 4250,
-    "trailing_plan": "4895回復で追随、4250割れ撤退",
-    "date": "2026-10-08",
-    "updated_at": "2026-10-09T02:57:31",
+    "tp_price": 5500,
+    "sl_price": 4534,
+    "trailing_plan": "5150円突破後は5日線を下抜けるまで保持",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
         "title": "【決算】（９日、２６年８月期） アルファ、アドテックプラズマテクノロジー",
         "source": "山陽新聞",
         "domain": "sanyonews.jp",
-        "date": "2026-10-09",
-        "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9nYU5CSC1HNWdnRHpBSTlHVTVQWTc2c3dyX3U4Skh5dkZtUzZJT0xBem40WmhRWFdXMWh0WDBHVjc1RENSUFBWcGExXzh5TV83aHZhZ3ctOEhVLVVnLWZGTDYwR3o2T3c?oc=5"
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5mTFM2UHBXaUFsaVhhOER5T0FteC1rT1NBRWhsbHNBTkk1THR5aDJ2V0tNRV9fNl9rMEVyWVpuaEYwaHU0NVRVUGZ0QWZTYmltd1hnV1hxclZRT2lPSmd1NWZMWUNERUNxaFNzODh1WTBXQQ?oc=5"
       },
       {
-        "title": "【決算】アドテックプラズマテクノロジー（広島県福山市）",
-        "source": "中国新聞デジタル",
-        "domain": "chugoku-np.co.jp",
-        "date": "2026-10-09",
-        "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBrbEtwMmU4VGg3UHhRUHFzcTdtOG82dTFCckRXNk51Q1RNY3d1T3A4MjFvckxGNkkzZEVxb1BBTnZQa2Qwb3VoU1I2Qm9JSG9yZU5JNktJZVRUQQ?oc=5"
+        "title": "アドテックプラズマ---ストップ高買い気配、想定以上の業績拡大や増配見通し受け 執筆",
+        "source": "Investing.com - FX | 株式市場 | ファイナンス | 金融ニュース",
+        "domain": "jp.investing.com",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1TSGJoN1pYQlotV0dxbDZFLVlEUE5nUUdrRnEweVh4U016RDVXQV83NHRwQjZrMFgyQ3JlV00ya2hSOWNRMmNLN3lkRUlwMDcxTVQ1VzBzazBQdHY1YUVkM3JXUXg0SEpXRktycDhpY1A?oc=5"
       },
       {
-        "title": "【決算速報】アドテックＰテク、経常58.7%増益。アナリスト予想を上回る(アイフィス株予報)",
+        "title": "アドテックプラズマ---ストップ高買い気配、想定以上の業績拡大や増配見通し受け(フィスコ)",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-09",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOUDNLT2RzYmFNWjF4TmpQNXAwNEdicmlxUms2dF9sWmFURFlrdVB0bGZUQmVLNHJfdE1VQXR2MGdUVGRYRGJPdy16ZDhPb1Nhdkk5enhBcUtOeV9JTFdCVVB0dk9GMjdGckRaUDhWYS16MDNGeWNXWTlQMGp3Q1pqX2N5ejVaVzA?oc=5"
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPR3lEMXAtR1MxVHFvdkRxVjVGcVIxdFlfVzZHRUJKa3prc05WWHZ3bGZEay04aDhNVDVxS21SOUhFMzBmRkV2NTZLbnUyZ0VRbjEyWE16M0tmcnJfbXI5bGlOeDRGdVJBaEFHaVZ6ZG13WjdtZGUyTFVDUXdScXJGeXFpd3dEems?oc=5"
       },
       {
-        "title": "ＡＤプラズマ",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-10-09",
-        "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxQTVp1ajJOcG5PWDBwOUFrSmpuSXlXMngtUE1oUDBKUkRMaGxtZUUxd0thQzNmTDMxZEpTanplTHVHMF85QUpiNnZ0YTBVcXJSU1ZPSGFKQm95ejhCUHdON2dpUkpGSVRyWkk2VjhyQkNmTUlEd2VGM1JLVzJlckJRNGdfZUV6dDZndjFWVXpBbXpSZnplSWp0eGp6NVZqNDVFZFdVNEp0UTNIZktDQ2lSMl9leFprYnZILXliZmNOZnk0Rkx5VDRpU0F2Ry0?oc=5"
+        "title": "動いた株・出来た株（前場）part3：アドテックプラズマテクノロジー、アサヒエイトなど17社(フィスコ)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNUm5hMTVGVDRXR2l2Tl9UUE5lSVlqMS12LWFfbzJQTi1HRklsR0pGZEdVTkMwSjVLMXBIMWNTdTdTQi1ZWFdxcUhoT2NmRC1oYlNiVFUzYmtrazVOeEVXZ3VHQjZOVmo3Y2xPSFR3V3plcERHODlFcTM2VFA3OUU3Q1VKSFNfbFE?oc=5"
       },
       {
-        "title": "SBIアセットマネジメント株式会社が株式会社アドテックプラズマテクノロジー＜6668＞株式の変更報告書を提出（保有減少）",
-        "source": "ｄメニューニュース",
-        "domain": "topics.smt.docomo.ne.jp",
-        "date": "2026-10-06",
-        "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNNW1fanhDbDBFUWRzR2JDeEdIdGpxQklmQi10c0pTOXBNVm1LaWRCYmFYWjBfU0VZUXhXSjlwelAxZ3ktNUVBUDRudk9CZmRNai03TkZmTnlNbGZFTXc5SzhSQkM5bE5PbTRzLVlzRDZnNWhJVDVyVUE3M1BEWDFEekRQUVPSAYoBQVVfeXFMT0RvWXRHajZiUnBBMHktSm0zU1RWLVpMM0JGVEljOEVZNVc4eUF5V0xDeGhpbWREYWtyZ1dwSmFKQnV6YWVDOGE1MHMybU5JUzFVOEpjeWJiWTVhNVRINGhBQjVSSXQtUUx3dml6RkxFOHBDM1dUMXBaWXFxYVJrN01WdXJnVEx2Mlpn?oc=5"
+        "title": "ＡＤプラズマはＳ高カイ気配、今期最高益・増配予想を好感",
+        "source": "ライブドアニュース",
+        "domain": "news.livedoor.com",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1PM1Jhd2tFdE1ZLUg5TDhXdE5vSms5c0dWclBsSnVhdlhZTHA4RjRhWF84Q0xMbktqWTN4c0tMb0VGbmYtWkRheExFQmVDQTY3aHltYzhVVEhlYThTankybHRxYVVlU0RHWkFKVWtQZ1NfMVZoa05LVQ?oc=5"
       }
     ]
   },
   "3131": {
     "code": "3131",
-    "rank": 1,
+    "rank": 2,
     "verdict": "recommend",
     "entry_type": "pullback_wait",
-    "reason": "メモリ商社首位級、トレンド強く押し目待ちで高値掴み回避",
-    "news_note": "SKハイニックス関連のメモリ商社、PER割安指摘も要確認",
-    "entry_strategy": "5日線8304円以下へ押したら分割買い",
-    "entry_price": 8304,
-    "support": 7862,
-    "resistance": 8800,
-    "tp_price": 9200,
-    "sl_price": 7860,
-    "trailing_plan": "8800突破で9200、7860割れで撤退",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "reason": "上方修正と新規ビジネス期待。ただしRSI76で現値追い危険。",
+    "news_note": "2026-10-02 かぶリッジ: 業績予想上方修正、新規ビジネスで収益安定化を深堀り",
+    "entry_strategy": "5日線8492円までの押し目を待つ。8151円割れは見送り",
+    "entry_price": 8492,
+    "support": 8151,
+    "resistance": 9050,
+    "tp_price": 9050,
+    "sl_price": 8151,
+    "trailing_plan": "9050円突破なら5日線トレール、届かず反落なら利確",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
+      {
+        "title": "シンデン・ハイテックス(株)【3131】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-09",
+        "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBQbno0dlZCZ2NVSmo2Mkd0RDNMXzhBaWZnNlZPVjhGeW04QjUyNnhwM1gzQUYydi1obXpSSEVkTEJxWVhPNll4enBUeXQ5czgtcU94X3ZtdDFSMzY1ckphOV9VZUJVdVZibEhZT19qemg5WUFLWkE?oc=5"
+      },
       {
         "title": "業績予想を上方修正──長期株式投資氏が深堀り！「新規ビジネスで収益の安定化」目指す半導体商社シンデン・ハイテックス(3131) 【日本株発掘】",
         "source": "かぶリッジ",
@@ -4865,20 +4893,30 @@
   },
   "6742": {
     "code": "6742",
-    "rank": 27,
-    "verdict": "neutral",
-    "reason": "営業利益率0.7%と本業の稼ぐ力が弱く、テクニカルのみの追随は危険。",
-    "news_note": "要確認",
-    "entry_strategy": "様子見",
-    "entry_price": 1030,
-    "support": 953.0,
-    "resistance": 1115.0,
-    "tp_price": 1150,
-    "sl_price": 980,
-    "trailing_plan": "要確認",
-    "date": "2026-09-20",
-    "updated_at": "2026-09-20T21:17:29",
-    "news_headlines": []
+    "rank": 13,
+    "verdict": "watch",
+    "entry_type": "wait",
+    "reason": "低PER・出来高増。レンジ上限で押し目待ち。",
+    "news_note": "2026-10-09 Yahoo: 企業情報のみ。材料は要確認",
+    "entry_strategy": "見送り、1134-1177円の押し目待ち",
+    "entry_price": 1195,
+    "support": 1134,
+    "resistance": 1205,
+    "tp_price": 1300,
+    "sl_price": 1134,
+    "trailing_plan": "1205円突破後は5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
+    "prompt_version": "2026-10-01-1",
+    "news_headlines": [
+      {
+        "title": "(株)京三製作所【6742】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-09",
+        "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE91M05RTDVnXzM5QVV3d3p2NEVsVDc5SVl5aWlxcW4yV29xbXJaSE53TDhURE11SUNMOVQyakd2VDRZaS1aZjZCOUxiNDlNb1hZN09Ib0oycEdrZm82azhJb3RoRGtwVUxKMTluNWRsNEZCcG8z?oc=5"
+      }
+    ]
   },
   "8392": {
     "code": "8392",
@@ -5531,28 +5569,49 @@
   },
   "7480": {
     "code": "7480",
-    "rank": 9,
-    "verdict": "watch",
-    "entry_type": "wait",
-    "reason": "高配当で押し目妙味、出来高減少は注意",
-    "news_note": "自己株処分、AI株価診断は要確認",
-    "entry_strategy": "3556〜3650円まで押したら検討",
-    "entry_price": 3600,
-    "support": 3556,
-    "resistance": 3925,
-    "tp_price": 3925,
-    "sl_price": 3450,
-    "trailing_plan": "3925到達で利確、3556割れ撤退",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "rank": 5,
+    "verdict": "recommend",
+    "entry_type": "pullback_wait",
+    "reason": "過熱低く高配当。抵抗突破前の押し目待ち。",
+    "news_note": "2026-10-01 日経: 2027年3月期9月度売上高推移速報を開示",
+    "entry_strategy": "5日線3831円までの押し目待ち、3700円割れ見送り",
+    "entry_price": 3831,
+    "support": 3783,
+    "resistance": 3985,
+    "tp_price": 4200,
+    "sl_price": 3700,
+    "trailing_plan": "3985円突破なら5日線、未達なら手仕舞い",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
+      {
+        "title": "スズデン(株)【7480】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-12",
+        "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9IaHZYQWYwMjRtTTJsV2RabHVNcFl6Q1picXowYTZjVEV1N0JCOUlPOGlFcldBbmtNNE52TXR2X1F2ckpTWXJpanhuMG5lZE1jdWg2QXF2cEd1LWhtSGl5YlRiNWctTVZQR0g0NnBldVcyOF9hSUE?oc=5"
+      },
+      {
+        "title": "マーケット速報",
+        "source": "www.nnn.co.jp",
+        "domain": "nnn.co.jp",
+        "date": "2026-10-11",
+        "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPNnBOQVgyTFNMOFotQmFXTHdtLWtaQ201blJrb212bGtkOHBLeWVsQ3pBbWlRaVBueW43TkkyU3c5TTZVbjZiNU8xN0xEaTlYUUtFVzRHV1QxOHY4cVQ0NXBadU1xNERoZGp4M1c4RTE5cUZ6OXV6S2tLcU94TVRwX09wZm1jYnlzY3RXdDJLSHY1QzVPd2s1NjR6Q08ySWF2U1lra3dWdjJnTmlqY1ppeFdLQ2JWMDJ2djFn?oc=5"
+      },
       {
         "title": "スズデン[7480]：2027年3月期9月度売上高推移速報についてのお知らせ（個別） 2026年10月1日(適時開示) ：日経会社情報DIGITAL",
         "source": "日本経済新聞",
         "domain": "nikkei.com",
         "date": "2026-10-01",
         "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE56RWZEUDAyem5CdFF1WjhQa1dBRnlmcmFCWlZUR0pDQ1gxSGJ1eE5MdWt5d3lhOFBkQlRfWlJ4alhoTy1td1c1bkloMTdXN2w3SnY5UmFkOXQ3Y1pYbWpWRTRMMEpIOUtuYnc?oc=5"
+      },
+      {
+        "title": "スズデン（7480）2027年3月期9月度売上高推移速報についてのお知らせ（個別）",
+        "source": "四季報オンライン",
+        "domain": "shikiho.toyokeizai.net",
+        "date": "2026-10-01",
+        "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE4xWHRmazFZS2pSOF9UQ2N5dFp1Q284cUNNdGl0UnZwVVJiTWcwUUVtMHJORm42OVAtQWxXRHRUX0xEMWlnX2VvRExaMUUwbmxVNjlqM3VJcw?oc=5"
       },
       {
         "title": "スズデン[7480]：従業員に対する譲渡制限付株式としての自己株式の処分に関するお知らせ 2026年10月1日(適時開示) ：日経会社情報DIGITAL",
@@ -5946,34 +6005,35 @@
   },
   "5985": {
     "code": "5985",
-    "rank": 13,
+    "rank": 11,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "車載ばね・EV向けバスバー。RSI64で過熱軽度も上ヒゲやや目立つ。",
-    "news_note": "モノづくりフェア2026in福岡に出展、EV向けバスバーを紹介。",
-    "entry_strategy": "2264〜2386円の押し目待ち",
-    "entry_price": 2400,
-    "support": 2386,
-    "resistance": 2556,
-    "tp_price": 2800,
-    "sl_price": 2200,
-    "trailing_plan": "5日線2386割れで撤退、上伸で建値切上げ",
-    "date": "2026-10-02",
-    "updated_at": "2026-10-03T01:42:14",
+    "reason": "PER11倍・ROE18%で割安。EV材料あるが押し目待ち。",
+    "news_note": "2026-10-13 レスポンス: EV向けバスバーや竹炭素材をモノづくりフェアで披露",
+    "entry_strategy": "見送り、2333-2400円の押し目待ち",
+    "entry_price": 2580,
+    "support": 2333,
+    "resistance": 2934,
+    "tp_price": 2934,
+    "sl_price": 2333,
+    "trailing_plan": "2934円突破後は5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
+    "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
-        "title": "マーケット速報",
-        "source": "山陽新聞",
-        "domain": "sandigi-www.webow.jp",
-        "date": "2026-09-30",
-        "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOYUVpdFVzeU1iZjFpamppZ1RmdWFwS0k3dXBjb3ZrdlVEWFFhVTNxcHE3QkNaeEVueHhYQUZEeV9CY3ZWNmctMnAza1V0ZWNxSjVxc0F6MG10eDROZXRubWpPOHVwaEpLM2pXdXhkR2dKdTB6cHQ0V2NKN3d1LXByQVlIMVI1SGNBc2dkb2xiWDJlM3dxQlhMOUQtMWc0aFlKZExPN3hIUjFYR3ZxajV2dXdtbDNMUzg?oc=5"
+        "title": "サンコール(株)【5985】：今の株価の理由は？値動きの背景をAIが解説",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5GQ0VPMmVqbU5QMzdMaDROLU9XczhMdll2M1lOcXQ4ancyZ3hvTkdyNS12aXpGbTVFbXFPekk2R0w5U3BpeGtUbnNuQ25sZkpoR1ZuREh1UWtkUGpmb1Fj?oc=5"
       },
       {
-        "title": "サンコール菊池、「モノづくりフェア2026in福岡」に出展 精密ばね・EV向けバスバー（BUSBAR）や環境素材「KYO BAMBLACK」を福岡で紹介",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
-        "date": "2026-09-28",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9wNUY0RTlfend0TGdrd1JfSzhZR25yVXJXVFM3Yjc0TkJqNHFHaFYxcm5rMW1vMWl6NGR5bDlNY2hPRXF0bFA5d1Zab3NYMmRuWjZBX1A1WC1aQm84S0xES0x3Nk9mdTZiM2c?oc=5"
+        "title": "EV向けバスバーや竹炭素材、サンコール菊池が披露へ…モノづくりフェア2026 in福岡",
+        "source": "レスポンス（Response.jp）",
+        "domain": "response.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9wa0ZQenlVMjdUd2NUa0NrR3Bqa2RMSEJwQjVsajhETFV0bnRCUHVRbTlEY3ZmMktSZmk4WDA2SGRuQnlHMlJISG9KZ0I0bXlmTlhydWFBcWhjTjJrUUhF?oc=5"
       }
     ]
   },
@@ -6034,28 +6094,28 @@
   },
   "3374": {
     "code": "3374",
-    "rank": 13,
+    "rank": 9,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "25日乖離16%で過熱気味、押し目待ち",
-    "news_note": "商社＋技術、材料は要確認",
-    "entry_strategy": "4833〜5000円まで待つ",
-    "entry_price": 4900,
-    "support": 4833,
-    "resistance": 5420,
-    "tp_price": 5400,
-    "sl_price": 4700,
-    "trailing_plan": "5420手前利確、4833割れ撤退",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "reason": "商社＋技術で上昇もRSI73、高値圏。押し目待ち。",
+    "news_note": "2026-10-06 経済界ウェブ: 商社＋技術の集団へ、一気通貫体制を強みに",
+    "entry_strategy": "見送り、5079-5288円の押し目待ち",
+    "entry_price": 5440,
+    "support": 5079,
+    "resistance": 5440,
+    "tp_price": 5700,
+    "sl_price": 5079,
+    "trailing_plan": "押し目後5440円突破なら5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
         "title": "内外テック(株)【3374】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-08",
-        "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5EcTBaaV96bWFZczFQYkxJMkdTSjQ3SnlTSzN3YVdlQld3YWVCRlBuMjRJSUlCTmlrMlpLa2FtdHBBVlBnVEdab2NuTlV4bXNrajZnOXB2enFqUkptSDFoNklNYXd4U2RFTUtkMklQUHJsWjJa?oc=5"
+        "date": "2026-10-12",
+        "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1SZWhDOHNkeXlQbkszNW9FSUw3cVE0UFFVZk5qd1JQMFFFWGRXMTJKaGhDb2pKVzRack9FaWJvMlQ0UTJETXJ3bHdzWGxUalQwbUYwZWFyWlA3N1BIUVNwMUR3a3JvbHQwZlZhdjBUZDhkWkZfREE?oc=5"
       },
       {
         "title": "マーケット速報",
@@ -6072,18 +6132,18 @@
         "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTFBvTFRyWnJNWFpqRUlVdE1VWkpZcEo2bDFUUk50cDJIRUJwQ3dPem8yNzdiNmJ5bXdhMFpqdnJfNlZ2S0pLc2xkZzNqODM2bDhZNU13?oc=5"
       },
       {
-        "title": "株の探偵 (@KIVgGJ3VbxwtCAI) on X",
-        "source": "Howl.link",
-        "domain": "t.co",
-        "date": "2026-10-06",
-        "url": "https://news.google.com/rss/articles/CBMiO0FVX3lxTFBaN2RfTVpjN18yQW10eVVNdXl6SjdGYksyU1oycXpjVV82MTFnd25xeUdXa2tLNlpPTVZz?oc=5"
+        "title": "内外テック[3374]：半導体領域への投資に特化したＶＣファンド「Taravine Partners１号投資事業有限責任組合」への出資に関するお知らせ 2026年9月30日(適時開示) ：日経会社情報DIGITAL",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-09-30",
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFA3bElIS3luM3hid0RYNnZmT3JWYWVXQmctU0lHUGFGYk5PZTEwaWhNT1F6UllSUWV1cU1HWkQ0S2hKYXBydWxxSWN1dlFCWFpMdjhzX3FoVUVGOGV3TDlHS2FzWUFjaGF6YkE?oc=5"
       },
       {
-        "title": "株価｜Web東奥",
-        "source": "東奥日報社",
-        "domain": "toonippo.co.jp",
-        "date": "2026-10-01",
-        "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxONUlTd2VTUDBqdU1MSHhESnh0NUY5VGdmVXNfTUlLM1pQR1JUdDdsWnYwV0VvSHdLbXdYMVEwcVNSYXczcS1FMW5QYjZ6OVJkMHFiYlRmcmk2QWR1SGtWc09Tek9hbHNLNVJIRm9BZGI5bFFuOS1hWUsxa0s0Y05KeW5JVTFpNXJDaXRaUHB6N0M0UE55c3RxY1Zfa2p1TFNWMTRJWS1XMHM4QWtxVHp4aGJnUnk?oc=5"
+        "title": "内外テックが続伸、半導体領域に特化したＶＣに出資(ウエルスアドバイザー)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-09-30",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOVXpmVHJTUlFMZmUxSzI4Z3F1S3p6TWN3RkQtTGpSX1FkRmZzS1hmRFhCUlJPTTJfTDRrOFFaYjVVUnc4aDhDZi1CRVoyVHNJVW5hRzFDelExamRQWGk0RmFuVkpvWU9XNzZzc1UxRE1nd3Z0SHZOdkRzZFpwS21LWTVEcmhLTzA?oc=5"
       }
     ]
   },
@@ -6387,22 +6447,43 @@
   },
   "6890": {
     "code": "6890",
-    "rank": 10,
+    "rank": 12,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "TOPIX採用で需給改善、25日乖離14%は注意",
-    "news_note": "TOPIX新規採用を発表",
-    "entry_strategy": "10800円近辺まで押したら検討",
-    "entry_price": 10800,
-    "support": 10582,
+    "reason": "半導体で高流動性。過熱低いが5日線下、押し目待ち。",
+    "news_note": "2026-10-11 YouTube: 株価半年+65.8%、高値から-4.9%の分析",
+    "entry_strategy": "見送り、10735-11000円の押し目待ち",
+    "entry_price": 11570,
+    "support": 10735,
     "resistance": 12330,
-    "tp_price": 12000,
-    "sl_price": 10582,
-    "trailing_plan": "12000手前で利確、10582割れ撤退",
-    "date": "2026-10-09",
-    "updated_at": "2026-10-10T02:31:58",
+    "tp_price": 12330,
+    "sl_price": 10735,
+    "trailing_plan": "12330円突破後は5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
+      {
+        "title": "フェローテック 株価 半年で+65.8%、高値から−4.9%【6890 銘柄分析】",
+        "source": "YouTube",
+        "domain": "youtu.be",
+        "date": "2026-10-11",
+        "url": "https://news.google.com/rss/articles/CBMiQkFVX3lxTE9pR0RQN191YWxqRmRScG8tWVp1VmhTb0JwQ0dLQkxrc1pWUENwcHhoQzNDMUJHS2FwZHBCVkU5bEJKUQ?oc=5"
+      },
+      {
+        "title": "(株)フェローテック【6890】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-09",
+        "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5RQ2tzSzZnOGl1N2IyQU0wQVpJS1VXbkhsUmE0LUdkVHVWRUpmR0RlT2drR1p0RzIxSFlrQnVQZm5lRGlZcmVZSmRlYlY0VmZaTjMwMks2RW9IVndmX3Z5aWVSWThsUFliZ0czTnlJWlFSVW5UOVE?oc=5"
+      },
+      {
+        "title": "(株)フェローテック【6890】：株価・株式情報",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-09",
+        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9jT3dFQlNILVZES0NtanFRTlFFNHNVQXNGUkxKUWNUWElLTTN3Tk5xU1JHVHcxeTlNNXFnOU5VUE1hZ0dUcnBfajdJYlpOUGQ3d0E?oc=5"
+      },
       {
         "title": "(株)フェローテック【6890】：今の株価の理由は？値動きの背景をAIが解説",
         "source": "Yahoo!ファイナンス",
@@ -6416,27 +6497,40 @@
         "domain": "kabutan.jp",
         "date": "2026-10-09",
         "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5Fb2h6a2tYZy1tWWwwSU9ZMklTZDlSUFJrdkxUTnJ6YmNHejB5WDJnQUtlSlFIS2FyMzVzT1dtR1h4aHFleTEtb0V0ODcyN0l0ZWlLX01FWXRxYlc5QzZF?oc=5"
+      }
+    ]
+  },
+  "4968": {
+    "code": "4968",
+    "rank": 14,
+    "verdict": "watch",
+    "entry_type": "wait",
+    "reason": "PBR0.7倍・出来高増。ただし材料薄く押し目待ち。",
+    "news_note": "2026-10-13 Yahoo: 株価の理由AI解説のみ。材料は要確認",
+    "entry_strategy": "見送り、2331-2485円の押し目待ち",
+    "entry_price": 2493,
+    "support": 2331,
+    "resistance": 2568,
+    "tp_price": 2568,
+    "sl_price": 2331,
+    "trailing_plan": "2568円突破後は5日線トレール",
+    "date": "2026-10-13",
+    "updated_at": "2026-10-14T03:23:58",
+    "prompt_version": "2026-10-01-1",
+    "news_headlines": [
+      {
+        "title": "荒川化学工業(株)【4968】：今の株価の理由は？値動きの背景をAIが解説",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFB1T1NGMERUN0N6TjhlU0c4a3Y0MTVfRGhvbVo4UVZNTmJkZXBlVW9JN1VmOFUzV1plR1JEWVhSWFppTkF0UldfZ3J2VnlTS0hHcXV5UnRiX3ZidklpQm40?oc=5"
       },
       {
-        "title": "フェローテック[6890]：TOPIX（東証株価指数）構成銘柄への新規採用に関するお知らせ 2026年10月7日(適時開示) ：日経会社情報DIGITAL",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-10-07",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5NamNRQ2lRSmdXQTRaSE40TFR5YS1McTk0Sk9DT2t5VUFuLXNzdVBuSzk4STFXQjhhMmtHcDVOb1hBVVJpVy1uOXNyWFdFS3R0cmdHcWhRcVFFaDBJZlZxMGNQb3dOMkRPdlE?oc=5"
-      },
-      {
-        "title": "フェローテクについて、野村証は保有割合が減少したと報告 [変更報告書No.6]",
-        "source": "株探",
-        "domain": "kabutan.jp",
-        "date": "2026-10-07",
-        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5OMGJzel92NDVycXdteERPTzd2eWNvMUJKYmlxRnF5eVktaFhtQ0xoLUZCUHNiaWhVbkswdjdFTG1YMXV4UmhUeWNGS1ZxMWtkWWJnOEtTZ2dYZWVOSFctVw?oc=5"
-      },
-      {
-        "title": "野村證券株式会社が株式会社フェローテックホールディングス＜6890＞株式の変更報告書を提出",
-        "source": "ｄメニューニュース",
-        "domain": "topics.smt.docomo.ne.jp",
-        "date": "2026-10-07",
-        "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxOaEd0MnluRFQxeFM0b0VuM3FzNVJUZXpNcVc0U19UNElJUERMYXp0a0lRVHV1aEx5MmItelMxOHkwejgydEVmWEdQWFFyVWpndHRjUGViT2ZOOXhOQjJIUnM4QURhRVYySmM0bVZCMWkzYjRqajdkbDNqSG44NFhpY3czNkXSAYoBQVVfeXFMUFNoMzlRVzRfbHJaU09jMnl2YUhGRVFqYXU2Sll1TndrTmNlYXBsR3VrNkh4UU1Mc0ttTUlXXzNKTExTcHlLa1hLb0dHamNweVpIZkU4X2FzTnNoYWFPbzJjUlpQTVlzb1Z1cUdkRmY4amJyNTJjb05uTnppMTNKNE96UVJHMjE3MEJR?oc=5"
+        "title": "荒川化学工業(株)【4968】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE12cjVMQmVFNUk4dWdsaGpyMUx6MHU5NjhueWJWcE1NZzZoX3ZocVZ2SUVPR1VBenJtV3ZPMXNTOS16WnItdHBaQ0tTUmk1MXBpYkU2UzljZElXNGw4YWt6T3R2NkY1SWhWalN2ZWpCaE8zNFZv?oc=5"
       }
     ]
   }
