@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-14T06:24:53",
+  "generated_at": "2026-10-14T08:20:42",
   "date": "2026-10-13",
   "horizon_days": 14,
   "items": {
@@ -3708,14 +3708,14 @@
       "days_until": -433,
       "soon": false
     },
+    "3791": {
+      "date": "2025-04-11",
+      "days_until": -550,
+      "soon": false
+    },
     "3796": {
       "date": "2025-05-15",
       "days_until": -516,
-      "soon": false
-    },
-    "3798": {
-      "date": "2025-05-09",
-      "days_until": -522,
       "soon": false
     }
   }
