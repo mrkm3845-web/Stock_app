@@ -137,15 +137,22 @@
     "sl_price": 0,
     "trailing_plan": "静観",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
         "title": "エアトリ、「九州ふっこう応援割」を10月15日正午販売開始 鹿児島県対象",
-        "source": "TRAICY（トライシー）",
-        "domain": "traicy.com",
+        "source": "千葉テレビ放送株式会社",
+        "domain": "chiba-tv.com",
         "date": "2026-10-14",
-        "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE1pRzhHNE0yWGVwWFhhLWItT3A1bktGY29Gblo1eVE1UnRQTW4yMGdDLWoyUkxMeFpQcHlhZmcwZ1BfaTVWQk55cV9sMmJOT0Zlem5pS1Uwdw?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5uZWVtWkh2X0dsOTc3UnQxTFlKSHhSemV4MGFyOEE1RjBDRmxBRmw1NWxfOTNjeFgwY3pYUXd0dHVTSVcwMUNNcDZ6amkzcmFyV1dsTG1faW10R2Y1b2EtTEx6azQ?oc=5"
+      },
+      {
+        "title": "(株)エアトリ【6191】：株つぶやき",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-13",
+        "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE52NlB1eDFQcXNnM3J0MkJkcUJMcVp6ek5aOFJNYXF6dnZSc1NqcEZ1XzRfN2tOMUFGNmowZXBmdjZvamcxUkVtM0xPQWI4aVN5b0tvdFZOMDQ?oc=5"
       },
       {
         "title": "エアトリ「九州ふっこう応援割」12時販売スタート。福岡・長崎の「航空券＋宿泊」が最大50％オフに",
@@ -167,13 +174,6 @@
         "domain": "atpress.ne.jp",
         "date": "2026-10-13",
         "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1kMzdwWFAxUFZZUmhWZ0lKcXI4SkJJajJBWERvX0tVR3cwYTFRYnVOeVd5ZVRCVGlZNzJycFFCRW9lYk9rbV9KY0k3NURKRjg?oc=5"
-      },
-      {
-        "title": "エアトリ、「九州ふっこう応援割」を10月13日正午販売開始 福岡・長崎県対象",
-        "source": "TRAICY（トライシー）",
-        "domain": "traicy.com",
-        "date": "2026-10-12",
-        "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE5pNHVFbzFXektxdFlERlkyaTVUekpzTlVKS3lBNEdUdTlCOFlST25hNGlUVV96T2FQRmJ0S3p2b05OVG1VV0hSSTdzWG4zWENianNMZmUzRQ?oc=5"
       }
     ]
   },
@@ -4146,7 +4146,7 @@
     "sl_price": 0,
     "trailing_plan": "静観",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -4201,16 +4201,9 @@
     "sl_price": 38000,
     "trailing_plan": "5日線割れで手仕舞い",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
-      {
-        "title": "(株)トーメンデバイス【2737】：株つぶやき",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-12",
-        "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBPQllnYzctZThiNUU2a1dtVlpSTHd5T0d0U3VsVXNWTXYtSU5CZzJiSXcwcjB1bjNDRXRYWmJsRFIwNUhKTTRkYmhkb2xYVHZrYWNabnpnMks?oc=5"
-      },
       {
         "title": "Rebellionsの推論NPU、日本で実証と導入計画が進む　トーメンデバイスとai&が展開",
         "source": "財経新聞",
@@ -4235,7 +4228,7 @@
     "sl_price": 0,
     "trailing_plan": "静観",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -4345,7 +4338,7 @@
     "sl_price": 2100,
     "trailing_plan": "5日線割れで手仕舞い",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -4386,7 +4379,7 @@
     "sl_price": 0,
     "trailing_plan": "静観",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -4762,7 +4755,7 @@
     "sl_price": 0,
     "trailing_plan": "静観",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -4817,7 +4810,7 @@
     "sl_price": 0,
     "trailing_plan": "静観",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -4851,7 +4844,7 @@
     "sl_price": 0,
     "trailing_plan": "静観",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -5582,7 +5575,7 @@
     "sl_price": 3600,
     "trailing_plan": "5日線割れで手仕舞い",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -5931,7 +5924,7 @@
     "sl_price": 1950,
     "trailing_plan": "上昇後は5日線で利益確定",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -6020,9 +6013,16 @@
     "sl_price": 2450,
     "trailing_plan": "5日線割れで手仕舞い",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
+      {
+        "title": "サンコール菊池、モノづくりフェア2026に出展へ EV向けバスバーなど展示",
+        "source": "Dellows News",
+        "domain": "news.dellows.jp",
+        "date": "2026-10-14",
+        "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFAyXzgtUUF1ZFIyTXR2aTlfVzN6bWxMVGpOQUxKd0VEZUg3NUtLQXREOUYyNnNESlBKeVRka1RDVUZHU29TTUhfc2piY0Q0ZDNtSnUwZVAwbEhEbW9Obnc0WjdfTzJ4NVc2?oc=5"
+      },
       {
         "title": "EV向けバスバーや竹炭素材、サンコール菊池が披露へ…モノづくりフェア2026 in福岡",
         "source": "レスポンス（Response.jp）",
@@ -6109,7 +6109,7 @@
     "sl_price": 0,
     "trailing_plan": "静観",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {
@@ -6352,7 +6352,7 @@
     "sl_price": 0,
     "trailing_plan": "静観",
     "date": "2026-10-14",
-    "updated_at": "2026-10-14T22:29:24",
+    "updated_at": "2026-10-15T00:55:37",
     "prompt_version": "2026-10-01-1",
     "news_headlines": [
       {

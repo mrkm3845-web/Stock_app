@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-14T22:50:04",
+  "generated_at": "2026-10-15T00:55:37",
   "date": "2026-10-14",
   "horizon_days": 14,
   "items": {
@@ -3748,11 +3748,6 @@
       "days_until": -495,
       "soon": false
     },
-    "3817": {
-      "date": "2025-08-05",
-      "days_until": -435,
-      "soon": false
-    },
     "3826": {
       "date": "2025-07-14",
       "days_until": -457,
@@ -3761,16 +3756,6 @@
     "3834": {
       "date": "2025-08-07",
       "days_until": -433,
-      "soon": false
-    },
-    "3835": {
-      "date": "2025-07-29",
-      "days_until": -442,
-      "soon": false
-    },
-    "3837": {
-      "date": "2025-08-05",
-      "days_until": -435,
       "soon": false
     },
     "3839": {
