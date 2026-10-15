@@ -56,3 +56,26 @@
 - `daily_main8_ai.yml` … AI 推奨（平日 20:17 JST）。`recommendations.json`（`picks` / `picks_in_range` / `range`）を生成。
 - `run_walkforward.yml` … 月次バックテスト＋パラメータ反映。
 - `weekly_review.yml` … 週次答え合わせ（土曜 09:00 JST）。
+
+## ローカルが古い可能性があるときのリモート同期（標準・重要）
+
+`main` は **GitHub Actions の bot が平日に自動でコミット＆プッシュ**する（`daily_main8.yml` / `daily_main8_ai.yml` など）。そのため、あなたが何もしなくてもリモートは先へ進み、**ローカルはすぐ遅れる**。同期を忘れると古いデータで分析してしまう。
+
+- **「分析をお願い」等のキーワードに依存しない。** 依頼内容から「最新データが必要か」「ローカルが古い疑いがあるか」を判断し、必要なら**作業の最初に同期**する。
+
+### 同期すべき場面（内容で判断）
+- 推奨・答え合わせ・相場・銘柄・トレード・保有・損益の分析や状況確認。
+- `docs/recommendations.json`、`docs/picks/`、`docs/history/`、`docs/ai_analysis/`、`docs/weekly/`、`docs/ai_strategy_latest.json` など、**botが自動更新する生成物**を参照する作業。
+- GitHub Actions の実行結果や生成物に依存する調査・説明。
+
+### 同期しなくてよい場面
+- ローカルで完結する純粋なコード編集・リファクタ・テスト追加など（最新データが不要なもの）。
+
+### 手順
+1. `git fetch origin main` を実行する（参照更新のみ。作業ツリーは変更しない）。
+2. `git status --porcelain` で未コミット変更を確認する。
+3. `docs/`（bot生成物）に未コミット変更がある場合のみ pull を見送り、その旨を報告してユーザーに確認する。
+4. `docs/` 以外のみ（`AGENTS.md`・`*.py` など）→ `git pull --rebase --autostash origin main` を実行する（WIPは一時退避して復元するため失われない）。
+5. 同期後、`docs/recommendations.json` の `date` / `generated_at` と `docs/history/dates.json` の先頭を確認し、**どの時点のデータで分析しているか**を最初に明示する。
+6. 競合やネットワーク失敗時は分析を続けず、状態を報告する。
+7. Plan Mode（読み取り専用）中は pull できないため、同期が必要な旨を伝え、承認を得てから実行する。
