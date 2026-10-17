@@ -2,7 +2,7 @@
   "week": "2026-W39",
   "start": "2026-09-21",
   "end": "2026-09-25",
-  "generated_at": "2026-10-10T15:45:14",
+  "generated_at": "2026-10-17T02:23:12",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -13,20 +13,20 @@
   },
   "summary": {
     "picks_total": 10,
-    "n_filled": 6,
+    "n_filled": 9,
     "n_not_filled": 0,
-    "n_pending": 4,
+    "n_pending": 1,
     "n_no_data": 0,
     "n_entered": 10,
     "fill_rate": 1.0,
-    "avg_return_pct": 6.622,
-    "median_return_pct": 7.613,
-    "win_rate": 0.667,
-    "avg_benchmark_pct": -0.128,
-    "avg_excess_pct": 6.75,
-    "beat_benchmark_rate": 1.0,
-    "rule_avg_return_pct": 6.622,
-    "rule_win_rate": 0.667,
+    "avg_return_pct": 1.223,
+    "median_return_pct": -0.3,
+    "win_rate": 0.444,
+    "avg_benchmark_pct": -0.771,
+    "avg_excess_pct": 1.995,
+    "beat_benchmark_rate": 0.667,
+    "rule_avg_return_pct": 1.223,
+    "rule_win_rate": 0.444,
     "avg_weekly_return_pct": 3.159,
     "weekly_win_rate": 0.7,
     "n_missed_evaluated": 0,
@@ -41,9 +41,9 @@
       "return_net_pct": 13.1276
     },
     "worst": {
-      "code": "8541",
-      "name": "愛媛銀行",
-      "return_net_pct": -0.7726
+      "code": "7826",
+      "name": "フルヤ金属",
+      "return_net_pct": -10.9854
     }
   },
   "trades": [
@@ -135,21 +135,31 @@
       },
       "fill_date": "2026-09-25",
       "fill_price": 4399.1178,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-15",
+        "price": 4045.0,
+        "reason": "保有期限",
+        "return_net_pct": -8.3252
+      },
       "exit_weekly": {
         "date": "2026-09-25",
         "price": 4675.0,
         "return_net_pct": 5.953,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-15",
+        "price": 4045.0,
+        "reason": "保有期限",
+        "return_net_pct": -8.3252
+      },
+      "return_gross_pct": -8.0497,
+      "return_net_pct": -8.3252,
+      "return_rule_pct": -8.3252,
       "return_weekly_pct": 5.953,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -1.7465,
+      "excess_pct": -6.5787,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -292,21 +302,31 @@
       },
       "fill_date": "2026-09-25",
       "fill_price": 4452.9333,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-15",
+        "price": 4046.0,
+        "reason": "損切り",
+        "return_net_pct": -9.4107
+      },
       "exit_weekly": {
         "date": "2026-09-25",
         "price": 4532.0,
         "return_net_pct": 1.4707,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-15",
+        "price": 4046.0,
+        "reason": "損切り",
+        "return_net_pct": -9.4107
+      },
+      "return_gross_pct": -9.1385,
+      "return_net_pct": -9.4107,
+      "return_rule_pct": -9.4107,
       "return_weekly_pct": 1.4707,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -1.7465,
+      "excess_pct": -7.6642,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -459,21 +479,31 @@
       },
       "fill_date": "2026-09-28",
       "fill_price": 11840.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-15",
+        "price": 10571.0,
+        "reason": "損切り",
+        "return_net_pct": -10.9854
+      },
       "exit_weekly": {
         "date": "2026-10-02",
         "price": 11840.0,
         "return_net_pct": -0.2996,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-15",
+        "price": 10571.0,
+        "reason": "損切り",
+        "return_net_pct": -10.9854
+      },
+      "return_gross_pct": -10.7179,
+      "return_net_pct": -10.9854,
+      "return_rule_pct": -10.9854,
       "return_weekly_pct": -0.2996,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -2.6805,
+      "excess_pct": -8.3049,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -2169,53 +2199,53 @@
     "3": {
       "n_per_day": 3,
       "picks": 6,
-      "n_filled": 4,
-      "n_pending": 2,
+      "n_filled": 6,
+      "n_pending": 0,
       "fill_rate": 1.0,
-      "avg_return_pct": 10.201,
-      "median_return_pct": 10.538,
-      "win_rate": 1.0,
-      "avg_excess_pct": 9.749,
+      "avg_return_pct": 3.582,
+      "median_return_pct": 7.613,
+      "win_rate": 0.667,
+      "avg_excess_pct": 4.019,
       "best": {
         "code": "6668",
         "name": "アドテック　プラズマ　テクノロジー",
         "return_net_pct": 13.1276
       },
       "worst": {
-        "code": "2737",
-        "name": "トーメンデバイス",
-        "return_net_pct": 6.5981
+        "code": "7826",
+        "name": "フルヤ金属",
+        "return_net_pct": -10.9854
       }
     },
     "5": {
       "n_per_day": 5,
       "picks": 10,
-      "n_filled": 6,
-      "n_pending": 4,
+      "n_filled": 9,
+      "n_pending": 1,
       "fill_rate": 1.0,
-      "avg_return_pct": 6.622,
-      "median_return_pct": 7.613,
-      "win_rate": 0.667,
-      "avg_excess_pct": 6.75,
+      "avg_return_pct": 1.223,
+      "median_return_pct": -0.3,
+      "win_rate": 0.444,
+      "avg_excess_pct": 1.995,
       "best": {
         "code": "6668",
         "name": "アドテック　プラズマ　テクノロジー",
         "return_net_pct": 13.1276
       },
       "worst": {
-        "code": "8541",
-        "name": "愛媛銀行",
-        "return_net_pct": -0.7726
+        "code": "7826",
+        "name": "フルヤ金属",
+        "return_net_pct": -10.9854
       }
     }
   },
   "breakdown": {
     "by_entry_type": {
       "追いかけ": {
-        "n": 4,
-        "avg": 8.476,
-        "median": 10.538,
-        "win_rate": 0.75
+        "n": 7,
+        "avg": 0.74,
+        "median": -0.3,
+        "win_rate": 0.429
       },
       "押し目待ち": {
         "n": 2,
@@ -2226,78 +2256,80 @@
     },
     "by_overheat": {
       "低": {
-        "n": 4,
-        "avg": 8.476,
-        "median": 10.538,
-        "win_rate": 0.75
+        "n": 6,
+        "avg": 2.695,
+        "median": 4.164,
+        "win_rate": 0.5
       },
       "中": {
-        "n": 2,
-        "avg": 2.913,
-        "median": 2.913,
-        "win_rate": 0.5
+        "n": 3,
+        "avg": -1.72,
+        "median": -0.773,
+        "win_rate": 0.333
       }
     },
     "by_sector": {
       "電気機器": {
-        "n": 2,
-        "avg": 10.878,
-        "median": 10.878,
-        "win_rate": 1.0
+        "n": 3,
+        "avg": 4.115,
+        "median": 8.628,
+        "win_rate": 0.667
+      },
+      "銀行業": {
+        "n": 3,
+        "avg": -3.132,
+        "median": -0.773,
+        "win_rate": 0.0
       },
       "その他製品": {
-        "n": 1,
-        "avg": 12.449,
-        "median": 12.449,
-        "win_rate": 1.0
+        "n": 2,
+        "avg": 0.732,
+        "median": 0.732,
+        "win_rate": 0.5
       },
       "卸売業": {
         "n": 1,
         "avg": 6.598,
         "median": 6.598,
         "win_rate": 1.0
-      },
-      "銀行業": {
-        "n": 2,
-        "avg": -0.536,
-        "median": -0.536,
-        "win_rate": 0.0
       }
     },
     "by_verdict": {
       "推奨": {
-        "n": 6,
-        "avg": 6.622,
-        "median": 7.613,
-        "win_rate": 0.667
+        "n": 9,
+        "avg": 1.223,
+        "median": -0.3,
+        "win_rate": 0.444
       }
     }
   },
   "notes": [
-    "まだ決済が確定していない建玉（未確定）が4件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
-    "約定して決済まで確定した6件の1件あたり平均損益は+6.62%でした。同じ期間の市場平均（TOPIX）は-0.13%なので、市場を6.75%ポイント上回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
+    "まだ決済が確定していない建玉（未確定）が1件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
+    "約定して決済まで確定した9件の1件あたり平均損益は+1.22%でした。同じ期間の市場平均（TOPIX）は-0.77%なので、市場を1.99%ポイント上回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
     "技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 +0.14）。スコアが高い＝上がる、とは言えない週でした。",
     "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均0.58%ポイント悪い結果でした。AIの強気判定が裏目に出た週なので、次回は慎重に見ます。"
   ],
   "actions": [
-    "過熱度『低』（47件・平均-1.876%）は 減点 -0.17。"
+    "過熱度『低』（48件・平均-4.571%）は 減点 -0.72。",
+    "過熱度『中』（13件・平均-0.53%）は 加点 +1.79。"
   ],
   "feedback": {
     "enabled": true,
     "window_weeks": 6,
-    "n_filled": 53,
-    "baseline_avg_pct": -1.676,
+    "n_filled": 62,
+    "baseline_avg_pct": -3.699,
     "overheat_delta": {
-      "low": -0.17
+      "low": -0.72,
+      "moderate": 1.79
     },
     "overheat_stats": {
-      "moderate": {
-        "n": 5,
-        "avg": 0.478
-      },
       "low": {
-        "n": 47,
-        "avg": -1.876
+        "n": 48,
+        "avg": -4.571
+      },
+      "moderate": {
+        "n": 13,
+        "avg": -0.53
       },
       "strong": {
         "n": 1,

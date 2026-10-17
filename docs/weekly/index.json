@@ -1,35 +1,43 @@
 [
   {
+    "week": "2026-W42",
+    "start": "2026-10-12",
+    "end": "2026-10-16",
+    "avg_return_pct": -5.352,
+    "win_rate": 0.0,
+    "n_filled": 3
+  },
+  {
     "week": "2026-W41",
     "start": "2026-10-05",
     "end": "2026-10-09",
-    "avg_return_pct": -8.219,
-    "win_rate": 0.0,
-    "n_filled": 4
+    "avg_return_pct": -5.19,
+    "win_rate": 0.211,
+    "n_filled": 19
   },
   {
     "week": "2026-W40",
     "start": "2026-09-28",
     "end": "2026-10-02",
-    "avg_return_pct": 3.48,
-    "win_rate": 0.5,
-    "n_filled": 6
+    "avg_return_pct": -3.551,
+    "win_rate": 0.25,
+    "n_filled": 12
   },
   {
     "week": "2026-W39",
     "start": "2026-09-21",
     "end": "2026-09-25",
-    "avg_return_pct": 6.622,
-    "win_rate": 0.667,
-    "n_filled": 6
+    "avg_return_pct": 1.223,
+    "win_rate": 0.444,
+    "n_filled": 9
   },
   {
     "week": "2026-W38",
     "start": "2026-09-14",
     "end": "2026-09-18",
-    "avg_return_pct": -4.521,
-    "win_rate": 0.067,
-    "n_filled": 15
+    "avg_return_pct": -4.373,
+    "win_rate": 0.053,
+    "n_filled": 19
   },
   {
     "week": "2026-W37",
