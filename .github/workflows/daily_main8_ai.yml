@@ -11,6 +11,10 @@ on:
         required: false
         type: boolean
         default: false
+      date:
+        description: '対象日を上書き（YYYY-MM-DD・手動検証用。空なら当日）'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -49,11 +53,15 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
+          ARGS="--ai"
           if [ "${{ inputs.force }}" = "true" ]; then
-            python main8.py --ai --force-ai
-          else
-            python main8.py --ai
+            ARGS="$ARGS --force-ai"
           fi
+          if [ -n "${{ inputs.date }}" ]; then
+            ARGS="$ARGS --date ${{ inputs.date }}"
+          fi
+          echo "python main8.py $ARGS"
+          python main8.py $ARGS
 
       - name: コミット＆プッシュ
         run: |
