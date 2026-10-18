@@ -207,33 +207,86 @@ def _clamp01(x):
     return min(1.0, max(0.0, xf))
 
 
-def compute_technical_score(feat, params, weekly_trend_up=None, relax=None):
-    """総合スコア（0〜100）。Phase 2: トレンド系（持続的な上昇）で構成。
+def _clamp01_arr(a):
+    """配列版クランプ（NaN/非有限は0、0〜1）。"""
+    a = np.nan_to_num(np.asarray(a, dtype=float), nan=0.0, posinf=0.0, neginf=0.0)
+    return np.clip(a, 0.0, 1.0)
 
-    Phase 1 の研究（分位分析）で有効と確認された指標のみを使う。
-    - pos_52w      : 52週高値からの位置（高いほど上昇トレンド）
-    - dist_sma200  : 200日線からの乖離率（30%で満点）
-    - sma200_slope : 200日線の傾き（20営業日、10%で満点）
-    - ret_120d     : 120日リターン（60%で満点）
 
-    旧成分（daily_gc / val_ratio / weekly_trend）は研究で逆効果（分位スプレッドが
-    マイナス）と分かったため除外した。
+# スコアv3の非線形パラメータ（行き過ぎの減点）。構造定数なので単一実装で共有する。
+_SCORE_TAPER = {
+    "dist_full": 0.20, "dist_start": 0.40, "dist_end": 1.00,
+    "ret_full": 0.60, "ret_start": 1.20, "ret_end": 3.00,
+    "floor": 0.3,
+}
+
+
+def _ramp_taper(x, full, start, end, floor=0.3):
+    """0→1（fullで満点）→startまで維持→endでfloorへ減衰（行き過ぎの減点）。"""
+    x = np.nan_to_num(np.asarray(x, dtype=float), nan=0.0, posinf=0.0, neginf=0.0)
+    out = np.zeros_like(x)
+    m = (x > 0) & (x < full)
+    out[m] = x[m] / full
+    out[(x >= full) & (x <= start)] = 1.0
+    m = (x > start) & (x < end)
+    out[m] = floor + (1.0 - floor) * (end - x[m]) / (end - start)
+    out[x >= end] = floor
+    return out
+
+
+def score_series_from_feat(feat, params):
+    """スコアv3（0〜100）の配列版。スクリーナーとバックテストで同一式を共有する。
+
+    v3（右裾研究 2026-10 の結果を反映）:
+    - pos_52w        : トレンド位置
+    - sma200_slope   : なめらかなトレンド（両期間で頑健）
+    - dist_sma200    : 非線形（+20%で満点、+40%超は減点）
+    - ret_120d       : 非線形（+60%で満点、+120%超は減点）
+    - liquidity      : log10(5日平均売買代金)（期待値が頑健）
     """
     w = params.get("score_weights", {})
+    pos = feat.get("pos_52w")
+    slope = feat.get("sma200_slope")
+    dist = feat.get("dist_sma200")
+    ret = feat.get("ret_120d")
+    n = len(pos) if pos is not None else (
+        len(slope) if slope is not None else (len(dist) if dist is not None else 0))
+    score = np.zeros(n, dtype=float)
+    if pos is not None:
+        score += w.get("pos_52w", 30) * _clamp01_arr(pos)
+    if slope is not None:
+        score += w.get("sma200_slope", 25) * _clamp01_arr(np.asarray(slope, float) / 0.10)
+    if dist is not None:
+        score += w.get("dist_sma200", 25) * _ramp_taper(
+            dist, _SCORE_TAPER["dist_full"], _SCORE_TAPER["dist_start"],
+            _SCORE_TAPER["dist_end"], _SCORE_TAPER["floor"])
+    if ret is not None:
+        score += w.get("ret_120d", 20) * _ramp_taper(
+            ret, _SCORE_TAPER["ret_full"], _SCORE_TAPER["ret_start"],
+            _SCORE_TAPER["ret_end"], _SCORE_TAPER["floor"])
+    liq_w = w.get("liquidity", 0)
+    if liq_w and feat.get("avg_val_5d") is not None:
+        val = np.maximum(np.asarray(feat["avg_val_5d"], dtype=float), 1.0)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            liq = _clamp01_arr((np.log10(val) - 4.0) / 3.0)
+        score += liq_w * liq
+    return score
 
-    def _last(key):
-        arr = feat.get(key)
-        if arr is None or len(arr) == 0:
-            return 0.0
-        return arr[-1]
 
-    score = 0.0
-    score += w.get("pos_52w", 30) * _clamp01(_last("pos_52w"))
-    score += w.get("dist_sma200", 25) * _clamp01(_last("dist_sma200") / 0.30)
-    score += w.get("sma200_slope", 25) * _clamp01(_last("sma200_slope") / 0.10)
-    score += w.get("ret_120d", 20) * _clamp01(_last("ret_120d") / 0.60)
+def compute_technical_score(feat, params, weekly_trend_up=None, relax=None):
+    """総合スコア（0〜100）。スコアv3（配列版と同一式）の最終値を返す。
 
-    return round(float(score), 1)
+    旧v2からの変更（右裾研究の結果）:
+    - sma200_slope を厚め、流動性を追加
+    - dist_sma200 / ret_120d の行き過ぎを減点（非線形）
+    """
+    s = score_series_from_feat(feat, params)
+    if len(s) == 0:
+        return 0.0
+    v = float(s[-1])
+    if not np.isfinite(v):
+        return 0.0
+    return round(max(0.0, min(100.0, v)), 1)
 
 
 def evaluate_warnings(price, val_ratio, params, extra=None):

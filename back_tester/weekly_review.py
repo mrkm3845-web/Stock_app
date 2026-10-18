@@ -676,6 +676,8 @@ def simulate_pick(pick, daily, intraday, signal_date, bench_daily, bench_intr, p
         "sector": pick.get("sector"),
         "signal_date": signal_date,
         "source": pick.get("source"),
+        "score_version": pick.get("score_version"),
+        "experiment_id": pick.get("experiment_id"),
         "score": _to_num(pick.get("score")),
         "verdict": pick.get("verdict"),
         "verdict_label": VERDICT_LABELS.get(pick.get("verdict"), pick.get("verdict")),
@@ -1780,6 +1782,8 @@ def review_week(monday, params, no_fetch=False):
         for rank_in_day, p in enumerate(picks, start=1):
             p = dict(p)
             p["source"] = src
+            p["score_version"] = snap.get("score_version")
+            p["experiment_id"] = snap.get("experiment_id")
             p["day_rank"] = rank_in_day
             p["day_pick_count"] = len(picks)
             trades.append(simulate_pick(p, daily, intraday, ds, daily, intraday, params))
@@ -1830,6 +1834,8 @@ def review_week(monday, params, no_fetch=False):
         "missed_down_count": len(missed_down),
         "missed_up_avg_pct": round(float(np.mean(missed_up)), 3) if missed_up else None,
         "missed_down_avg_pct": round(float(np.mean(missed_down)), 3) if missed_down else None,
+        "score_versions": sorted({t.get("score_version") for t in trades if t.get("score_version")}),
+        "experiment_ids": sorted({t.get("experiment_id") for t in trades if t.get("experiment_id")}),
         "best": None if not best else {
             "code": best["code"], "name": best["name"], "return_net_pct": best["return_net_pct"],
         },
@@ -1924,6 +1930,10 @@ def render_markdown(r):
     lines = [f"# 週次答え合わせレポート {r['week']}（{r['start']} 〜 {r['end']}）", ""]
     lines.append(f"※ ルール: {r['review_rule']['entry']} / {r['review_rule']['exit']}")
     lines.append(f"※ {r['review_rule'].get('exit_reference','')} / コスト {r['review_rule']['cost']} / ベンチマーク {r['review_rule'].get('benchmark','')}")
+    sv = s.get("score_versions") or []
+    ex = s.get("experiment_ids") or []
+    if sv or ex:
+        lines.append(f"※ 実験タグ: スコア版 {', '.join(sv) or '-'} / 実験ID {', '.join(ex) or '-'}（research_upside 由来の検証）")
     lines.append("")
     lines.append("## サマリ（主指標＝OCO／参考＝金曜11:30）")
     lines.append("")

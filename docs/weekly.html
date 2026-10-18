@@ -226,6 +226,11 @@ function renderEasySummary(s) {
     const el = document.getElementById('easy-summary');
     if (!el) return;
     const parts = [];
+    const sv = s.score_versions || [];
+    if (sv.length) {
+        const ex = (s.experiment_ids || []).join(', ');
+        parts.push(`スコア版: <b>${esc(sv.join(', '))}</b>${ex ? `（実験: ${esc(ex)}）` : ''}。`);
+    }
     const filled = s.n_filled ?? 0;
     const pending = s.n_pending ?? 0;
     const pick = s.picks_total ?? 0;

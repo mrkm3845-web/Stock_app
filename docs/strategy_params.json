@@ -128,10 +128,11 @@
     "probe_qty_factor": 0.5
   },
   "score_weights": {
-    "pos_52w": 30,
-    "dist_sma200": 25,
-    "sma200_slope": 25,
-    "ret_120d": 20
+    "pos_52w": 25,
+    "dist_sma200": 15,
+    "sma200_slope": 30,
+    "ret_120d": 10,
+    "liquidity": 20
   },
   "portfolio": {
     "max_positions": 5,

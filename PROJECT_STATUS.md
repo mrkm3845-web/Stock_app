@@ -80,17 +80,19 @@ flowchart LR
 
 ## 3. スコア（最重要）
 
-**Phase 2: トレンド合成スコア（0〜100）** — [`common/features.py`](common/features.py) の `compute_technical_score`。
+**スコアv3: トレンド＋流動性（0〜100）** — [`common/features.py`](common/features.py) の `compute_technical_score`（配列版 `score_series_from_feat` をスクリーナー/バックテストで共有）。
 
 | 成分 | 重み | 変換 |
 | :--- | ---: | :--- |
-| `pos_52w`（52週高値からの位置 = 終値/252日高値） | 30 | そのまま 0〜1 |
-| `dist_sma200`（200日線からの乖離 = 終値/SMA200 − 1） | 25 | ÷0.30 して 0〜1 |
-| `sma200_slope`（200日線の20営業日変化率） | 25 | ÷0.10 して 0〜1 |
-| `ret_120d`（120日リターン） | 20 | ÷0.60 して 0〜1 |
+| `sma200_slope`（200日線の20営業日変化率） | 30 | ÷0.10 して 0〜1（両期間で頑健） |
+| `pos_52w`（52週高値からの位置 = 終値/252日高値） | 25 | そのまま 0〜1 |
+| `liquidity`（5日平均売買代金） | 20 | `log10(avg_val)` を 10M〜10B円で 0〜1 |
+| `dist_sma200`（200日線乖離） | 15 | +20%で満点、+40%超は減衰（行き過ぎ減点） |
+| `ret_120d`（120日リターン） | 10 | +60%で満点、+120%超は減衰（行き過ぎ減点） |
 
-- 各成分は 0〜1 にクランプして加算（NaN/負は0）。**トレンド系のみ・相対化なしの絶対スコア**。
-- **旧成分（日足GC・出来高増加率・週足トレンド）は Phase 1 の研究で逆効果のため廃止**。
+- 各成分は 0〜1 にクランプして加算（NaN/負は0）。**トレンド＋流動性の絶対スコア**。
+- **v3の根拠（右裾研究 2026-10）**: 5日の上位5期待値 +0.27%→+0.66%、大負け率 13.9%→8.5%。学習期(〜2024)/検証期(2025〜)の両方で改善（`back_tester/validate_score.py`）。
+- **旧成分（日足GC・出来高増加率・週足トレンド）は研究で逆効果のため廃止**。
 
 **経緯（Phase 0/1/2）**
 - Phase 0: 旧スコアは「上位ほど上がる」関係を示せず、上位選択がランダムに劣後。成分では「200日線より上」以外の寄与が小さく、出来高急増・GC直後・週足上昇は**分位スプレッドがマイナス（逆効果）**。
@@ -202,7 +204,7 @@ flowchart LR
 
 ## 8. 主要パラメータ（[`docs/strategy_params.json`](docs/strategy_params.json)）
 
-- `score_weights`: `{pos_52w:30, dist_sma200:25, sma200_slope:25, ret_120d:20}`
+- `score_weights`: `{pos_52w:25, dist_sma200:15, sma200_slope:30, ret_120d:10, liquidity:20}`（v3）
 - `price_tiers`: 価格帯ごとの `tp_pct` / `sl_pct` / `max_hold_days` / `atr_sl_mult`（バックテストが自動更新）
 - `portfolio`: `{max_positions:5, max_per_sector:2, risk_per_trade_pct:1.0, reference_capital_jpy:1000000}`（`max_per_sector` は同一業種の同時採用上限）
 - `price_filter`: `{enabled, min_price, max_price}`。**第2母集団（価格レンジ）の定義**。全体推奨（無制限）とは別に、レンジ内だけを母集団としてAIが順位付けし、`recommendations.json` の `picks_in_range` に「その中での確実性順の推奨」を併記する（値がさ回避・1取引リスク抑制が狙い）。フロントはレンジ選択時、**レンジAIの「推奨＋様子見」を順位順で表示し、AI判定列もレンジAIに差し替える**。CLI `--min-price`/`--max-price` で上書き可（指定時は有効化）。

@@ -233,20 +233,12 @@ def weekly_trend_daily(df):
 
 
 def score_series(feat, weekly_up, sig, weights):
-    """compute_technical_score（Phase 2: トレンド合成）と同一式のベクトル化版。
+    """compute_technical_score（スコアv3）と同一式のベクトル化版。
 
-    旧式（GC / 出来高増加率 / 週足）は Phase 1 の研究で逆効果のため廃止。
+    式は common/features.score_series_from_feat に一本化（スクリーナーと共有）。
+    旧式（GC / 出来高増加率 / 週足）は研究で逆効果のため廃止。
     """
-    def clamp01(a):
-        a = np.asarray(a, dtype=float)
-        return np.clip(np.nan_to_num(a, nan=0.0), 0.0, 1.0)
-
-    score = np.zeros(len(feat["close"]), dtype=float)
-    score += weights.get("pos_52w", 30) * clamp01(feat["pos_52w"])
-    score += weights.get("dist_sma200", 25) * clamp01(np.asarray(feat["dist_sma200"], dtype=float) / 0.30)
-    score += weights.get("sma200_slope", 25) * clamp01(np.asarray(feat["sma200_slope"], dtype=float) / 0.10)
-    score += weights.get("ret_120d", 20) * clamp01(np.asarray(feat["ret_120d"], dtype=float) / 0.60)
-    return score
+    return F.score_series_from_feat(feat, {"score_weights": weights})
 
 
 def prepare_stocks(stock_dfs):

@@ -45,7 +45,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common.config import load_strategy_params  # noqa: E402
 from common import features as F  # noqa: E402
 from common.persona import PERSONA_JA  # noqa: E402
-from common.version import PROMPT_VERSION  # noqa: E402
+from common.version import PROMPT_VERSION, SCORE_VERSION, SCORE_EXPERIMENT  # noqa: E402
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -58,6 +58,10 @@ TECHNICAL_REC_PATH = os.path.join(DOCS_DIR, "recommendations_technical.json")
 AI_LATEST_PATH = os.path.join(DOCS_DIR, "ai_strategy_latest.json")
 AI_ANALYSIS_DIR = os.path.join(DOCS_DIR, "ai_analysis")
 PICKS_DIR = os.path.join(DOCS_DIR, "picks")
+
+# テスト用オフライン実行（既定OFF）。ネットワークを使わずローカルキャッシュのみで動かす。
+OFFLINE = False
+OFFLINE_PRICE_CACHE = os.path.join(BASE_DIR, "back_tester", "data", "backtest_cache")
 EARNINGS_PATH = os.path.join(DOCS_DIR, "earnings.json")
 # 決算接近の警告とみなす日数（保有上限に合わせる）
 EARNINGS_HORIZON_DAYS = 14
@@ -108,7 +112,29 @@ def is_market_open_day(date_str):
 
 
 # ---------------------------------------------------------------- JPX銘柄リスト
+def _stock_list_from_db(markets=None):
+    """ローカルDB（data/stocks.db）から銘柄リストを復元する（オフライン用）。"""
+    if not os.path.exists(DB_PATH):
+        return []
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("SELECT DISTINCT code, name, market, sector FROM daily_stocks")
+        rows = c.fetchall()
+        conn.close()
+        records = [{"コード": r[0], "銘柄名": r[1], "市場・商品区分": r[2], "33業種区分": r[3]} for r in rows]
+        if markets:
+            records = [r for r in records if any(m in (r.get("市場・商品区分") or "") for m in markets)]
+        if records:
+            print(f">> ローカルDBから銘柄リスト復元: {len(records)} 銘柄")
+        return records
+    except Exception:
+        return []
+
+
 def fetch_jpx_stock_list(markets):
+    if OFFLINE:
+        return _stock_list_from_db(markets)
     page_url = "https://www.jpx.co.jp/markets/statistics-equities/misc/01.html"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -202,6 +228,22 @@ def download_ohlcv_batch(codes, stock_dfs, start_date):
 
 def fetch_ohlcv_all(codes):
     """価格データをキャッシュ付きで取得。1日1回だけ全更新、残りはキャッシュ。"""
+    if OFFLINE:
+        stock_dfs = {}
+        for code in codes:
+            f = os.path.join(OFFLINE_PRICE_CACHE, f"{code}.csv")
+            if not os.path.exists(f):
+                continue
+            try:
+                df = pd.read_csv(f, index_col=0, parse_dates=True)
+                df.index = pd.to_datetime(df.index).tz_localize(None)
+                if len(df) >= 25:
+                    stock_dfs[code] = df
+            except Exception:
+                pass
+        print(f">> オフライン価格キャッシュ使用: {len(stock_dfs)} 銘柄")
+        return stock_dfs
+
     os.makedirs(PRICE_CACHE, exist_ok=True)
     today = get_target_date_str()
     stamp = os.path.join(PRICE_CACHE, "_updated.txt")
@@ -343,18 +385,21 @@ def scan_market_merged(stock_list, params):
     ohlcv = fetch_ohlcv_all(codes)
     cached_fund = load_cached_fundamentals()
 
-    print(f">> 最新ファンダメンタルズ情報を取得中...（{len(ohlcv)} 銘柄）")
     latest_fund = {}
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = {executor.submit(fetch_single_fundamental, c): c for c in ohlcv.keys()}
-        for future in as_completed(futures):
-            code = futures[future]
-            try:
-                _, info = future.result()
-                if info:
-                    latest_fund[code] = info
-            except Exception:
-                pass
+    if OFFLINE:
+        print(">> オフライン: ファンダ最新取得をスキップ（data/stocks.db のキャッシュを使用）")
+    else:
+        print(f">> 最新ファンダメンタルズ情報を取得中...（{len(ohlcv)} 銘柄）")
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            futures = {executor.submit(fetch_single_fundamental, c): c for c in ohlcv.keys()}
+            for future in as_completed(futures):
+                code = futures[future]
+                try:
+                    _, info = future.result()
+                    if info:
+                        latest_fund[code] = info
+                except Exception:
+                    pass
 
     results = []
     errors = []
@@ -1251,6 +1296,8 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
         "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"),
         "date": date,
         "version": params.get("version"),
+        "score_version": SCORE_VERSION,
+        "experiment_id": SCORE_EXPERIMENT,
         "regime": regime,
         "portfolio_guide": {
             "max_positions": portfolio.get("max_positions", 5),
@@ -1344,6 +1391,8 @@ def save_picks_snapshot(target_date, recommendations, pool, ai_map, is_ai):
         "source": "ai" if is_ai else "technical",
         "version": (recommendations or {}).get("version"),
         "prompt_version": PROMPT_VERSION,
+        "score_version": SCORE_VERSION,
+        "experiment_id": SCORE_EXPERIMENT,
         "regime": (recommendations or {}).get("regime"),
         "portfolio_guide": (recommendations or {}).get("portfolio_guide"),
         "overall": (recommendations or {}).get("overall"),
@@ -1552,7 +1601,9 @@ def save_history_json(all_stocks, target_date, regime=None, portfolio=None, keep
     with open(dates_file, "w", encoding="utf-8") as f:
         json.dump(existing_dates, f, ensure_ascii=False)
 
-    meta = {"date": target_date, "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"), "regime": regime, "portfolio": portfolio}
+    meta = {"date": target_date, "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"),
+            "score_version": SCORE_VERSION, "experiment_id": SCORE_EXPERIMENT,
+            "regime": regime, "portfolio": portfolio}
     with open(os.path.join(HISTORY_DIR, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False)
 
@@ -1706,8 +1757,12 @@ def main():
     parser.add_argument("--no-discord", action="store_true", help="Discord通知をスキップ")
     parser.add_argument("--min-price", type=float, default=None, help="株価フィルターの下限（指定時は有効化）")
     parser.add_argument("--max-price", type=float, default=None, help="株価フィルターの上限（指定時は有効化）")
+    parser.add_argument("--offline", action="store_true", help="テスト用: ネットワークを使わずローカルキャッシュのみ")
+    parser.add_argument("--date", default=None, help="テスト用: 対象日を上書き (YYYY-MM-DD)")
     args = parser.parse_args()
 
+    global OFFLINE
+    OFFLINE = bool(args.offline)
     params = load_strategy_params()
     # 株価フィルターのCLI上書き（strategy_params.json を編集せずに試せる）
     if args.min_price is not None or args.max_price is not None:
@@ -1725,7 +1780,7 @@ def main():
     if args.max_stocks:
         stock_list = stock_list[: args.max_stocks]
 
-    date = get_target_date_str()
+    date = args.date or get_target_date_str()
     if not is_market_open_day(date):
         print(f">> 【{date}】は非営業日（土日祝・取引所休場）のため処理をスキップします。")
         return
@@ -1739,7 +1794,7 @@ def main():
     print(f">> 【{date}】全件スキャン: {len(results)} 件 (新規 +{added}, 更新 {updated})")
 
     save_to_sqlite(results, date)
-    regime = fetch_market_regime()
+    regime = None if OFFLINE else fetch_market_regime()
     if regime:
         state = "risk-on" if regime["risk_on"] else "risk-off"
         print(f">> 地合い: {state} ({regime['ticker']} {regime['close']} vs SMA{regime['sma_days']} {regime['sma']})")

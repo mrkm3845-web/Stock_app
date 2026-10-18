@@ -1,0 +1,3470 @@
+{
+  "generated_at": "2026-10-15T17:54:29",
+  "walk_end": "2026-09-30",
+  "hold_days": [
+    5,
+    10,
+    20,
+    60
+  ],
+  "n_stocks": 3103,
+  "n_folds": 15,
+  "baseline_mean_pct": {
+    "5": 0.056,
+    "10": 0.444,
+    "20": 1.344,
+    "60": 4.513
+  },
+  "bench_mean_pct": {
+    "5": 0.505,
+    "10": 1.014,
+    "20": 2.018,
+    "60": 5.861
+  },
+  "patterns": [
+    {
+      "pattern": "DC(20,60)",
+      "n_events": 33631,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 3646,
+            "mean_pct": 0.292,
+            "median_pct": 0.117,
+            "hit_rate": 51.43
+          },
+          "by_regime": {
+            "on": {
+              "count": 3319,
+              "mean_pct": 0.176,
+              "median_pct": 0.022,
+              "hit_rate": 50.26
+            },
+            "off": {
+              "count": 327,
+              "mean_pct": 1.473,
+              "median_pct": 0.991,
+              "hit_rate": 63.3
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3645,
+              "mean_pct": 0.299,
+              "median_pct": 0.118,
+              "hit_rate": 51.44
+            },
+            "moderate": {
+              "count": 1,
+              "mean_pct": -25.175,
+              "median_pct": -25.175,
+              "hit_rate": 0.0
+            },
+            "high": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": 0.236,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.213,
+          "positive_fold_ratio": 0.8,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 3646,
+            "mean_pct": 0.761,
+            "median_pct": 0.376,
+            "hit_rate": 52.93
+          },
+          "by_regime": {
+            "on": {
+              "count": 3319,
+              "mean_pct": 0.552,
+              "median_pct": 0.196,
+              "hit_rate": 51.52
+            },
+            "off": {
+              "count": 327,
+              "mean_pct": 2.887,
+              "median_pct": 1.999,
+              "hit_rate": 67.28
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3645,
+              "mean_pct": 0.769,
+              "median_pct": 0.381,
+              "hit_rate": 52.95
+            },
+            "moderate": {
+              "count": 1,
+              "mean_pct": -28.457,
+              "median_pct": -28.457,
+              "hit_rate": 0.0
+            },
+            "high": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": 0.317,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.253,
+          "positive_fold_ratio": 0.733,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 3646,
+            "mean_pct": 1.6,
+            "median_pct": 0.71,
+            "hit_rate": 54.61
+          },
+          "by_regime": {
+            "on": {
+              "count": 3319,
+              "mean_pct": 1.407,
+              "median_pct": 0.617,
+              "hit_rate": 53.93
+            },
+            "off": {
+              "count": 327,
+              "mean_pct": 3.569,
+              "median_pct": 2.036,
+              "hit_rate": 61.47
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3645,
+              "mean_pct": 1.611,
+              "median_pct": 0.716,
+              "hit_rate": 54.62
+            },
+            "moderate": {
+              "count": 1,
+              "mean_pct": -34.955,
+              "median_pct": -34.955,
+              "hit_rate": 0.0
+            },
+            "high": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": 0.256,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.418,
+          "positive_fold_ratio": 0.8,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 3646,
+            "mean_pct": 4.766,
+            "median_pct": 2.656,
+            "hit_rate": 60.92
+          },
+          "by_regime": {
+            "on": {
+              "count": 3319,
+              "mean_pct": 4.354,
+              "median_pct": 2.316,
+              "hit_rate": 59.87
+            },
+            "off": {
+              "count": 327,
+              "mean_pct": 8.948,
+              "median_pct": 5.667,
+              "hit_rate": 71.56
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3645,
+              "mean_pct": 4.755,
+              "median_pct": 2.655,
+              "hit_rate": 60.91
+            },
+            "moderate": {
+              "count": 1,
+              "mean_pct": 43.873,
+              "median_pct": 43.873,
+              "hit_rate": 100.0
+            },
+            "high": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": 0.253,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.095,
+          "positive_fold_ratio": 0.6,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "DC(25,75)",
+      "n_events": 25551,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 1844,
+            "mean_pct": 0.104,
+            "median_pct": -0.181,
+            "hit_rate": 47.45
+          },
+          "by_regime": {
+            "on": {
+              "count": 1716,
+              "mean_pct": 0.122,
+              "median_pct": -0.202,
+              "hit_rate": 47.44
+            },
+            "off": {
+              "count": 128,
+              "mean_pct": -0.14,
+              "median_pct": -0.063,
+              "hit_rate": 47.66
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 1843,
+              "mean_pct": 0.104,
+              "median_pct": -0.182,
+              "hit_rate": 47.42
+            },
+            "moderate": {
+              "count": 1,
+              "mean_pct": 0.128,
+              "median_pct": 0.128,
+              "hit_rate": 100.0
+            },
+            "high": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": 0.048,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.401,
+          "positive_fold_ratio": 0.6,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 1844,
+            "mean_pct": 0.458,
+            "median_pct": 0.045,
+            "hit_rate": 50.98
+          },
+          "by_regime": {
+            "on": {
+              "count": 1716,
+              "mean_pct": 0.428,
+              "median_pct": 0.023,
+              "hit_rate": 50.41
+            },
+            "off": {
+              "count": 128,
+              "mean_pct": 0.855,
+              "median_pct": 0.571,
+              "hit_rate": 58.59
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 1843,
+              "mean_pct": 0.458,
+              "median_pct": 0.047,
+              "hit_rate": 51.0
+            },
+            "moderate": {
+              "count": 1,
+              "mean_pct": -0.157,
+              "median_pct": -0.157,
+              "hit_rate": 0.0
+            },
+            "high": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": 0.014,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.556,
+          "positive_fold_ratio": 0.533,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 1844,
+            "mean_pct": 1.441,
+            "median_pct": 0.581,
+            "hit_rate": 54.45
+          },
+          "by_regime": {
+            "on": {
+              "count": 1716,
+              "mean_pct": 1.393,
+              "median_pct": 0.492,
+              "hit_rate": 54.02
+            },
+            "off": {
+              "count": 128,
+              "mean_pct": 2.084,
+              "median_pct": 1.229,
+              "hit_rate": 60.16
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 1843,
+              "mean_pct": 1.444,
+              "median_pct": 0.588,
+              "hit_rate": 54.48
+            },
+            "moderate": {
+              "count": 1,
+              "mean_pct": -5.149,
+              "median_pct": -5.149,
+              "hit_rate": 0.0
+            },
+            "high": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": 0.097,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.577,
+          "positive_fold_ratio": 0.733,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 1844,
+            "mean_pct": 4.653,
+            "median_pct": 3.047,
+            "hit_rate": 59.49
+          },
+          "by_regime": {
+            "on": {
+              "count": 1716,
+              "mean_pct": 4.51,
+              "median_pct": 2.927,
+              "hit_rate": 58.92
+            },
+            "off": {
+              "count": 128,
+              "mean_pct": 6.581,
+              "median_pct": 5.127,
+              "hit_rate": 67.19
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 1843,
+              "mean_pct": 4.653,
+              "median_pct": 3.04,
+              "hit_rate": 59.47
+            },
+            "moderate": {
+              "count": 1,
+              "mean_pct": 5.548,
+              "median_pct": 5.548,
+              "hit_rate": 100.0
+            },
+            "high": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": 0.14,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.208,
+          "positive_fold_ratio": 0.6,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "DC(5,25)",
+      "n_events": 102335,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 36143,
+            "mean_pct": 0.219,
+            "median_pct": 0.072,
+            "hit_rate": 50.91
+          },
+          "by_regime": {
+            "on": {
+              "count": 33505,
+              "mean_pct": 0.175,
+              "median_pct": 0.027,
+              "hit_rate": 50.39
+            },
+            "off": {
+              "count": 2638,
+              "mean_pct": 0.777,
+              "median_pct": 0.8,
+              "hit_rate": 57.58
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 36131,
+              "mean_pct": 0.217,
+              "median_pct": 0.073,
+              "hit_rate": 50.92
+            },
+            "moderate": {
+              "count": 4,
+              "mean_pct": -4.799,
+              "median_pct": -0.072,
+              "hit_rate": 25.0
+            },
+            "high": {
+              "count": 8,
+              "mean_pct": 9.171,
+              "median_pct": -0.148,
+              "hit_rate": 50.0
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": 0.163,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.286,
+          "positive_fold_ratio": 0.8,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 36142,
+            "mean_pct": 0.713,
+            "median_pct": 0.384,
+            "hit_rate": 53.21
+          },
+          "by_regime": {
+            "on": {
+              "count": 33504,
+              "mean_pct": 0.537,
+              "median_pct": 0.268,
+              "hit_rate": 52.18
+            },
+            "off": {
+              "count": 2638,
+              "mean_pct": 2.955,
+              "median_pct": 2.185,
+              "hit_rate": 66.22
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 36130,
+              "mean_pct": 0.713,
+              "median_pct": 0.385,
+              "hit_rate": 53.21
+            },
+            "moderate": {
+              "count": 4,
+              "mean_pct": -5.074,
+              "median_pct": -0.037,
+              "hit_rate": 50.0
+            },
+            "high": {
+              "count": 8,
+              "mean_pct": 4.19,
+              "median_pct": -0.03,
+              "hit_rate": 50.0
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": 0.269,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.301,
+          "positive_fold_ratio": 0.8,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 36139,
+            "mean_pct": 1.738,
+            "median_pct": 1.025,
+            "hit_rate": 56.3
+          },
+          "by_regime": {
+            "on": {
+              "count": 33501,
+              "mean_pct": 1.508,
+              "median_pct": 0.86,
+              "hit_rate": 55.28
+            },
+            "off": {
+              "count": 2638,
+              "mean_pct": 4.663,
+              "median_pct": 3.29,
+              "hit_rate": 69.26
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 36129,
+              "mean_pct": 1.739,
+              "median_pct": 1.026,
+              "hit_rate": 56.31
+            },
+            "moderate": {
+              "count": 4,
+              "mean_pct": -6.585,
+              "median_pct": -0.993,
+              "hit_rate": 25.0
+            },
+            "high": {
+              "count": 6,
+              "mean_pct": 3.374,
+              "median_pct": 0.005,
+              "hit_rate": 50.0
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": 0.394,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.28,
+          "positive_fold_ratio": 0.867,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 36140,
+            "mean_pct": 4.681,
+            "median_pct": 2.312,
+            "hit_rate": 58.0
+          },
+          "by_regime": {
+            "on": {
+              "count": 33502,
+              "mean_pct": 4.455,
+              "median_pct": 2.085,
+              "hit_rate": 57.31
+            },
+            "off": {
+              "count": 2638,
+              "mean_pct": 7.557,
+              "median_pct": 4.986,
+              "hit_rate": 66.76
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 36128,
+              "mean_pct": 4.684,
+              "median_pct": 2.313,
+              "hit_rate": 58.01
+            },
+            "moderate": {
+              "count": 4,
+              "mean_pct": -6.666,
+              "median_pct": -2.689,
+              "hit_rate": 25.0
+            },
+            "high": {
+              "count": 8,
+              "mean_pct": -2.078,
+              "median_pct": -0.609,
+              "hit_rate": 25.0
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": 0.168,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.18,
+          "positive_fold_ratio": 0.6,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "DC(週足13,52)",
+      "n_events": 31070,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 3317,
+            "mean_pct": -0.068,
+            "median_pct": -0.202,
+            "hit_rate": 48.21
+          },
+          "by_regime": {
+            "on": {
+              "count": 3165,
+              "mean_pct": -0.096,
+              "median_pct": -0.3,
+              "hit_rate": 47.74
+            },
+            "off": {
+              "count": 152,
+              "mean_pct": 0.512,
+              "median_pct": 0.433,
+              "hit_rate": 57.89
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3246,
+              "mean_pct": -0.082,
+              "median_pct": -0.204,
+              "hit_rate": 48.12
+            },
+            "moderate": {
+              "count": 55,
+              "mean_pct": 0.835,
+              "median_pct": 0.828,
+              "hit_rate": 54.55
+            },
+            "high": {
+              "count": 16,
+              "mean_pct": -0.334,
+              "median_pct": -0.313,
+              "hit_rate": 43.75
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": -0.124,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.573,
+          "positive_fold_ratio": 0.533,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 3317,
+            "mean_pct": 0.392,
+            "median_pct": 0.115,
+            "hit_rate": 51.22
+          },
+          "by_regime": {
+            "on": {
+              "count": 3165,
+              "mean_pct": 0.29,
+              "median_pct": 0.047,
+              "hit_rate": 50.71
+            },
+            "off": {
+              "count": 152,
+              "mean_pct": 2.516,
+              "median_pct": 1.75,
+              "hit_rate": 61.84
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3246,
+              "mean_pct": 0.4,
+              "median_pct": 0.115,
+              "hit_rate": 51.23
+            },
+            "moderate": {
+              "count": 55,
+              "mean_pct": -0.056,
+              "median_pct": 0.039,
+              "hit_rate": 50.91
+            },
+            "high": {
+              "count": 16,
+              "mean_pct": 0.41,
+              "median_pct": -0.009,
+              "hit_rate": 50.0
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": -0.052,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.622,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 3317,
+            "mean_pct": 1.379,
+            "median_pct": 0.77,
+            "hit_rate": 55.08
+          },
+          "by_regime": {
+            "on": {
+              "count": 3165,
+              "mean_pct": 1.214,
+              "median_pct": 0.718,
+              "hit_rate": 54.76
+            },
+            "off": {
+              "count": 152,
+              "mean_pct": 4.808,
+              "median_pct": 2.376,
+              "hit_rate": 61.84
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3246,
+              "mean_pct": 1.41,
+              "median_pct": 0.779,
+              "hit_rate": 55.24
+            },
+            "moderate": {
+              "count": 55,
+              "mean_pct": 0.494,
+              "median_pct": -0.821,
+              "hit_rate": 47.27
+            },
+            "high": {
+              "count": 16,
+              "mean_pct": -1.89,
+              "median_pct": 0.424,
+              "hit_rate": 50.0
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": 0.035,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.639,
+          "positive_fold_ratio": 0.533,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 3317,
+            "mean_pct": 3.56,
+            "median_pct": 2.015,
+            "hit_rate": 57.22
+          },
+          "by_regime": {
+            "on": {
+              "count": 3165,
+              "mean_pct": 3.43,
+              "median_pct": 1.989,
+              "hit_rate": 56.9
+            },
+            "off": {
+              "count": 152,
+              "mean_pct": 6.273,
+              "median_pct": 3.065,
+              "hit_rate": 63.82
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3246,
+              "mean_pct": 3.59,
+              "median_pct": 2.01,
+              "hit_rate": 57.09
+            },
+            "moderate": {
+              "count": 55,
+              "mean_pct": 2.953,
+              "median_pct": 3.119,
+              "hit_rate": 67.27
+            },
+            "high": {
+              "count": 16,
+              "mean_pct": -0.552,
+              "median_pct": -0.899,
+              "hit_rate": 50.0
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": -0.953,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -2.301,
+          "positive_fold_ratio": 0.533,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "GC(20,60)",
+      "n_events": 34627,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 16820,
+            "mean_pct": -0.185,
+            "median_pct": -0.3,
+            "hit_rate": 45.67
+          },
+          "by_regime": {
+            "on": {
+              "count": 16227,
+              "mean_pct": -0.196,
+              "median_pct": -0.338,
+              "hit_rate": 45.41
+            },
+            "off": {
+              "count": 593,
+              "mean_pct": 0.114,
+              "median_pct": 0.2,
+              "hit_rate": 52.78
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 15395,
+              "mean_pct": -0.142,
+              "median_pct": -0.3,
+              "hit_rate": 45.76
+            },
+            "moderate": {
+              "count": 917,
+              "mean_pct": -0.052,
+              "median_pct": -0.372,
+              "hit_rate": 47.33
+            },
+            "high": {
+              "count": 508,
+              "mean_pct": -1.731,
+              "median_pct": -1.411,
+              "hit_rate": 39.96
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": -0.241,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.69,
+          "positive_fold_ratio": 0.267,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 16820,
+            "mean_pct": 0.165,
+            "median_pct": -0.17,
+            "hit_rate": 48.53
+          },
+          "by_regime": {
+            "on": {
+              "count": 16227,
+              "mean_pct": 0.11,
+              "median_pct": -0.208,
+              "hit_rate": 48.18
+            },
+            "off": {
+              "count": 593,
+              "mean_pct": 1.674,
+              "median_pct": 0.864,
+              "hit_rate": 58.18
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 15395,
+              "mean_pct": 0.215,
+              "median_pct": -0.144,
+              "hit_rate": 48.78
+            },
+            "moderate": {
+              "count": 917,
+              "mean_pct": 0.321,
+              "median_pct": -0.3,
+              "hit_rate": 48.42
+            },
+            "high": {
+              "count": 508,
+              "mean_pct": -1.618,
+              "median_pct": -1.484,
+              "hit_rate": 41.34
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": -0.279,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.849,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 16819,
+            "mean_pct": 1.133,
+            "median_pct": 0.381,
+            "hit_rate": 52.22
+          },
+          "by_regime": {
+            "on": {
+              "count": 16226,
+              "mean_pct": 1.106,
+              "median_pct": 0.341,
+              "hit_rate": 52.03
+            },
+            "off": {
+              "count": 593,
+              "mean_pct": 1.868,
+              "median_pct": 1.142,
+              "hit_rate": 57.5
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 15394,
+              "mean_pct": 1.151,
+              "median_pct": 0.42,
+              "hit_rate": 52.59
+            },
+            "moderate": {
+              "count": 917,
+              "mean_pct": 1.696,
+              "median_pct": 0.036,
+              "hit_rate": 50.16
+            },
+            "high": {
+              "count": 508,
+              "mean_pct": -0.413,
+              "median_pct": -1.308,
+              "hit_rate": 44.88
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": -0.211,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.885,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 16816,
+            "mean_pct": 4.127,
+            "median_pct": 2.076,
+            "hit_rate": 56.97
+          },
+          "by_regime": {
+            "on": {
+              "count": 16223,
+              "mean_pct": 4.149,
+              "median_pct": 2.067,
+              "hit_rate": 56.97
+            },
+            "off": {
+              "count": 593,
+              "mean_pct": 3.527,
+              "median_pct": 2.667,
+              "hit_rate": 57.0
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 15393,
+              "mean_pct": 4.162,
+              "median_pct": 2.2,
+              "hit_rate": 57.54
+            },
+            "moderate": {
+              "count": 917,
+              "mean_pct": 5.289,
+              "median_pct": 1.561,
+              "hit_rate": 53.87
+            },
+            "high": {
+              "count": 506,
+              "mean_pct": 0.968,
+              "median_pct": -1.05,
+              "hit_rate": 45.26
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": -0.386,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.734,
+          "positive_fold_ratio": 0.6,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "GC(25,75)",
+      "n_events": 26861,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 13945,
+            "mean_pct": -0.146,
+            "median_pct": -0.3,
+            "hit_rate": 46.65
+          },
+          "by_regime": {
+            "on": {
+              "count": 13270,
+              "mean_pct": -0.196,
+              "median_pct": -0.3,
+              "hit_rate": 46.01
+            },
+            "off": {
+              "count": 675,
+              "mean_pct": 0.834,
+              "median_pct": 0.621,
+              "hit_rate": 59.41
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 12470,
+              "mean_pct": -0.055,
+              "median_pct": -0.237,
+              "hit_rate": 47.08
+            },
+            "moderate": {
+              "count": 885,
+              "mean_pct": -0.543,
+              "median_pct": -0.503,
+              "hit_rate": 44.29
+            },
+            "high": {
+              "count": 590,
+              "mean_pct": -1.474,
+              "median_pct": -0.896,
+              "hit_rate": 41.19
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": -0.202,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.651,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 13945,
+            "mean_pct": 0.358,
+            "median_pct": 0.021,
+            "hit_rate": 50.2
+          },
+          "by_regime": {
+            "on": {
+              "count": 13270,
+              "mean_pct": 0.265,
+              "median_pct": -0.067,
+              "hit_rate": 49.57
+            },
+            "off": {
+              "count": 675,
+              "mean_pct": 2.19,
+              "median_pct": 1.407,
+              "hit_rate": 62.67
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 12470,
+              "mean_pct": 0.427,
+              "median_pct": 0.109,
+              "hit_rate": 50.83
+            },
+            "moderate": {
+              "count": 885,
+              "mean_pct": 0.124,
+              "median_pct": -0.426,
+              "hit_rate": 46.33
+            },
+            "high": {
+              "count": 590,
+              "mean_pct": -0.745,
+              "median_pct": -1.384,
+              "hit_rate": 42.88
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": -0.086,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.656,
+          "positive_fold_ratio": 0.533,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 13945,
+            "mean_pct": 1.193,
+            "median_pct": 0.48,
+            "hit_rate": 53.15
+          },
+          "by_regime": {
+            "on": {
+              "count": 13270,
+              "mean_pct": 1.144,
+              "median_pct": 0.45,
+              "hit_rate": 52.92
+            },
+            "off": {
+              "count": 675,
+              "mean_pct": 2.167,
+              "median_pct": 1.009,
+              "hit_rate": 57.63
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 12470,
+              "mean_pct": 1.259,
+              "median_pct": 0.589,
+              "hit_rate": 53.83
+            },
+            "moderate": {
+              "count": 885,
+              "mean_pct": 1.211,
+              "median_pct": 0.067,
+              "hit_rate": 50.4
+            },
+            "high": {
+              "count": 590,
+              "mean_pct": -0.223,
+              "median_pct": -1.417,
+              "hit_rate": 43.05
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": -0.151,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.825,
+          "positive_fold_ratio": 0.533,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 13942,
+            "mean_pct": 4.24,
+            "median_pct": 2.164,
+            "hit_rate": 57.63
+          },
+          "by_regime": {
+            "on": {
+              "count": 13267,
+              "mean_pct": 4.255,
+              "median_pct": 2.178,
+              "hit_rate": 57.64
+            },
+            "off": {
+              "count": 675,
+              "mean_pct": 3.936,
+              "median_pct": 1.704,
+              "hit_rate": 57.48
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 12470,
+              "mean_pct": 4.349,
+              "median_pct": 2.309,
+              "hit_rate": 58.44
+            },
+            "moderate": {
+              "count": 885,
+              "mean_pct": 5.116,
+              "median_pct": 1.649,
+              "hit_rate": 54.92
+            },
+            "high": {
+              "count": 587,
+              "mean_pct": 0.584,
+              "median_pct": -1.594,
+              "hit_rate": 44.46
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": -0.273,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.621,
+          "positive_fold_ratio": 0.6,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "GC(5,25)",
+      "n_events": 103214,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 28234,
+            "mean_pct": 0.03,
+            "median_pct": -0.177,
+            "hit_rate": 47.77
+          },
+          "by_regime": {
+            "on": {
+              "count": 26482,
+              "mean_pct": -0.06,
+              "median_pct": -0.3,
+              "hit_rate": 46.74
+            },
+            "off": {
+              "count": 1752,
+              "mean_pct": 1.393,
+              "median_pct": 1.096,
+              "hit_rate": 63.24
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 27868,
+              "mean_pct": 0.036,
+              "median_pct": -0.173,
+              "hit_rate": 47.83
+            },
+            "moderate": {
+              "count": 263,
+              "mean_pct": -0.892,
+              "median_pct": -1.145,
+              "hit_rate": 43.35
+            },
+            "high": {
+              "count": 103,
+              "mean_pct": 0.77,
+              "median_pct": -1.423,
+              "hit_rate": 42.72
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": -0.026,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.475,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 28233,
+            "mean_pct": 0.408,
+            "median_pct": 0.12,
+            "hit_rate": 51.08
+          },
+          "by_regime": {
+            "on": {
+              "count": 26481,
+              "mean_pct": 0.285,
+              "median_pct": 0.015,
+              "hit_rate": 50.14
+            },
+            "off": {
+              "count": 1752,
+              "mean_pct": 2.267,
+              "median_pct": 1.523,
+              "hit_rate": 65.35
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 27868,
+              "mean_pct": 0.434,
+              "median_pct": 0.138,
+              "hit_rate": 51.21
+            },
+            "moderate": {
+              "count": 263,
+              "mean_pct": -0.673,
+              "median_pct": -1.656,
+              "hit_rate": 41.83
+            },
+            "high": {
+              "count": 102,
+              "mean_pct": -3.869,
+              "median_pct": -2.236,
+              "hit_rate": 41.18
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": -0.036,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.606,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 28232,
+            "mean_pct": 1.04,
+            "median_pct": 0.351,
+            "hit_rate": 52.26
+          },
+          "by_regime": {
+            "on": {
+              "count": 26480,
+              "mean_pct": 0.942,
+              "median_pct": 0.301,
+              "hit_rate": 51.91
+            },
+            "off": {
+              "count": 1752,
+              "mean_pct": 2.524,
+              "median_pct": 1.326,
+              "hit_rate": 57.53
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 27868,
+              "mean_pct": 1.093,
+              "median_pct": 0.368,
+              "hit_rate": 52.43
+            },
+            "moderate": {
+              "count": 263,
+              "mean_pct": -1.527,
+              "median_pct": -1.953,
+              "hit_rate": 42.21
+            },
+            "high": {
+              "count": 101,
+              "mean_pct": -6.964,
+              "median_pct": -5.203,
+              "hit_rate": 31.68
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": -0.304,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.978,
+          "positive_fold_ratio": 0.267,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 28231,
+            "mean_pct": 4.531,
+            "median_pct": 2.273,
+            "hit_rate": 57.59
+          },
+          "by_regime": {
+            "on": {
+              "count": 26479,
+              "mean_pct": 4.411,
+              "median_pct": 2.158,
+              "hit_rate": 57.17
+            },
+            "off": {
+              "count": 1752,
+              "mean_pct": 6.348,
+              "median_pct": 4.246,
+              "hit_rate": 63.93
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 27866,
+              "mean_pct": 4.593,
+              "median_pct": 2.327,
+              "hit_rate": 57.78
+            },
+            "moderate": {
+              "count": 263,
+              "mean_pct": 1.572,
+              "median_pct": -1.963,
+              "hit_rate": 44.87
+            },
+            "high": {
+              "count": 102,
+              "mean_pct": -4.721,
+              "median_pct": -3.378,
+              "hit_rate": 38.24
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": 0.018,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.33,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "GC(週足13,52)",
+      "n_events": 32590,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 21283,
+            "mean_pct": -0.062,
+            "median_pct": -0.219,
+            "hit_rate": 47.47
+          },
+          "by_regime": {
+            "on": {
+              "count": 20037,
+              "mean_pct": -0.106,
+              "median_pct": -0.271,
+              "hit_rate": 47.06
+            },
+            "off": {
+              "count": 1246,
+              "mean_pct": 0.648,
+              "median_pct": 0.348,
+              "hit_rate": 54.17
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 18623,
+              "mean_pct": 0.056,
+              "median_pct": -0.16,
+              "hit_rate": 47.98
+            },
+            "moderate": {
+              "count": 1436,
+              "mean_pct": -0.167,
+              "median_pct": -0.486,
+              "hit_rate": 45.82
+            },
+            "high": {
+              "count": 1224,
+              "mean_pct": -1.731,
+              "median_pct": -0.972,
+              "hit_rate": 41.67
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": -0.118,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.567,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 21283,
+            "mean_pct": 0.362,
+            "median_pct": -0.045,
+            "hit_rate": 49.69
+          },
+          "by_regime": {
+            "on": {
+              "count": 20037,
+              "mean_pct": 0.249,
+              "median_pct": -0.109,
+              "hit_rate": 49.14
+            },
+            "off": {
+              "count": 1246,
+              "mean_pct": 2.171,
+              "median_pct": 0.975,
+              "hit_rate": 58.59
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 18623,
+              "mean_pct": 0.448,
+              "median_pct": 0.041,
+              "hit_rate": 50.37
+            },
+            "moderate": {
+              "count": 1436,
+              "mean_pct": 0.407,
+              "median_pct": -0.415,
+              "hit_rate": 47.21
+            },
+            "high": {
+              "count": 1224,
+              "mean_pct": -1.009,
+              "median_pct": -1.114,
+              "hit_rate": 42.24
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": -0.082,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.652,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 21283,
+            "mean_pct": 1.245,
+            "median_pct": 0.34,
+            "hit_rate": 52.17
+          },
+          "by_regime": {
+            "on": {
+              "count": 20037,
+              "mean_pct": 1.118,
+              "median_pct": 0.29,
+              "hit_rate": 51.83
+            },
+            "off": {
+              "count": 1246,
+              "mean_pct": 3.292,
+              "median_pct": 1.08,
+              "hit_rate": 57.62
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 18623,
+              "mean_pct": 1.322,
+              "median_pct": 0.428,
+              "hit_rate": 52.71
+            },
+            "moderate": {
+              "count": 1436,
+              "mean_pct": 1.452,
+              "median_pct": 0.172,
+              "hit_rate": 51.11
+            },
+            "high": {
+              "count": 1224,
+              "mean_pct": -0.171,
+              "median_pct": -0.943,
+              "hit_rate": 45.18
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": -0.099,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.773,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 21276,
+            "mean_pct": 4.451,
+            "median_pct": 1.879,
+            "hit_rate": 56.19
+          },
+          "by_regime": {
+            "on": {
+              "count": 20030,
+              "mean_pct": 4.306,
+              "median_pct": 1.735,
+              "hit_rate": 55.8
+            },
+            "off": {
+              "count": 1246,
+              "mean_pct": 6.788,
+              "median_pct": 3.196,
+              "hit_rate": 62.52
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 18616,
+              "mean_pct": 4.544,
+              "median_pct": 2.003,
+              "hit_rate": 56.84
+            },
+            "moderate": {
+              "count": 1436,
+              "mean_pct": 4.389,
+              "median_pct": 1.63,
+              "hit_rate": 55.01
+            },
+            "high": {
+              "count": 1224,
+              "mean_pct": 3.113,
+              "median_pct": -0.743,
+              "hit_rate": 47.79
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": -0.062,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.41,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "カップウィズハンドル",
+      "n_events": 20317,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 16176,
+            "mean_pct": -0.053,
+            "median_pct": -0.3,
+            "hit_rate": 47.27
+          },
+          "by_regime": {
+            "on": {
+              "count": 15682,
+              "mean_pct": -0.095,
+              "median_pct": -0.3,
+              "hit_rate": 46.89
+            },
+            "off": {
+              "count": 494,
+              "mean_pct": 1.287,
+              "median_pct": 0.958,
+              "hit_rate": 59.51
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 11171,
+              "mean_pct": -0.052,
+              "median_pct": -0.243,
+              "hit_rate": 47.52
+            },
+            "moderate": {
+              "count": 2787,
+              "mean_pct": 0.207,
+              "median_pct": -0.171,
+              "hit_rate": 48.15
+            },
+            "high": {
+              "count": 2218,
+              "mean_pct": -0.385,
+              "median_pct": -0.59,
+              "hit_rate": 44.91
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": -0.109,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.558,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 16176,
+            "mean_pct": 0.423,
+            "median_pct": 0.026,
+            "hit_rate": 50.18
+          },
+          "by_regime": {
+            "on": {
+              "count": 15682,
+              "mean_pct": 0.382,
+              "median_pct": -0.028,
+              "hit_rate": 49.79
+            },
+            "off": {
+              "count": 494,
+              "mean_pct": 1.742,
+              "median_pct": 1.378,
+              "hit_rate": 62.55
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 11171,
+              "mean_pct": 0.427,
+              "median_pct": 0.028,
+              "hit_rate": 50.17
+            },
+            "moderate": {
+              "count": 2787,
+              "mean_pct": 0.923,
+              "median_pct": 0.393,
+              "hit_rate": 52.85
+            },
+            "high": {
+              "count": 2218,
+              "mean_pct": -0.22,
+              "median_pct": -0.465,
+              "hit_rate": 46.84
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": -0.021,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.591,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 16176,
+            "mean_pct": 1.502,
+            "median_pct": 0.811,
+            "hit_rate": 54.49
+          },
+          "by_regime": {
+            "on": {
+              "count": 15682,
+              "mean_pct": 1.536,
+              "median_pct": 0.833,
+              "hit_rate": 54.63
+            },
+            "off": {
+              "count": 494,
+              "mean_pct": 0.426,
+              "median_pct": -0.007,
+              "hit_rate": 50.0
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 11171,
+              "mean_pct": 1.473,
+              "median_pct": 0.837,
+              "hit_rate": 54.76
+            },
+            "moderate": {
+              "count": 2787,
+              "mean_pct": 1.975,
+              "median_pct": 0.894,
+              "hit_rate": 55.47
+            },
+            "high": {
+              "count": 2218,
+              "mean_pct": 1.053,
+              "median_pct": 0.401,
+              "hit_rate": 51.89
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": 0.158,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.516,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 16176,
+            "mean_pct": 4.807,
+            "median_pct": 2.724,
+            "hit_rate": 57.68
+          },
+          "by_regime": {
+            "on": {
+              "count": 15682,
+              "mean_pct": 4.88,
+              "median_pct": 2.795,
+              "hit_rate": 57.98
+            },
+            "off": {
+              "count": 494,
+              "mean_pct": 2.502,
+              "median_pct": -0.295,
+              "hit_rate": 48.38
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 11171,
+              "mean_pct": 5.03,
+              "median_pct": 3.005,
+              "hit_rate": 58.71
+            },
+            "moderate": {
+              "count": 2787,
+              "mean_pct": 4.545,
+              "median_pct": 2.596,
+              "hit_rate": 57.59
+            },
+            "high": {
+              "count": 2218,
+              "mean_pct": 4.01,
+              "median_pct": 1.381,
+              "hit_rate": 52.66
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": 0.294,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.054,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "ダブルトップ",
+      "n_events": 45345,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 8104,
+            "mean_pct": 0.157,
+            "median_pct": 0.036,
+            "hit_rate": 50.48
+          },
+          "by_regime": {
+            "on": {
+              "count": 7148,
+              "mean_pct": 0.133,
+              "median_pct": -0.002,
+              "hit_rate": 49.97
+            },
+            "off": {
+              "count": 956,
+              "mean_pct": 0.339,
+              "median_pct": 0.316,
+              "hit_rate": 54.29
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 8101,
+              "mean_pct": 0.157,
+              "median_pct": 0.035,
+              "hit_rate": 50.48
+            },
+            "moderate": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            },
+            "high": {
+              "count": 3,
+              "mean_pct": -0.044,
+              "median_pct": 0.093,
+              "hit_rate": 66.67
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": 0.101,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.348,
+          "positive_fold_ratio": 0.667,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 8104,
+            "mean_pct": 0.616,
+            "median_pct": 0.342,
+            "hit_rate": 53.46
+          },
+          "by_regime": {
+            "on": {
+              "count": 7148,
+              "mean_pct": 0.343,
+              "median_pct": 0.183,
+              "hit_rate": 51.76
+            },
+            "off": {
+              "count": 956,
+              "mean_pct": 2.653,
+              "median_pct": 1.931,
+              "hit_rate": 66.11
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 8101,
+              "mean_pct": 0.616,
+              "median_pct": 0.345,
+              "hit_rate": 53.46
+            },
+            "moderate": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            },
+            "high": {
+              "count": 3,
+              "mean_pct": -0.147,
+              "median_pct": -0.192,
+              "hit_rate": 33.33
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": 0.172,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.398,
+          "positive_fold_ratio": 0.667,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 8103,
+            "mean_pct": 1.885,
+            "median_pct": 1.205,
+            "hit_rate": 58.44
+          },
+          "by_regime": {
+            "on": {
+              "count": 7147,
+              "mean_pct": 1.508,
+              "median_pct": 0.925,
+              "hit_rate": 56.44
+            },
+            "off": {
+              "count": 956,
+              "mean_pct": 4.703,
+              "median_pct": 3.353,
+              "hit_rate": 73.33
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 8101,
+              "mean_pct": 1.886,
+              "median_pct": 1.207,
+              "hit_rate": 58.45
+            },
+            "moderate": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            },
+            "high": {
+              "count": 2,
+              "mean_pct": -0.59,
+              "median_pct": -0.59,
+              "hit_rate": 0.0
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": 0.541,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.133,
+          "positive_fold_ratio": 0.733,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 8104,
+            "mean_pct": 4.112,
+            "median_pct": 2.315,
+            "hit_rate": 59.21
+          },
+          "by_regime": {
+            "on": {
+              "count": 7148,
+              "mean_pct": 3.693,
+              "median_pct": 1.9,
+              "hit_rate": 57.93
+            },
+            "off": {
+              "count": 956,
+              "mean_pct": 7.244,
+              "median_pct": 4.838,
+              "hit_rate": 68.72
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 8101,
+              "mean_pct": 4.12,
+              "median_pct": 2.317,
+              "hit_rate": 59.23
+            },
+            "moderate": {
+              "count": 0,
+              "mean_pct": null,
+              "median_pct": null,
+              "hit_rate": null
+            },
+            "high": {
+              "count": 3,
+              "mean_pct": -19.379,
+              "median_pct": -27.215,
+              "hit_rate": 0.0
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": -0.401,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.749,
+          "positive_fold_ratio": 0.267,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "ダブルボトム",
+      "n_events": 58021,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 26086,
+            "mean_pct": -0.089,
+            "median_pct": -0.3,
+            "hit_rate": 46.71
+          },
+          "by_regime": {
+            "on": {
+              "count": 25461,
+              "mean_pct": -0.117,
+              "median_pct": -0.3,
+              "hit_rate": 46.46
+            },
+            "off": {
+              "count": 625,
+              "mean_pct": 1.06,
+              "median_pct": 0.672,
+              "hit_rate": 57.12
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 24048,
+              "mean_pct": -0.086,
+              "median_pct": -0.257,
+              "hit_rate": 46.85
+            },
+            "moderate": {
+              "count": 1448,
+              "mean_pct": -0.311,
+              "median_pct": -0.53,
+              "hit_rate": 45.03
+            },
+            "high": {
+              "count": 590,
+              "mean_pct": 0.341,
+              "median_pct": -0.546,
+              "hit_rate": 45.25
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": -0.145,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.594,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 26085,
+            "mean_pct": 0.3,
+            "median_pct": -0.028,
+            "hit_rate": 49.74
+          },
+          "by_regime": {
+            "on": {
+              "count": 25460,
+              "mean_pct": 0.258,
+              "median_pct": -0.059,
+              "hit_rate": 49.44
+            },
+            "off": {
+              "count": 625,
+              "mean_pct": 2.009,
+              "median_pct": 1.087,
+              "hit_rate": 62.08
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 24048,
+              "mean_pct": 0.301,
+              "median_pct": -0.005,
+              "hit_rate": 49.96
+            },
+            "moderate": {
+              "count": 1448,
+              "mean_pct": 0.117,
+              "median_pct": -0.3,
+              "hit_rate": 46.89
+            },
+            "high": {
+              "count": 589,
+              "mean_pct": 0.706,
+              "median_pct": -0.427,
+              "hit_rate": 47.71
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": -0.144,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.714,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 26084,
+            "mean_pct": 0.964,
+            "median_pct": 0.359,
+            "hit_rate": 52.68
+          },
+          "by_regime": {
+            "on": {
+              "count": 25459,
+              "mean_pct": 0.944,
+              "median_pct": 0.351,
+              "hit_rate": 52.63
+            },
+            "off": {
+              "count": 625,
+              "mean_pct": 1.764,
+              "median_pct": 0.897,
+              "hit_rate": 54.4
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 24047,
+              "mean_pct": 0.956,
+              "median_pct": 0.379,
+              "hit_rate": 52.8
+            },
+            "moderate": {
+              "count": 1448,
+              "mean_pct": 0.824,
+              "median_pct": 0.173,
+              "hit_rate": 51.31
+            },
+            "high": {
+              "count": 589,
+              "mean_pct": 1.622,
+              "median_pct": 0.188,
+              "hit_rate": 50.76
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": -0.38,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -1.054,
+          "positive_fold_ratio": 0.267,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 26085,
+            "mean_pct": 4.067,
+            "median_pct": 2.07,
+            "hit_rate": 57.93
+          },
+          "by_regime": {
+            "on": {
+              "count": 25460,
+              "mean_pct": 4.068,
+              "median_pct": 2.068,
+              "hit_rate": 57.95
+            },
+            "off": {
+              "count": 625,
+              "mean_pct": 4.006,
+              "median_pct": 2.173,
+              "hit_rate": 57.28
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 24048,
+              "mean_pct": 4.133,
+              "median_pct": 2.163,
+              "hit_rate": 58.31
+            },
+            "moderate": {
+              "count": 1448,
+              "mean_pct": 3.544,
+              "median_pct": 1.068,
+              "hit_rate": 54.63
+            },
+            "high": {
+              "count": 589,
+              "mean_pct": 2.625,
+              "median_pct": 0.117,
+              "hit_rate": 50.59
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": -0.446,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.794,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "フラッグ/ペナント",
+      "n_events": 3685,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 2845,
+            "mean_pct": -0.583,
+            "median_pct": -1.333,
+            "hit_rate": 42.11
+          },
+          "by_regime": {
+            "on": {
+              "count": 2790,
+              "mean_pct": -0.522,
+              "median_pct": -1.272,
+              "hit_rate": 42.4
+            },
+            "off": {
+              "count": 55,
+              "mean_pct": -3.688,
+              "median_pct": -4.015,
+              "hit_rate": 27.27
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 798,
+              "mean_pct": 0.096,
+              "median_pct": -0.983,
+              "hit_rate": 43.61
+            },
+            "moderate": {
+              "count": 887,
+              "mean_pct": -0.391,
+              "median_pct": -1.357,
+              "hit_rate": 41.38
+            },
+            "high": {
+              "count": 1160,
+              "mean_pct": -1.197,
+              "median_pct": -1.524,
+              "hit_rate": 41.64
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": -0.639,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -1.088,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 2845,
+            "mean_pct": 0.052,
+            "median_pct": -1.235,
+            "hit_rate": 44.67
+          },
+          "by_regime": {
+            "on": {
+              "count": 2790,
+              "mean_pct": 0.098,
+              "median_pct": -1.171,
+              "hit_rate": 44.8
+            },
+            "off": {
+              "count": 55,
+              "mean_pct": -2.308,
+              "median_pct": -2.286,
+              "hit_rate": 38.18
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 798,
+              "mean_pct": 1.022,
+              "median_pct": -0.165,
+              "hit_rate": 48.75
+            },
+            "moderate": {
+              "count": 887,
+              "mean_pct": -0.27,
+              "median_pct": -1.516,
+              "hit_rate": 43.86
+            },
+            "high": {
+              "count": 1160,
+              "mean_pct": -0.369,
+              "median_pct": -1.894,
+              "hit_rate": 42.5
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": -0.392,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.962,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 2845,
+            "mean_pct": 0.652,
+            "median_pct": -1.012,
+            "hit_rate": 46.64
+          },
+          "by_regime": {
+            "on": {
+              "count": 2790,
+              "mean_pct": 0.754,
+              "median_pct": -0.955,
+              "hit_rate": 46.88
+            },
+            "off": {
+              "count": 55,
+              "mean_pct": -4.525,
+              "median_pct": -3.063,
+              "hit_rate": 34.55
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 798,
+              "mean_pct": 2.371,
+              "median_pct": 0.312,
+              "hit_rate": 51.63
+            },
+            "moderate": {
+              "count": 887,
+              "mean_pct": 0.697,
+              "median_pct": -1.562,
+              "hit_rate": 44.42
+            },
+            "high": {
+              "count": 1160,
+              "mean_pct": -0.566,
+              "median_pct": -1.93,
+              "hit_rate": 44.91
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": -0.692,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -1.366,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 2845,
+            "mean_pct": 3.409,
+            "median_pct": -0.863,
+            "hit_rate": 48.26
+          },
+          "by_regime": {
+            "on": {
+              "count": 2790,
+              "mean_pct": 3.508,
+              "median_pct": -0.703,
+              "hit_rate": 48.57
+            },
+            "off": {
+              "count": 55,
+              "mean_pct": -1.614,
+              "median_pct": -9.226,
+              "hit_rate": 32.73
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 798,
+              "mean_pct": 5.445,
+              "median_pct": 2.023,
+              "hit_rate": 54.26
+            },
+            "moderate": {
+              "count": 887,
+              "mean_pct": 3.69,
+              "median_pct": -0.713,
+              "hit_rate": 48.7
+            },
+            "high": {
+              "count": 1160,
+              "mean_pct": 1.794,
+              "median_pct": -4.044,
+              "hit_rate": 43.79
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": -1.104,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -2.452,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "レンジブレイク",
+      "n_events": 13800,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 4891,
+            "mean_pct": 0.254,
+            "median_pct": -0.3,
+            "hit_rate": 47.15
+          },
+          "by_regime": {
+            "on": {
+              "count": 4777,
+              "mean_pct": 0.254,
+              "median_pct": -0.3,
+              "hit_rate": 46.93
+            },
+            "off": {
+              "count": 114,
+              "mean_pct": 0.283,
+              "median_pct": 0.461,
+              "hit_rate": 56.14
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3973,
+              "mean_pct": 0.124,
+              "median_pct": -0.3,
+              "hit_rate": 47.04
+            },
+            "moderate": {
+              "count": 517,
+              "mean_pct": 0.233,
+              "median_pct": -0.264,
+              "hit_rate": 47.78
+            },
+            "high": {
+              "count": 401,
+              "mean_pct": 1.573,
+              "median_pct": -0.539,
+              "hit_rate": 47.38
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": 0.198,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.251,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 4890,
+            "mean_pct": 0.757,
+            "median_pct": 0.079,
+            "hit_rate": 50.57
+          },
+          "by_regime": {
+            "on": {
+              "count": 4776,
+              "mean_pct": 0.733,
+              "median_pct": 0.053,
+              "hit_rate": 50.38
+            },
+            "off": {
+              "count": 114,
+              "mean_pct": 1.786,
+              "median_pct": 1.53,
+              "hit_rate": 58.77
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3973,
+              "mean_pct": 0.742,
+              "median_pct": 0.098,
+              "hit_rate": 50.72
+            },
+            "moderate": {
+              "count": 517,
+              "mean_pct": 0.807,
+              "median_pct": -0.059,
+              "hit_rate": 49.32
+            },
+            "high": {
+              "count": 400,
+              "mean_pct": 0.845,
+              "median_pct": 0.053,
+              "hit_rate": 50.75
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": 0.313,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.257,
+          "positive_fold_ratio": 0.533,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 4890,
+            "mean_pct": 1.332,
+            "median_pct": 0.332,
+            "hit_rate": 51.84
+          },
+          "by_regime": {
+            "on": {
+              "count": 4776,
+              "mean_pct": 1.321,
+              "median_pct": 0.325,
+              "hit_rate": 51.78
+            },
+            "off": {
+              "count": 114,
+              "mean_pct": 1.823,
+              "median_pct": 0.598,
+              "hit_rate": 54.39
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3973,
+              "mean_pct": 1.382,
+              "median_pct": 0.365,
+              "hit_rate": 52.18
+            },
+            "moderate": {
+              "count": 517,
+              "mean_pct": 1.153,
+              "median_pct": 0.632,
+              "hit_rate": 53.0
+            },
+            "high": {
+              "count": 400,
+              "mean_pct": 1.075,
+              "median_pct": -0.31,
+              "hit_rate": 47.0
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": -0.012,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.686,
+          "positive_fold_ratio": 0.333,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 4888,
+            "mean_pct": 4.527,
+            "median_pct": 1.561,
+            "hit_rate": 55.65
+          },
+          "by_regime": {
+            "on": {
+              "count": 4774,
+              "mean_pct": 4.542,
+              "median_pct": 1.572,
+              "hit_rate": 55.7
+            },
+            "off": {
+              "count": 114,
+              "mean_pct": 3.881,
+              "median_pct": 0.879,
+              "hit_rate": 53.51
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 3973,
+              "mean_pct": 4.714,
+              "median_pct": 1.614,
+              "hit_rate": 55.8
+            },
+            "moderate": {
+              "count": 517,
+              "mean_pct": 4.139,
+              "median_pct": 1.053,
+              "hit_rate": 54.35
+            },
+            "high": {
+              "count": 398,
+              "mean_pct": 3.161,
+              "median_pct": 1.512,
+              "hit_rate": 55.78
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": 0.014,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.334,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "三角持ち合い上放れ",
+      "n_events": 22175,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 7382,
+            "mean_pct": -0.04,
+            "median_pct": -0.214,
+            "hit_rate": 47.43
+          },
+          "by_regime": {
+            "on": {
+              "count": 7234,
+              "mean_pct": -0.066,
+              "median_pct": -0.232,
+              "hit_rate": 47.29
+            },
+            "off": {
+              "count": 148,
+              "mean_pct": 1.197,
+              "median_pct": 0.36,
+              "hit_rate": 54.05
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 7146,
+              "mean_pct": -0.038,
+              "median_pct": -0.18,
+              "hit_rate": 47.65
+            },
+            "moderate": {
+              "count": 190,
+              "mean_pct": 0.454,
+              "median_pct": -0.962,
+              "hit_rate": 41.05
+            },
+            "high": {
+              "count": 46,
+              "mean_pct": -2.441,
+              "median_pct": -2.061,
+              "hit_rate": 39.13
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": -0.096,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.545,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 7382,
+            "mean_pct": 0.377,
+            "median_pct": -0.01,
+            "hit_rate": 49.88
+          },
+          "by_regime": {
+            "on": {
+              "count": 7234,
+              "mean_pct": 0.339,
+              "median_pct": -0.015,
+              "hit_rate": 49.85
+            },
+            "off": {
+              "count": 148,
+              "mean_pct": 2.197,
+              "median_pct": 0.169,
+              "hit_rate": 51.35
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 7146,
+              "mean_pct": 0.389,
+              "median_pct": 0.011,
+              "hit_rate": 50.07
+            },
+            "moderate": {
+              "count": 190,
+              "mean_pct": 0.298,
+              "median_pct": -1.197,
+              "hit_rate": 44.74
+            },
+            "high": {
+              "count": 46,
+              "mean_pct": -1.206,
+              "median_pct": -1.145,
+              "hit_rate": 41.3
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": -0.067,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.637,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 7382,
+            "mean_pct": 1.161,
+            "median_pct": 0.393,
+            "hit_rate": 52.55
+          },
+          "by_regime": {
+            "on": {
+              "count": 7234,
+              "mean_pct": 1.132,
+              "median_pct": 0.441,
+              "hit_rate": 52.68
+            },
+            "off": {
+              "count": 148,
+              "mean_pct": 2.583,
+              "median_pct": -0.69,
+              "hit_rate": 45.95
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 7146,
+              "mean_pct": 1.172,
+              "median_pct": 0.463,
+              "hit_rate": 52.76
+            },
+            "moderate": {
+              "count": 190,
+              "mean_pct": 1.132,
+              "median_pct": -1.127,
+              "hit_rate": 45.79
+            },
+            "high": {
+              "count": 46,
+              "mean_pct": -0.315,
+              "median_pct": -0.476,
+              "hit_rate": 47.83
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": -0.183,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.857,
+          "positive_fold_ratio": 0.267,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 7382,
+            "mean_pct": 4.545,
+            "median_pct": 2.568,
+            "hit_rate": 58.47
+          },
+          "by_regime": {
+            "on": {
+              "count": 7234,
+              "mean_pct": 4.552,
+              "median_pct": 2.589,
+              "hit_rate": 58.52
+            },
+            "off": {
+              "count": 148,
+              "mean_pct": 4.216,
+              "median_pct": 1.703,
+              "hit_rate": 56.08
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 7146,
+              "mean_pct": 4.688,
+              "median_pct": 2.681,
+              "hit_rate": 58.83
+            },
+            "moderate": {
+              "count": 190,
+              "mean_pct": -0.426,
+              "median_pct": -1.811,
+              "hit_rate": 44.74
+            },
+            "high": {
+              "count": 46,
+              "mean_pct": 2.899,
+              "median_pct": 2.746,
+              "hit_rate": 58.7
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": 0.032,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.316,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "上昇トレンド構造(HH/HL)",
+      "n_events": 1167471,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 606480,
+            "mean_pct": 0.082,
+            "median_pct": -0.093,
+            "hit_rate": 48.92
+          },
+          "by_regime": {
+            "on": {
+              "count": 586073,
+              "mean_pct": 0.059,
+              "median_pct": -0.124,
+              "hit_rate": 48.57
+            },
+            "off": {
+              "count": 20407,
+              "mean_pct": 0.739,
+              "median_pct": 0.848,
+              "hit_rate": 59.08
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 560676,
+              "mean_pct": 0.103,
+              "median_pct": -0.066,
+              "hit_rate": 49.2
+            },
+            "moderate": {
+              "count": 28756,
+              "mean_pct": -0.055,
+              "median_pct": -0.382,
+              "hit_rate": 46.12
+            },
+            "high": {
+              "count": 17048,
+              "mean_pct": -0.376,
+              "median_pct": -0.555,
+              "hit_rate": 44.5
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": 0.026,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.423,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 606480,
+            "mean_pct": 0.493,
+            "median_pct": 0.157,
+            "hit_rate": 51.34
+          },
+          "by_regime": {
+            "on": {
+              "count": 586073,
+              "mean_pct": 0.432,
+              "median_pct": 0.105,
+              "hit_rate": 50.9
+            },
+            "off": {
+              "count": 20407,
+              "mean_pct": 2.233,
+              "median_pct": 1.711,
+              "hit_rate": 63.78
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 560676,
+              "mean_pct": 0.521,
+              "median_pct": 0.191,
+              "hit_rate": 51.63
+            },
+            "moderate": {
+              "count": 28756,
+              "mean_pct": 0.308,
+              "median_pct": -0.235,
+              "hit_rate": 48.25
+            },
+            "high": {
+              "count": 17048,
+              "mean_pct": -0.138,
+              "median_pct": -0.427,
+              "hit_rate": 46.77
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": 0.049,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.521,
+          "positive_fold_ratio": 0.533,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 606477,
+            "mean_pct": 1.379,
+            "median_pct": 0.661,
+            "hit_rate": 53.9
+          },
+          "by_regime": {
+            "on": {
+              "count": 586070,
+              "mean_pct": 1.329,
+              "median_pct": 0.619,
+              "hit_rate": 53.65
+            },
+            "off": {
+              "count": 20407,
+              "mean_pct": 2.819,
+              "median_pct": 1.786,
+              "hit_rate": 60.93
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 560673,
+              "mean_pct": 1.436,
+              "median_pct": 0.705,
+              "hit_rate": 54.21
+            },
+            "moderate": {
+              "count": 28756,
+              "mean_pct": 0.842,
+              "median_pct": 0.036,
+              "hit_rate": 50.17
+            },
+            "high": {
+              "count": 17048,
+              "mean_pct": 0.408,
+              "median_pct": -0.033,
+              "hit_rate": 49.87
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": 0.035,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.639,
+          "positive_fold_ratio": 0.467,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 606439,
+            "mean_pct": 4.468,
+            "median_pct": 2.192,
+            "hit_rate": 57.23
+          },
+          "by_regime": {
+            "on": {
+              "count": 586032,
+              "mean_pct": 4.432,
+              "median_pct": 2.153,
+              "hit_rate": 57.1
+            },
+            "off": {
+              "count": 20407,
+              "mean_pct": 5.509,
+              "median_pct": 3.254,
+              "hit_rate": 61.08
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 560643,
+              "mean_pct": 4.581,
+              "median_pct": 2.283,
+              "hit_rate": 57.63
+            },
+            "moderate": {
+              "count": 28752,
+              "mean_pct": 3.681,
+              "median_pct": 1.398,
+              "hit_rate": 53.85
+            },
+            "high": {
+              "count": 17044,
+              "mean_pct": 2.083,
+              "median_pct": -0.062,
+              "hit_rate": 49.76
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": -0.045,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -1.393,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        }
+      }
+    },
+    {
+      "pattern": "押し目継続",
+      "n_events": 183173,
+      "holds": {
+        "5": {
+          "overall": {
+            "count": 84478,
+            "mean_pct": 0.082,
+            "median_pct": -0.06,
+            "hit_rate": 49.26
+          },
+          "by_regime": {
+            "on": {
+              "count": 82005,
+              "mean_pct": 0.036,
+              "median_pct": -0.1,
+              "hit_rate": 48.81
+            },
+            "off": {
+              "count": 2473,
+              "mean_pct": 1.626,
+              "median_pct": 1.169,
+              "hit_rate": 64.09
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 84314,
+              "mean_pct": 0.083,
+              "median_pct": -0.059,
+              "hit_rate": 49.28
+            },
+            "moderate": {
+              "count": 127,
+              "mean_pct": -0.715,
+              "median_pct": -0.254,
+              "hit_rate": 43.31
+            },
+            "high": {
+              "count": 37,
+              "mean_pct": 1.803,
+              "median_pct": -0.388,
+              "hit_rate": 32.43
+            }
+          },
+          "baseline_mean_pct": 0.056,
+          "excess_pct": 0.026,
+          "bench_mean_pct": 0.505,
+          "bench_excess_pct": -0.423,
+          "positive_fold_ratio": 0.4,
+          "n_folds_with_event": 15
+        },
+        "10": {
+          "overall": {
+            "count": 84479,
+            "mean_pct": 0.555,
+            "median_pct": 0.187,
+            "hit_rate": 51.7
+          },
+          "by_regime": {
+            "on": {
+              "count": 82006,
+              "mean_pct": 0.488,
+              "median_pct": 0.128,
+              "hit_rate": 51.19
+            },
+            "off": {
+              "count": 2473,
+              "mean_pct": 2.801,
+              "median_pct": 2.219,
+              "hit_rate": 68.5
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 84315,
+              "mean_pct": 0.557,
+              "median_pct": 0.189,
+              "hit_rate": 51.72
+            },
+            "moderate": {
+              "count": 127,
+              "mean_pct": -0.418,
+              "median_pct": -0.174,
+              "hit_rate": 45.67
+            },
+            "high": {
+              "count": 37,
+              "mean_pct": 0.769,
+              "median_pct": -0.423,
+              "hit_rate": 27.03
+            }
+          },
+          "baseline_mean_pct": 0.444,
+          "excess_pct": 0.111,
+          "bench_mean_pct": 1.014,
+          "bench_excess_pct": -0.459,
+          "positive_fold_ratio": 0.6,
+          "n_folds_with_event": 15
+        },
+        "20": {
+          "overall": {
+            "count": 84476,
+            "mean_pct": 1.531,
+            "median_pct": 0.773,
+            "hit_rate": 54.67
+          },
+          "by_regime": {
+            "on": {
+              "count": 82003,
+              "mean_pct": 1.478,
+              "median_pct": 0.733,
+              "hit_rate": 54.42
+            },
+            "off": {
+              "count": 2473,
+              "mean_pct": 3.263,
+              "median_pct": 2.33,
+              "hit_rate": 63.08
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 84314,
+              "mean_pct": 1.532,
+              "median_pct": 0.775,
+              "hit_rate": 54.69
+            },
+            "moderate": {
+              "count": 127,
+              "mean_pct": 0.536,
+              "median_pct": -0.185,
+              "hit_rate": 47.24
+            },
+            "high": {
+              "count": 35,
+              "mean_pct": 2.654,
+              "median_pct": -0.176,
+              "hit_rate": 42.86
+            }
+          },
+          "baseline_mean_pct": 1.344,
+          "excess_pct": 0.187,
+          "bench_mean_pct": 2.018,
+          "bench_excess_pct": -0.487,
+          "positive_fold_ratio": 0.667,
+          "n_folds_with_event": 15
+        },
+        "60": {
+          "overall": {
+            "count": 84472,
+            "mean_pct": 5.034,
+            "median_pct": 2.76,
+            "hit_rate": 59.32
+          },
+          "by_regime": {
+            "on": {
+              "count": 81999,
+              "mean_pct": 5.009,
+              "median_pct": 2.734,
+              "hit_rate": 59.22
+            },
+            "off": {
+              "count": 2473,
+              "mean_pct": 5.876,
+              "median_pct": 3.463,
+              "hit_rate": 62.6
+            }
+          },
+          "by_overheat": {
+            "low": {
+              "count": 84311,
+              "mean_pct": 5.04,
+              "median_pct": 2.766,
+              "hit_rate": 59.34
+            },
+            "moderate": {
+              "count": 127,
+              "mean_pct": 4.057,
+              "median_pct": 1.095,
+              "hit_rate": 59.06
+            },
+            "high": {
+              "count": 34,
+              "mean_pct": -6.769,
+              "median_pct": -2.371,
+              "hit_rate": 14.71
+            }
+          },
+          "baseline_mean_pct": 4.513,
+          "excess_pct": 0.521,
+          "bench_mean_pct": 5.861,
+          "bench_excess_pct": -0.827,
+          "positive_fold_ratio": 0.6,
+          "n_folds_with_event": 15
+        }
+      }
+    }
+  ],
+  "sensitivity": {
+    "ダブルボトム": [
+      {
+        "variant": 0,
+        "params": {
+          "tol": 0.03,
+          "min_gap": 15,
+          "max_gap": 60
+        },
+        "excess_pct": {
+          "5": -0.16,
+          "10": -0.153,
+          "20": -0.372,
+          "60": -0.453
+        }
+      },
+      {
+        "variant": 1,
+        "params": {
+          "tol": 0.05,
+          "min_gap": 10,
+          "max_gap": 60
+        },
+        "excess_pct": {
+          "5": -0.146,
+          "10": -0.145,
+          "20": -0.386,
+          "60": -0.398
+        }
+      },
+      {
+        "variant": 2,
+        "params": {
+          "tol": 0.06,
+          "min_gap": 20,
+          "max_gap": 90
+        },
+        "excess_pct": {
+          "5": -0.136,
+          "10": -0.101,
+          "20": -0.363,
+          "60": -0.619
+        }
+      }
+    ],
+    "ダブルトップ": [
+      {
+        "variant": 0,
+        "params": {
+          "tol": 0.03,
+          "min_gap": 15,
+          "max_gap": 60
+        },
+        "excess_pct": {
+          "5": -0.034,
+          "10": 0.096,
+          "20": 0.331,
+          "60": -0.764
+        }
+      },
+      {
+        "variant": 1,
+        "params": {
+          "tol": 0.05,
+          "min_gap": 10,
+          "max_gap": 60
+        },
+        "excess_pct": {
+          "5": 0.128,
+          "10": 0.176,
+          "20": 0.562,
+          "60": -0.364
+        }
+      },
+      {
+        "variant": 2,
+        "params": {
+          "tol": 0.06,
+          "min_gap": 20,
+          "max_gap": 90
+        },
+        "excess_pct": {
+          "5": -0.205,
+          "10": -0.192,
+          "20": 0.062,
+          "60": -1.175
+        }
+      }
+    ],
+    "レンジブレイク": [
+      {
+        "variant": 0,
+        "params": {
+          "lookback": 15,
+          "width_atr_max": 2.0,
+          "vol_mult": 1.5
+        },
+        "excess_pct": {
+          "5": 0.657,
+          "10": 0.49,
+          "20": -0.415,
+          "60": -1.637
+        }
+      },
+      {
+        "variant": 1,
+        "params": {
+          "lookback": 20,
+          "width_atr_max": 3.0,
+          "vol_mult": 1.5
+        },
+        "excess_pct": {
+          "5": 0.198,
+          "10": 0.313,
+          "20": -0.012,
+          "60": 0.014
+        }
+      },
+      {
+        "variant": 2,
+        "params": {
+          "lookback": 30,
+          "width_atr_max": 3.5,
+          "vol_mult": 1.2
+        },
+        "excess_pct": {
+          "5": -0.142,
+          "10": -0.171,
+          "20": -0.426,
+          "60": -0.464
+        }
+      }
+    ],
+    "三角持ち合い上放れ": [
+      {
+        "variant": 0,
+        "params": {
+          "lookback": 30,
+          "sub": 10,
+          "vol_mult": 1.0
+        },
+        "excess_pct": {
+          "5": -0.223,
+          "10": -0.214,
+          "20": -0.41,
+          "60": -0.231
+        }
+      },
+      {
+        "variant": 1,
+        "params": {
+          "lookback": 40,
+          "sub": 10,
+          "vol_mult": 1.0
+        },
+        "excess_pct": {
+          "5": -0.096,
+          "10": -0.067,
+          "20": -0.183,
+          "60": 0.032
+        }
+      },
+      {
+        "variant": 2,
+        "params": {
+          "lookback": 50,
+          "sub": 15,
+          "vol_mult": 1.0
+        },
+        "excess_pct": {
+          "5": -0.22,
+          "10": -0.241,
+          "20": -0.264,
+          "60": -0.116
+        }
+      }
+    ],
+    "フラッグ/ペナント": [
+      {
+        "variant": 0,
+        "params": {
+          "run_days": 8,
+          "run_min": 0.12,
+          "flag_days": 8
+        },
+        "excess_pct": {
+          "5": -0.879,
+          "10": -0.96,
+          "20": -0.902,
+          "60": -0.555
+        }
+      },
+      {
+        "variant": 1,
+        "params": {
+          "run_days": 10,
+          "run_min": 0.15,
+          "flag_days": 10
+        },
+        "excess_pct": {
+          "5": -0.639,
+          "10": -0.392,
+          "20": -0.692,
+          "60": -1.104
+        }
+      },
+      {
+        "variant": 2,
+        "params": {
+          "run_days": 15,
+          "run_min": 0.2,
+          "flag_days": 12
+        },
+        "excess_pct": {
+          "5": 0.242,
+          "10": 0.593,
+          "20": -0.611,
+          "60": -2.294
+        }
+      }
+    ],
+    "カップウィズハンドル": [
+      {
+        "variant": 0,
+        "params": {
+          "depth_min": 0.1,
+          "depth_max": 0.4,
+          "handle_max": 10
+        },
+        "excess_pct": {
+          "5": 0.008,
+          "10": 0.035,
+          "20": 0.237,
+          "60": 0.391
+        }
+      },
+      {
+        "variant": 1,
+        "params": {
+          "depth_min": 0.12,
+          "depth_max": 0.45,
+          "handle_max": 15
+        },
+        "excess_pct": {
+          "5": -0.109,
+          "10": -0.021,
+          "20": 0.158,
+          "60": 0.294
+        }
+      },
+      {
+        "variant": 2,
+        "params": {
+          "depth_min": 0.15,
+          "depth_max": 0.5,
+          "handle_max": 20
+        },
+        "excess_pct": {
+          "5": 0.008,
+          "10": 0.205,
+          "20": 0.13,
+          "60": 0.651
+        }
+      }
+    ]
+  },
+  "notes": [
+    "将来リターンは翌営業日寄り→H日後引け（手数料0.05%＋スリッページ0.1%・TP/SLなし）。",
+    "ベースラインは同一フォールド・同一適格日の全銘柄平均。",
+    "benchmark は 1306.T の終値→終値（コストなし）の近似。|50%|超の異常値は除外。",
+    "excess_pct はイベント平均 − ベースライン平均。プラスほど型が有効。",
+    "positive_fold_ratio はフォールド単位でイベント平均 > ベースライン平均だった割合。",
+    "データ異常ガード: 1取引 |リターン|>5（+500%超）と価格<1.0円は除外。",
+    "サバイバーシップバイアスあり。型×保有期間×定義グリッドの多重検定に注意。",
+    "研究専用。スコア・strategy_params.json には反映しない。"
+  ]
+}
