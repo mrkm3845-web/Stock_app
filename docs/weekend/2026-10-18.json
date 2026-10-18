@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-18",
+  "data_date": "2026-10-16",
+  "title": "W43前の週末作戦ノート",
+  "subtitle": "地銀の傷を整理して、守りながら次の一手を探す",
+  "score_version": "v3-research_upside-2026-10-18",
+  "lead": "今週は「当てにいく」より「減らさない」。地銀の同時保有という最大の弱点は解消できたので、来週は低ベータの1銘柄を軸に、押し目とブレイクを少人数で拾います。",
+  "sections": [
+    {
+      "id": "summary",
+      "title": "3行まとめ",
+      "icon": "lightbulb",
+      "html": "<ul class='mb-0'><li><b>地合いは全面安ではない。</b>10/16時点で全銘柄の約86%が200日線上、82%が25日線上。壊れているのは銀行だけ。</li><li><b>最大の敗因はセクター集中。</b>地銀を同時に複数持つと、損切りが間に合わない。今後は金融1銘柄まで。</li><li><b>v3はまだ実運用前。</b>過去の週次成績で決めつけず、W43〜W46の4週間を観測する。</li></ul>"
+    },
+    {
+      "id": "numbers",
+      "title": "今週の数字",
+      "icon": "graph-up",
+      "html": "<div class='table-responsive'><table class='table table-sm table-bordered align-middle mb-2'><thead><tr><th>週</th><th>平均</th><th>勝率</th><th>約定</th></tr></thead><tbody><tr><td>W42（10/12〜16）</td><td class='neg'>-5.35%</td><td>0%</td><td>3件</td></tr><tr><td>W41</td><td class='neg'>-5.19%</td><td>21%</td><td>19件</td></tr><tr><td>W40</td><td class='neg'>-3.55%</td><td>25%</td><td>12件</td></tr></tbody></table></div><p class='mb-2'>W42は約定3件だけで、6件が未確定。1週間の数字でv3を判断しません。TOPIXは-1.31%だったので、市場を4.04%ポイント下回りました。</p><div class='table-responsive'><table class='table table-sm table-bordered align-middle mb-0'><thead><tr><th>日付</th><th>銀行の25日線上比率</th><th>銀行5日平均</th><th>全銘柄5日平均</th></tr></thead><tbody><tr><td>10/09</td><td>35%</td><td class='neg'>-4.89%</td><td class='pos'>+1.50%</td></tr><tr><td>10/14</td><td>11%</td><td class='neg'>-10.58%</td><td class='pos'>+0.97%</td></tr><tr><td>10/16</td><td>9%</td><td class='neg'>-4.52%</td><td class='pos'>+2.87%</td></tr></tbody></table></div>"
+    },
+    {
+      "id": "lesson",
+      "title": "今週の気づき",
+      "icon": "search",
+      "html": "<ul class='mb-0'><li><b>スコアは長期トレンド、入口は短期需給。</b>地銀は200日線+45〜55%でスコア上位に残るが、5日で-10〜-20%になることがある。</li><li><b>AIの「推奨」は買いシグナルではない。</b>W42は推奨-4.07% vs 様子見-2.42%。AIは「除外・確認」に使う。</li><li><b>押し目待ちは約定率が低い。</b>W42は37.5%。見送り後の成行は+0.40%だったので、強い突破は小さく打診する。</li><li><b>損切りは実行できている。</b>東海カーボンは2.5ATR損切の少し上で撤退。この習慣を続ける。</li></ul>"
+    },
+    {
+      "id": "plan",
+      "title": "来週の作戦",
+      "icon": "signpost-split",
+      "html": "<div class='plain mb-2'><b>基本方針：守り優先。</b>新規は最大3銘柄、1取引リスク1%、現金50%以上。銀行・保険・証券は新規停止。</div><ul class='mb-0'><li><b>金融は1銘柄まで。</b>銀行セクターの25日線上比率が30%超＋5日プラスになるまで、銀行は買わない。</li><li><b>入口は指値・逆指値。</b>寄付成行の追いかけはしない。約定後すぐOCO。</li><li><b>最大保有7/14/20日。</b>+5%で建値・一部利確、その後トレール。</li><li><b>決算5日前以内は新規見送り。</b>データがnullの銘柄は会社IRで確認。</li></ul>"
+    },
+    {
+      "id": "candidates",
+      "title": "候補と注文",
+      "icon": "list-check",
+      "html": "<div class='table-responsive'><table class='table table-sm table-bordered align-middle mb-2'><thead><tr><th>優先</th><th>銘柄</th><th>買い方</th><th>入口</th><th>損切</th><th>利確</th><th>リスク</th><th>リワード</th></tr></thead><tbody><tr><td>A</td><td>7272 ヤマハ発動機</td><td>継続監視</td><td>-</td><td>1,737</td><td>2,142</td><td>6.8%</td><td>2.2倍</td></tr><tr><td>A</td><td>1518 三井松島HD</td><td>2,294突破</td><td>2,294</td><td>2,192</td><td>2,631</td><td>4.4%</td><td>3.3倍</td></tr><tr><td>B</td><td>7537 丸文</td><td>1,900押し目</td><td>1,900</td><td>1,753</td><td>2,233</td><td>7.7%</td><td>2.3倍</td></tr><tr><td>C</td><td>7282 豊田合成</td><td>1,081突破</td><td>1,081</td><td>982</td><td>1,228</td><td>9.2%</td><td>1.5倍</td></tr></tbody></table></div><ul class='mb-0'><li><b>7272</b>：すでに持っている場合はOCO 1,737 / 2,142。追加買いはしない。1,800割れで半減。</li><li><b>1518</b>：52週高値ブレイク。半玉から。寄付で2,294を大きく超えたら追わない。</li><li><b>7537</b>：PBR0.8・配当4.3%だがROE5.7%。1,900まで来たときだけ半玉。</li><li><b>7282</b>：1518も7537も不成立なら、小玉の代替。52週高値0.994なので見送り可。</li><li><b>見送り</b>：8050（値がさ）、8541/8387（地銀）、6058（リワード1.1倍）、2612（2,850回復まで）、6570/6098/4746/8766（過熱）。</li></ul>"
+    },
+    {
+      "id": "risk",
+      "title": "守るルール",
+      "icon": "shield-check",
+      "html": "<ul class='mb-0'><li><b>1306.Tが397.3（200日線）を終値で割れたら</b>、新規停止・2銘柄まで。</li><li><b>週間-3%で新規停止、-5%で現金化。</b>リベンジトレードをしない。</li><li><b>同じセクターは最大2銘柄、金融は1銘柄。</b>地銀3銘柄の再発防止。</li><li><b>損切りを広げない・ナンピンしない。</b>約定後はOCOに任せる。</li></ul>"
+    },
+    {
+      "id": "system",
+      "title": "システム側の宿題",
+      "icon": "tools",
+      "html": "<ul class='mb-0'><li><b>sector_guard（最優先）</b>：セクターの25日線上比率30%未満、またはセクター5日-5%未満なら新規停止。</li><li><b>knife_guard</b>：5日-10%以下かつ25日線下は、5日線を2日連続回復するまで待つ。</li><li><b>AI判定の校正</b>：recommendがwatchを下回り続けるなら、判定優先を下げてスコアのタイブレークに。</li><li><b>週次プランのキャッシュ</b>：score_versionを含める、または--force-plan。10/19に再生成。</li><li><b>実行の見える化</b>：ジャーナルでmax_per_sectorとOCOの遵守率を確認。</li></ul>"
+    },
+    {
+      "id": "privacy",
+      "title": "このページについて",
+      "icon": "info-circle",
+      "html": "<div class='warn mb-0'><ul class='mb-0'><li>このページは公開されます。保有数量・損益額・口座情報・個人情報は載せていません。</li><li>投資助言ではありません。データは2026-10-16時点で、サンプルも少ないため「仮説」として読んでください。</li><li>更新日：2026-10-18。次回は10/24〜25の週末に更新予定。</li></ul></div>"
+    }
+  ]
+}
