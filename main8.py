@@ -44,6 +44,7 @@ logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common.config import load_strategy_params  # noqa: E402
 from common import features as F  # noqa: E402
+from common import patterns as PAT  # noqa: E402
 from common.persona import PERSONA_JA  # noqa: E402
 from common.version import PROMPT_VERSION, SCORE_VERSION, SCORE_EXPERIMENT  # noqa: E402
 
@@ -423,6 +424,10 @@ def scan_market_merged(stock_list, params):
             ctx = F.compute_stock_context(df, feat, weekly)
             warnings = F.evaluate_warnings(price, val_ratio, params, ctx)
             score = F.compute_technical_score(feat, params, weekly["trend_up"])
+            try:
+                pattern_summary = PAT.latest_pattern_summary(feat)
+            except Exception:
+                pattern_summary = ""
 
             w_down = bool(
                 len(weekly["close"]) >= 13
@@ -494,6 +499,7 @@ def scan_market_merged(stock_list, params):
                 "warnings": [w["id"] for w in warnings],
                 "earnings_date": earnings_date,
                 "ctx": ctx,
+                "pattern_summary": pattern_summary,
                 "excluded": w_down,
             })
         except Exception as e:
@@ -791,6 +797,8 @@ def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None)
             f"RSI14:{ctx.get('rsi14')} 連騰:{ctx.get('run_up_days')}日 寄付ギャップ:{ctx.get('gap_pct')}%",
             f"過熱度:{plan['overheat_level']} ルール推奨入口:{plan['suggested_entry_type']} 押し目候補:{plan['entry_zone_low']}〜{plan['entry_zone_high']}円",
         ]
+        if r.get("pattern_summary"):
+            parts.append(f"型:{r['pattern_summary']}")
         if fund:
             parts.append(
                 f"PER:{fund.get('per')}倍 PBR:{fund.get('pbr')}倍 ROE:{fund.get('roe')}% "
@@ -824,6 +832,8 @@ def _ai_system_prompt(max_picks=5, max_output=15):
         "短期急騰・移動平均からの大きな乖離・RSI高値・窓開け・上ヒゲ拒否などの過熱サインがある銘柄では、"
         "現在値での成行追いかけ（breakout_chase）を推奨せず、押し目（pullback_wait）や打診（probe_only）に切り替えるか、"
         "見送り（wait）にしてください。ただしトレンドと上昇余地が強く、過熱が軽度なら追いかけ（breakout_chase）を許容します。"
+        "【過去検証メモ（参考）】日本株の短期〜スイング検証では、GC(20,60)直後・ダブルボトム・フラッグ/ペナントは平均リターンが市場平均を下回る傾向、"
+        "DC(5,25)/DC(20,60)直後や押し目は相対的に良好でした。ただし平均的な傾向であり、型だけに依存せず、トレンド・過熱回避・決算を優先してください。"
         "entry_type は次から1つだけ選んでください: "
         "breakout_chase（上昇余地あり・追いかけ可）/ pullback_wait（移動平均・サポート近辺の押し目待ち）/ "
         "probe_only（過熱強・小口の打診のみ）/ wait（見送り・様子見）。"
@@ -1286,6 +1296,7 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
             "news_headlines": news_map.get(r["code"]) or [],
             "max_hold_days": tier.get("max_hold_days", 14),
             "gc_days": r["gc_days"],
+            "pattern_summary": r.get("pattern_summary"),
             "val_ratio_5d": r["val_ratio_5d"],
             "avg_val_5d": r["avg_val_5d"],
             "atr14": r["atr14"],
@@ -1371,6 +1382,7 @@ def save_picks_snapshot(target_date, recommendations, pool, ai_map, is_ai):
             "rsi14": ctx.get("rsi14"),
             "dist_sma25_pct": ctx.get("dist_sma25_pct"),
             "pos_52w": ctx.get("pos_52w"),
+            "pattern_summary": r.get("pattern_summary"),
         })
 
     ai_records = []

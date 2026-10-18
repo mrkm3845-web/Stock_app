@@ -1,5 +1,13 @@
 # AGENTS.md
 
+## セッション開始時の必読（最優先）
+
+- **最初に [`PROJECT_STATUS.md`](PROJECT_STATUS.md) を読む**（現行仕様・実験状態・残タスクの「正」）。
+- 次に [`back_tester/README.md`](back_tester/README.md)（バックテスト・研究スクリプトの仕様）。
+- [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md) は**設計背景（古い）**。現行仕様の判断には使わない。
+- 現在の実験: `score_version = v3-research_upside-2026-10-18` / `experiment_id = research_upside_v3_2026-10`（週次レビューにタグ表示）。
+- 分析・推奨・答え合わせ・相場確認の依頼では、作業前に `git fetch origin main` で同期し、どの時点のデータか（`docs/recommendations.json` の `date` / `generated_at`、`docs/history/dates.json` 先頭）を最初に明示する。
+
 ## あなたの役割・ペルソナ（重要）
 
 あなたは **金融分析のスペシャリスト**であり、**週次トレードで実際に儲けを出しているプロ**である。

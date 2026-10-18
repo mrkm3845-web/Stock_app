@@ -419,6 +419,49 @@ def pattern_functions():
     }
 
 
+def _last_event_days(flags, recent_days=3):
+    f = np.asarray(flags, dtype=bool)
+    n = len(f)
+    if n == 0:
+        return None
+    lo = max(0, n - recent_days)
+    idx = np.nonzero(f[lo:])[0]
+    if idx.size == 0:
+        return None
+    return int(n - 1 - (lo + int(idx[-1])))
+
+
+def latest_pattern_summary(p, recent_days=3):
+    """直近 recent_days 本以内に発生した型を短い文字列で返す（AIプロンプト用）。
+
+    例: "GC(20,60)直後 / DC(5,25)2日前 / ダブルボトム"
+    型は平均的な傾向の参考情報であり、売買判断を単独で決めるものではない。
+    """
+    a = _to_arrays(p)
+    items = []
+
+    def add(label, flags):
+        d = _last_event_days(flags, recent_days)
+        if d is not None:
+            items.append(label if d == 0 else f"{label}{d}日前")
+
+    try:
+        gc20, dc20 = ma_cross(a, 20, 60)
+        _, dc5 = ma_cross(a, 5, 25)
+        add("GC(20,60)", gc20)
+        add("DC(5,25)", dc5)
+        add("DC(20,60)", dc20)
+    except Exception:
+        pass
+    for label, fn in (("ダブルボトム", double_bottom), ("レンジブレイク", range_breakout),
+                      ("カップ", cup_with_handle), ("フラッグ", flag_pennant)):
+        try:
+            add(label, fn(a))
+        except Exception:
+            pass
+    return " / ".join(items)
+
+
 def compute_patterns(p):
     """1銘柄分の全パターン（bool配列）を返す。"""
     out = {}

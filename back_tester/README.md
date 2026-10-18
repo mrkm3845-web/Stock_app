@@ -17,6 +17,7 @@
 | `back_tester/research_signals.py` | 候補シグナル研究（Phase 1）。指標ごとの分位スプレッドを測る（トレンド系＋過熱系 `ret_5d` / `dist_sma5` / `rsi14` / `gap_pct` / `run_up_days`、業種相対強度 `sector_rs_20d` を含む） |
 | `back_tester/research_patterns.py` | **型（チャートパターン）研究（新規）**。GC/ダブルボトム等の発生イベントを保有期間 {5,10,20,60}日で測定し、ベースライン・TOPIX超過・定義感度を確認（研究専用・スコア未反映） |
 | `back_tester/research_upside.py` | **右裾（大勝ち）捕捉の指標研究（新規）**。指標ごとに「大勝ち確率のリフト」と「上位K（1/3/5）期待値」を保有期間 {5,10,20,60}日で測定。大負け確率を併記（研究専用・スコア未反映） |
+| `back_tester/validate_score.py` | **スコアv2 vs v3 の高速検証**。`research_upside` のキャッシュを使い、5日/20日の上位K期待値・分位スプレッド・大負けを比較（研究専用） |
 | `common/patterns.py` | **型の機械的検出**（先読み排除の純関数）。GC/DC（5,25・25,75・20,60・週足）、ダブルボトム/トップ、レンジ/三角ブレイク、フラッグ/ペナント、カップウィズハンドル、トレンド構造、押し目継続 |
 | `back_tester/weekly_review.py` | **週次答え合わせ**。実運用で提示した推奨・技術上位を1週間（月〜金）単位で採点（下記 8章） |
 | `common/config.py` | `docs/strategy_params.json` のローダー（リポジトリ直下） |
@@ -28,6 +29,13 @@
 
 > 旧スクリプト `backtest_scanner.py` / `backtest_scanner_v2.py` / `backtest_volume_deepdive.py` は
 > ウォークフォワードに統合されたため削除済み。
+
+### スコアv3と研究の現状（2026-10-18）
+- スコアは **v3**（`common/features.score_series_from_feat` に一本化）: `sma200_slope 30 / pos_52w 25 / liquidity 20 / dist_sma200 15（+40%超は減点）/ ret_120d 10（+120%超は減点）`。
+- 研究: `research_patterns.py`（型）、`research_upside.py`（右裾＋上位K）、`validate_score.py`（v2 vs v3）。
+- `research_upside.py` は**オフライン既定**（`back_tester/data/backtest_cache` のCSVのみ）・**進捗バー**・**ディスクキャッシュ**（`back_tester/data/upside_cache/`）・`--max-minutes`。初回約80秒 / 再実行約11秒。
+- **実験タグ**: `score_version` / `experiment_id` を picks/history/recommendations/週次に刻印（`common/version.py`）。
+- 週次プラン（`docs/weekly/plan.json`）は `based_on_date` 一致でキャッシュ再利用するため、同日中のスコア版変更では再生成されない（10-19以降に基準日が進めば自動更新）。
 
 ---
 

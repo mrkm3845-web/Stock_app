@@ -7,14 +7,61 @@
 
 ---
 
+## 2026-10-18 現状サマリ（次セッションはここから）
+
+**ドキュメントの役割**
+- **このファイル（PROJECT_STATUS.md）**: 現行仕様・実験状態・残タスクの**正**。最初に読む。
+- [`back_tester/README.md`](back_tester/README.md): バックテスト／研究スクリプトの仕様と実行方法。
+- [`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md): 設計の**背景・経緯**（古い記述あり。現行仕様はこのファイルを見る）。
+- [`AGENTS.md`](AGENTS.md): 運用ルール（日本語・同期・ワークフロー実行手順）。
+
+**現行スコア = v3（トレンド＋流動性）**
+- 重み: `sma200_slope 30 / pos_52w 25 / liquidity 20 / dist_sma200 15 / ret_120d 10`
+- 非線形: `dist_sma200` は +20%で満点・**+40%超は減衰**、`ret_120d` は +60%で満点・**+120%超は減衰**
+- 式は [`common/features.py`](common/features.py) の `score_series_from_feat` に一本化（スクリーナー/BT共有）
+- 根拠: 右裾研究 [`research_upside.py`](back_tester/research_upside.py)＋[`validate_score.py`](back_tester/validate_score.py)
+  - 5日 上位5期待値 **+0.27% → +0.66%**、大負け率 **13.9% → 8.5%**
+  - 20日 **1.27% → 3.23%**、大負け **13.2% → 5.2%**
+  - 学習期(〜2024)/検証期(2025〜)の両方で改善
+
+**実験タグ（重要）**
+- `score_version = v3-research_upside-2026-10-18` / `experiment_id = research_upside_v3_2026-10`（[`common/version.py`](common/version.py)）
+- 保存: `docs/picks/{date}.json`・`docs/history/meta.json`・`docs/recommendations*.json`
+- 週次: 各取引 `trades[]` と `summary.score_versions/experiment_ids`、`weekly.html` の気づき欄、`results/weekly_review_{week}.md` 冒頭
+- 目的: 「どの週がv3（research_upside由来）の検証か」を後から追跡する
+
+**AIプロンプト（2026-10-18）**
+- `PROMPT_VERSION = 2026-10-18-1`
+- 候補に**型サマリ**（直近3日以内の GC(20,60)/DC(5,25)/DC(20,60)/ダブルボトム/レンジ/カップ/フラッグ）を付与し、`型:` 行を注入
+- システムプロンプトに**過去検証メモ**（GC(20,60)直後・DB・フラッグは平均劣後、DC・押し目は相対良好／参考程度）を追加（週次プランにも同様）
+
+**研究ツール（再現用）**
+- [`research_patterns.py`](back_tester/research_patterns.py): 型のイベントスタディ
+- [`research_upside.py`](back_tester/research_upside.py): 右裾＋上位K期待値。**オフライン既定・進捗バー・キャッシュ・`--max-minutes`**
+- [`validate_score.py`](back_tester/validate_score.py): v2 vs v3 の高速比較
+- キャッシュ: `back_tester/data/upside_cache/`（gitignore済）。初回約80秒→再実行約11秒
+
+**実験の現在状態（2026-10-18）**
+- 10-16のAIを手動実行し、**v3タグ付き5銘柄**を生成（`docs/picks/2026-10-16.json`）
+- W42の答え合わせを再生成し、**タグ表示を確認**（10-16ピックは翌営業日待ちで `no_data`）
+- `docs/weekly/plan.json`（来週の作戦）は **10-16基準の旧プランをキャッシュ再利用**中。**10-19以降に基準日が進むと自動でv3に更新**される
+
+**次にやること**
+1. 週次プランのキャッシュキーに `score_version` を追加（または `--force-plan`）→ 同日内でもv3で再生成
+2. パターンオーバーレイ（DC/GC/DB/フラッグの小さな並び順補正）をウォークフォワード検証してから反映
+3. v3での月次ウォークフォワード（`run_walkforward.yml`）を確認
+4. 4〜8週間の週次答え合わせでv3の実運用を観測（1週間で判断しない）
+
+---
+
 ## 0. 30秒サマリ
 
 - 日本株スクリーナー（プライム+スタンダード 約3,100銘柄）。全銘柄をスキャン → **スコア上位40を候補に AI（Gemini/DeepSeek 切替可）が順位付け** → 「推奨/様子見」を提示。AI入力には **Google News RSS の材料**を注入。
-- **スコアは Phase 2 の「トレンド合成」**（52週高値位置・200日線乖離・200日線傾き・120日リターン）。
+- **現行スコアは v3（トレンド＋流動性）**: 200日線傾き30 / 52週高値位置25 / 流動性20 / 200日線乖離15（+40%超は減点）/ 120日リターン10（+120%超は減点）。詳細は冒頭の「2026-10-18 現状サマリ」。
 - バックテストは**同一リポジトリ内の [`back_tester/`](back_tester/)**。**毎月 第1土曜にガード付きで `docs/strategy_params.json` へ自動反映**。
 - **週次答え合わせ** [`back_tester/weekly_review.py`](back_tester/weekly_review.py) を新設。日々の推奨・技術上位を1週間（月〜金）単位で実際の値動きと突き合わせ、**毎週 土曜09:00 JSTに `docs/weekly.html` へ自動生成**。
 - フロントは GitHub Pages（[`docs/index.html`](docs/index.html) / [`docs/journal.html`](docs/journal.html)）。
-- ワークフローは3本（技術スクリーニング / AI分析 / バックテスト）。
+- ワークフローは4本（技術スクリーニング / AI分析 / 月次バックテスト / 週次答え合わせ）。
 
 ---
 
@@ -28,7 +75,7 @@
 ```
 Stock_app/
 ├── main8.py                      # 現行スクリーナー（Stage1 スコア + Stage2 AI）
-├── common/{config.py,features.py}# 共通（特徴量・スコア・パラメータ読込）
+├── common/{config,features,patterns,version,persona}.py # 共通（特徴量・スコア・型検出・版管理）
 ├── docs/                         # GitHub Pages 兼 出力
 │   ├── index.html / journal.html # フロント
 │   ├── strategy_params.json      # 単一情報源（バックテストが自動更新）
@@ -43,8 +90,11 @@ Stock_app/
 ├── back_tester/                  # バックテスト（下記 7章）＋ 週次答え合わせ
 │   ├── backtest_rolling_walkforward.py
 │   ├── apply_optimal_params.py
-│   ├── research_signals.py
-│   ├── weekly_review.py         # 週次答え合わせ（月〜金・金曜11:30手仕舞いで採点）
+│   ├── research_signals.py      # 指標の分位研究
+│   ├── research_patterns.py     # 型のイベント研究
+│   ├── research_upside.py       # 右裾（大勝ち）研究（offline/cache/progress）
+│   ├── validate_score.py        # スコアv2 vs v3 の高速検証
+│   ├── weekly_review.py         # 週次答え合わせ（OCO・持ち越し採点）
 │   └── results/
 └── .github/workflows/            # daily_main8 / daily_main8_ai / run_walkforward / weekly_review
 ```
@@ -143,12 +193,13 @@ flowchart LR
 
 **プロバイダ / 認証**
 - `ai.provider` で切替: `"gemini"`（既定） / `"deepseek"`。実装は `_call_gemini`（`main8.py`） / `_call_deepseek`。
-- 環境変数: `GEMINI_API_KEY` / `DEEPSEEK_API_KEY`。**GitHub Actions の env に渡す必要あり**（現状 `daily_main8_ai.yml` は `GEMINI_API_KEY` のみ。DeepSeek利用時は `DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}` を追記）。
+- 環境変数: `GEMINI_API_KEY` / `DEEPSEEK_API_KEY`。**GitHub Actions の env に渡す**（`daily_main8_ai.yml` は両方を設定済み）。
 - **現在の既定: `provider=deepseek`, `model=deepseek-flash`（DeepSeek-V4.1-Flash。JSON出力/Vision対応、最大出力384K）**。Gemini運用に戻す場合は `provider=gemini`, `model=gemini-3.6-flash`（フォールバック `gemini-3.1-pro-preview`）。※Geminiは当環境で503/429（混雑・無料枠超過）が続いたため DeepSeek を既定化。
 - リトライ: 5xx は最大5回（指数バックオフ）、**課金クォータ 429 は即スキップ**。JSON解析失敗時は再試行。応答が得られなければ `retry_candidates` 件に絞って再試行。
 
 **入力（Stage1候補 → プロンプト）**
 - 候補 = スコア上位 `max_calls_per_run`（40）。プロンプトには技術（乖離/RSI/ATR/需給/エントリー判定/過熱）＋ファンダ＋決算＋**ニュース**を注入。
+- **型コンテキスト（2026-10-18〜）**: 候補レコードに `pattern_summary`（直近3日以内の GC(20,60)/DC(5,25)/DC(20,60)/ダブルボトム/レンジ/カップ/フラッグ）を付与し、プロンプトに `型:` 行を注入。システムプロンプトには**過去検証メモ**（GC(20,60)直後・DB・フラッグは平均劣後、DC・押し目は相対良好／参考程度）を追加。`PROMPT_VERSION=2026-10-18-1`。週次プランのシステムプロンプトにも同じメモを前置。
 - **ニュース**: `ai.news_source`（`gnews`=Google News RSS（既定）/ `yfinance` / `hybrid`）、`ai.news_days`（14）、`ai.news_max`（5）。企業名検索→直近N日→重複除去。※日本株の yfinance `.news` はほぼ空（PoC: 5銘柄すべて0件）。プロンプトの「ニュース」欄には先頭3件を注入。
 - 画像は渡さない（テキストのみ）。
 
@@ -173,6 +224,9 @@ flowchart LR
   - **選定エッジ検証**: `quantile_analysis` / `selection_comparison` / `weight_ablation` / `atr_trail_worst_trades` / `regime_effect` / `position_sizing_effect` / **`entry_style_comparison`（成行 vs 押し目指値・高値掴み回避の検証）**。
   - 出力: `results/backtest_walkforward_result.json`（上記キー含む）・`.csv`・`backtest_tier_exit.csv`・`_report.md`。
 - [`research_signals.py`](back_tester/research_signals.py): 候補指標（トレンド系＋**過熱系 `ret_5d` / `dist_sma5` / `rsi14` / `gap_pct` / `run_up_days`**・業種相対強度 `sector_rs_20d`）の分位スプレッド研究 → `results/research_signals.json/.csv`。
+- [`research_patterns.py`](back_tester/research_patterns.py): 型（GC/DC/ダブルボトム/レンジ/三角/フラッグ/カップ/HH-HL/押し目）のイベントスタディ。保有 {5,10,20,60}日・ベースライン/TOPIX超過・定義感度 → `results/research_patterns.*`。
+- [`research_upside.py`](back_tester/research_upside.py): **右裾（大勝ち）捕捉**の指標研究。上位K（1/3/5）期待値・大勝ちリフト・大負け率。**オフライン既定・進捗バー・ディスクキャッシュ・`--max-minutes`** → `results/research_upside.*`。
+- [`validate_score.py`](back_tester/validate_score.py): スコアv2 vs v3 の高速比較（`research_upside` キャッシュ使用）。5日/20日の期待値・スプレッド・大負けを比較。
 - [`apply_optimal_params.py`](back_tester/apply_optimal_params.py): 結果を**ガード付き**で `docs/strategy_params.json` の `signals`・`price_tiers`・**`entry_guard`（過熱度別の押し目深さ/待機日数）** に反映。
   - ガード: 最低100件 / OOS PF≧1.15 / 期待値>0 / 年率>ベンチマーク / DD≦50% / （signals）近傍安定性 / 前回比劣化なし。
 - [`run_walkforward.yml`](.github/workflows/run_walkforward.yml): **毎月 第1土曜 21:00 JST**。バックテスト→ガード反映→`docs/strategy_params.json` と `results/` をコミット（**手動同期不要**）。
@@ -193,8 +247,11 @@ flowchart LR
 - [`weekly_review.yml`](.github/workflows/weekly_review.yml): **毎週 土曜 09:00 JST**（`workflow_dispatch` で週指定・全週遡及も可）。
 - **段階**: 並び順の校正（Phase B・実装済み）→ 4週＆十分な取引が貯まったら `entry_guard` 等（Phase C）を検討。
 
-### 直近の検証所見（2022-01〜2026-08）
-- 新スコア: 分位スプレッド **+0.347%** / Spearman **0.92**（上位分位 +0.16% / 下位分位 −0.19%）。
+### 直近の検証所見（2022-01〜2026-09）
+- **スコアv3（2026-10）**: 5日 上位5期待値 **+0.27% → +0.66%**、大負け率 **13.9% → 8.5%**。20日 **1.27% → 3.23%**、大負け **13.2% → 5.2%**。学習期(〜2024)/検証期(2025〜)の両方で改善（`validate_score.py`）。
+- **右裾研究（2026-10）**: 大勝ちリフトと期待値は別物。`atr_pct` はリフト3.2xだが期待値マイナス（両裾）、`sma200_slope` は両期間プラス、`log_avg_val`（流動性）も頑健。`dist_sma200`/`ret_120d` は2025年以降に符号反転。型（GC/DB/フラッグ等）はリフト<1。
+- **型研究（2026-10）**: ダブルボトム・GC(20,60)・フラッグは平均で逆効果、DC直後・カップ・押し目継続は相対的に良好。定義感度でもダブルボトム/フラッグは一貫マイナス。
+- 旧Phase 2スコア: 分位スプレッド **+0.347%** / Spearman **0.92**（上位分位 +0.16% / 下位分位 −0.19%）。
 - 選定比較: 上位 PF 1.04 / 年率 +16.2% / DD 35.1%、ランダム PF 1.14、下位 PF 0.88（**上位>下位は明確、PFではランダムと同等**）。
 - **同時保有数**: 本期間は **4銘柄が最良**（年率 +37.6% / DD 31.9%）。ただし単一経路のため**既定ガイドは5のまま**。
 - **地合いフィルタは不採用**: 指数MA・breadth いずれも年率を下げDDを悪化。既定OFF、`regime_effect` で毎回計測。
@@ -221,10 +278,11 @@ flowchart LR
 ## 9. 出力ファイル
 
 - `docs/history/{date}.json.gz` / `latest.json.gz`: 全銘柄レコード（スコア付き、gzip）。読み手は `.json` にフォールバック（移行期・旧ファイル対応）。
-- `docs/history/dates.json` / `meta.json`: 日付一覧 / データ鮮度メタ（小さいので平文）。
-- `docs/recommendations.json`（AI時）/ `recommendations_technical.json`（技術のみ）: `{regime, portfolio_guide, picks[], picks_in_range[], range}`。
+- `docs/history/dates.json` / `meta.json`: 日付一覧 / データ鮮度メタ（小さいので平文）。`meta.json` には `score_version` / `experiment_id` を記録。
+- `docs/recommendations.json`（AI時）/ `recommendations_technical.json`（技術のみ）: `{regime, portfolio_guide, picks[], picks_in_range[], range, score_version, experiment_id}`。
+- `docs/picks/{date}.json`: 日次スナップショット。`source`（ai/technical）・`score_version`・`experiment_id`・`pattern_summary`（pool）を保持。週次答え合わせはこのタグを各取引へ引き継ぐ。
   - `picks[]`: 全体母集団（無制限）の推奨。`picks_in_range[]`: 価格レンジ母集団（`price_filter`）内の推奨。`range`: `{enabled, min_price, max_price, count, overall, date, stocks[]}`。`stocks[]` は**レンジAIが返した全候補**（`{code,rank,verdict,entry_type,reason}` の順位順。フロントのレンジ表示で「推奨＋様子見」を確実性順に出すため）。AIは母集団ごとに1回ずつ呼ぶ（全体=`ai_analysis/{date}.json` / レンジ=`ai_analysis/{date}_range.json`）。
-  - `picks[]`（`picks_in_range[]` も同形）の各要素: `code,name,price,score,verdict,rank,tp_price,sl_price,ai_tp_price,ai_sl_price,atr_sl_mult,stop_distance,suggested_qty,trailing_plan,earnings_date,earnings_soon,entry_type,entry_type_label,entry_zone_low,entry_zone_high,overheat_level,overheat_flags,rsi14,dist_sma5_pct,dist_sma25_pct,pos_52w,run_up_days,gap_pct,atr_pct,...`
+  - `picks[]`（`picks_in_range[]` も同形）の各要素: `code,name,price,score,verdict,rank,tp_price,sl_price,ai_tp_price,ai_sl_price,atr_sl_mult,stop_distance,suggested_qty,trailing_plan,earnings_date,earnings_soon,entry_type,entry_type_label,entry_zone_low,entry_zone_high,overheat_level,overheat_flags,rsi14,dist_sma5_pct,dist_sma25_pct,pos_52w,run_up_days,gap_pct,atr_pct,pattern_summary,...`
 - `docs/earnings.json`: `{date, horizon_days:14, items:{code:{date,days_until,soon}}}`。
 - `docs/ai_analysis/{date}.json`（全体母集団）/ `{date}_range.json`（価格レンジ母集団） / `ai_strategy_latest.json`。
 - `docs/picks/{date}.json`: 日次ピックのスナップショット（`source`, `picks[]`, `pool[]`, `ai_stocks[]`）。週次答え合わせとAI校正の入力。
@@ -266,6 +324,10 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 ## 11. 残タスク・既知の制約
 
 **残タスク**
+- **v3の実運用観測（進行中）**: 10-16のv3ピックは10/19以降に約定→順次確定。**4〜8週間**の週次答え合わせで判断（`score_version` タグで追跡）。1週間の結果で良し悪しを決めない。
+- **週次プランのキャッシュキー**: 現在は `based_on_date` のみでプランを再利用するため、同日中にスコア版が変わっても旧プランが残る。`score_version` をキャッシュ条件に含める or `--force-plan` を追加（10-19以降は基準日が進めば自動更新）。
+- **パターンオーバーレイ（未実装）**: DC/GC/DB/フラッグの小さな並び順補正を、ウォークフォワードでOOS検証してから `strategy_params` へ。
+- **v3の月次ウォークフォワード**: 11/7の定期実行または手動で確認。`apply_optimal_params` は `score_weights` を上書きしないため、v3は手動検証のまま。
 - **週次答え合わせの還元（校正）**: Phase B（実績に基づく**過熱度別スコア補正**を `weekly_feedback` に反映し `main8` の並び順へ）を実装済み。今後 `docs/picks` が蓄積し過熱度・entry_type のサンプルが増えると補正が有効化される（現在は再構成データで過熱度が「低」に偏り、補正0＝観測のみ）。十分に貯まったら `entry_guard` 等（Phase C）へ拡張。
 - **週次スナップショットの蓄積**: `docs/picks/{date}.json` が今後蓄積される（過去分は `history`/`ai_analysis` から復元＝「復元」表示）。AI判定の校正は蓄積後に精度が上がる。
 - **過熱指標・押し目エントリーのバックテスト定期検証**: 実装済み・初回反映済み（`entry_guard`: moderate=1.5ATR/10日、high=1.5ATR/5日）。以降は月次 `run_walkforward.yml` で再検証し、ガード通過時に `entry_guard` を更新。
@@ -314,3 +376,8 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **履歴のgzip化**: 日別履歴を `.json.gz` で保存（実測 約2.97MB→約0.45MB、約85%削減）。フロント（`index.html`/`journal.html`）は `DecompressionStream` で解凍＋`.json`フォールバック、`weekly_review` は `.json.gz`/`.json` 二重読み、`main8` は書き込み時に解凍検証（失敗時は平文）。Pagesは `.gz` を `Content-Encoding` なしで配信することを実機確認済み。
 - **単純な株価フィルター** → **価格レンジの第2推奨（母集団を分ける）**: `strategy_params.json` の `price_filter`（`enabled`/`min_price`/`max_price`）と CLI `--min-price`/`--max-price` を追加。**全体推奨（無制限）はそのまま**とし、**価格レンジ内だけを母集団**とするAI順位付けを別途行い、`recommendations.json` の `picks_in_range` に「その中での確実性順の推奨」を併記（値がさ回避）。`index.html` に「全体 / ◯円未満」トグルを追加し、Discordにもレンジ推奨を追記。判定は `common/features.is_price_excluded` に集約。AIは母集団ごとに1回呼ぶ。
 - **レンジ表示の本実装**: レンジ選択時に「レンジ内を価格で絞るだけ」から、**レンジAIの「推奨＋様子見」をレンジ順位順で表示し、AI判定列もレンジAIへ差し替える**方式に変更。`main8` は `range.stocks`（レンジAIの全候補・順位順）を出力、`index.html` は表示中母集団に応じて `currentAI`/`aiRankOf`/`aiVerdictPriority` を切替（`ai_strategy_latest.json` は全体ビュー専用）。
+- **スコアv3（2026-10-18）**: `sma200_slope`/流動性を厚く、`dist_sma200`/`ret_120d` の行き過ぎを非線形に減点。式を `common/features.score_series_from_feat` に一本化（スクリーナー/BT共有）。OOS 5日 上位5期待値 +0.27→+0.66%、大負け13.9→8.5%。
+- **研究基盤（2026-10-18）**: `common/patterns.py`（型検出）、`research_patterns.py`（型）、`research_upside.py`（右裾＋上位K、オフライン/進捗/キャッシュ）、`validate_score.py`（v2 vs v3）。
+- **実験タグ（2026-10-18）**: `score_version`/`experiment_id` を picks/history/recommendations/週次JSON・MD・weekly.html に刻印。週次で「どの週がv3か」を追跡可能に。
+- **AIプロンプト（2026-10-18）**: 型サマリ行＋過去検証メモを日次/週次プランに追加。`PROMPT_VERSION=2026-10-18-1`。
+- **手動検証（2026-10-18）**: `main8.py --offline` / `--date`、AIワークフローに `date` 入力（既定OFF/空欄）を追加。10-16をv3で手動AI実行し、W42答え合わせを再生成してタグを確認。

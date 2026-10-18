@@ -1535,6 +1535,7 @@ def _cand_from_pick(p, hist):
         "dist_sma25_pct": _to_num(p.get("dist_sma25_pct")),
         "atr_pct": _to_num(p.get("atr_pct")),
         "pos_52w": _to_num(p.get("pos_52w")),
+        "pattern_summary": p.get("pattern_summary") or h.get("pattern_summary"),
         "tp_price": _to_num(p.get("tp_price")),
         "sl_price": _to_num(p.get("sl_price")),
         "fundamentals": p.get("fundamentals"),
@@ -1584,6 +1585,7 @@ def _load_latest_candidates(params, limit):
             "fundamentals": {"per": r.get("per"), "pbr": r.get("pbr"), "roe": r.get("roe"),
                              "op_margin": r.get("op_margin"), "div_yield": r.get("div_yield")},
             "earnings_date": r.get("earnings_date"), "news_note": None, "news_headlines": [],
+            "pattern_summary": r.get("pattern_summary"),
             "reason": None,
         })
         seen.add(code)
@@ -1604,6 +1606,8 @@ def _plan_candidate_lines(cands):
             f"PER:{fund.get('per')} PBR:{fund.get('pbr')} ROE:{fund.get('roe')} 配当:{fund.get('div_yield')}",
             f"利確候補:{c.get('tp_price')} 損切候補:{c.get('sl_price')}",
         ]
+        if c.get("pattern_summary"):
+            parts.append(f"型:{c.get('pattern_summary')}")
         if c.get("earnings_date"):
             parts.append(f"決算:{c['earnings_date']}")
         if c.get("reason"):
@@ -1617,6 +1621,7 @@ def _plan_candidate_lines(cands):
 def _plan_system_prompt():
     return (
         PERSONA_JA + "\n"
+        "【過去検証メモ（参考）】日本株の短期〜スイング検証では、GC(20,60)直後・ダブルボトム・フラッグ/ペナントは平均リターンが市場平均を下回る傾向、DC直後・押し目は相対的に良好。ただし平均傾向であり、型だけに依存せずトレンド・過熱回避・決算を優先する。\n"
         "あなたは日本株の週次スイング戦略の責任者である。金曜大引け後の最新候補と、直近の答え合わせ結果を踏まえて"
         "『来週の作戦』を練る。毎日のAI順位より踏み込み、候補を深掘りして『来週一番のおすすめ（top_pick）』を1つ選び、"
         "入口・OCO（利確指値/損切逆指値）・想定シナリオ・リスクを具体的に示す。"

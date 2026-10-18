@@ -9,7 +9,7 @@
 """
 
 # AIプロンプトの版（日次 _ai_system_prompt / 週次 _plan_system_prompt 共通）
-PROMPT_VERSION = "2026-10-01-1"
+PROMPT_VERSION = "2026-10-18-1"
 
 # スコアの版・実験タグ（picks / history / 週次答え合わせに刻印して事後検証する）
 SCORE_VERSION = "v3-research_upside-2026-10-18"

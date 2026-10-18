@@ -5,6 +5,14 @@
 > 当時の課題認識と設計方針の記録として残します（`main6.py`/`main7.py` 等の旧ファイル名が含まれますが、**現行は [`main8.py`](main8.py)**）。
 > バックテストの現行仕様は [`back_tester/README.md`](back_tester/README.md)。
 
+> **2026-10-18 追記: 現行との主な差分（この文書の記述より優先）**
+> - スコアは **v3**（`sma200_slope` 30 / `pos_52w` 25 / 流動性 20 / `dist_sma200` 15（+40%超は減点）/ `ret_120d` 10（+120%超は減点））。本文の Phase 2（4成分）は旧版。
+> - **実験タグ** `score_version` / `experiment_id` を導入（picks/history/週次/画面）。
+> - 研究スクリプト: `back_tester/research_patterns.py` / `research_upside.py` / `validate_score.py`、型検出 `common/patterns.py`。
+> - AIプロンプトに**型サマリ＋過去検証メモ**を注入（`PROMPT_VERSION=2026-10-18-1`）。
+> - `main8.py` に `--offline` / `--date`（テスト用・既定OFF）、AIワークフローに `date` 入力。
+> - **現行仕様・残タスク・実験状態は必ず [`PROJECT_STATUS.md`](PROJECT_STATUS.md) を正とする。**
+
 > 本ドキュメントは、重複・矛盾していた旧版を整理し直した統合版です。
 > 本計画の実装優先順位は、ワークスペースのtodoリストと同期しています。
 
