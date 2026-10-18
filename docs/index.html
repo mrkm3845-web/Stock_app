@@ -496,25 +496,28 @@
             list.forEach(p => { if (p && p.code) PICKS[p.code] = p; });
         }
 
+        function rangePriceLabel() {
+            const m = REC_RANGE_META || {};
+            if (!m || !m.enabled) return '価格レンジ';
+            const lo = m.min_price, hi = m.max_price;
+            if (lo && hi) return `¥${Number(lo).toLocaleString()}〜¥${Number(hi).toLocaleString()}`;
+            if (hi) return `¥${Number(hi).toLocaleString()}未満`;
+            if (lo) return `¥${Number(lo).toLocaleString()}以上`;
+            return '価格レンジ';
+        }
+
         function updateRangeLabel() {
             const btn = document.getElementById('recview-range');
             const note = document.getElementById('rec-range-note');
             const m = REC_RANGE_META || {};
-            let label = '価格レンジ';
-            if (m && m.enabled) {
-                const lo = m.min_price, hi = m.max_price;
-                if (lo && hi) label = `¥${Number(lo).toLocaleString()}〜¥${Number(hi).toLocaleString()}`;
-                else if (hi) label = `¥${Number(hi).toLocaleString()}未満`;
-                else if (lo) label = `¥${Number(lo).toLocaleString()}以上`;
-            }
             if (btn) {
-                btn.textContent = label;
+                btn.textContent = rangePriceLabel();
                 btn.style.display = (m && m.enabled) ? '' : 'none';
             }
             if (note) {
                 if (m && m.enabled) {
-                    const shown = (REC_RANGE_STOCKS || []).filter(s => s.verdict === 'recommend' || s.verdict === 'watch').length;
-                    note.textContent = `（レンジ内 推奨＋様子見 ${shown}件）`;
+                    const evaluated = (REC_RANGE_STOCKS || []).length;
+                    note.textContent = `（${rangePriceLabel()}の全銘柄を表示 / レンジAI評価 ${evaluated}件・参考）`;
                 } else {
                     note.textContent = '';
                 }
@@ -537,9 +540,11 @@
             if (!el) return;
             const list = recListFor(recView);
             if (list.length === 0) {
-                const scope = (recView === 'range') ? '選択中の価格レンジ内の' : '本日の';
+                const isRange = recView === 'range';
+                const scope = isRange ? `${rangePriceLabel()}の` : '本日の';
+                const tail = isRange ? `（${rangePriceLabel()}の全銘柄は表示中）` : '（様子見）';
                 el.innerHTML = `<div class="alert alert-secondary py-2 mb-2 small fw-bold" role="alert">
-                    <i class="bi bi-robot me-1"></i> ${scope}AI推奨（recommend）はありません（様子見）。</div>`;
+                    <i class="bi bi-robot me-1"></i> ${scope}AI推奨（recommend）はありません${tail}。</div>`;
             } else {
                 el.innerHTML = '';
             }
@@ -1092,13 +1097,8 @@
 
             let filtered = STOCKS.filter(s => {
                 if (s.excluded) return false;  // 週足トレンド下向き等の除外銘柄は表示しない
-                // 推奨の母集団トグル（価格レンジ）: レンジAIの「推奨＋様子見」だけに絞る
-                if (isRangeView()) {
-                    const rv = RANGE_AI[s.code];
-                    if (!rv) return false;
-                    if (rv.verdict !== 'recommend' && rv.verdict !== 'watch') return false;
-                } else if (recView === 'range' && REC_RANGE_META && REC_RANGE_META.enabled) {
-                    // レンジAI候補が無い場合のフォールバック（価格のみ）
+                // 推奨の母集団トグル（価格レンジ）: 価格帯の全銘柄を表示する（AIは参考）
+                if (recView === 'range' && REC_RANGE_META && REC_RANGE_META.enabled) {
                     const lo = (REC_RANGE_META.min_price != null) ? REC_RANGE_META.min_price : -Infinity;
                     const hi = (REC_RANGE_META.max_price != null) ? REC_RANGE_META.max_price : Infinity;
                     if (s.price < lo || s.price > hi) return false;
@@ -1153,11 +1153,7 @@
             });
 
             filtered.sort((a, b) => {
-                // レンジ表示中はレンジAIの順位順（確実性順）を最優先
-                if (isRangeView()) {
-                    const rva = aiRankOf(a.code), rvb = aiRankOf(b.code);
-                    if (rva !== rvb) return rva - rvb;
-                }
+                // 並び順は常に選択中の sortKey を優先する（レンジ表示でも固定しない）
                 if (sortKey === "ai_order") {
                     const va = aiVerdictPriority(a.code);
                     const vb = aiVerdictPriority(b.code);
@@ -1235,7 +1231,7 @@
                     const dateStr = isRange ? 'レンジ' : (ai.date ? ai.date.slice(5) : '');
                     const rankStr = (isCur && ai.rank !== null && ai.rank !== undefined) ? ` <span class="text-muted" style="font-size:0.68rem;">#${ai.rank}</span>` : '';
                     const wrapperStyle = isCur ? '' : ' style="opacity:.55;"';
-                    const tip = isRange ? 'レンジ内AI判定（価格レンジ母集団・確実性順）' : (isCur ? `AI判定（${ai.date}）` : `AI判定（${ai.date}）・最新バッチ外の参考`);
+                    const tip = isRange ? `${rangePriceLabel()}のAI判定（別プール・参考）` : (isCur ? `AI判定（${ai.date}）` : `AI判定（${ai.date}）・最新バッチ外の参考`);
                     aiCell = `<span${wrapperStyle} title="${esc(tip)}">${verdictBadge(ai.verdict, ai.reason)}${rankStr}</span>`
                         + (isCur ? '' : `<div class="text-muted" style="font-size:0.66rem;">(${dateStr})</div>`);
                 }
