@@ -355,6 +355,9 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 
 ## 12. 主要な変更履歴（概要）
 
+> **日付付きの詳細（commit・検証・影響・ロールバック）は [`CHANGELOG.md`](CHANGELOG.md) を参照。**
+> ここは 2026-10 以前の経緯の要約です。
+
 - 単一リポジトリ統合（back_tester を Stock_app へ）。旧リポジトリはアーカイブ。
 - Gemini モデル名修正（`gemini-3.6-flash`）＋リトライ／クォータ対応。応答コード正規化。
 - 一覧の AI 順位・判定バッジ、日付整合、AI推奨順ソート。

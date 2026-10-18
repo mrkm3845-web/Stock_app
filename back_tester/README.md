@@ -3,6 +3,7 @@
 スクリーナー（Stock_app/main8.py）と同じ**スコア式**を再現し、過去データから
 成績が崩れにくいパラメータを探索・検証するためのバックテストです。
 結果はガード付きで `docs/strategy_params.json` へ自動反映されます。
+変更履歴（日付・commit・検証・影響）は [`CHANGELOG.md`](../CHANGELOG.md) を参照してください。
 
 ---
 
