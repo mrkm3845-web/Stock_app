@@ -211,10 +211,10 @@
   },
   "weekly_feedback": {
     "enabled": true,
-    "generated_at": "2026-10-17T02:23:17",
+    "generated_at": "2026-10-18T02:58:22",
     "window_weeks": 6,
     "weeks": [
-      "2026-W42",
+      "2026-W43",
       "2026-W42",
       "2026-W41",
       "2026-W40",
