@@ -1043,22 +1043,36 @@
   },
   "4203": {
     "code": "4203",
-    "rank": 10,
-    "verdict": "watch",
-    "entry_type": "wait",
-    "reason": "半導体材料は強いが5日-6%。押し目形成を確認",
-    "news_note": "2026-10-16 ゴムタイムス:中国・シンガポールで半導体封止材増強",
-    "entry_strategy": "8300円まで待ち、7609円支持で再評価",
-    "entry_price": 8300,
-    "support": 7609.5,
-    "resistance": 9471.0,
-    "tp_price": 9200,
-    "sl_price": 7600,
-    "trailing_plan": "見送り。8984円回復で再検討",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "rank": 2,
+    "verdict": "recommend",
+    "entry_type": "pullback_wait",
+    "reason": "半導体封止材増産で中長期材料、25日線近辺の押し目待ち",
+    "news_note": "2026-10-19 EE Times: 先端半導体向け封止材を中国・シンガポールで増産",
+    "entry_strategy": "8450円まで待ち、8390円の25日線を支持に確認",
+    "entry_price": 8450,
+    "support": 8390,
+    "resistance": 9471,
+    "tp_price": 9300,
+    "sl_price": 8100,
+    "trailing_plan": "9200円超で半分手仕舞い、25日線割れ撤退",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
+      {
+        "title": "先端半導体向け封止材を増産 中国／シンガポールで（EE Times Japan）",
+        "source": "Yahoo!ニュース",
+        "domain": "news.yahoo.co.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE15V2x6QWVLZFRCaXB3TUN6NHpTTDd1UHdCZloyQ3lhdnFWUHRPVHdLTjBJTUJZWDRQOVN3a3dQbXRvczNSWFJQUEM3UnF0cjhsVlFpNTRBaWx3Q1RSeDQ5a1ZCX205TUpzSEtCM18zRjMtb25NS1JLZkphdmc4bjg?oc=5"
+      },
+      {
+        "title": "住友ベークライト、シンガポール工場の先端半導体向け封止材生産能力増強🔒",
+        "source": "シンガポール新聞社",
+        "domain": "singaporeshimbun.com",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBvZ3hBRGZ6S2ZIbnItSkRyQUxucnNiMlZEcEJmS1BsOWhYVkhMdEl4cEZkWFI0X1VnVHBDZ0JIb3BMYmxIRF8zSVc0TjZSalg2bzRTelNR?oc=5"
+      },
       {
         "title": "住友ベーク、中国・シンガポールで 先端半導体向け封止材増強",
         "source": "ゴムタイムス",
@@ -1068,7 +1082,7 @@
       },
       {
         "title": "住友ベークライト、中国・シンガポールで封止材増産",
-        "source": "https://plantdb.jp/",
+        "source": "plantdb.jp",
         "domain": "plantdb.jp",
         "date": "2026-10-16",
         "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9VWkNOYTlpalFmaG56Mm5NUEJtRG9TUkl4RFNFdHhCUjk0R01DNmJFZFJMaEVpQ1p6b0FvRjFySEF6LTNUQXVrZjNqRWUtb1JZNFJtSl9PY2t4NlMyVkJZQ3o1ODM0MGRhU1h1OXZaRzc?oc=5"
@@ -1079,20 +1093,6 @@
         "domain": "finance.yahoo.co.jp",
         "date": "2026-10-15",
         "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE5wamNveE5ab2JST09HcGpSM0hhaVE1TVV1MnI5TGpjVUMxbThXSm5fOXBzNGRMa3V0ZFBTOE5WM0EzMEJOMHFXc0FHd003WVFP?oc=5"
-      },
-      {
-        "title": "【アナリスト評価】住友ベークライト、レーティング強気を継続、目標株価11,000円に引上げ（米系大手証券）(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-13",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNS0VBM19FeWw0SjNObkpCMEs5aWhVRklLOHNYZVM2UmNERlFFYTBMTG9aa3cyN1Qtb3pldXlIRHBIekxYaV9NWXZid19zVzRyVWJGN3JYWjhnT1kzVHRMZWdrLVhLRlhMcngzZHhzajN4aWh1RWJNX2pva3kydlh2UkVMRng2aVE?oc=5"
-      },
-      {
-        "title": "【シンガポール】住友ベーク、半導体向け封止材の生産能力増強（NNA）",
-        "source": "Yahoo!ニュース",
-        "domain": "news.yahoo.co.jp",
-        "date": "2026-10-13",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFAtd182Slhid01rd0FXbkUwWnJZUHhzbHNWNTNDSDgybjB6TDBwX05zQnYzd3A2bDRpZC0zWkd6QWJYbmtSbXAwX3NYTVJST0hXbTNFWm50UkdPVEd0cEJNZkEtS2NOSXlPZXdpY25GdjF6NFVhMGZPbWlfNndOTlk?oc=5"
       }
     ]
   },
@@ -4137,56 +4137,56 @@
   },
   "7826": {
     "code": "7826",
-    "rank": 15,
+    "rank": 7,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "材料乏しく調整。値動き重い。",
-    "news_note": "2026-10-13 日経: 訂正有価証券報告書。要確認",
-    "entry_strategy": "様子見",
-    "entry_price": 11420,
-    "support": 9830,
+    "reason": "高配当・高営業利益率だがDC直後、自己株処分で需給注意",
+    "news_note": "2026-10-19 日経: 譲渡制限付株式報酬の自己株式処分完了",
+    "entry_strategy": "9720円支持までの押し目を待つ",
+    "entry_price": 9750,
+    "support": 9720,
     "resistance": 12380,
-    "tp_price": 0,
-    "sl_price": 0,
-    "trailing_plan": "静観",
-    "date": "2026-10-14",
-    "updated_at": "2026-10-15T00:55:37",
-    "prompt_version": "2026-10-01-1",
+    "tp_price": 11500,
+    "sl_price": 9300,
+    "trailing_plan": "見送り、9300円割れで下落加速警戒",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
+      {
+        "title": "フルヤ金属[7826]：譲渡制限付株式報酬としての自己株式の処分の払込完了に関するお知らせ 2026年10月19日(適時開示) ：日経会社情報DIGITAL",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE40VlpOZG4tMkdRUy1Kbms3N1FISWJEaXBRVXl6WWk3Y2x5YkY4QXlDNzdFMjZ5Q2ljTzlUU0VwSjctZTNKUVlMd3RtTlBGaVZManFnVXFKU3BZdXJOak1KUWkxaUZEMHhwbEE?oc=5"
+      },
       {
         "title": "(株)フルヤ金属【7826】：今の株価の理由は？値動きの背景をAIが解説",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-14",
-        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9zU212TWhCeFJxdDZ4aTdDSy02YmlmdzNxVFZuYTVHQ3gteElrU0Q1Z3dJaURnamEyVGU5d1ZLSGZNVjRkRDY2cVpEX291T1VrbC10d1JuZ0oxMnVjWWt3?oc=5"
+        "date": "2026-10-16",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBkR0NNblVXWHYwX2M4QlhtX1p5MjJBbmwwZnpWblNFNlRkcW8ydjVkVVhIWjNpTzI4bjRRcGppazk3eHQwejBmOWMzUXFLdnJRbElWMFdicW9ZNmtFR2NR?oc=5"
       },
       {
-        "title": "フルヤ金属[7826]：訂正有価証券報告書－第58期(2025/07/01－2026/06/30) (有価証券報告書) ：日経会社情報DIGITAL",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-10-13",
-        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBWbU5VcGM2a1IxT3NSbE5sZk0zeHFWNkZjaWhRNzd3TFgyWDZkNEt0ekE3MzBQaXlHSXB0Um5DR1QzQi1EOWU4OEdGRER1Z21VMEhyVi04dmlUNkNyMmNqOHB0WkJYZnVURU9sbA?oc=5"
-      },
-      {
-        "title": "マーケット速報",
-        "source": "北國新聞",
-        "domain": "hokkoku.co.jp",
-        "date": "2026-10-12",
-        "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQdDJlcnd1T3NWa21kd282a2RXdExoWnZUS3FwUzlmb3I3cFhHaVhJVkR2bmNlYzNYUG1zdjU1d1ZXQl8tb0JFalBjTXpZVERYV0M4cVhCbXpCT21weEt3R1plNXgzQ1FpTjl3UFJqYjNvNjVORnVOSnpfdV9wMWdJUHF6U2c5dE1yZHBsZlk5QWh1QWozOEJtUkVCNFY2MzRONlB6WTFjMjQ3OHd5ajREWE13cks?oc=5"
-      },
-      {
-        "title": "(株)フルヤ金属【7826】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
+        "title": "(株)フルヤ金属【7826】：決算情報",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-11",
-        "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9YMlktcExxak05TTFoZFFOaGZWSE1ocGNCUnp0blhfajBCTk9BN3JmZGV2T3UwSnNhVzViMXQ4ZzJ5QXYxZVJfdDlvNGdTOG4yVVVpYlRqblZOQTJsdndJNlRLMjRxR0pWVldadmNhQll4WlAtMmc?oc=5"
+        "date": "2026-10-16",
+        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1fSDFZMlNoSXhfMUE5d0dqbG04Tk93TjBqb1NDS21rQzZWajJVWkJEYzVJaGotNFpUVTNkajJ6RTd1cHMyaWs3OXkxMWdZSGlWTjdaSUJLN3Q2NEdNNVFLMQ?oc=5"
       },
       {
-        "title": "フルヤ金属[7826]：コーポレート・ガバナンスに関する報告書 2026/10/09 2026年10月9日(適時開示) ：日経会社情報DIGITAL",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-10-09",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBNSGpMZHEwR3I1eVhWRWRaSGNGT2FEbkYyMTJnUWhHTDlYU3FYcjdTcVRkdzVSaXRaSmlHLXRnbEhvRTYzZHZSV25NdEtzcUZxdFZWNkptaThGNFFxUGJhdFJUUzFRWmktV0E?oc=5"
+        "title": "(株)フルヤ金属【7826】：現物信用売買内訳時系列",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-16",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBGWGRrSEllemJwSmNjTGRmUUFQamNBeGFaVFI5SmNVMnNtZU0ydmtkRGJCMGZTRmxjSE1kUFVnZGVFSkcyeko3TFMxamdxS2Ezd19qZ1AyZWx2bDlIUllz?oc=5"
+      },
+      {
+        "title": "(株)フルヤ金属【7826】：株主優待",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-16",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE12QW1YN3c4cTJkdHVRYk5EM3A2dFFJZGFfYTcyUldtLWRxMEMxemo2R29zX0x1Q2wwMUpSUmU0YnFXdUNPM1FBTFZRQTV2U0kwdEQ1cVlKWnBZZ2hHaFBV?oc=5"
       }
     ]
   },
@@ -4219,90 +4219,90 @@
   },
   "6098": {
     "code": "6098",
-    "rank": 7,
-    "verdict": "watch",
+    "rank": 14,
+    "verdict": "caution",
     "entry_type": "wait",
-    "reason": "8連騰・RSI69.7・上ヒゲで高値掴み警戒。押し目待ち",
-    "news_note": "2026-10-15 月刊私塾界:スタディサプリ売却方針、譲渡額500億円以上",
-    "entry_strategy": "18175円割れ後、反発確認まで見送り",
-    "entry_price": 18175,
-    "support": 15982.4,
-    "resistance": 19065.0,
-    "tp_price": 19000,
-    "sl_price": 17700,
-    "trailing_plan": "見送り。17750割れなら上昇一巡と判断",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "reason": "9連騰・RSI72.4・乖離10%で過熱、高値掴み警戒",
+    "news_note": "2026-10-19 CNET: カーセンサーが不審アクセスでサービス停止",
+    "entry_strategy": "18100円まで押すまで見送り、現値追い禁止",
+    "entry_price": 18100,
+    "support": 18000,
+    "resistance": 19065,
+    "tp_price": 19500,
+    "sl_price": 17500,
+    "trailing_plan": "見送り、18000円割れで調整入り警戒",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
+      {
+        "title": "「カーセンサー」がサービス停止、不審アクセス検知で--再開未定",
+        "source": "CNET Japan",
+        "domain": "japan.cnet.com",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE5NYlJ2d3pVSm5SQlltUXhJSUFLcS1xazF1b0w4VkxGLURGdGt2UzY0X01PR0tFb1ZfaHV1bUJZRExPdVNNRDJ6SzNTRzhUVVJpTkE?oc=5"
+      },
+      {
+        "title": "リクルートの株価はなぜ高い？上昇した理由と今後の見通しを解説",
+        "source": "かぶリッジ",
+        "domain": "kabu.bridge-salon.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBDVnc3TmxwYVh0OThXZnNtQVhXMDVQT2VYUkJ1VEJKcmdUdGZSWVFOZWNWNHdFUjc1UVpPZVcyVUtoRGFWN0VKRFlRb2lkSHh5WkVldEVn?oc=5"
+      },
+      {
+        "title": "リクルート、中古車サイト「カーセンサーnet」を一時停止 不審アクセスを検知",
+        "source": "BigGo ファイナンス",
+        "domain": "finance.biggo.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9LczFYVC1ZMl9GYTVwR2NyZVlTM2tGVTRlazlUSjNaV3AwNlo1WTB2a1EtX0hiN2tNUnI4d0htcU81S2xpNmVPb1R2YkQycGxJN1V0Sm9FVFdqdFpoYTlrUngwalA4WE5qRVV2Z0RpRHBqbUpk?oc=5"
+      },
+      {
+        "title": "リクルートの「カーセンサーnet」、不審なアクセスでサービス停止",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFA4TkRiRlZvcHV4SkZZeTh5Tkdyb0pNME9sR0dLS1BaQl9HRWQzU1FUU3BVaTFlazhFS1JjQ1NCWWFJVmRpbXdjdzd0ZjdGc2JsdEVzUVFVSDFlOWh3SjNJTHJCZmZ1NlpOclNaQw?oc=5"
+      },
       {
         "title": "(株)リクルートホールディングス【6098】：今の株価の理由は？値動きの背景をAIが解説",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
         "date": "2026-10-16",
         "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9tWXUtelI5RVhoV0RidkNVM0ZZVGRHeE1zNUt5U2pfQ0N3V2hXalhHelVPSXQ3U0xfOEJnUGgyejF2RkVIUHhxQk5xRnBjOEl4eF9JZ25kNExwT0pObEVF?oc=5"
-      },
-      {
-        "title": "スタディサプリ売却、リクルートの誤算 塾現場「生徒なかなか見ない」",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1YMDFCNHN5TU1faDBrT3hzTzRHTkVDM3V0TTE4MExQejVrc3o2dThlWGNJV21vdkxjYnFLanhYMzhkak9XUWZTeF9vYkpVcWNGNDdHX1FPb0R2WVE3alIwdWlvVy1yV0NZSnRvNA?oc=5"
-      },
-      {
-        "title": "リクルート、「スタディサプリ」売却方針と日経報道 譲渡額は５００億円以上か",
-        "source": "月刊私塾界",
-        "domain": "shijyukukai.jp",
-        "date": "2026-10-15",
-        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE92UDdPOGYzMnkxeGNRZ1FzVWswd04xekxIU1U3N3UwUXdsU1BlVmtHX2s2NTVQa0laNlF2U1k1d2M0NVdDMW5aSEU5a3hveV85NlE?oc=5"
-      },
-      {
-        "title": "前場コメント No.6 リクルートＨＤ、プログレス、キャスター、ビタブリット、フライヤー、ネクセラファーマ(トレーダーズ・ウェブ)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-15",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNTTFnbkxPNVlROUExVWRnWnVkNzJ4ZTROTXd5SXlSREpiNlpTZGVMelBxMEpGUHBHNTY0UXVieEtiakhZR3o5S2ZyRC13WkUxT0pvc1N2Mll1ejhpdmVGTGxIQ3ZVXzJwbHY0RkNuNzc2REtMVmhqci1qdUVIZE5UZlpoT3IxR1U?oc=5"
-      },
-      {
-        "title": "リクルート－底堅い 自社株取得期間を延長 27年3月末まで(トレーダーズ・ウェブ)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-15",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPNFc0VmtIMGo1MTd5UHVPakdBc1lpVnlPQkJxZXhvNGEwZUtxSTBDRjh2akwzVUh0ekFhMm85M1ZibERfSjBpMEJ5c0xONV84RnBkQzlHbHhSd2labS1DVWdHVUxycGh3NDh0WmtmRlVGZHM5cEFEOE1kc190ekJaNjFTR2puVTg?oc=5"
       }
     ]
   },
   "8387": {
     "code": "8387",
-    "rank": 3,
-    "verdict": "recommend",
-    "entry_type": "pullback_wait",
-    "reason": "PER9.9・PBR0.88で割安、20日線近辺の押し目候補",
-    "news_note": "2026-10-13 東京・大阪:新本部棟を2026年10月に建設着手",
-    "entry_strategy": "4000円まで待ち、3955円支持確認で買い",
-    "entry_price": 4000,
-    "support": 3955.0,
-    "resistance": 4855.0,
+    "rank": 8,
+    "verdict": "watch",
+    "entry_type": "wait",
+    "reason": "PER9.9・PBR0.88と割安、3955円支持近辺の押し目",
+    "news_note": "2026-10-19 再都市化: 四国銀行が新本部棟に着工、2031年春完成",
+    "entry_strategy": "3960円まで待ち、3955円支持で反転確認",
+    "entry_price": 3960,
+    "support": 3955,
+    "resistance": 4855,
     "tp_price": 4500,
-    "sl_price": 3880,
-    "trailing_plan": "+5%で建値、+10%で8割利確、残りトレール",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "sl_price": 3800,
+    "trailing_plan": "4500円手前で一部利確、3800円割れ撤退",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
+      {
+        "title": "四国銀行、地上10階・延床1.39万㎡の新本部棟に着工！はりまや橋前の本店街区を全面更新、2031年春完成へ",
+        "source": "再都市化",
+        "domain": "saitoshika-west.com",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBMN1VrOE1BNkRSOXFibUhuQnFGc2JkNXdRQkc1NXlLeHRJdEJ2MGtPcXpKODEzRTRxSGZ1RkpmRFJIeG10VUFxOE5lcWJxZ0stVzA3bXZtbWZpZnVXbGc?oc=5"
+      },
       {
         "title": "四国銀行（8387）の株主優待｜国内株式",
         "source": "SBI証券",
         "domain": "sbisec.co.jp",
         "date": "2026-10-16",
         "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxQUXRNVGVQc2Y1QnNUWk9iMGI1X29nNjhnZ2xDUFhXUUJYSDdhOXR6QUFlRlcydjlpT3R0WTdGR0dOTW1mQkJpeVhtU1pBcnZhbzhHYTc3UlBYczRsM0xMWVFfLThETzBjX3pBUmRsZks5cG5YWFZqcFk4d253eVFUVFFCYVRBSnFXa25pZXhZOXF3cXI1X0ZhVXluZlp0YlZGUzRLMGJmcDhRcElUcXRsaFExN3F1Z0ozejNubEo2R0NoWldNeGhpZXllTWdnR2lCTVp3dVpmQWZUN2tHVG5SbTFYU1lacUcxbGc0?oc=5"
-      },
-      {
-        "title": "(株)四国銀行【8387】：株つぶやき",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE5EV0xpS2tJVGx6cE5zY21oQTNjaGtxT1pFaFc3aGpJX19jamtXWXF6X2lCZUJKNER3NlBEZWZ2M3diTE1IYVFrbE43MjBfT2lVMEdvR01QQnY?oc=5"
       },
       {
         "title": "高知市に本部を置く「四国銀行」 「はりまや橋」の近く 「（仮称）四国銀行 新本部棟」を2026年10月に建設着手！",
@@ -4319,37 +4319,37 @@
         "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1OdzJMYVl4TTUzRVVBSUZYOFF0cWVXTmpqVEJyNUMtLUo5TTF6NzM5eGFmOWVvbHZGMlhqYlJUbGdnNzB2T2dYblUwSEVhZ2FwOEVvb1lublQxMFFrUTNIOGtXNUVRQXM?oc=5"
       },
       {
-        "title": "点差イコール力の差 四国銀行大敗 社会人野球・日本選手権四国２次予選",
+        "title": "四国銀行、全国ならず ＪＲ四国に１―２１ 社会人野球・日本選手権四国２次予選",
         "source": "高知新聞",
         "domain": "kochinews.co.jp",
         "date": "2026-10-09",
-        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE43RlZGQkVOZnNraFBqcWFxRGx3MjRjcGdOcjFXOC1JbnA4cDNKS3Z0eGdKVmktZ3JGQkF1ckZkWlBfWVRGVWhuM29FSHMxbXhaVURPVmppTFJnMlNrX1Jn?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFB3UFdwbjJfcnRLbS1oOUtCMEQtSm55QUU2cG5aeE9naExaLW1ZYVN6ZExNazBIcF9hSmZvV2IzVzFLTWZMUm9NVk5SM2VacGlJNjRpX2c5RTZEMTYxcnFj?oc=5"
       }
     ]
   },
   "5301": {
     "code": "5301",
-    "rank": 8,
+    "rank": 6,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "5日-11%でナイフ。20日線支持確認まで見送り",
-    "news_note": "2026-10-16 株探:野村証の保有割合減少を報告",
-    "entry_strategy": "1925円割れず反発確認まで待つ",
-    "entry_price": 1925,
-    "support": 1925.0,
-    "resistance": 2423.0,
-    "tp_price": 2300,
-    "sl_price": 1900,
-    "trailing_plan": "見送り。反発後に2000円台回復で再評価",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "reason": "スコア高いがDC直後、野村保有減で上値重く見送り",
+    "news_note": "2026-10-16 株探: 野村証の東海カーボン保有割合が減少",
+    "entry_strategy": "1968円支持までの押し目形成を待つ",
+    "entry_price": 1970,
+    "support": 1968,
+    "resistance": 2423,
+    "tp_price": 2250,
+    "sl_price": 1880,
+    "trailing_plan": "見送り、1968円割れなら警戒継続",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
         "title": "東海カーボン(株)【5301】：今の株価の理由は？値動きの背景をAIが解説",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-16",
+        "date": "2026-10-19",
         "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE44TUtwdkx3WG10R3E2Y0FYSzh0MkdaMlFmc2FmaEhHZ3dhcGNDQVF2T2VnTl9DQURUYXI4WmNZQTZUUXZWQmJCd2MtZnE5bF9wX2RtaFJtTlZzaC14eWF3?oc=5"
       },
       {
@@ -4746,21 +4746,21 @@
   },
   "6668": {
     "code": "6668",
-    "rank": 11,
-    "verdict": "watch",
+    "rank": 13,
+    "verdict": "caution",
     "entry_type": "wait",
-    "reason": "20日+35%で値動き荒い。急騰追いは避け押し目待ち",
-    "news_note": "2026-10-16 山陽新聞:26年8月期決算。材料は要確認",
-    "entry_strategy": "4408円まで待ち、出来高減の押し目を確認",
-    "entry_price": 4408,
-    "support": 3450.0,
-    "resistance": 6070.0,
-    "tp_price": 5800,
-    "sl_price": 4200,
-    "trailing_plan": "見送り。5233円回復で再評価",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "reason": "20日+37%・ATR7%超で過熱、現値追いは危険",
+    "news_note": "2026-10-16 山陽新聞: 26年8月期決算を発表、動意続く",
+    "entry_strategy": "4700円まで冷ますのを待つ、成行追い禁止",
+    "entry_price": 4700,
+    "support": 4600,
+    "resistance": 6070,
+    "tp_price": 6000,
+    "sl_price": 4400,
+    "trailing_plan": "見送り、4400円割れで上昇一巡警戒",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
         "title": "【決算】（９日、２６年８月期） アルファ、アドテックプラズマテクノロジー",
@@ -4770,7 +4770,7 @@
         "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1nQjQ0cjZWejYySUNCZkp4a3k5cEFWLXV6d1poSmNyU09MRHVYZk5EcFhyY2Q3Z3dkZm5TUnM0dTcwMjVNRVNYenRLMlZfcWNyU2FUZmxjYS1KYzZGVEd2VGVBOVk4NDJTUkRoTA?oc=5"
       },
       {
-        "title": "前日に動いた銘柄 part2 サイバートラスト、HEROZ、アドテックプラズマテクノロジーなど 執筆",
+        "title": "前日に動いた銘柄 part2 サイバートラスト、HEROZ、アドテックプラズマテクノロジーなど 執筆： Fisco",
         "source": "Investing.com - FX | 株式市場 | ファイナンス | 金融ニュース",
         "domain": "jp.investing.com",
         "date": "2026-10-14",
@@ -5275,56 +5275,56 @@
   },
   "8541": {
     "code": "8541",
-    "rank": 5,
+    "rank": 1,
     "verdict": "recommend",
     "entry_type": "pullback_wait",
-    "reason": "PBR0.9・割安度プラス、5日線押し目で銀行株の出遅れ狙い",
-    "news_note": "2026-10-16 VOIX:みかん定期預金開始。材料は限定的",
-    "entry_strategy": "3326円まで待ち、3215円支持で買い増し",
-    "entry_price": 3326,
-    "support": 3215.0,
-    "resistance": 3710.5,
-    "tp_price": 3600,
-    "sl_price": 3180,
-    "trailing_plan": "+3%で建値、+6%で半分手仕舞い",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "reason": "ありあけ5%超保有で改革期待、PBR0.9倍・RSI50で過熱なし",
+    "news_note": "2026-10-19 日経: ありあけキャピタルが愛媛銀株5%超を純投資目的で保有",
+    "entry_strategy": "3300円まで待ち、3205円支持で反転確認",
+    "entry_price": 3300,
+    "support": 3205,
+    "resistance": 3710,
+    "tp_price": 3650,
+    "sl_price": 3150,
+    "trailing_plan": "3600円超で建値、5日線割れで利確縮小",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
-        "title": "【プリンセス駅伝】控えはわずか1人…背水の陣で挑む愛媛銀行女子陸上部、2年連続「クイーンズ駅伝」への挑戦（あいテレビ）",
-        "source": "Yahoo!ニュース",
-        "domain": "news.yahoo.co.jp",
-        "date": "2026-10-18",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE50OUhRVS1ZVVZjMzd0R2dOWVlxNFlNak84TXVBRVZQZU9WSFc4MU1TamtldEFUVTVyLWlYUnhnQVZIT0NtSlVacmxWY1FLRlZMNVpGN1gzdWRvcmYzWFVxajktNG5kTkE0T2pDdzVtWXhxLVp1cXVqYUdYZjNrSDg?oc=5"
+        "title": "ありあけキャピタル、愛媛銀行株5%超保有 「純投資」目的で",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5lNFpWNWZTRm1xREZjYTl0b3QzYXFqY1Rvb3EzTU1PaklWR0JjNk1PM2xycUVJeUtDRGNHNkNjVE9YSWFPblEzYnlyZkpGUFV5bEV5Q1dtOFFsS0gwQlduSEtScENTUHFNRDFBeg?oc=5"
       },
       {
-        "title": "【プリンセス駅伝】控えはわずか1人…背水の陣で挑む愛媛銀行女子陸上部、2年連続｢クイーンズ駅伝｣への挑戦",
+        "title": "ありあけキャピタル株式会社が株式会社愛媛銀行＜8541＞株式の大量保有報告書を提出",
+        "source": "ｄメニューニュース",
+        "domain": "topics.smt.docomo.ne.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQYk1rU2FWeXctdE05V3hFTUZFeU5IZWQwN0VLMkJpTEgxcE5jTmxzeDVZc3JtY2h5aVdtM3RsS0d4QXlXTjJ6QVpBcElKdlVYa2N3VjNJZ1J3eDdPWkVlU1VmZ0Z4ZDFOQ01SZmdZRUFxZWZoNHA4SlpabXFrd0ZmTE5rcnJLWUNNaWfSAYoBQVVfeXFMUGJNa1NhVnl3LXRNOVd4RU1GRXlOSGVkMDdFSzJCaUxIMXBOY05sc3g1WXNybWNoeWlXbTN0bEtHeEF5V04yekFaQXBJSnZVWGtjd1YzSWdSd3g3T1pFZVNVZmdGeGQxTkNNUmZnWUVBcWVmaDRwOEpaWm1xa3dGZkxOa3JyS1lDTWln?oc=5"
+      },
+      {
+        "title": "【プリンセス駅伝】愛媛銀行は25位で本戦出場に届かず 気温28度の過酷なレース",
         "source": "TBS NEWS DIG",
         "domain": "newsdig.tbs.co.jp",
         "date": "2026-10-18",
-        "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE8ydWozYWJmeUxuUTZPcUhpeFZfX0hCZHNWV2hVZHIzdW1zd3N0RlAwVWthdUVLY20tQUh6cGRNb2tIMzJGc3Q4cDlGUDN6X1NwUFJueUUxdEN2X0N2N1Vpc2FPal9nMDg?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1GbjlLaVM3bVhMbWdOdm9mel9DYzBQQS1ySkVMOWJHbVI3Zm9aYkxBV1dTSjZSZWtHV2VHTWV6RUJrak1HUHQtZTFFQi1XR3g3cmcyQ2xYenZUWWN4c3Zz?oc=5"
       },
       {
-        "title": "愛媛銀行が提供するHandyBank限定みかん定期預金の取扱開始のお知らせ",
-        "source": "ニュースメディアVOIX",
-        "domain": "voix.jp",
-        "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiTEFVX3lxTE1fMkVSaEVVRlM2bzZJbEFPLUhrdXNtYmxWME1WR3hoNkNqTnA5ZDBOSG9Cbkk0Zjl0d01OTUtFT0pJQ3BBV2d2OGRyRE0?oc=5"
+        "title": "【プリンセス駅伝】愛媛銀行は25位で本戦出場に届かず 気温28度の過酷なレース (あいテレビ)",
+        "source": "Yahoo!ニュース",
+        "domain": "news.yahoo.co.jp",
+        "date": "2026-10-18",
+        "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNNGZoLVV5ZTlOMXd6OUZfNWlUQS0taXJTU25tcmd0dlUzV2JiMWwxX25NQVRvYXFMV0E0NjNUMTROSjVsNHY3RndHSU9tOFZVcFExUDVsOWw5TkZPMGxwazFiRWpvTFdwTEZYMHE3OF9DQnUzNGtUTUNCckNGVUtkVFZTMWlFNzNJYlk2TENB?oc=5"
       },
       {
-        "title": "「HandyBank限定みかん定期預金」の取扱開始について",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
-        "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBwMjBGMmJKeGE1SG1CWk5fdVFZcERJcG1POUcxTlZnQ24wSGk0RUI0b05BX0dkNjUxNDZEeElYZzJ2OFotc3ZmcjMtaTJmdEZMWEJpb3NERHFrSDcxRnVnc2R3VmU0LVdhUnc?oc=5"
-      },
-      {
-        "title": "愛媛県功労賞に”地域経済の発展“愛媛銀行元頭取の本田元広さんら３人が選出【愛媛】",
-        "source": "FNNプライムオンライン",
-        "domain": "fnn.jp",
-        "date": "2026-10-09",
-        "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE1vQmtCQnI4aG50eDZZd1poNHp2NTgzeDV1ZVFjSXRTMmM3MVYtREo0QVRUZEduQkVOa1JnSTNOLS1nZGg2dVlYZWJFTWlwQQ?oc=5"
+        "title": "【プリンセス駅伝】控えはわずか1人…背水の陣で挑む愛媛銀行女子陸上部、2年連続｢クイーンズ駅伝｣への挑戦",
+        "source": "au Webポータル",
+        "domain": "article.auone.jp",
+        "date": "2026-10-18",
+        "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE53S0pZcW9YbkpWbTR2MzlFSWFZcEYzRUJYU3JibXFwM243eDYyT01lNTBMM1Vxd1pqOHpjekxYeEkxOU45bXJCeE1oMElacmtBak9Nbng5NHl4NFlvX0lnMnczb24xdVZ4UHVaSS1R?oc=5"
       }
     ]
   },
@@ -6694,21 +6694,21 @@
   },
   "3132": {
     "code": "3132",
-    "rank": 6,
+    "rank": 3,
     "verdict": "recommend",
     "entry_type": "pullback_wait",
-    "reason": "20日+21%と強いが過熱薄い。5日線下の押し目を待つ",
-    "news_note": "2026-10-16 BigGo:UAEセキュリティ企業買収、中東開拓",
-    "entry_strategy": "4400円まで待ち、反発確認で打診買い",
-    "entry_price": 4400,
-    "support": 3630.3,
-    "resistance": 5096.0,
+    "reason": "UAEサイバー買収で中東開拓、20日急騰後の押し目待ち",
+    "news_note": "2026-10-16 BigGo: UAEのCyberSec ITを子会社化、中東・アフリカ開拓",
+    "entry_strategy": "4300円まで待ち、4210円近辺で反転確認",
+    "entry_price": 4300,
+    "support": 4210,
+    "resistance": 5096,
     "tp_price": 5000,
     "sl_price": 4150,
-    "trailing_plan": "+4%で建値、+8%で半分手仕舞い",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "trailing_plan": "4800円超で建値、5日線割れで縮小",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
         "title": "マクニカホールディングス、サイバーセキュリティサービスのUAE・CyberSec IT Consultingを子会社化",
@@ -6726,24 +6726,24 @@
       },
       {
         "title": "マクニカホールディングス＜3132＞、サイバーセキュリティサービスのUAE・CyberSec IT Consultingを子会社化",
-        "source": "ｄメニューニュース",
-        "domain": "topics.smt.docomo.ne.jp",
+        "source": "Excite エキサイト",
+        "domain": "excite.co.jp",
         "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPbFhCdTc2V1g1Qm5mbVFRRWhUUGxHS0llZDR3T201MHVXVHhCVm1vZVdaT2lPa3lSZlBBaGNBbU1MazZtLTVvUGc2M3hwZXpxdU9DRDljQjFMc19IVkMxMWllSmxwQVZhMTdMb3ZXTHVveGh0TmVvbE52dHVuN00wYW5RY3JZVDDSAYcBQVVfeXFMT2xYQnU3NldYNUJuZm1RUUVoVFBsR0tJZWQ0d09tNTB1V1R4QlZtb2VXWk9pT2t5UmZQQWhjQW1NTGs2bS01b1BnNjN4cGV6cXVPQ0Q5Y0IxTHNfSFZDMTFpZUpscEFWYTE3TG92V0x1b3hodE5lb2xOdnR1bjdNMGFuUWNyWVQw?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE14aWU5YkJ4SEtzVWc0ZGRoai01OFdXTGRLdFdOTWNlZ3ZJaVUyckEwRGdsR2hHU0swRkIxdEJRajFabzMyNFc2Zkw5WjB1UHNib3FVSmY5YnNBQzBBdFBESGFaWEZ6cVk?oc=5"
       },
       {
-        "title": "マクニカホールディングス(株)【3132】：今の株価の理由は？値動きの背景をAIが解説",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
+        "title": "マクニカ、UAEのサイバー防衛関連企業を子会社化 事業拡大へ",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
         "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1qUVllcnBQSF9oYnFyaURwcTgtWTQ5THNweE9pTldfR2YzYWkyNGNJUUtwOFh6OGIzRkpQMnRWTkxpUURoaWZfOTFVQjZSMWRJanpWa093QXFObXRHN21N?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9KUldnelAyemluZkl3dzZKZGNwZzZ6WUhOaVhDbVdEekgxdHpDVk12djI5UWNkaEpWRVFnSG9Ud3c5eWJGTjFZOHNwNzZvdVNlZURmSkFZTU1GQjZrZHl5QW5qcDlmUlhSNktqbA?oc=5"
       },
       {
         "title": "マクニカホールディングス[3132]：当社連結子会社によるCyberSec IT Consultingの株式取得に関する合意のお知らせ 2026年10月16日(適時開示) ：日経会社情報DIGITAL",
         "source": "日本経済新聞",
         "domain": "nikkei.com",
         "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNYktuVHRyLVpOdTZvX3VzS2oxdE5YdUloT3d5d1B2aXIwb205TXBfR2lUamk5UTc5TDA0N0k0YXZCUklVQjMyTExSMEJFTHp2Vkg2dkpiV2JpQm9Td0ZmSTJpQXdtM3dUWk5tVUJDMGt1OXliVl9QZ3EzOHU3ZmlrVm9neDl6U2dUb09PT3V0ZmV1NkZHZkZsckpKb1AyNDdGbjRvaUhuWUZkdHZNZ09QU2ZqWUVVRXN3TDZobUhnajNpVFZxb01PbU1Ual8?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5HNnNBY3hoV0hicVV2MHdzcXFQa0NvV2dFQTgyTTU3ekRIb3lTNF9XRF9zdDNHMGdtT3ctaHoxUTZQN2tVbEQ4LVRfcG43clJtQ1RFWUhhSzZTUFQyTXZvd1NEdWNZV21EWEE?oc=5"
       }
     ]
   },
@@ -6838,56 +6838,56 @@
   },
   "7272": {
     "code": "7272",
-    "rank": 1,
-    "verdict": "recommend",
-    "entry_type": "pullback_wait",
-    "reason": "低PER・割安でトレンド健在、RSI57と過熱薄い。5日線押し目狙い",
-    "news_note": "2026-10-18 レスポンス:ヤマハファンイベント、XSR900 GP新色",
-    "entry_strategy": "1845円まで待ち、反発確認で買い",
-    "entry_price": 1845,
-    "support": 1743.0,
-    "resistance": 1888.0,
-    "tp_price": 1950,
-    "sl_price": 1780,
-    "trailing_plan": "+3%で建値、+5%で5日線追随、割れで縮小",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "rank": 11,
+    "verdict": "watch",
+    "entry_type": "wait",
+    "reason": "PER7.9倍・下ヒゲ長く割安、GC直後で押し目待ち",
+    "news_note": "2026-10-19 PR: 磐田ものづくりフェス出展、材料性は薄い",
+    "entry_strategy": "1790円まで待ち、1754円支持で反転確認",
+    "entry_price": 1790,
+    "support": 1754,
+    "resistance": 1888,
+    "tp_price": 1900,
+    "sl_price": 1730,
+    "trailing_plan": "1888円突破でトレール、1730円割れ撤退",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
-        "title": "ヤマハ恒例の一大ファンイベント「My Yamaha Motorcycle Day 2026」、三井アウトレットパーク滋賀竜王で開催 10月24日",
-        "source": "Yahoo!ニュース",
-        "domain": "news.yahoo.co.jp",
-        "date": "2026-10-18",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE01VHY1eGVQZ3R6RElWa2ZYQUJKai1YZlZ5ZnFTSHZ1TU1QRUNWSjE2dHdaOU9WbU84VnBBUzRETlFlSklFM0lrcll0enR2M2hxR0h6eFlMZ3diRzg4ODRCck83UHZ2R215cW1wU3c0R3lVTzdxR1hBU3MwTEwwcVk?oc=5"
+        "title": "「僕の中ではまだ20%」YE-01の開発者がMXoNで語った、ヤマハ電動モトクロッサーの現在地",
+        "source": "Off1.jp",
+        "domain": "off1.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiR0FVX3lxTE9DdWtNVkFrOGdZNjk1SWtoVkZ2clFhRUlHRDd2SXJUWWxmdEhNT25NZ2dwbzViRnlRWXNpdlJfbnd5S3RrNkhv?oc=5"
       },
       {
-        "title": "ヤマハ恒例の一大ファンイベント「My Yamaha Motorcycle Day 2026」、三井アウトレットパーク滋賀竜王で開催 10月24日 1枚目の写真・画像",
-        "source": "レスポンス（Response.jp）",
-        "domain": "s.response.jp",
-        "date": "2026-10-18",
-        "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQMWQyeVFseGE5TVZ4NGNSbFp3RV9fdUtVRWVJUzdzRnlTUndseFhfRjBtN1NEM3FpQTNsMWE0R2pIUTQ4cF9QM2N0NUtpaWZRbjVHQ2F2YkpFZ0NpZ1djY1U0bkdnbUFzYjVjelVaVVFscVpLYWNBdjdLLWtzbUdCS1lGa1gySDBkbWRUMWxPOHI?oc=5"
+        "title": "「磐田ものづくりフェス2026」に出展",
+        "source": "Digital PR Platform",
+        "domain": "digitalpr.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiQ0FVX3lxTE9LaWJaUkFENjl0MGIyUlBwRldJOHlWNnJMQ0xtTFNoMklfRmg1a2tUQk85Mm9wamVabkhLaUoyaWpPVGs?oc=5"
       },
       {
-        "title": "ついに伝説の「ゴロワーズカラー」登場、ヤマハ『XSR900 GP』2027年モデルで「レジェンドブルー」追加 1枚目の写真・画像",
-        "source": "レスポンス（Response.jp）",
-        "domain": "s.response.jp",
-        "date": "2026-10-18",
-        "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOMThrdVVYMWZ0cktGUmpOTFh4UllJWW9ybzVCYmZ0YlVTNGw3clpPaFpDWTU0UVFYRGJEbjR4c1VNOGFfNC1QR2E4cnJaS0pabzYteGpITDgwN0I0bmlobU5PbmpTeENGM3FCZk9vVGJvVFB6SURHR0NpVXFfTjRkNzdxejllOXVmdlJHN29sQ08?oc=5"
+        "title": "ヤマハ、電動アシスト自転車の購入でデジタルギフト5,000円分がもらえる「ヤマハの電アシ 秋トクキャンペーン」",
+        "source": "kakaku.com",
+        "domain": "news.kakaku.com",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5nNTIwUHRnU05sQzlGZGQ5WHpQSnF1cGRJMHBLODRoeTRUMDNQSG5JajhDNUo2R1J0Tmd5Wjh1aS0zWUxYQ2huYWRqelNINkdkZ25qc19aT1BtQTh6QmVVS3ExUm5sb0JTUENpVk9R?oc=5"
       },
       {
-        "title": "ヤマハ発動機、「グッドデザイン賞」43年連続受賞 今年は『YZF-R7』とポータブル操船機で｜Infoseekニュース",
-        "source": "Infoseek",
-        "domain": "news.infoseek.co.jp",
-        "date": "2026-10-18",
-        "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFBiRmg2RjRkM2FsUHVhSmF6TU15NDFTeFlmMF9SSWxkNW1LUHB1ZXo1aXhTZ3VRbkxDa09YbFJqVUNJVU1DRkViM05hWGwxeWJyQlczS1pTTXE1RE1JZ1E5QVFB?oc=5"
+        "title": "フォーミュラE「Lola Formula E Team」にテクニカルパートナーとして協業継続",
+        "source": "Digital PR Platform",
+        "domain": "digitalpr.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiQ0FVX3lxTE9wREVwT2FoRklidzZDUWZULTdpODVCbS01YWU3a3ZtVWhUOGJtVkZHc1RwRFdkek1wXzJzX2pTTVUteWM?oc=5"
       },
       {
-        "title": "ヤマハ発動機、「グッドデザイン賞」43年連続受賞 今年は『YZF-R7』とポータブル操船機で",
-        "source": "レスポンス（Response.jp）",
-        "domain": "response.jp",
-        "date": "2026-10-18",
-        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5HYU1mclIyaXF6M1hXT242OEZNOEV0NVRRM04ycnFyU1BCODhJWDZfbzBlbnRLVjI2X004X05QUktvTTUtZlRTaUJ5QU1jRV9kYXBBUEFGVTZRT2JYUDEw?oc=5"
+        "title": "ヤマハ発動機、フィッシングボート「YFR330」 に上位グレードをラインアップ",
+        "source": "KAZI online",
+        "domain": "kazi-online.com",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1Dbk1oNUxEeWdaRUQ1b1YtVS1lcDJSUjlhQTNwa0IxSlhrUHVuQTdhSVJWR0hOWTJsWmxXVU9kSDBkd0RxTGk3U3p6RmFZaWRIUVRQVDRGcVRTZw?oc=5"
       }
     ]
   },
@@ -6896,32 +6896,32 @@
     "rank": 4,
     "verdict": "recommend",
     "entry_type": "pullback_wait",
-    "reason": "電力需要の長期材料、25日線押し目ならリスク限定",
-    "news_note": "2026-10-12 ニュースイッチ:電力需要商機、売上高2倍の長期構想",
-    "entry_strategy": "11343円まで待ち、反発確認で買い",
-    "entry_price": 11343,
-    "support": 10106.9,
-    "resistance": 12800.0,
-    "tp_price": 12500,
-    "sl_price": 10850,
-    "trailing_plan": "+4%で建値、+8%で半分手仕舞い",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "reason": "電力需要で売上2倍構想、25日線への押し目を拾う",
+    "news_note": "2026-10-12 日刊工業: 明電舎が売上高2倍へ長期構想を打ち出し",
+    "entry_strategy": "11100円まで待ち、11000円支持で下ヒゲ確認",
+    "entry_price": 11100,
+    "support": 11000,
+    "resistance": 12800,
+    "tp_price": 12600,
+    "sl_price": 10700,
+    "trailing_plan": "12200円超で建値、25日線割れ撤退",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
-        "title": "明電舎とリコーブラックラムズ東京がパートナーシップを締結 広告看板を掲出へ",
-        "source": "Dellows News",
-        "domain": "news.dellows.jp",
-        "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE12cEdCbkhybjMyTkg3OUprNzZSWE0xb2NZbnBHYTRSdWFxSGxyeXM5U3BUa3VCRVBqdU00Q0hTRElKcV96VHFZaXBSVDktOWtSS2YwSkI3bXBDNEtYVi1ha1Z6MTg?oc=5"
+        "title": "(株)明電舎【6508】：株つぶやき",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-18",
+        "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE4zZllqV1N0RUhua1ZTMVpVN0loZG5GNUdSTlZIS0ZKdkhEajdoZGJUN3hDWFhucjVOcV9nYzFOaTgyOTBYNVk4ZVFIQlRXOW9TRE9vZmdRUGI?oc=5"
       },
       {
-        "title": "リコーブラックラムズ東京、株式会社明電舎とオフィシャルパートナー新規契約のお知らせ",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
+        "title": "株式会社明電舎とオフィシャルパートナー新規契約のお知らせ | 2026-2027シーズン | RICOH BlackRamsTokyo",
+        "source": "リコーブラックラムズ東京",
+        "domain": "blackrams-tokyo.com",
         "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5QTktYMzRqWkREQlZoZ1lyZmU5dFVQMGJTd0d0SHZ2UVFSY21ZVEptY2QtalZxY1JKOG9Tai1fd1UzSDFwMFAzYjVWNW9nTXc1VDdHdWpXOFAtYkVKSGRLTkZQUFpyVjFON2c?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE9MLS10dmZNaU1OR3dYek1IRVN1MkhLbi1qR0p6eGtTRHE1Y3daRVRRVGVuMjQ1dEpucVpBOWRpSk1kYXhDSjZHM05tcjhHczluMnFSam5GNE5NOFlGQjNEU2R5VGJEZ0lTTkhZVVZPUTFrZTFwQVY4UA?oc=5"
       },
       {
         "title": "世界で高まる電力需要商機…明電舎が売上高2倍へ、打ち出した長期構想の全容",
@@ -6931,18 +6931,18 @@
         "url": "https://news.google.com/rss/articles/CBMiQkFVX3lxTE5nY05fdjUzdGRHbmMwTUdISlhvWTFsN1F5SUZBYWx5b0JrWXBfOTdHUXNGOGwzQ2kzU0FmNUk3MWpSZw?oc=5"
       },
       {
-        "title": "明電舎、セラ平膜 シンガポールの水需要取り込む",
-        "source": "化学工業日報 電子版",
-        "domain": "chemicaldaily.com",
-        "date": "2026-10-09",
-        "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE9sSk5aeWpIVkZSZXBIUzlVWkIxdVZwVWszdHZ6RUNjMVhCTmNkdVY3RFlENHl6YTc4UjdsVnJLSFFKNkFERWpHcVdWR3BNaFRkQkVn?oc=5"
-      },
-      {
         "title": "明電舎、40年売上高2倍に 世界で高まる電力需要商機",
         "source": "日刊工業新聞",
         "domain": "nikkan.co.jp",
         "date": "2026-10-09",
         "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE9IeHlLR2lzY0xpU1A4R3dNb01ycEN5YXlycm9MVFpKRnA2a0RHTlFOa1VMS0NkeGwtdkZsS0NGWVpaV1lIYTF3eHl4OFFrVnphRXNHZ2ttM2I?oc=5"
+      },
+      {
+        "title": "明電舎、セラ平膜 シンガポールの水需要取り込む",
+        "source": "化学工業日報 電子版",
+        "domain": "chemicaldaily.com",
+        "date": "2026-10-09",
+        "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE9sSk5aeWpIVkZSZXBIUzlVWkIxdVZwVWszdHZ6RUNjMVhCTmNkdVY3RFlENHl6YTc4UjdsVnJLSFFKNkFERWpHcVdWR3BNaFRkQkVn?oc=5"
       }
     ]
   },
@@ -6951,18 +6951,18 @@
     "rank": 9,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "バリュエーション高く上値抵抗近い。押し目待ち",
-    "news_note": "2026-10-15 Yahoo:27年3月期経常予想を前週3.9%上方修正",
-    "entry_strategy": "3232円まで待ち、3012円支持で再評価",
-    "entry_price": 3232,
-    "support": 3012.4,
-    "resistance": 3432.0,
-    "tp_price": 3400,
-    "sl_price": 3000,
-    "trailing_plan": "見送り。3432円突破なら再検討",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "reason": "カップ形状とアナリスト増額、抵抗近く押し目待ち",
+    "news_note": "2026-10-15 Yahoo: 27年3月期経常予想が前週比3.9%上昇",
+    "entry_strategy": "3260円まで待ち、25日線近辺で反転確認",
+    "entry_price": 3260,
+    "support": 3230,
+    "resistance": 3432,
+    "tp_price": 3500,
+    "sl_price": 3150,
+    "trailing_plan": "3450円超で建値、3150円割れ撤退",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
         "title": "セイコーエプソンがQuollioを活用しAI時代のデータ基盤を構築する取り組み",
@@ -7003,21 +7003,21 @@
   },
   "9147": {
     "code": "9147",
-    "rank": 12,
+    "rank": 10,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "レンジ0.9・5連騰で高値圏。押し目待ち",
-    "news_note": "2026-10-15 Daily Cargo:NXHDセミコンインディア出展",
-    "entry_strategy": "5821円まで待ち、5440円支持で再評価",
-    "entry_price": 5821,
-    "support": 5440.0,
-    "resistance": 6027.0,
-    "tp_price": 6000,
-    "sl_price": 5400,
-    "trailing_plan": "見送り。6027円突破なら再検討",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "reason": "ダブルボトム/カップ、インド半導体材料だがPER高く押し目待ち",
+    "news_note": "2026-10-15 Daily Cargo: NXHDがセミコンインディア出展、MOU締結",
+    "entry_strategy": "5650円まで待ち、5477円支持を意識",
+    "entry_price": 5650,
+    "support": 5477,
+    "resistance": 6027,
+    "tp_price": 6100,
+    "sl_price": 5450,
+    "trailing_plan": "6000円超で一部利確、5450円割れ撤退",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
         "title": "NXHD セミコンインディア出展、MOU締結式も | ロジスティクス | ニュース",
@@ -7041,39 +7041,46 @@
         "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE01dkZyRU10VWZNN0FkSHl1UnlpMzNNUVJLX19hTGRjMVNfaWd2c1VUN2djRk1fek1nVXd0eDk1eWZ6T1VKVERST041N3NOVmtHMTUtRzMzWjlQYzJDeWxYY1Bydw?oc=5"
       },
       {
-        "title": "日本通運所属のショートトラックスピードスケート宮田将吾選手が全日本選手権で2冠達成",
-        "source": "NIPPON EXPRESSホールディングス",
-        "domain": "nipponexpress-holdings.com",
-        "date": "2026-10-13",
-        "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE1kMDNZRnRfcHhjaUY0M1ZPTHA1TlVFMElhNEstWWoyNFppMnMtWmZiR1VXSjZiT2xWWTJ2LV8xWE9FQnNwbXZTcGE3RFMtVUZSSGR1ZGdULVBvc1ZoTXltaTF3Zw?oc=5"
+        "title": "NXグループ、「SEMICON India」出展",
+        "source": "マテリアルフロー･プラス",
+        "domain": "mf-p.jp",
+        "date": "2026-10-14",
+        "url": "https://news.google.com/rss/articles/CBMiSEFVX3lxTFBkbmdKUjZzS01qTE9MMERPajJMb1JDakIzX3VfbXlTbzdYM0tJMzFoLVJLSWhBLUE1WUlQNUxjRGpDb0didk83UA?oc=5"
       },
       {
-        "title": "ＮＸグループ、「SEMICON India 2026」で半導体エコシステム構築を支える物流戦略を発信",
-        "source": "NIPPON EXPRESSホールディングス",
-        "domain": "nipponexpress-holdings.com",
-        "date": "2026-10-13",
-        "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE1ZeHFpa080TEZzU2VfWE0zRGd3bmtsVkxSZ0lDWGl5bkxSZ192RF9wZzJFZVhaMkJfaTIyWDJ4WnJWcDdHSGp4N3hnckUwVkxjUkhBeEJQSFZGTjUzRFhyOFhGQQ?oc=5"
+        "title": "NXHD、インド半導体網に物流基盤で食い込む",
+        "source": "LOGISTICS TODAY",
+        "domain": "logi-today.com",
+        "date": "2026-10-14",
+        "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTFBIYnNRQlhDYWYtTmxhTTl6dVdWaHB2Z3I4UlJKRnVzbUliQ0ZLcF9Mc3Y0MzBPdDJRUDRVTWtYZjJkYVJpTjFTVUJB?oc=5"
       }
     ]
   },
   "2531": {
     "code": "2531",
-    "rank": 13,
+    "rank": 12,
     "verdict": "caution",
     "entry_type": "wait",
-    "reason": "5日+25%・RSI77.8で過熱。オアシス材料の出尽くし警戒",
-    "news_note": "2026-10-17 京都新聞:香港系物言う株主が大量保有、改革圧力",
-    "entry_strategy": "2913円まで待ち、急騰分の押し目を確認",
-    "entry_price": 2913,
-    "support": 2420.0,
-    "resistance": 3235.0,
-    "tp_price": 3200,
-    "sl_price": 2850,
-    "trailing_plan": "見送り。3235円超えても出来高伴わなければ不参加",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "reason": "5日+14%・上ヒゲ0.52で過熱、物言う株主材料も現値追い禁",
+    "news_note": "2026-10-17 京都新聞: 香港系物言う株主が大量保有、構造改革圧力",
+    "entry_strategy": "2750円まで冷ますのを待ち、成行追い禁止",
+    "entry_price": 2750,
+    "support": 2720,
+    "resistance": 3235,
+    "tp_price": 3100,
+    "sl_price": 2600,
+    "trailing_plan": "見送り、2720円割れで急騰分の返り警戒",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
+      {
+        "title": "１６日の動意株＞宝ＨＬＤ(ウエルスアドバイザー)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNVHVEMHhEaFNjOUhPMXR4ZlpGeHFndFVnRFFTVXdRTThGbmxmaVZlblpvRC1yV21fVHpIX0xJcFlITVNfck1SUnA3Zk5SbVctaWF4NUZsalZjVlNJbFJpODFMWllJXzRQdlB5dmh5NjVWZ0lFbHNiX1F5cjV1eTVBVzR4RGt1Q2M?oc=5"
+      },
       {
         "title": "宝ＨＤ株を香港系「物言う株主」が大量保有 業績不振受けた構造改革へ圧力強まるか",
         "source": "京都新聞デジタル",
@@ -7082,73 +7089,59 @@
         "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBJQ2RZQmFVWFVUdUtDOU8wV0tmVnBxZ2hFcml2bXYtT0g0LUp0UURCTi1kNXYzSUtLRXVRUThtMUhQREo2WlFmTU14OUNvOXNIalhYamdjRk9JTUk?oc=5"
       },
       {
-        "title": "話題株ピックアップ【昼刊】：ベイカレント、ＳＨＩＦＴ、宝ＨＬＤ",
-        "source": "株探",
-        "domain": "kabutan.jp",
-        "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE94ZGxxMERDcy1mNGpxMFgyY3JLSTF1bXlsTEs2MTRQUUQydUJ2LVZnMS1JMm1HZUkyTVZpZTdfVHpaaGhfanJCZ3d1WTdQdkxHbGgwRjI4NFdJaWNOUWdDMA?oc=5"
-      },
-      {
-        "title": "宝ＨＬＤが２６年ぶり高値、オアシスの大量保有を材料視(ウエルスアドバイザー)",
+        "title": "宝ホールディングス(株)【2531】：ニュース・最新情報",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
         "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOSTl1VExRc2dCLU9oSkZndzBmek41dHpQZzh5SndtaEZDSGlhR3FXYmpGalJWaFVLZS12a29KdHE0QzZyd0d5N0JZVFdmUU9WYW9pZGJubEZYc0lpMVNORnlDNE5lZ3l2SHh0SVFmeGc2bXVLcnpnQm1ScG9XTHMzTGR6bS1wOWs?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE0wa0c0REsxRG53QThkam13RlpFeEpUZXhKLVNFS0J4SzExQV9VUHY1bkk3SXNaQ2RTUG5oSG1XdFhYY3FtTDFVWlZfWmEyUE94TmlXVUJmMEI?oc=5"
       },
       {
-        "title": "宝ＨＤ－急騰 オアシスマネジメントが大株主に浮上 保有割合は5.09％(トレーダーズ・ウェブ)",
+        "title": "宝ホールディングス(株)【2531】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
         "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOTmhUbGtSRmdHdnIxUGp0VjZwUldPVGEwS0lYc0VrQVAxQlVWS0VidW0tMFdUdThyZE40YUl5S2pURkpRcUctaGtJOXBwNkZLRzk4bTM3V1NXWDNQZHRSTlhvMk1EVThRSXNINkszTG80VGxhRFZSNk8xRzltMDVnNnJBMmNxS00?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1pUEhaQjRVbWZfR3hzRXI3TUE1TVd0ZExPaVhCM3U3LVNCSWhPY0syNDdObklZVTlraDc5X3dFeTNIb3kxMTlZOWZibnBQb09HelQ5SHB3T0tCTm9J?oc=5"
       },
       {
-        "title": "宝ＨＬＤが３連騰、オアシス・マネジメントが５．０９％保有判明で思惑",
-        "source": "株探",
-        "domain": "kabutan.jp",
+        "title": "【宝酒造】「タカラcanチューハイ」〈徳島産すだち〉 7月28日(火)数量限定発売",
+        "source": "山陽新聞",
+        "domain": "sanyonews.jp",
         "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE9XUWZpVlRKem5lYXBvZWRiX3ZjbXJ5THJBX1psamxTRlJzZC1BX1lwX3hGRHpGN1hKbmJwTWNaTjg4TXdxZlltdndrNFUwQVdiMHItOHJLVjhtUmpjOWlNRA?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE11aGZfVV9JZ3VfNXRnbDVCTnYtWXA3SlgzTmRCNnAtNDJZOVhHSVdWXzVvaElvTllkODR2dldyVl9ETmNKQjA0dmt4MkFkaW0tVU5ZT1VOZnhIaVBvaGI1RDF3TDdNUzhnOERmbk4zWQ?oc=5"
       }
     ]
   },
   "8766": {
     "code": "8766",
-    "rank": 14,
+    "rank": 15,
     "verdict": "caution",
     "entry_type": "wait",
-    "reason": "RSI76・20日+32%で過熱。高値掴み回避、押し目待ち",
-    "news_note": "2026-10-17 Yahoo:現物信用売買内訳。材料は要確認",
-    "entry_strategy": "538円まで待ち、525円支持で再評価",
-    "entry_price": 538,
-    "support": 407.9,
-    "resistance": 562.0,
-    "tp_price": 560,
-    "sl_price": 515,
-    "trailing_plan": "見送り。562円超えの追いはしない",
-    "date": "2026-10-16",
-    "updated_at": "2026-10-18T11:56:08",
-    "prompt_version": "2026-10-01-1",
+    "reason": "RSI74.6・20日+33%で過熱、現値での追い買い不可",
+    "news_note": "2026-10-16 山陽新聞: 防災授業で教材活用、材料性は薄い",
+    "entry_strategy": "520円まで待ち、500円支持で反転確認",
+    "entry_price": 520,
+    "support": 500,
+    "resistance": 562,
+    "tp_price": 580,
+    "sl_price": 490,
+    "trailing_plan": "見送り、500円割れで調整長期化警戒",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
     "news_headlines": [
-      {
-        "title": "東京海上ホールディングス(株)【8766】：現物信用売買内訳時系列",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-17",
-        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1BOVdyN3QzNko4T3lENkk1NURZTzFPWW5XbmNyXzFXZzd3Y2thSDh3VjBQQ0h1UEdSemdDaHViai12a1AtZHRDVWFfN1RtbWlpQy1mb2J0Q0tjdzFRODhz?oc=5"
-      },
-      {
-        "title": "写真は、レンゾ・ピアノ設計の東京海上日動の新本社の模型）",
-        "source": "環境金融研究機構",
-        "domain": "rief-jp.org",
-        "date": "2026-10-17",
-        "url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE1UQjJwajBLTVhZYWRnYk5PTWQ5Q2lhMnMyallPUGdMX21rcExYcDZEUzJLSVJYcDk2eGc5bGdBNXI4ckh2VWc?oc=5"
-      },
       {
         "title": "竜操中が防災授業と避難訓練 東京海上ＨＤの教材活用",
         "source": "山陽新聞",
         "domain": "sanyonews.jp",
         "date": "2026-10-16",
         "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE16NnFFSGVjZTFzcFpLXzFfYmp1bkRlTE42YkNMTVhZVEpKMnB0SlN3WE5VNU5pc0JWTEoxQzNGMmZOVFVZbTlOZlBVT3hWQ2xWeGc?oc=5"
+      },
+      {
+        "title": "東京海上ホールディングス(株)【8766】：現物信用売買内訳時系列",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-16",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1BOVdyN3QzNko4T3lENkk1NURZTzFPWW5XbmNyXzFXZzd3Y2thSDh3VjBQQ0h1UEdSemdDaHViai12a1AtZHRDVWFfN1RtbWlpQy1mb2J0Q0tjdzFRODhz?oc=5"
       },
       {
         "title": "東京海上ホールディングス(株)【8766】：今の株価の理由は？値動きの背景をAIが解説",
@@ -7163,6 +7156,68 @@
         "domain": "nikkei.com",
         "date": "2026-10-14",
         "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE90d3NLeF9CbDBsc2FEcHdUelF5NER6a0R5bDRMN1RjQnFobnZNVS16elU2U1o5VVRaZlFNMUpCWTlWNjVSVHpFa2lOS01LaVBvaUxaNzcya1lQRnhnUzhySE1vQV9wSWd1VXRVZQ?oc=5"
+      },
+      {
+        "title": "東京海上ホールディングス[8766]：Tokio Marine Value Creation Book 2026 1 2026年10月10日(適時開示) ：日経会社情報DIGITAL",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-10-10",
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBXNlQzNEtIVEJDczI1U1dweExCWGZFNWVZSEItU3FkZ0FEX3BuekhRNmZreWkwWjJRcUxIclBuSm9fNkpRZ1lTSi1yTE8zT0FTc2hJMkFTMTJwT1NWTjQyOWZZTkZ5UFpWRWc?oc=5"
+      }
+    ]
+  },
+  "9107": {
+    "code": "9107",
+    "rank": 5,
+    "verdict": "recommend",
+    "entry_type": "pullback_wait",
+    "reason": "みずほ目標引上げ・高配当、25日線近辺の押し目狙い",
+    "news_note": "2026-10-19 時事: みずほが目標株価引き上げ、株主還元を織り込み",
+    "entry_strategy": "3380円まで待ち、3320円支持で反転を確認",
+    "entry_price": 3380,
+    "support": 3320,
+    "resistance": 3546,
+    "tp_price": 3650,
+    "sl_price": 3250,
+    "trailing_plan": "3560円突破でトレール、3300円割れ撤退",
+    "date": "2026-10-19",
+    "updated_at": "2026-10-19T23:39:01",
+    "prompt_version": "2026-10-18-1",
+    "news_headlines": [
+      {
+        "title": "川崎汽船(株)【9107】：今の株価の理由は？値動きの背景をAIが解説",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE43ZzMwY21hcGZQU3dxUkpaQ2Jwcy1vMS1rLWpoNXhEN29ia3VaUmNfRkVCdkdzODU2RFBic2VaM1FXeUlZdWJUOTdjcUpuY0lIU2Y0VmVidDZ3aFdTd2pn?oc=5"
+      },
+      {
+        "title": "川崎汽船－みずほが目標株価引き上げ 高水準の株主還元を織り込み〔DZH 個別株情報〕(時事通信)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxORlluNVBqWkdzSm4zdW5KYlN5MURYa2djei1lczU1X0plRm1WVVlhcDZwbjRXelJEZGV2S1U0aXBxenBuekdsZTlXZ29sQjlDeFpzQVZLWEZtanpSTFFOam9JVVEzc28yUzhGNVNUVlhuTTRRcjF4bTNWal9LTFRZSnFiNWlyZmc?oc=5"
+      },
+      {
+        "title": "【アナリスト予想】川崎汽船、27年3月期経常予想。対前週6.2%上昇。(アイフィス株予報)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-16",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPdk5zUW5VYmRzbm53eHhicldFR19oUkdrTTdGRWlpdGQ0YnZCUFFveGJFZ05Fem1KeWFlLVNSWk0tM1g0al9tNUluVURxejBtSVgtdmkxZzYzeFlyTWtZX1k3SkNkVGs3UEhxd2JpRFJuYVotTjRIVnVmZ1hvVkhjZ2VFVkxKZmc?oc=5"
+      },
+      {
+        "title": "【アナリスト評価】川崎汽船、レーティング中立を据置き、目標株価3,200円に引上げ（日系大手証券）(アイフィス株予報)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-16",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQUldxQWtJTU1qUXBaMC02blQyWXhVb2tiTmQzam45OG9VOF9VclFOVTVpZlFxVGVSamVaeXkycFZtNVc3OUpEWVVGaUUyTkxWY3ZxWmgwNnh5YzJ5MGdsd25McmFLcjlhLVI0T3NSRnAzOGRRNnZWTi03aDlpbnJxa3ZYUkJ0Tm8?oc=5"
+      },
+      {
+        "title": "川崎汽船(株)【9107】：決算情報",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-16",
+        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5FR1dtd2pMUEtrZUREeFM5OHZPdm1TdGJTRVp2WllSWHp6WndJQWh5dHlYQUx0VkRIVzloV2dSazBwc2xRQUNQenhIam5iUHRrVnhuVlRJM09JT2dQZF85Tg?oc=5"
       }
     ]
   }
