@@ -1056,15 +1056,15 @@
     "sl_price": 8100,
     "trailing_plan": "9200円超で半分手仕舞い、25日線割れ撤退",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
-        "title": "先端半導体向け封止材を増産 中国／シンガポールで（EE Times Japan）",
+        "title": "先端半導体向け封止材を増産 中国／シンガポールで (EE Times Japan)",
         "source": "Yahoo!ニュース",
         "domain": "news.yahoo.co.jp",
         "date": "2026-10-19",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE15V2x6QWVLZFRCaXB3TUN6NHpTTDd1UHdCZloyQ3lhdnFWUHRPVHdLTjBJTUJZWDRQOVN3a3dQbXRvczNSWFJQUEM3UnF0cjhsVlFpNTRBaWx3Q1RSeDQ5a1ZCX205TUpzSEtCM18zRjMtb25NS1JLZkphdmc4bjg?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNbjBGd2JUTmhIVWRuLXN1ZkhobERoVmg4b2xSNVI3QXdranZGN0NRMlFySzY2TXpIMmItel9JdW5KWE5ES3JMam5mRDlTanpCcHVhV2c5bmgxQUtiQmJld3BuWVBXck9OdWE4Y1Z2ZWd5eVhvd0FPaFlDQ1JvMGZFUDlVRzZSTVdMVVc2SzNR?oc=5"
       },
       {
         "title": "住友ベークライト、シンガポール工場の先端半導体向け封止材生産能力増強🔒",
@@ -1072,6 +1072,13 @@
         "domain": "singaporeshimbun.com",
         "date": "2026-10-19",
         "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBvZ3hBRGZ6S2ZIbnItSkRyQUxucnNiMlZEcEJmS1BsOWhYVkhMdEl4cEZkWFI0X1VnVHBDZ0JIb3BMYmxIRF8zSVc0TjZSalg2bzRTelNR?oc=5"
+      },
+      {
+        "title": "先端半導体向け封止材を増産 中国／シンガポールで：MUF用は2倍、顆粒材は3倍に",
+        "source": "EE Times Japan",
+        "domain": "eetimes.itmedia.co.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBLbXB5TUVDbU5EQWhuTkp2MFhKVzNsamt5QXQ4a2dYdFZYOVF0WlFCUmRsRlQ3QkdwaHpfQk1sdG5ucmhnQ2h5dklFWVZQcDJoRlhGRVVfN2NZc3ppWFZaM1N4MUpOTGFZM3JFQXBkTQ?oc=5"
       },
       {
         "title": "住友ベーク、中国・シンガポールで 先端半導体向け封止材増強",
@@ -1086,13 +1093,6 @@
         "domain": "plantdb.jp",
         "date": "2026-10-16",
         "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9VWkNOYTlpalFmaG56Mm5NUEJtRG9TUkl4RFNFdHhCUjk0R01DNmJFZFJMaEVpQ1p6b0FvRjFySEF6LTNUQXVrZjNqRWUtb1JZNFJtSl9PY2t4NlMyVkJZQ3o1ODM0MGRhU1h1OXZaRzc?oc=5"
-      },
-      {
-        "title": "住友ベークライト(株)【SBCLY】：株価・株式情報",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-15",
-        "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE5wamNveE5ab2JST09HcGpSM0hhaVE1TVV1MnI5TGpjVUMxbThXSm5fOXBzNGRMa3V0ZFBTOE5WM0EzMEJOMHFXc0FHd003WVFP?oc=5"
       }
     ]
   },
@@ -4150,7 +4150,7 @@
     "sl_price": 9300,
     "trailing_plan": "見送り、9300円割れで下落加速警戒",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -4232,7 +4232,7 @@
     "sl_price": 17500,
     "trailing_plan": "見送り、18000円割れで調整入り警戒",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -4287,7 +4287,7 @@
     "sl_price": 3800,
     "trailing_plan": "4500円手前で一部利確、3800円割れ撤退",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -4342,7 +4342,7 @@
     "sl_price": 1880,
     "trailing_plan": "見送り、1968円割れなら警戒継続",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -4759,7 +4759,7 @@
     "sl_price": 4400,
     "trailing_plan": "見送り、4400円割れで上昇一巡警戒",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -5288,7 +5288,7 @@
     "sl_price": 3150,
     "trailing_plan": "3600円超で建値、5日線割れで利確縮小",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -6707,7 +6707,7 @@
     "sl_price": 4150,
     "trailing_plan": "4800円超で建値、5日線割れで縮小",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -6851,15 +6851,15 @@
     "sl_price": 1730,
     "trailing_plan": "1888円突破でトレール、1730円割れ撤退",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
-        "title": "「僕の中ではまだ20%」YE-01の開発者がMXoNで語った、ヤマハ電動モトクロッサーの現在地",
-        "source": "Off1.jp",
-        "domain": "off1.jp",
-        "date": "2026-10-19",
-        "url": "https://news.google.com/rss/articles/CBMiR0FVX3lxTE9DdWtNVkFrOGdZNjk1SWtoVkZ2clFhRUlHRDd2SXJUWWxmdEhNT25NZ2dwbzViRnlRWXNpdlJfbnd5S3RrNkhv?oc=5"
+        "title": "ヤマハ発動機、組織改革で売上高58％増",
+        "source": "日経クロストレンド",
+        "domain": "xtrend.nikkei.com",
+        "date": "2026-10-20",
+        "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNQ040R2xtWEl1VnRnUktDMmlhLTVXZXRLc0VReUI1ZTZOQU16QnU2bEJFR1dVTHg1UUJuRWhCNVloMjhpMFlKdnFIVDlRNngxanNYNHJNT1YtdTZhdnZEZWZsSzVndkVRVXJzOVRFMXpRWUlacTJNOGZYci1CZGw0ajM5cDBjRlJFbzFz?oc=5"
       },
       {
         "title": "「磐田ものづくりフェス2026」に出展",
@@ -6906,7 +6906,7 @@
     "sl_price": 10700,
     "trailing_plan": "12200円超で建値、25日線割れ撤退",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -6961,7 +6961,7 @@
     "sl_price": 3150,
     "trailing_plan": "3450円超で建値、3150円割れ撤退",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -6993,11 +6993,11 @@
         "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNWTFyUWVreVJ4LTBZa1F1dWhVWEkyWVUwREtHVjlMVk9rQktUX3Q0NmhwNm1lTGU1MHFqNzdyQ2NjWm5GeTZKbnJVNHA5dlhEb2lCTUY3d0RFM2l1SHU0V3FTdGFybFFRV0o2Qk5Ta2pxaEdUQ25CRm5HWHMxOVktVHRkLU02Q2c?oc=5"
       },
       {
-        "title": "プロジェクター、プリンター、スキャナー、時計など計5種のデザインが「2026年度 グッドデザイン賞」を受賞",
-        "source": "Excite エキサイト",
-        "domain": "excite.co.jp",
-        "date": "2026-10-15",
-        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBZYTJ0QzNPV3hvM0pFZm9oVlFuMktyekJ4THRGZjJ2aTUtTHZ5SVBNTmEtemNBLXlJeWhMS2hQSnRoNk9BTWxfOWd6MlBrX3lXMk9kUjdJRF9teU5zcGh3b24tVk5IWk9pZFBhWg?oc=5"
+        "title": "「生みの親」は消滅、それでも75周年 老舗時計ブランド「オリエントスター」が仕掛けた“初の一手” 菅田将暉の起用に隠された「狙い」とは",
+        "source": "AdverTimes.（アドタイ） by 宣伝会議",
+        "domain": "advertimes.com",
+        "date": "2026-10-14",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1iS3NFR0h3SUtJNnBhSVk0SndaWWNNaHd4X2E3YmZCWUpjeUNfZHd1ek9TUmxDM2F3VkwwS0pZSVoyN196aFdJR1k3N0lnNjRrRDlyTl9TUWpETnJZcElZ?oc=5"
       }
     ]
   },
@@ -7016,7 +7016,7 @@
     "sl_price": 5450,
     "trailing_plan": "6000円超で一部利確、5450円割れ撤退",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -7071,7 +7071,7 @@
     "sl_price": 2600,
     "trailing_plan": "見送り、2720円割れで急騰分の返り警戒",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
       {
@@ -7089,13 +7089,6 @@
         "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBJQ2RZQmFVWFVUdUtDOU8wV0tmVnBxZ2hFcml2bXYtT0g0LUp0UURCTi1kNXYzSUtLRXVRUThtMUhQREo2WlFmTU14OUNvOXNIalhYamdjRk9JTUk?oc=5"
       },
       {
-        "title": "宝ホールディングス(株)【2531】：ニュース・最新情報",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE0wa0c0REsxRG53QThkam13RlpFeEpUZXhKLVNFS0J4SzExQV9VUHY1bkk3SXNaQ2RTUG5oSG1XdFhYY3FtTDFVWlZfWmEyUE94TmlXVUJmMEI?oc=5"
-      },
-      {
         "title": "宝ホールディングス(株)【2531】：企業情報（決算時期・代表者名・大株主情報・IR動画など）",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
@@ -7108,6 +7101,13 @@
         "domain": "sanyonews.jp",
         "date": "2026-10-16",
         "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE11aGZfVV9JZ3VfNXRnbDVCTnYtWXA3SlgzTmRCNnAtNDJZOVhHSVdWXzVvaElvTllkODR2dldyVl9ETmNKQjA0dmt4MkFkaW0tVU5ZT1VOZnhIaVBvaGI1RDF3TDdNUzhnOERmbk4zWQ?oc=5"
+      },
+      {
+        "title": "宝HDが急騰､香港ファンドの大量保有で需給思惑台頭",
+        "source": "四季報オンライン",
+        "domain": "shikiho.toyokeizai.net",
+        "date": "2026-10-16",
+        "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE1RejhxOWJWWW1yRFZwby1Bblhoa2ZJNHZKakdNVktUenVmeVRhU2ZkNndkSWRwQkExMjk2OGo4WWFpeGVtcjgycU90d3JjV2FSQ05LMnpvNA?oc=5"
       }
     ]
   },
@@ -7126,22 +7126,22 @@
     "sl_price": 490,
     "trailing_plan": "見送り、500円割れで調整長期化警戒",
     "date": "2026-10-19",
-    "updated_at": "2026-10-19T23:39:01",
+    "updated_at": "2026-10-20T02:34:49",
     "prompt_version": "2026-10-18-1",
     "news_headlines": [
+      {
+        "title": "東京海上ホールディングス(株)【8766】：現物信用売買内訳時系列",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-10-19",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1BOVdyN3QzNko4T3lENkk1NURZTzFPWW5XbmNyXzFXZzd3Y2thSDh3VjBQQ0h1UEdSemdDaHViai12a1AtZHRDVWFfN1RtbWlpQy1mb2J0Q0tjdzFRODhz?oc=5"
+      },
       {
         "title": "竜操中が防災授業と避難訓練 東京海上ＨＤの教材活用",
         "source": "山陽新聞",
         "domain": "sanyonews.jp",
         "date": "2026-10-16",
         "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE16NnFFSGVjZTFzcFpLXzFfYmp1bkRlTE42YkNMTVhZVEpKMnB0SlN3WE5VNU5pc0JWTEoxQzNGMmZOVFVZbTlOZlBVT3hWQ2xWeGc?oc=5"
-      },
-      {
-        "title": "東京海上ホールディングス(株)【8766】：現物信用売買内訳時系列",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-10-16",
-        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1BOVdyN3QzNko4T3lENkk1NURZTzFPWW5XbmNyXzFXZzd3Y2thSDh3VjBQQ0h1UEdSemdDaHViai12a1AtZHRDVWFfN1RtbWlpQy1mb2J0Q0tjdzFRODhz?oc=5"
       },
       {
         "title": "東京海上ホールディングス(株)【8766】：今の株価の理由は？値動きの背景をAIが解説",
