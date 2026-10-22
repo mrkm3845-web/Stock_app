@@ -10,6 +10,19 @@
 
 ## 2026-10-22
 
+### 作戦ノート作成前のデータ鮮度チェック（この変更）
+- **commit**: この変更（データ鮮度チェック）
+- **種別**: 運用 / ワークフロー / ドキュメント
+- **変更**:
+  - `tools/refresh_data_if_stale.py` を追加。JPXカレンダーで期待する取引日を求め、`docs/history` の日付・`recommendations.json` の日付・AI価格と最新終値のズレを確認する。
+  - 古ければ `main8.py` を実行。AIキーがあれば `--ai --force-ai`、なければテクニカルのみ更新し、AIが古いままなら警告する。
+  - `prompts/strategy_note.md` と `.opencode/command/strategy-note.md` の作成前に鮮度チェックを追加。
+  - `refresh_data_ai.yml` を追加。スマホからもスクリーナー＋AIを手動更新できる。
+  - `docs/strategy.html` に「データ更新（AI）」ボタンを追加。
+- **根拠・検証**: 手動実行は平日夜・週末が中心で、AIが前日価格のままになる問題（例: 8541のAI 3,255 vs 最新 3,455）を防ぐ。`tools/refresh_data_if_stale.py --check` で期待日2026-10-22、履歴2026-10-21、AI古い・価格ズレ3件を検出。
+- **影響・ロールバック**: 鮮度チェックと更新に数分かかる場合がある。AIキーがないローカルではテクニカルのみ。戻す場合は追加スクリプト・ワークフロー・プロンプトの手順を `git revert`。
+- **関連**: `tools/refresh_data_if_stale.py` / `prompts/strategy_note.md` / `.opencode/command/strategy-note.md` / `.github/workflows/refresh_data_ai.yml` / `docs/strategy.html` / `docs/guide.html` / `AGENTS.md` / `PROJECT_STATUS.md`
+
 ### 作戦トリガー監視を60分間隔に変更（この変更）
 - **commit**: この変更（60分間隔）
 - **種別**: ワークフロー / ドキュメント

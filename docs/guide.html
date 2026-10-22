@@ -445,6 +445,11 @@
             通知は<b>平日9:05〜15:05 JSTに60分間隔</b>＋引け後の確認です。秒単位の約定通知ではありません。
             損切りは証券会社のOCOを必ず置いてください。
         </div>
+        <div class="tip">
+            <strong>価格・スコア・AIをまとめて更新したいとき：</strong>
+            今日の作戦ページの<b>「データ更新（AI）」</b>→「Run workflow」を実行します。
+            作戦ノートを作る前にも、`tools/refresh_data_if_stale.py` が鮮度を確認し、古ければスクリーニングを実行します。
+        </div>
         <a href="strategy.html" class="btn btn-danger btn-sm fw-bold mt-1"><i class="bi bi-signpost-split me-1"></i>今日の作戦を開く</a>
     </div>
 

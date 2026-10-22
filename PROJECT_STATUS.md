@@ -320,7 +320,8 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - ワークフロー実行時は、**どのワークフローを実行するか宣言してから**実行する（`AGENTS.md`）。
 - 作戦ノート: opencode の `/strategy-note` で、最新の `tradehistory(JP)_*.csv` と市場データから `docs/weekend/` に生成（補助: `tools/prepare_strategy_note.py`、Windows代替: `tools/prepare_strategy_note.ps1`）。他のハーネスは `prompts/strategy_note.md` を使う。
 - 作戦台帳: `docs/strategy/active.json`。トリガーは `tools/check_strategy_plan.py` が `--mode intraday|eod` で判定し、`docs/strategy/status.json` / `events.json` を更新。ワークフロー: `plan_check_intraday.yml`（平日60分・1日7回）/ `daily_main8.yml`（17時台）/ `daily_main8_ai.yml`（AI実行後）。
-- ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）/ `weekly_review.yml`（土曜09:00）。
+- データ鮮度: 作戦ノート作成前に `tools/refresh_data_if_stale.py --refresh`。平日の夜は当日、週末は直近の金曜を期待日として、履歴・AIが古ければ `main8.py` で価格・スコア・AIをまとめて更新する。AIキーがない場合はテクニカルのみ。スマホからは `refresh_data_ai.yml`（手動データ更新）を実行。
+- ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）/ `weekly_review.yml`（土曜09:00）/ `plan_check_intraday.yml`（平日60分）/ `refresh_data_ai.yml`（手動データ更新）。
 - **非営業日スキップ**: `main8.py` は JPX 取引所カレンダー（`pandas_market_calendars`）で**土日祝・取引所休場を判定してスキップ**。週次レビューもベンチマークの実営業日で非営業日のシグナルを除外する。カレンダー未導入時は安全側（営業日扱い）にフォールバック。
 
 ---

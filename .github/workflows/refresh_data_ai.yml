@@ -1,0 +1,69 @@
+name: 手動データ更新（スクリーナー＋AI）
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manual-screener-ai
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy requests yfinance openpyxl xlrd pandas_market_calendars
+
+      - name: Cache price data
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/price_cache
+            data/stocks.db
+          key: price-cache-${{ runner.os }}
+          restore-keys: |
+            price-cache-${{ runner.os }}-
+
+      - name: スクリーナー＋AIを強制更新
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python main8.py --ai --force-ai
+
+      - name: 作戦トリガーを再チェック
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python tools/check_strategy_plan.py --mode eod
+
+      - name: コミット＆プッシュ
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          if git diff --staged --quiet; then
+            echo "変更なし"
+          else
+            git commit -m "Manual data refresh [skip ci]"
+            git pull --rebase -X theirs origin main || {
+              echo "競合が発生したため、ローカル生成データを優先して解決します"
+              GIT_EDITOR=true git rebase --continue
+            }
+            git push origin main
+          fi

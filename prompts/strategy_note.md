@@ -40,6 +40,22 @@
 
 ## 2. 最新データを集める
 
+### 2-1. 価格・スコア・AIの鮮度チェック
+
+まず次を実行する。**数分かかることがある**。
+
+```bash
+uv run --no-project --python 3.11 --with pandas_market_calendars python tools/refresh_data_if_stale.py --refresh
+```
+
+- 平日の夜なら「当日の引け」、週末なら「直近の金曜」を期待日として判定する
+- 履歴・AIが古ければ、`main8.py` を実行して**価格・スコア・候補・AIをまとめて更新**する
+- `DEEPSEEK_API_KEY` / `GEMINI_API_KEY` があればAIも更新。なければテクニカルのみ更新し、AIは古いまま警告する
+- AIが古いままの場合は、ノートに「AI基準日が古い」と明記し、**スコアと作戦台帳を優先**する
+- どうしても今すぐAIも更新したい場合は、今日の作戦ページの「データ更新（AI）」をGitHub Actionsから実行する
+
+### 2-2. 作戦用コンテキストを作る
+
 ```bash
 python tools/prepare_strategy_note.py
 ```

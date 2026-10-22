@@ -147,6 +147,7 @@ Invoke-RestMethod -Uri "https://api.github.com/repos/mrkm3845-web/Stock_app/acti
 | `run_walkforward.yml` | 月次バックテスト＋パラメータ反映 |
 | `weekly_review.yml` | 週次答え合わせ（土曜09:00 JST） |
 | `plan_check_intraday.yml` | 作戦トリガー監視（平日9:05〜15:05 JSTに60分間隔） |
+| `refresh_data_ai.yml` | 手動データ更新（スクリーナー＋AI。スマホからも実行可） |
 
 ---
 
@@ -167,6 +168,19 @@ opencode で次のコマンドを実行します。
 
 このコマンドは、ルートの最新 `tradehistory(JP)_*.csv` を読み、市場データと合わせて
 **作戦ノート**と**作戦台帳**を作り、コミット・push まで行います。
+
+### 作成前のデータ更新
+
+作戦ノートを作る前に、必ず鮮度を確認します。
+
+```bash
+uv run --no-project --python 3.11 --with pandas_market_calendars python tools/refresh_data_if_stale.py --refresh
+```
+
+- 平日の夜は当日の引け、週末は直近の金曜を期待日として判定
+- 履歴・AIが古ければ `main8.py` で**価格・スコア・AIをまとめて更新**（数分）
+- AIキーがなければテクニカルのみ更新し、AIが古いままならその旨をノートに明記
+- AIも今すぐ更新したいときは、今日の作戦ページの「データ更新（AI）」（`refresh_data_ai.yml`）を実行
 
 ### 他のハーネスでも使う
 
