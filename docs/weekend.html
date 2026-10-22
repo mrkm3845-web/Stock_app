@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0d6efd">
-    <meta name="description" content="週末に考えた相場観・来週の作戦・リスク管理を、スマホで確認できるノートです。">
-    <title>週末作戦ノート｜スイング戦略</title>
+    <meta name="description" content="起動したタイミングの相場観・作戦・リスク管理を、スマホで確認できるノートです。">
+    <title>作戦ノート｜スイング戦略</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -37,8 +37,8 @@
     <div class="card p-3">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
             <div>
-                <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-journal-richtext"></i> 週末作戦ノート</h1>
-                <small class="text-muted" id="page-subtitle">週末に考えたことを、次の1週間の行動ルールに落とすノートです。</small>
+                <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-journal-richtext"></i> 作戦ノート</h1>
+                <small class="text-muted" id="page-subtitle">起動したタイミングの分析と、次の行動ルールをまとめるノートです。</small>
             </div>
             <div class="d-flex flex-wrap gap-2 header-actions justify-content-end">
                 <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナー</a>
@@ -50,7 +50,7 @@
         <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
             <div class="input-group input-group-sm" style="width: auto;">
                 <span class="input-group-text bg-light fw-bold"><i class="bi bi-calendar3 me-1"></i> ノート</span>
-                <select id="note-selector" class="form-select form-select-sm fw-bold" aria-label="週末ノートを選ぶ"></select>
+                <select id="note-selector" class="form-select form-select-sm fw-bold" aria-label="作戦ノートを選ぶ"></select>
             </div>
             <span id="updated-badge" class="badge badge-soft">更新: -</span>
             <span id="data-badge" class="badge badge-soft">データ: -</span>
@@ -63,7 +63,7 @@
 
     <div id="content" class="d-none">
         <div class="card p-3 lead-card">
-            <h2 class="h6 fw-bold mb-2" id="note-title">週末作戦ノート</h2>
+            <h2 class="h6 fw-bold mb-2" id="note-title">作戦ノート</h2>
             <p class="mb-0" id="note-lead"></p>
             <div class="muted-small mt-2" id="note-meta"></div>
         </div>
@@ -77,7 +77,7 @@
     </div>
 
     <div class="text-center muted-small mt-4">
-        <p class="mb-1">このページは、週末の分析と来週の行動ルールを忘れないためのメモです。</p>
+        <p class="mb-1">このページは、その時点の分析と次の行動ルールを忘れないためのメモです。</p>
         <p class="mb-0">投資助言ではありません。データは作成時点のもので、最終判断はご自身でお願いします。</p>
     </div>
 </div>
@@ -96,13 +96,14 @@ function setBadge(id, text) {
     if (el) el.textContent = text;
 }
 
-function renderNote(note, date) {
-    document.getElementById('note-title').textContent = note.title || '週末作戦ノート';
+function renderNote(note, id) {
+    const created = note.created_at || note.date || id;
+    document.getElementById('note-title').textContent = note.title || '作戦ノート';
     document.getElementById('note-lead').textContent = note.lead || '';
-    document.getElementById('note-meta').textContent = `${note.date || date} 作成 ／ データ基準 ${note.data_date || '-'}`;
-    document.getElementById('page-subtitle').textContent = note.subtitle || '週末に考えたことを、次の1週間の行動ルールに落とすノートです。';
+    document.getElementById('note-meta').textContent = `${created} 作成 ／ データ基準 ${note.data_date || '-'}${note.trigger ? ' ／ ' + note.trigger : ''}`;
+    document.getElementById('page-subtitle').textContent = note.subtitle || '起動したタイミングの分析と、次の行動ルールをまとめるノートです。';
 
-    setBadge('updated-badge', `更新: ${note.date || date}`);
+    setBadge('updated-badge', `作成: ${created}`);
     setBadge('data-badge', `データ: ${note.data_date || '-'}`);
     setBadge('score-badge', `スコア: ${note.score_version || '-'}`);
 
@@ -119,14 +120,14 @@ function renderNote(note, date) {
         .join('');
 }
 
-async function loadNote(date) {
+async function loadNote(id) {
     const box = document.getElementById('error-box');
     box.classList.add('d-none');
     try {
-        const note = await fetchJson(`weekend/${date}.json`);
-        renderNote(note, date);
+        const note = await fetchJson(`weekend/${id}.json`);
+        renderNote(note, id);
         const url = new URL(location.href);
-        url.searchParams.set('date', date);
+        url.searchParams.set('date', id);
         history.replaceState(null, '', url.pathname + url.search);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
@@ -140,16 +141,18 @@ async function boot() {
         const index = await fetchJson('weekend/index.json');
         const notes = (Array.isArray(index.notes) ? index.notes : [])
             .slice()
-            .sort((a, b) => String(b.date).localeCompare(String(a.date)));
-        if (!notes.length) throw new Error('週末ノートがまだありません。');
+            .map(n => ({ ...n, _key: n.id || n.date, _created: n.created_at || n.date || n.id }))
+            .sort((a, b) => String(b._created).localeCompare(String(a._created)));
+        if (!notes.length) throw new Error('作戦ノートがまだありません。');
 
         const selector = document.getElementById('note-selector');
         selector.innerHTML = notes
-            .map(n => `<option value="${esc(n.date)}">${esc(n.date)}　${esc(n.title || '')}</option>`)
+            .map(n => `<option value="${esc(n._key)}">${esc(n._created)}　${esc(n.title || '')}</option>`)
             .join('');
 
-        const requested = new URLSearchParams(location.search).get('date');
-        const initial = notes.some(n => n.date === requested) ? requested : notes[0].date;
+        const params = new URLSearchParams(location.search);
+        const requested = params.get('date') || params.get('id');
+        const initial = notes.some(n => n._key === requested) ? requested : notes[0]._key;
         selector.value = initial;
         selector.addEventListener('change', () => loadNote(selector.value));
 

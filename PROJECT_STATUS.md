@@ -184,7 +184,7 @@ flowchart LR
   - 銘柄モーダル: 銘柄詳細（**決算日**・**需給/水準: サポート20日/レジスタンス20日/ATR14(円・%)/52週高値位置/200日線乖離/レンジ位置**・**過熱警戒バッジ**）＋**価格帯別ルールの利確/損切（ATR損切。利確=赤・損切=青）**＋**推奨株数**＋決算警告。AI戦略は**参考情報（売買指示には未採用）**と明示。AI判定が注意/回避/様子見のときは**「注意の理由」コールアウト**を表示し、バッジにも理由ツールチップを付与。「最新AI実行」ボタンは**常時有効**（プロンプトをコピーしてGeminiへ）。モーダル内の順序は**検証済み（基本情報/需給・水準/モメンタム/エントリー判定/推奨ポジション/スイング戦略）→ AI参考（下部）→ ファンダ**とし、AIは補助として後ろに配置。
 - [`docs/guide.html`](docs/guide.html): **はじめての人向け見方ガイド**。一覧・バッジ・並び替え・モーダル（決算日/需給水準/エントリー判定）・用語集・注意を平易に解説。index.html / journal.html のヘッダからリンク。
 - [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示（決算日・需給水準・過熱警戒も同様）。`strategy_params` / `recommendations` / `earnings` / `meta` を読み、利確/損切・推奨株数を index と統一。OCO既定値とCSV取込も価格帯別ルールで算出。
-- [`docs/weekend.html`](docs/weekend.html): **週末作戦ノート**。`docs/weekend/index.json` と `docs/weekend/{date}.json` を読み、週末の分析・来週の作戦・リスク管理をスマホ向けに表示。公開ページのため、保有数量・損益額・口座情報は載せない。
+- [`docs/weekend.html`](docs/weekend.html): **作戦ノート**。`docs/weekend/index.json` と `docs/weekend/{date}.json` を読み、起動したタイミングの分析・作戦・リスク管理をスマホ向けに表示。opencode の `/strategy-note` で最新の取引履歴と市場データから生成する。公開ページのため、保有数量・損益額・口座情報は載せない。
 - **推奨の母集団トグル**: index.html のスイング画面に「全体 / ◯円未満（`price_filter`）」トグル。レンジ選択時は `recommendations.json` の `range.min_price/max_price` に入る**全銘柄を表示**し、AI判定列は `range.stocks` のレンジAIに差し替える（評価済みのみ・参考。`currentAI`/`aiVerdictPriority` を表示中母集団に応じて切替）。**並び順は全体/レンジとも選択中の `sortKey` を常に優先**し、AI順位で固定しない（既定はスコア順）。全体選択時は従来どおり `ai_strategy_latest.json`。
 - 旧 `main7.html` / `index_main6_backup.html` は退避。
 
@@ -317,6 +317,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 ```
 
 - ワークフロー実行時は、**どのワークフローを実行するか宣言してから**実行する（`AGENTS.md`）。
+- 作戦ノート: opencode の `/strategy-note` で、最新の `tradehistory(JP)_*.csv` と市場データから `docs/weekend/` に生成（補助: `tools/prepare_strategy_note.ps1`）。
 - ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）/ `weekly_review.yml`（土曜09:00）。
 - **非営業日スキップ**: `main8.py` は JPX 取引所カレンダー（`pandas_market_calendars`）で**土日祝・取引所休場を判定してスキップ**。週次レビューもベンチマークの実営業日で非営業日のシグナルを除外する。カレンダー未導入時は安全側（営業日扱い）にフォールバック。
 

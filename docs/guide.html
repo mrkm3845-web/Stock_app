@@ -33,7 +33,7 @@
             </div>
             <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i>スクリーナーへ戻る</a>
             <a href="weekly.html" class="btn btn-outline-success btn-sm fw-bold"><i class="bi bi-clipboard2-check me-1"></i>週次答え合わせ</a>
-            <a href="weekend.html" class="btn btn-outline-info btn-sm fw-bold"><i class="bi bi-journal-richtext me-1"></i>週末作戦ノート</a>
+            <a href="weekend.html" class="btn btn-outline-info btn-sm fw-bold"><i class="bi bi-journal-richtext me-1"></i>作戦ノート</a>
             <a href="playbook.html" class="btn btn-outline-warning btn-sm fw-bold"><i class="bi bi-mortarboard me-1"></i>AIの学び</a>
         </div>
     </div>
@@ -49,6 +49,7 @@
             <li><a href="#modal">モーダル（詳細画面）の見方</a></li>
             <li><a href="#entry">エントリー判定の4種類（高値掴み防止）</a></li>
             <li><a href="#loop">AIの学びノート（継続改善のしくみ）</a></li>
+            <li><a href="#strategy-note">作戦ノート（起動したタイミングの作戦）</a></li>
             <li><a href="#glossary">用語集</a></li>
             <li><a href="#caution">注意事項</a></li>
         </ol>
@@ -419,6 +420,29 @@
             <b>傾向が続くか</b>を見てください。<b>95%信頼区間</b>が広いときは「まだ確度が低い」サインです。
         </div>
         <a href="playbook.html" class="btn btn-warning btn-sm fw-bold mt-1"><i class="bi bi-mortarboard me-1"></i>AIの学びノートを開く</a>
+    </div>
+
+    <div class="card p-3" id="strategy-note">
+        <h2 class="section">作戦ノート（起動したタイミングの作戦）</h2>
+        <p class="mb-2">
+            週末だけでなく、<b>引け後・前場前・急落時</b>など、見直したいタイミングで作る「作戦メモ」です。
+            スクリーナー上部の<b>「作戦ノート」</b>ボタンから開けます。
+        </p>
+        <div class="plain">
+            <strong>使い方：</strong><br>
+            1) opencode で <span class="term">/strategy-note</span> と入力（追加の希望があれば後ろに書く）<br>
+            2) 最新の取引履歴と市場データを読み、保有・地合い・候補・損切りをまとめる<br>
+            3) ノートが自動で追加され、このページで切り替えて読める
+        </div>
+        <div class="tip">
+            <strong>見るときのコツ：</strong>まず<b>「作成日時」と「データ基準日」</b>を確認してください。
+            取引履歴と市場データの日付がズレているときは、ノートにもその注意が書かれます。
+        </div>
+        <div class="warn">
+            <strong>公開ページです。</strong>保有数量・損益額・口座情報は載せていません。
+            銘柄名・OCO水準・作戦だけを公開し、細かい損益は取引記録ページ（自分のブラウザ内）で確認します。
+        </div>
+        <a href="weekend.html" class="btn btn-info btn-sm fw-bold mt-1"><i class="bi bi-journal-richtext me-1"></i>作戦ノートを開く</a>
     </div>
 
     <!-- 7 -->

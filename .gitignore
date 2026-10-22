@@ -2,3 +2,8 @@ __pycache__/
 *.pyc
 back_tester/data/
 data/stocks.db
+
+# 個人の取引履歴は絶対にコミットしない
+tradehistory(JP)_*.csv
+tradehistory*.csv
+tools/out/

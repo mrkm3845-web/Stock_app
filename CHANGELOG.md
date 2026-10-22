@@ -8,6 +8,23 @@
 
 ---
 
+## 2026-10-22
+
+### 作戦ノートの一発生成（/strategy-note）（この変更）
+- **commit**: この変更（作戦ノート自動化）
+- **種別**: 運用 / ドキュメント / UI
+- **変更**:
+  - `.opencode/command/strategy-note.md` を追加。最新の `tradehistory(JP)_*.csv` と市場データから、起動時点の作戦ノートを生成し、`docs/weekend/{timestamp}.json` と `docs/weekend/index.json` を更新して push する。
+  - `tools/prepare_strategy_note.ps1` を追加。最新CSVの自動検出、FIFOでの保有・実現損益、地合い・セクター・最新ピック・週次・プランを `tools/out/strategy_context.json` に出力する。
+  - 作戦ノートをタイムスタンプ式（`id` / `created_at` / `data_date` / `trade_history_last_date` / `trigger`）に拡張。`docs/weekend.html` は作成日時で切り替え可能。
+  - 初回ノートとして `docs/weekend/2026-10-22-1512.json` を追加（10-21基準、保有3銘柄のOCO整理）。
+  - `.gitignore` に `tradehistory*.csv` と `tools/out/` を追加。
+  - `AGENTS.md` に「あいまいなら必ず質問」「作戦ノートは `/strategy-note`」を追記。
+  - `docs/guide.html` に作戦ノートの使い方を追加。
+- **根拠・検証**: `powershell -NoProfile -ExecutionPolicy Bypass -File tools/prepare_strategy_note.ps1` で最新CSV（`tradehistory(JP)_20261022.csv`）を読み、保有3銘柄・地合い・最新ピックをJSON出力。JSON構文チェックとローカルHTTP配信を確認。
+- **影響・ロールバック**: 既存ページの挙動は維持。戻す場合はコマンド・スクリプト・ページ変更を `git revert`。
+- **関連**: `.opencode/command/strategy-note.md` / `tools/prepare_strategy_note.ps1` / `docs/weekend.html` / `docs/weekend/*` / `docs/guide.html` / `AGENTS.md` / `.gitignore`
+
 ## 2026-10-18
 
 ### 価格レンジ表示を全銘柄化し、ソート固定を解除（この変更）
