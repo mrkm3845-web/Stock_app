@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>運用マニュアル｜自動で動くこと・自分がやること</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.9rem; padding-bottom: 60px; }
+        .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
+        h2.section { font-size: 1.15rem; font-weight: 800; color: #0d6efd; border-left: 5px solid #0d6efd; padding-left: 10px; margin-top: 10px; }
+        h3.sub { font-size: 1rem; font-weight: 700; color: #212529; margin-top: 18px; }
+        table th { background-color: #212529 !important; color: #fff !important; text-align: center; vertical-align: middle !important; font-size: 0.8rem; }
+        table td { vertical-align: middle; font-size: 0.83rem; }
+        .plain { background: #f8f9fa; border-left: 4px solid #adb5bd; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .tip { background: #fff9db; border-left: 4px solid #ffd43b; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .warn { background: #fff5f5; border-left: 4px solid #ff6b6b; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .auto { background: #eef6ff; border-left: 4px solid #0d6efd; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .manual { background: #fff4e6; border-left: 4px solid #fd7e14; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+        .kbd { background: #212529; color: #fff; border-radius: 4px; padding: 1px 6px; font-size: 0.8rem; font-family: Consolas, monospace; }
+        .term { font-weight: 700; color: #0d6efd; }
+        .tag { font-size: 0.7rem; padding: 2px 7px; border-radius: 20px; font-weight: 700; white-space: nowrap; }
+        .tag-auto { background: #0d6efd; color: #fff; }
+        .tag-manual { background: #fd7e14; color: #fff; }
+        .tag-none { background: #adb5bd; color: #fff; }
+        .toc a { text-decoration: none; }
+        .step { counter-reset: step; }
+        .step li { margin-bottom: 6px; }
+        .muted-small { color: #6c757d; font-size: 0.78rem; }
+        .hero { background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); color: #fff; }
+        .hero .text-muted { color: #dbe7ff !important; }
+        .hero .muted-small { color: #dbe7ff; }
+        .hero a { text-decoration: underline; }
+        table td code { overflow-wrap: anywhere; }
+        .time-badge { font-family: Consolas, monospace; font-weight: 700; background: #212529; color: #fff; border-radius: 5px; padding: 2px 7px; font-size: 0.78rem; white-space: nowrap; }
+    </style>
+</head>
+<body>
+<div class="container py-3" style="max-width: 920px;">
+
+    <div class="card hero p-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <h1 class="h5 mb-0 fw-bold"><i class="bi bi-gear-wide-connected"></i> 運用マニュアル</h1>
+                <small>裏で自動で動くこと／自分が手動でやること</small>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="index.html" class="btn btn-light btn-sm fw-bold"><i class="bi bi-sliders me-1"></i>スクリーナー</a>
+                <a href="strategy.html" class="btn btn-outline-light btn-sm fw-bold"><i class="bi bi-signpost-split me-1"></i>今日の作戦</a>
+                <a href="weekend.html" class="btn btn-outline-light btn-sm fw-bold"><i class="bi bi-journal-richtext me-1"></i>作戦ノート</a>
+                <a href="guide.html" class="btn btn-outline-light btn-sm fw-bold"><i class="bi bi-question-circle me-1"></i>見方ガイド</a>
+            </div>
+        </div>
+        <div class="mt-3 muted-small">
+            最終更新: 2026-10-23 ／ 対象: このリポジトリ（<code>main</code> ブランチ・GitHub Pages）<br>
+            仕様の詳細は <a href="https://github.com/mrkm3845-web/Stock_app/blob/main/PROJECT_STATUS.md" class="text-white fw-bold" target="_blank" rel="noopener">PROJECT_STATUS.md</a>、
+            日々の判断の正は <b>作戦台帳（docs/strategy/active.json）</b> です。
+        </div>
+    </div>
+
+    <div class="card p-3 toc">
+        <div class="fw-bold mb-2"><i class="bi bi-list-ul me-1"></i>目次</div>
+        <ol class="mb-0">
+            <li><a href="#summary">30秒でわかる全体像</a></li>
+            <li><a href="#day">1日の流れ（時刻表）</a></li>
+            <li><a href="#auto">裏で自動で動くこと（6本）</a></li>
+            <li><a href="#manual">自分が手動でやること</a></li>
+            <li><a href="#screens">画面の役割分担（3か所）</a></li>
+            <li><a href="#notify">通知の種類と意味</a></li>
+            <li><a href="#limits">知っておくこと（制約・落とし穴）</a></li>
+            <li><a href="#files">ファイル早見表（自動／手動／触らない）</a></li>
+            <li><a href="#trouble">困ったとき（Q&amp;A）</a></li>
+            <li><a href="#glossary">用語集</a></li>
+        </ol>
+    </div>
+
+    <!-- 1 -->
+    <div class="card p-3" id="summary">
+        <h2 class="section">1. 30秒でわかる全体像</h2>
+        <p class="mb-2">
+            <b>データの更新と採点は、全部コンピュータがやります。</b>あなたがやるのは<b>3つだけ</b>です。
+        </p>
+        <div class="row g-2 mb-2">
+            <div class="col-md-4">
+                <div class="manual h-100 mb-0">
+                    <div class="fw-bold mb-1"><i class="bi bi-1-circle me-1"></i>作戦を決める</div>
+                    夜か週末に<b>作戦ノート</b>を作る（<code>/strategy-note</code>）。ここで「買う・待つ・見送る・損切り」を決める。
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="manual h-100 mb-0">
+                    <div class="fw-bold mb-1"><i class="bi bi-2-circle me-1"></i>注文を置く</div>
+                    証券会社に<b>OCO</b>（利確と損切のセット注文）を置く。<b>これが本体</b>。Botは代わりに約定しません。
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="manual h-100 mb-0">
+                    <div class="fw-bold mb-1"><i class="bi bi-3-circle me-1"></i>見て、記録する</div>
+                    日中は<b>今日の作戦</b>とDiscord通知を見る。売買したら台帳を更新する。
+                </div>
+            </div>
+        </div>
+        <div class="auto mb-0">
+            <b>自動で回っているもの:</b> 平日5回のスクリーニング → 夜にAI分析 → 日中7回のトリガー監視 → 土曜に週次答え合わせ → 月1回バックテスト。人が押さなくても進みます。
+        </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="card p-3" id="day">
+        <h2 class="section">2. 1日の流れ（時刻表）</h2>
+        <p class="mb-2">時刻は<b>日本時間</b>。平日の例です。<span class="tag tag-auto">自動</span>は何もしなくてOK、<span class="tag tag-manual">手動</span>だけ動きます。</p>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle">
+                <thead>
+                    <tr><th style="width:118px">時刻</th><th style="width:70px">誰</th><th>何が起きる</th><th style="width:170px">あなたがやること</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">04:17</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td>スクリーニング（スコア計算）</td>
+                        <td class="muted-small">なし</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">06:17</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td>スクリーニング（スコア計算）</td>
+                        <td class="muted-small">なし</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">09:00</span></td>
+                        <td class="text-center"><span class="tag tag-manual">手動</span></td>
+                        <td>寄り付き</td>
+                        <td><b>OCOが入っているか確認</b>（前日に約定していないかも）</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">09:05〜15:05</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td>作戦トリガー監視を<b>1時間ごと7回</b>。入口・損切・利確に触れたかを判定</td>
+                        <td>Discord通知が来たら<b>今日の作戦</b>を開く</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">15:30</span></td>
+                        <td class="text-center"><span class="tag tag-none">─</span></td>
+                        <td>大引け</td>
+                        <td class="muted-small">なし</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">17:17</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td>スクリーニング＋<b>引け後チェック</b>（今日の結果を確定）</td>
+                        <td class="muted-small">なし</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">19:17</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td>スクリーニング</td>
+                        <td class="muted-small">なし</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">20:17</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td><b>AI分析</b>（推奨づくり）＋引け後チェック</td>
+                        <td>DiscordのAI推奨を見る（任意）</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">21:17</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td>スクリーニング</td>
+                        <td class="muted-small">なし</td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td class="text-center"><span class="time-badge">夜 または 週末</span></td>
+                        <td class="text-center"><span class="tag tag-manual">手動</span></td>
+                        <td>作戦ノート＋作戦台帳を作る</td>
+                        <td><b>ここが一番大事。</b>「明日どうするか」を決める</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">土 09:00</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td>週次答え合わせ（先週の成績・AIの校正）</td>
+                        <td>週次答え合わせページを見る（任意）</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="time-badge">第1土 21:00</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td>月次バックテスト（パラメータの見直し）</td>
+                        <td>結果を見る（月1回・任意）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip mb-0">
+            <b>時刻は「予定」です。</b>GitHub Actions の自動実行は<b>中央値で約100分遅れ</b>、遅いときは3〜4時間遅れます。
+            くわしくは <a href="#limits">7. 知っておくこと</a> を読んでください。<b>損切りの代わりにはなりません</b>。
+        </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="card p-3" id="auto">
+        <h2 class="section">3. 裏で自動で動くこと（6本）</h2>
+        <p class="mb-2">GitHub Actions（クラウド）で動きます。あなたのPCの電源は不要です。</p>
+        <div class="table-responsive mb-2">
+            <table class="table table-sm table-bordered align-middle">
+                <thead>
+                    <tr><th style="width:180px">名前</th><th style="width:150px">いつ</th><th>何をする</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>毎日スクリーニング</b><br><span class="muted-small">daily_main8.yml</span></td>
+                        <td>平日 04:17 / 06:17 / 17:17 / 19:17 / 21:17</td>
+                        <td>全銘柄のスコア計算。17時台だけ引け後チェックも実行</td>
+                    </tr>
+                    <tr>
+                        <td><b>AI分析</b><br><span class="muted-small">daily_main8_ai.yml</span></td>
+                        <td>平日 20:17</td>
+                        <td>スコア上位40をAIが順位付けし、推奨を作る。Discordに通知</td>
+                    </tr>
+                    <tr>
+                        <td><b>作戦トリガー監視</b><br><span class="muted-small">plan_check_intraday.yml</span></td>
+                        <td>平日 09:05〜15:05 の<b>1時間ごと7回</b></td>
+                        <td>作戦台帳の水準に現在値が触れたかを判定。状態が変わったときだけDiscord通知</td>
+                    </tr>
+                    <tr>
+                        <td><b>週次答え合わせ</b><br><span class="muted-small">weekly_review.yml</span></td>
+                        <td>土曜 09:00</td>
+                        <td>先週の推奨を採点し、成績とAIの傾向をまとめる</td>
+                    </tr>
+                    <tr>
+                        <td><b>月次バックテスト</b><br><span class="muted-small">run_walkforward.yml</span></td>
+                        <td>第1土曜 21:00</td>
+                        <td>過去データで検証し、条件を満たした改善だけパラメータに反映</td>
+                    </tr>
+                    <tr>
+                        <td><b>手動データ更新</b><br><span class="muted-small">refresh_data_ai.yml</span></td>
+                        <td class="text-center">予約なし</td>
+                        <td>スクリーナー＋AIをその場で更新（<span class="tag tag-manual">手動</span>で起動する）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="sub"><i class="bi bi-pencil-square me-1"></i>自動で書き換わるファイル</h3>
+        <div class="plain mb-0">
+            <code>docs/history/</code>（価格・スコア）／<code>docs/recommendations.json</code>（AI推奨）／<code>docs/picks/</code>（日次スナップショット）／
+            <code>docs/weekly/</code>（答え合わせ）／<code>docs/strategy/status.json</code>・<code>events.json</code>（作戦の現在状態と履歴）／
+            <code>docs/strategy_params.json</code>（月次の検証結果）<br>
+            <span class="muted-small">→ これらは<b>手で編集しない</b>。次回の自動実行で上書きされます。</span>
+        </div>
+
+        <div class="tip mb-0 mt-2">
+            <b>失敗したときは？</b>赤いバツが出て、その回のデータ更新は止まります。次の回（数時間後）に自動で再挑戦されます。
+            通知が来ないだけで、あなたが何かする必要はありません。ただし<b>2日続けて更新されない</b>ときは
+            <a href="https://github.com/mrkm3845-web/Stock_app/actions" target="_blank" rel="noopener">Actions の画面</a>を確認してください。
+        </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="card p-3" id="manual">
+        <h2 class="section">4. 自分が手動でやること</h2>
+
+        <h3 class="sub"><i class="bi bi-sunrise me-1"></i>4-1. 毎営業日の朝（5分）</h3>
+        <ol class="mb-2">
+            <li><b>今日の作戦</b>を開く → 「今日やること」を上から確認</li>
+            <li>証券会社で<b>OCO</b>（利確＋損切）が生きているか確認。前日に約定・取消していないか</li>
+            <li>買い注文を置くのは、<b>入口の価格と条件の両方</b>が満たされたときだけ</li>
+        </ol>
+        <div class="tip mb-2">
+            <b>条件NGなら買わない。</b>「価格が来た」だけでは買いではありません（地合い・セクター・決算5日前を確認）。
+        </div>
+
+        <h3 class="sub"><i class="bi bi-arrow-left-right me-1"></i>4-2. 売買した日（必須・10分）</h3>
+        <p class="mb-1">ポジションが変わったら、<b>作戦台帳を更新</b>します。これを忘れると、翌日から古い保有で判定されます。</p>
+        <ol class="mb-2">
+            <li>取引履歴CSVを最新にする（証券会社からダウンロード）</li>
+            <li>opencode で <span class="kbd">/strategy-note</span> を実行</li>
+            <li>生成された作戦台帳（保有・OCO水準）を確認して、必要なら手で直す</li>
+        </ol>
+        <div class="warn mb-2">
+            取引履歴CSV（<code>tradehistory(JP)_*.csv</code>）は<b>絶対にコミットしない</b>。読むだけです。
+        </div>
+
+        <h3 class="sub"><i class="bi bi-moon-stars me-1"></i>4-3. 夜・週末の作戦づくり（15〜30分）</h3>
+        <ol class="mb-2">
+            <li>opencode で <span class="kbd">/strategy-note</span>（追加の希望があれば後ろに書く）</li>
+            <li>中で<b>データの鮮度チェック</b>が走り、古ければ自動で更新されます（数分かかります）</li>
+            <li>作戦ノート（なぜそう決めたか＝記録）と作戦台帳（今日の水準＝実行）が更新される</li>
+            <li>コミット・push まで自動で行われ、数分後に公開ページへ反映</li>
+        </ol>
+        <div class="plain mb-2">
+            <b>中で起きていること:</b>
+            <code>tools/refresh_data_if_stale.py --refresh</code> →（古ければ）<code>main8.py</code> →
+            <code>tools/prepare_strategy_note.py</code> → ノートと台帳を生成 → <code>docs/weekend/</code> と <code>docs/strategy/active.json</code> を更新
+        </div>
+        <div class="tip mb-2">
+            AIキーが無いローカルでは、テクニカルのみ更新されます。AIが古いままなら、ノートにその旨が明記されます。<b>スコアと台帳を優先</b>してください。
+        </div>
+
+        <h3 class="sub"><i class="bi bi-cloud-arrow-down me-1"></i>4-4. 「今すぐデータを更新したい」（2〜5分・待つだけ）</h3>
+        <p class="mb-1">スマホからでもできます。</p>
+        <ol class="mb-2">
+            <li><a href="strategy.html">今日の作戦</a>の<b>「データ更新（AI）」</b>ボタン → GitHub の <b>Run workflow</b> を押す</li>
+            <li>そのまま3〜5分待つ（スクリーナー＋AI＋引け後チェックが走ります）</li>
+        </ol>
+        <div class="plain mb-2 muted-small">
+            ページのボタン: 今日の作戦 → 「データ更新（AI）」／「手動チェック」（トリガー判定だけ）
+        </div>
+
+        <h3 class="sub"><i class="bi bi-terminal me-1"></i>4-5. PCから手で動かすコマンド</h3>
+        <p class="mb-1">チャットで頼めば実行できますが、自分で打つときはこれだけ覚えれば足ります。</p>
+        <div class="table-responsive mb-2">
+            <table class="table table-sm table-bordered align-middle">
+                <thead><tr><th style="width:180px">やりたいこと</th><th>コマンド</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>データが最新か確認</td>
+                        <td><code>uv run --no-project --python 3.11 --with pandas_market_calendars python tools/refresh_data_if_stale.py --check</code></td>
+                    </tr>
+                    <tr>
+                        <td>古ければ更新（AIも）</td>
+                        <td><code>uv run --no-project --python 3.11 --with pandas_market_calendars python tools/refresh_data_if_stale.py --refresh</code></td>
+                    </tr>
+                    <tr>
+                        <td>作戦の判定を今すぐ実行</td>
+                        <td><code>uv run --no-project --python 3.11 --with pandas --with numpy --with yfinance python tools/check_strategy_plan.py --mode eod --force</code></td>
+                    </tr>
+                    <tr>
+                        <td>作戦用の材料を集める</td>
+                        <td><code>python tools/prepare_strategy_note.py</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="plain mb-0 muted-small">
+            <code>--check</code> は確認だけ、<code>--refresh</code> は更新まで。<code>--force</code> は市場時間外でも判定します（確認用）。
+            ローカルで更新しても<b>コミットされません</b>。公開ページに反映したいときは GitHub Actions の「データ更新（AI）」を使ってください。
+        </div>
+
+        <h3 class="sub"><i class="bi bi-calendar-month me-1"></i>4-6. 月に1回（10分）</h3>
+        <ol class="mb-0">
+            <li><b>週次答え合わせ</b>で、先週の推奨が当たったか外れたかを見る</li>
+            <li><b>月次バックテスト</b>の結果で、パラメータが勝手に変わる（条件を満たしたときだけ）</li>
+            <li>1週間の結果でやり方を変えない。<b>4〜8週間</b>ためてから判断する</li>
+        </ol>
+    </div>
+
+    <!-- 5 -->
+    <div class="card p-3" id="screens">
+        <h2 class="section">5. 画面の役割分担（3か所）</h2>
+        <p class="mb-2">「作戦」が出てくる画面は3つあります。<b>中身が違う</b>ので、見る順番を決めておくと迷いません。</p>
+        <div class="table-responsive mb-2">
+            <table class="table table-sm table-bordered align-middle">
+                <thead>
+                    <tr><th style="width:170px">画面</th><th style="width:80px">性質</th><th>答える問い</th><th style="width:110px">見る時間</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>スクリーナー上部</b><br><span class="muted-small">index.html のカード</span></td>
+                        <td class="text-center">要約</td>
+                        <td>今日の作戦を<b>ひと目</b>で確認</td>
+                        <td class="text-center">日中</td>
+                    </tr>
+                    <tr>
+                        <td><b>今日の作戦</b><br><span class="muted-small">strategy.html</span></td>
+                        <td class="text-center">実行</td>
+                        <td><b>今、何をする？</b>（現在値・距離・OCO・見送り理由）</td>
+                        <td class="text-center">日中</td>
+                    </tr>
+                    <tr>
+                        <td><b>作戦ノート</b><br><span class="muted-small">weekend.html</span></td>
+                        <td class="text-center">記録</td>
+                        <td><b>なぜそう決めた？</b>前回から何が変わった？</td>
+                        <td class="text-center">夜・週末</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="warn mb-0">
+            <b>古い作戦ノートに注意。</b>作戦ノートは<b>作った時点のスナップショット</b>で、あとから更新されません。
+            数日前のノートを開くと、保有も価格水準も古いままです。<b>最新の水準は必ず「今日の作戦」で確認</b>してください。
+        </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="card p-3" id="notify">
+        <h2 class="section">6. 通知の種類と意味</h2>
+        <p class="mb-2">Discord に届く通知は<b>2種類だけ</b>です。</p>
+        <div class="table-responsive mb-2">
+            <table class="table table-sm table-bordered align-middle">
+                <thead><tr><th style="width:150px">通知</th><th style="width:150px">いつ来る</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><b>AI推奨</b></td>
+                        <td>平日 20:17 のAI分析後</td>
+                        <td>その日の推奨銘柄（新規・更新があったとき）</td>
+                    </tr>
+                    <tr>
+                        <td><b>作戦トリガー</b></td>
+                        <td>日中の監視／引け後チェック</td>
+                        <td>損切・利確・買い入口に<b>触れたとき</b>、条件が崩れたとき（<b>状態が変わったときだけ</b>）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h3 class="sub">状態の言葉</h3>
+        <div class="table-responsive mb-0">
+            <table class="table table-sm table-bordered align-middle">
+                <thead><tr><th style="width:120px">表示</th><th>意味</th><th style="width:180px">あなたの動き</th></tr></thead>
+                <tbody>
+                    <tr><td><b>保有</b></td><td>OCOの範囲内。何もしない</td><td>そのまま</td></tr>
+                    <tr><td><b>損切接近</b></td><td>損切りまであと1%以内</td><td>OCOを確認（動かさない・広げない）</td></tr>
+                    <tr><td><b>損切到達</b></td><td>当日の安値が損切り以下</td><td>約定を確認。ナンピンしない</td></tr>
+                    <tr><td><b>利確接近／到達</b></td><td>利確まであと1%以内／到達</td><td>約定確認。トレールするか判断</td></tr>
+                    <tr><td><b>買い到達</b></td><td>入口の価格に触れた（条件もOK）</td><td>サイズと現金比率を確認して発注</td></tr>
+                    <tr><td><b>条件NG</b></td><td>価格は来たが、地合い・セクター・決算で買えない</td><td><b>買わない</b></td></tr>
+                    <tr><td><b>期限切れ</b></td><td>押し目待ちの期限を過ぎた</td><td>注文を取り消す</td></tr>
+                    <tr><td><b>保有期限</b></td><td>最大保有日に到達</td><td>引けで手仕舞いを検討</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="card p-3" id="limits">
+        <h2 class="section">7. 知っておくこと（制約・落とし穴）</h2>
+
+        <div class="warn">
+            <b>1. 自動実行は遅れる。</b>このリポジトリの実測で、予定より<b>中央値+100分</b>、最悪<b>+3時間43分</b>。
+            さらに<b>予定の約4割は発火しません</b>（捨てられる）。「9:05に動く」とは思わないでください。
+        </div>
+
+        <div class="warn">
+            <b>2. 日中の監視は「リアルタイム」ではない。</b>遅れて起動しても<b>その日の高値・安値</b>で判定するので、1時間前に割っていたことは検知できます。
+            ただし通知は遅く、<b>寄り付き直後の1時間は抜けやすい</b>です。約定の速さは期待しないこと。
+        </div>
+
+        <div class="warn">
+            <b>3. 通知が来ない＝安全ではない。</b>データが取れない日（休場・遅延・取得失敗）は<b>静かにスキップ</b>します。
+            「静かだから大丈夫」ではなく、<b>OCOが最後の砦</b>です。
+        </div>
+
+        <div class="tip">
+            <b>4. 損切りは証券会社のOCOで置く。</b>監視Botは<b>通知と記録だけ</b>。発注も注文変更もしません。
+            相場が急に動いたとき、Botは間に合いません。
+        </div>
+
+        <div class="tip">
+            <b>5. 何が正か。</b>迷ったら<b>作戦台帳 → スコア → AI</b>の順。AIは提案、実行は台帳です。
+        </div>
+
+        <div class="plain">
+            <b>6. 公開ページです。</b>保有<b>数量・損益額・口座情報・個人情報は載せない</b>。保有は銘柄コードとOCO水準まで。
+            取引履歴CSVは<b>読むだけでコミットしない</b>。
+        </div>
+
+        <div class="plain mb-0">
+            <b>7. 投資助言ではありません。</b>「儲かる」とは言えません。最終判断はご自身で。データは作成時点のものです。
+        </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="card p-3" id="files">
+        <h2 class="section">8. ファイル早見表</h2>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle">
+                <thead><tr><th style="width:80px">誰が</th><th>ファイル</th><th>中身</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td><code>docs/history/</code> / <code>docs/recommendations*.json</code> / <code>docs/picks/</code> / <code>docs/earnings.json</code> / <code>docs/ai_analysis/</code></td>
+                        <td>価格・スコア・推奨・スナップショット</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td><code>docs/strategy/status.json</code> / <code>events.json</code></td>
+                        <td>作戦の現在状態・トリガー履歴（手で編集しない）</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td><code>docs/weekly/</code> / <code>docs/strategy_params.json</code></td>
+                        <td>週次答え合わせ・検証で更新されたパラメータ</td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td class="text-center"><span class="tag tag-manual">手動</span></td>
+                        <td><code>docs/strategy/active.json</code></td>
+                        <td><b>作戦台帳（実行の正）</b>。保有・入口・OCO・条件・ルール</td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td class="text-center"><span class="tag tag-manual">手動</span></td>
+                        <td><code>docs/weekend/{日時}.json</code> / <code>docs/weekend/index.json</code></td>
+                        <td>作戦ノート（分析と記録）と一覧</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><span class="tag tag-none">固定</span></td>
+                        <td><code>docs/*.html</code> / <code>prompts/</code> / <code>tools/</code> / <code>.github/workflows/</code></td>
+                        <td>画面・手順書・スクリプト・自動実行の設定（変更したら CHANGELOG へ）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="plain mb-0 muted-small">
+            古い台帳は <code>docs/strategy/plans/</code> に退避されます。削除はしません。
+        </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="card p-3" id="trouble">
+        <h2 class="section">9. 困ったとき（Q&amp;A）</h2>
+
+        <h3 class="sub">データが古い気がする</h3>
+        <div class="plain">今日の作戦のヘッダに<b>「データ: 日付」</b>が出ます。ここが今日（平日の夜なら当日、週末なら金曜）より前なら、
+            「データ更新（AI）」を実行してください。それでも進まないときは Actions の画面でエラーを見ます。</div>
+
+        <h3 class="sub">作戦が空っぽ／「作戦台帳がありません」と出る</h3>
+        <div class="plain">台帳（<code>active.json</code>）がまだ無いか、読み込みに失敗しています。opencode で <span class="kbd">/strategy-note</span> を実行して作り直してください。</div>
+
+        <h3 class="sub">Discord通知が来ない</h3>
+        <div class="plain">仕様どおりのことが多いです。通知は<b>状態が変わったときだけ</b>。同じ状態が続けば来ません。
+            加えて、遅延・発火漏れ・データ取得失敗でも来ません。<b>通知の有無で安全を判断しない</b>でください。</div>
+
+        <h3 class="sub">AI分析だけ失敗する（赤いバツ）</h3>
+        <div class="plain">AIのAPI混雑・上限・キー切れが原因です。スコアとテクニカルは更新されているので、<b>スコアと台帳で判断</b>してください。
+            AIは「参考情報」です。</div>
+
+        <h3 class="sub">銘柄を買った／売った</h3>
+        <div class="plain">その日のうちに <span class="kbd">/strategy-note</span> を実行して台帳を更新します。
+            古い保有が残ると、翌日から存在しないポジションの損切り接近が通知されます。</div>
+
+        <h3 class="sub">損切りに引っかかった</h3>
+        <div class="plain">約定を確認し、台帳から外します（<span class="kbd">/strategy-note</span> で更新）。
+            <b>ナンピンしない・損切りを広げない</b>。同じ銘柄にすぐ再エントリーしない。</div>
+
+        <h3 class="sub">自動実行を止めたい</h3>
+        <div class="plain">GitHub の Actions 画面で該当ワークフローを Disable します。ただし止めるとデータが更新されなくなり、
+            判断の材料が古くなります。<b>止める前に理由を決めてください</b>。</div>
+    </div>
+
+    <!-- 10 -->
+    <div class="card p-3" id="glossary">
+        <h2 class="section">10. 用語集</h2>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle mb-0">
+                <tbody>
+                    <tr><td style="width:150px"><b>OCO</b></td><td>利確と損切を同時に置く注文。片方が約定したらもう片方は自動で消える。</td></tr>
+                    <tr><td><b>作戦台帳</b></td><td>「いつ・何を・いくらで・どこで損切るか」を書いた表（<code>active.json</code>）。AIより優先。</td></tr>
+                    <tr><td><b>トリガー</b></td><td>発動条件。<b>価格トリガー</b>（例: 1,975まで下がった）と<b>条件トリガー</b>（例: 銀行セクターが強い）がある。</td></tr>
+                    <tr><td><b>押し目</b></td><td>上昇トレンド中に一時的に下がったところ。そこで買うのが「押し目買い」。</td></tr>
+                    <tr><td><b>ブレイク</b></td><td>レジスタンス（上値の壁）を超えて上がること。超えたところで買う。</td></tr>
+                    <tr><td><b>地合い</b></td><td>市場全体の雰囲気。<b>リスクオン</b>＝買いやすい／<b>リスクオフ</b>＝慎重に。</td></tr>
+                    <tr><td><b>スコア</b></td><td>トレンド＋流動性を0〜100点にしたもの（v3）。銘柄選びの土台。</td></tr>
+                    <tr><td><b>AI推奨</b></td><td>スコア上位40をAIが順位付けしたもの。<b>提案</b>であって指示ではない。</td></tr>
+                    <tr><td><b>週次答え合わせ</b></td><td>先週の推奨が当たったかを採点し、AIの傾向を補正する仕組み。</td></tr>
+                    <tr><td><b>ウォークフォワード</b></td><td>過去データで「未来を予測できていたか」を検証する方法。月1回・自動。</td></tr>
+                    <tr><td><b>最大保有日</b></td><td>その銘柄を持ってよい期限。過ぎたら引けで手仕舞いを検討。</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card p-3">
+        <div class="warn mb-0">
+            <b>このページは公開されます。</b>保有数量・損益額・口座情報は載せていません。銘柄コード・価格水準・手順だけです。
+            投資助言ではありません。最終判断はご自身でお願いします。
+        </div>
+    </div>
+
+    <div class="text-center muted-small mt-3">
+        <a href="index.html">スクリーナー</a> ／ <a href="guide.html">見方ガイド</a> ／
+        <a href="strategy.html">今日の作戦</a> ／ <a href="weekend.html">作戦ノート</a> ／
+        <a href="weekly.html">週次答え合わせ</a> ／ <a href="journal.html">取引記録</a>
+    </div>
+
+</div>
+</body>
+</html>

@@ -8,6 +8,31 @@
 
 ---
 
+## 2026-10-23
+
+### 運用マニュアル（`docs/ops.html`）を追加（この変更）
+- **commit**: この変更（運用マニュアル）
+- **種別**: ドキュメント / UI
+- **変更**:
+  - `docs/ops.html` を追加。「裏で自動で動くこと」と「自分が手動でやること」を1ページに整理。
+    - 1日の時刻表（04:17 / 06:17 / 09:00 / 09:05〜15:05 / 15:30 / 17:17 / 19:17 / 20:17 / 21:17 / 土09:00 / 第1土21:00）
+    - 自動6本（`daily_main8` / `daily_main8_ai` / `plan_check_intraday` / `weekly_review` / `run_walkforward` / `refresh_data_ai`）の内容・出力・失敗時
+    - 手動（朝のOCO確認、売買後の台帳更新、夜・週末の作戦ノート、データ更新、PCコマンド、月次確認）
+    - 画面の役割分担（要約／実行／記録）、通知の意味、制約、ファイル早見表、Q&A、用語集
+  - `index.html` / `strategy.html` / `weekend.html` / `guide.html` に「運用マニュアル」リンクを追加。
+  - `docs/strategy.html` と `docs/guide.html` に「日中の監視は**分析用ではなく執行の見張り番**」「Actionsの遅延で**1〜2時間遅れの後追い検知**」「**通知が来ない≠安全**（OCOが本体）」を明記。
+  - `docs/weekend.html` に「このノートは作成時点の記録。最新の水準は今日の作戦で確認」を追記。
+  - `PROJECT_STATUS.md` に `ops.html`・日次監視の位置づけ・**11月中旬の効果測定タスク**を追加。`AGENTS.md` のトリガー監視に同じ注意を追加。
+- **根拠・検証**:
+  - 各ワークフローの `cron` と実行ステップ、`tools/*.py` のCLI引数を実装から確認して記載。
+  - GitHub Actions API で scheduled 実行を集計（`daily_main8` n=44）。**遅延は中央値+100分・最大+223分、予定の約6割しか発火していない**ことを確認し、マニュアルの制約に反映。
+  - `docs/strategy/events.json` に intraday 由来の検知がまだ0件であることも確認（効果測定の判断材料）。
+  - HTMLタグの対応検証と、Chromeヘッドレスでの描画（上部・下部・末尾）を確認。
+- **影響・ロールバック**: 挙動変更なし（ページ追加と文言のみ）。cron・スクリプト・台帳は未変更。戻す場合は `docs/ops.html` と各リンク・追記を `git revert`。
+- **関連**: `docs/ops.html` / `docs/index.html` / `docs/strategy.html` / `docs/weekend.html` / `docs/guide.html` / `PROJECT_STATUS.md` / `AGENTS.md`
+
+---
+
 ## 2026-10-22
 
 ### 作戦ノートの銘柄表記を「銘柄名（コード）」に統一（この変更）

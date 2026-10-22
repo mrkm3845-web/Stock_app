@@ -47,6 +47,7 @@
             <div class="d-flex flex-wrap gap-2">
                 <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナー</a>
                 <a href="weekend.html" class="btn btn-outline-info btn-sm fw-bold" id="note-link"><i class="bi bi-journal-richtext me-1"></i> 作戦ノート</a>
+                <a href="ops.html" class="btn btn-outline-dark btn-sm fw-bold"><i class="bi bi-gear-wide-connected me-1"></i> 運用マニュアル</a>
                 <a href="weekly.html" class="btn btn-outline-success btn-sm fw-bold"><i class="bi bi-clipboard2-check me-1"></i> 週次答え合わせ</a>
                 <a href="journal.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> 取引記録</a>
                 <button class="btn btn-outline-secondary btn-sm fw-bold" onclick="location.reload()"><i class="bi bi-arrow-clockwise me-1"></i> 更新</button>
@@ -59,7 +60,8 @@
             <span id="checked-badge" class="badge bg-light text-secondary border">チェック: -</span>
             <span id="data-badge" class="badge bg-light text-secondary border">データ: -</span>
         </div>
-        <div class="muted-small mt-2">自動チェックは平日60分間隔です。「手動チェック」はトリガー判定だけ、「データ更新（AI）」は価格・スコア・AIをまとめて更新します。</div>
+        <div class="muted-small mt-2">自動チェックは平日60分間隔です。「手動チェック」はトリガー判定だけ、「データ更新（AI）」は価格・スコア・AIをまとめて更新します。<br>
+            <b>このページは分析用ではなく、作戦台帳の水準に触れたかを見張る「実行ボード」</b>です。作戦そのもの（なぜその水準か）は夜・週末に作る<a href="weekend.html" class="fw-bold">作戦ノート</a>で決めます。監視はActionsの遅延で1〜2時間遅れることがあり、リアルタイムの約定通知ではありません。手順は<a href="ops.html" class="fw-bold">運用マニュアル</a>。</div>
     </div>
 
     <div id="loading" class="alert alert-info">読み込み中...</div>
