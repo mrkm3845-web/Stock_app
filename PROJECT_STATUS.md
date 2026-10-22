@@ -185,7 +185,7 @@ flowchart LR
 - [`docs/guide.html`](docs/guide.html): **はじめての人向け見方ガイド**。一覧・バッジ・並び替え・モーダル（決算日/需給水準/エントリー判定）・用語集・注意を平易に解説。index.html / journal.html のヘッダからリンク。
 - [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示（決算日・需給水準・過熱警戒も同様）。`strategy_params` / `recommendations` / `earnings` / `meta` を読み、利確/損切・推奨株数を index と統一。OCO既定値とCSV取込も価格帯別ルールで算出。
 - [`docs/weekend.html`](docs/weekend.html): **作戦ノート**。`docs/weekend/index.json` と `docs/weekend/{date}.json` を読み、起動したタイミングの分析・作戦・リスク管理をスマホ向けに表示。opencode の `/strategy-note` で最新の取引履歴と市場データから生成する。公開ページのため、保有数量・損益額・口座情報は載せない。
-- [`docs/strategy.html`](docs/strategy.html): **今日の作戦**。`docs/strategy/active.json`（台帳）・`status.json`（現在状態）・`events.json`（履歴）を読み、今日やること・価格/条件トリガー・保有OCO・見送り理由を表示。平日9:00〜15:30 JSTに30分間隔＋引け後に `tools/check_strategy_plan.py` がチェックし、状態変化をDiscord通知する。公開ページのため、保有数量・損益額は載せない。
+- [`docs/strategy.html`](docs/strategy.html): **今日の作戦**。`docs/strategy/active.json`（台帳）・`status.json`（現在状態）・`events.json`（履歴）を読み、今日やること・価格/条件トリガー・保有OCO・見送り理由を表示。平日9:05〜15:05 JSTに60分間隔＋引け後に `tools/check_strategy_plan.py` がチェックし、状態変化をDiscord通知する。公開ページのため、保有数量・損益額は載せない。
 - **推奨の母集団トグル**: index.html のスイング画面に「全体 / ◯円未満（`price_filter`）」トグル。レンジ選択時は `recommendations.json` の `range.min_price/max_price` に入る**全銘柄を表示**し、AI判定列は `range.stocks` のレンジAIに差し替える（評価済みのみ・参考。`currentAI`/`aiVerdictPriority` を表示中母集団に応じて切替）。**並び順は全体/レンジとも選択中の `sortKey` を常に優先**し、AI順位で固定しない（既定はスコア順）。全体選択時は従来どおり `ai_strategy_latest.json`。
 - 旧 `main7.html` / `index_main6_backup.html` は退避。
 
@@ -319,7 +319,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 
 - ワークフロー実行時は、**どのワークフローを実行するか宣言してから**実行する（`AGENTS.md`）。
 - 作戦ノート: opencode の `/strategy-note` で、最新の `tradehistory(JP)_*.csv` と市場データから `docs/weekend/` に生成（補助: `tools/prepare_strategy_note.py`、Windows代替: `tools/prepare_strategy_note.ps1`）。他のハーネスは `prompts/strategy_note.md` を使う。
-- 作戦台帳: `docs/strategy/active.json`。トリガーは `tools/check_strategy_plan.py` が `--mode intraday|eod` で判定し、`docs/strategy/status.json` / `events.json` を更新。ワークフロー: `plan_check_intraday.yml`（平日30分）/ `daily_main8.yml`（17時台）/ `daily_main8_ai.yml`（AI実行後）。
+- 作戦台帳: `docs/strategy/active.json`。トリガーは `tools/check_strategy_plan.py` が `--mode intraday|eod` で判定し、`docs/strategy/status.json` / `events.json` を更新。ワークフロー: `plan_check_intraday.yml`（平日60分・1日7回）/ `daily_main8.yml`（17時台）/ `daily_main8_ai.yml`（AI実行後）。
 - ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）/ `weekly_review.yml`（土曜09:00）。
 - **非営業日スキップ**: `main8.py` は JPX 取引所カレンダー（`pandas_market_calendars`）で**土日祝・取引所休場を判定してスキップ**。週次レビューもベンチマークの実営業日で非営業日のシグナルを除外する。カレンダー未導入時は安全側（営業日扱い）にフォールバック。
 

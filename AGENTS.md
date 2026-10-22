@@ -146,7 +146,7 @@ Invoke-RestMethod -Uri "https://api.github.com/repos/mrkm3845-web/Stock_app/acti
 | `daily_main8_ai.yml` | AI推奨（平日20:17 JST）。`recommendations.json` を生成 |
 | `run_walkforward.yml` | 月次バックテスト＋パラメータ反映 |
 | `weekly_review.yml` | 週次答え合わせ（土曜09:00 JST） |
-| `plan_check_intraday.yml` | 作戦トリガー監視（平日9:00〜15:30 JSTに30分間隔） |
+| `plan_check_intraday.yml` | 作戦トリガー監視（平日9:05〜15:05 JSTに60分間隔） |
 
 ---
 
@@ -200,9 +200,9 @@ WindowsでPythonがない場合だけ `tools/prepare_strategy_note.ps1` を使�
 
 ### トリガー監視
 
-- 平日の市場時間中に30分間隔で `python tools/check_strategy_plan.py --mode intraday`
+- 平日の市場時間中に60分間隔で `python tools/check_strategy_plan.py --mode intraday`
 - 引け後に `--mode eod` で確定チェック
-- 30分間隔は**平日9:00〜15:30 JSTのみ**。24時間ではない
+- 60分間隔は**平日9:05〜15:05 JSTのみ**。24時間ではない（1日7回）
 - 状態が変わったときだけDiscord通知。同じ通知を繰り返さない
 - 損切りは証券会社のOCOを必ず置く。Botは補助であり、約定を保証しない
 

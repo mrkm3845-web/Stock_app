@@ -1,9 +1,9 @@
-name: 作戦トリガー監視（日中30分）
+name: 作戦トリガー監視（日中60分）
 
 on:
   schedule:
-    # 平日 09:00〜15:30 JST に30分間隔（UTC 00:00〜06:30）
-    - cron: '*/30 0-6 * * 1-5'
+    # 平日 09:05〜15:05 JST に60分間隔（UTC 00:05〜06:05）
+    - cron: '5 0-6 * * 1-5'
   workflow_dispatch:
 
 permissions:
