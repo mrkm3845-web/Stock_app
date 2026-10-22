@@ -33,6 +33,7 @@
             </div>
             <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i>スクリーナーへ戻る</a>
             <a href="weekly.html" class="btn btn-outline-success btn-sm fw-bold"><i class="bi bi-clipboard2-check me-1"></i>週次答え合わせ</a>
+            <a href="strategy.html" class="btn btn-outline-danger btn-sm fw-bold"><i class="bi bi-signpost-split me-1"></i>今日の作戦</a>
             <a href="weekend.html" class="btn btn-outline-info btn-sm fw-bold"><i class="bi bi-journal-richtext me-1"></i>作戦ノート</a>
             <a href="playbook.html" class="btn btn-outline-warning btn-sm fw-bold"><i class="bi bi-mortarboard me-1"></i>AIの学び</a>
         </div>
@@ -49,6 +50,7 @@
             <li><a href="#modal">モーダル（詳細画面）の見方</a></li>
             <li><a href="#entry">エントリー判定の4種類（高値掴み防止）</a></li>
             <li><a href="#loop">AIの学びノート（継続改善のしくみ）</a></li>
+            <li><a href="#today-plan">今日の作戦（トリガー通知）</a></li>
             <li><a href="#strategy-note">作戦ノート（起動したタイミングの作戦）</a></li>
             <li><a href="#glossary">用語集</a></li>
             <li><a href="#caution">注意事項</a></li>
@@ -422,6 +424,30 @@
         <a href="playbook.html" class="btn btn-warning btn-sm fw-bold mt-1"><i class="bi bi-mortarboard me-1"></i>AIの学びノートを開く</a>
     </div>
 
+    <div class="card p-3" id="today-plan">
+        <h2 class="section">今日の作戦（トリガー通知）</h2>
+        <p class="mb-2">
+            スクリーナー上部の<b>「今日の作戦」</b>に、その日のやること・トリガー・保有OCOが並びます。
+            価格が入口や損切りに近づいたとき、到達したとき、条件が崩れたときに <b>Discord</b> へ通知します。
+        </p>
+        <div class="plain">
+            <strong>見る順番：</strong><br>
+            1) 今日やること（上から順に）<br>
+            2) トリガー一覧（現在値・入口・損切・利確・距離）<br>
+            3) 見送り・条件NG（なぜ買わないか）<br>
+            4) 保有のOCO（損切りは証券会社にも必ず置く）
+        </div>
+        <div class="tip">
+            <strong>価格が来ても、条件がNGなら買いません。</strong>
+            例：3,180円に来ても、銀行セクターが弱ければ「見送り」。価格トリガーと条件トリガーを分けて表示します。
+        </div>
+        <div class="warn">
+            通知は<b>平日9:00〜15:30 JSTに30分間隔</b>＋引け後の確認です。秒単位の約定通知ではありません。
+            損切りは証券会社のOCOを必ず置いてください。
+        </div>
+        <a href="strategy.html" class="btn btn-danger btn-sm fw-bold mt-1"><i class="bi bi-signpost-split me-1"></i>今日の作戦を開く</a>
+    </div>
+
     <div class="card p-3" id="strategy-note">
         <h2 class="section">作戦ノート（起動したタイミングの作戦）</h2>
         <p class="mb-2">
@@ -431,8 +457,13 @@
         <div class="plain">
             <strong>使い方：</strong><br>
             1) opencode で <span class="term">/strategy-note</span> と入力（追加の希望があれば後ろに書く）<br>
-            2) 最新の取引履歴と市場データを読み、保有・地合い・候補・損切りをまとめる<br>
-            3) ノートが自動で追加され、このページで切り替えて読める
+            2) 最新の取引履歴と市場データを読み、<b>作戦ノート</b>と<b>作戦台帳</b>を作る<br>
+            3) ノートはこのページ、台帳は「今日の作戦」ページに反映される
+        </div>
+        <div class="tip">
+            <strong>opencode以外では：</strong><span class="term">prompts/strategy_note.md</span> を読み、
+            <span class="term">python tools/prepare_strategy_note.py</span> を実行します。
+            Claude Code / Codex / Cursor / Gemini CLI でも同じ手順で使えます。
         </div>
         <div class="tip">
             <strong>見るときのコツ：</strong>まず<b>「作成日時」と「データ基準日」</b>を確認してください。

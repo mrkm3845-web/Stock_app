@@ -1,0 +1,139 @@
+{
+  "plan_id": "2026-10-22-1512",
+  "created_at": "2026-10-22T15:12:31+09:00",
+  "data_date": "2026-10-21",
+  "trade_history_last_date": "2026-10-19",
+  "valid_until": "2026-10-30",
+  "status": "active",
+  "note_id": "2026-10-22-1512",
+  "note_path": "docs/weekend/2026-10-22-1512.json",
+  "policy": {
+    "max_positions": 3,
+    "cash_min_pct": 50,
+    "max_per_sector": 1,
+    "financial_max": 1,
+    "risk_per_trade_pct": 1.0,
+    "near_pct": 1.0
+  },
+  "market": {
+    "regime_ticker": "1306.T",
+    "regime_close": 425.6,
+    "regime_sma200": 398.4,
+    "regime": "risk_on",
+    "breadth_above_sma200_pct": 85.4,
+    "breadth_above_sma25_pct": 78.9,
+    "bank_above_sma25_pct": 16.7,
+    "bank_avg_ret5_pct": -0.46
+  },
+  "positions": [
+    {
+      "code": "7272",
+      "name": "ヤマハ発動機",
+      "entry_price": 1864,
+      "stop": 1737,
+      "take_profit": 2142,
+      "max_hold_until": "2026-10-23",
+      "status": "hold",
+      "thesis": "低PER・高配当・上昇トレンド。25日線を少し下回ったが200日線上。",
+      "invalidation": "1,800割れで半減、1,737で撤退。追加買いなし。"
+    },
+    {
+      "code": "1518",
+      "name": "三井松島ホールディングス",
+      "entry_price": 2285,
+      "stop": 2192,
+      "take_profit": 2631,
+      "max_hold_until": "2026-11-17",
+      "status": "hold",
+      "thesis": "高配当・ROE11%台。25日線付近で推移。",
+      "invalidation": "2,192割れで撤退。2,294超えでトレール。"
+    },
+    {
+      "code": "6191",
+      "name": "エアトリ",
+      "entry_price": 1433,
+      "stop": 1310,
+      "take_profit": 1612,
+      "max_hold_until": "2026-10-28",
+      "status": "hold",
+      "thesis": "旅行支援材料。上昇継続だが高値圏。",
+      "invalidation": "1,310割れで撤退。1,518超えでトレール。"
+    }
+  ],
+  "watchlist": [
+    {
+      "code": "4746",
+      "name": "東計電算",
+      "trigger_type": "pullback",
+      "entry_price": 2000,
+      "entry_zone_low": 1958,
+      "entry_zone_high": 2082,
+      "stop": 1896,
+      "take_profit": 2360,
+      "wait_until": "2026-10-30",
+      "conditions": ["market_risk_on", "sector_ok", "earnings_ok"],
+      "priority": "A",
+      "status": "waiting",
+      "thesis": "光通信の保有増。高営業利益率で押し目妙味。",
+      "invalidation": "1,896割れ、または決算5日前。"
+    },
+    {
+      "code": "9107",
+      "name": "川崎汽船",
+      "trigger_type": "pullback",
+      "entry_price": 3280,
+      "entry_zone_low": 3247,
+      "entry_zone_high": 3418,
+      "stop": 3158,
+      "take_profit": 3787,
+      "wait_until": "2026-10-30",
+      "conditions": ["market_risk_on", "sector_ok", "earnings_ok"],
+      "priority": "A",
+      "status": "waiting",
+      "thesis": "目標株価引上げと高還元。RSI53で過熱薄い。",
+      "invalidation": "3,158割れ、または決算5日前。"
+    },
+    {
+      "code": "6448",
+      "name": "ブラザー工業",
+      "trigger_type": "pullback",
+      "entry_price": 4680,
+      "entry_zone_low": 4588,
+      "entry_zone_high": 4725,
+      "stop": 4486,
+      "take_profit": 5309,
+      "wait_until": "2026-10-30",
+      "conditions": ["market_risk_on", "sector_ok", "earnings_ok"],
+      "priority": "B",
+      "status": "waiting",
+      "thesis": "低ATRで上昇基調。押し目ならリスク限定。",
+      "invalidation": "4,486割れ、または決算5日前。"
+    }
+  ],
+  "avoid": [
+    {
+      "code": "8541",
+      "name": "愛媛銀行",
+      "reason": "スコアは高いが、銀行セクターの25日線上比率が16.7%で弱い。AI入口3,180は現値から遠い。"
+    },
+    {
+      "code": "5301",
+      "name": "東海カーボン",
+      "reason": "急落後の反転未確認。5日-12%台でナイフ。"
+    },
+    {
+      "code": "6058",
+      "name": "ベクトル",
+      "reason": "保有3銘柄のため優先度低い。"
+    }
+  ],
+  "rules": [
+    "1306.Tが200日線398.4を終値で割れたら新規停止",
+    "銀行は25日線上比率30%超まで新規停止",
+    "週間-3%で新規停止、-5%で現金化",
+    "決算5日前以内は新規見送り",
+    "同じセクターは最大1銘柄（金融は1銘柄）",
+    "損切りを広げない・ナンピンしない"
+  ],
+  "updated_at": "2026-10-22T15:12:31+09:00"
+}

@@ -23,6 +23,16 @@
         .table-striped > tbody > tr:nth-of-type(odd) > td.td-sticky { background-color: #f2f3f5; }
         .table-hover > tbody > tr:hover > td.td-sticky { background-color: #e9ecef; }
         .entry-col { font-size: 0.72rem; line-height: 1.2; }
+        .plan-action { border-left: 4px solid #adb5bd; background: #fff; padding: 6px 10px; border-radius: 6px; margin-bottom: 5px; font-size: 0.8rem; }
+        .plan-action.urgent { border-left-color: #e03131; background: #fff5f5; }
+        .plan-action.entry { border-left-color: #2b8a3e; background: #f4fff6; }
+        .plan-action.watch { border-left-color: #1971c2; background: #f1f7ff; }
+        .plan-action.blocked { border-left-color: #f08c00; background: #fff9db; }
+        .badge-plan { font-size: 0.65rem; border-radius: 4px; padding: 1px 5px; font-weight: 700; white-space: nowrap; }
+        .badge-plan.avoid { background: #ffe3e3; color: #c92a2a; }
+        .badge-plan.entry { background: #d3f9d8; color: #2b8a3e; }
+        .badge-plan.watch { background: #e7f5ff; color: #1971c2; }
+        .badge-plan.danger { background: #fff3bf; color: #d9480f; }
 
         .stock-main-cell { text-align: left !important; min-width: 150px; max-width: 210px; }
         .company-name {
@@ -85,6 +95,9 @@
                     <a href="weekly.html" class="btn btn-outline-success btn-sm fw-bold">
                         <i class="bi bi-clipboard2-check me-1"></i> 週次答え合わせ
                     </a>
+                    <a href="strategy.html" class="btn btn-outline-danger btn-sm fw-bold">
+                        <i class="bi bi-signpost-split me-1"></i> 今日の作戦
+                    </a>
                     <a href="weekend.html" class="btn btn-outline-info btn-sm fw-bold">
                         <i class="bi bi-journal-richtext me-1"></i> 作戦ノート
                     </a>
@@ -105,6 +118,18 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- 今日の作戦（作戦台帳の要約） -->
+        <div class="card p-3 bg-white" id="today-plan-card">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                <div>
+                    <h2 class="h6 mb-0 text-danger fw-bold"><i class="bi bi-signpost-split me-1"></i> 今日の作戦</h2>
+                    <small class="text-muted" id="today-plan-meta">作戦台帳を読み込み中...</small>
+                </div>
+                <a href="strategy.html" class="btn btn-outline-danger btn-sm fw-bold">詳細を見る</a>
+            </div>
+            <div id="today-plan-list"><div class="text-muted small">読み込み中...</div></div>
         </div>
 
         <!-- モード切替（目的が違うので分離） -->
@@ -470,6 +495,8 @@
         let RANGE_AI = {};
         let recView = 'all';
         let PARAMS = null;
+        let PLAN_ITEMS = {};
+        let PLAN_AVOID = {};
         let scoreThreshold = 70;
         let sortKey = "score";
         let sortDir = "desc";
@@ -480,7 +507,7 @@
 
         document.addEventListener("DOMContentLoaded", async () => {
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
-            await Promise.all([loadAILatest(), loadMeta(), loadEarnings(), loadPicks(), loadParams()]);
+            await Promise.all([loadAILatest(), loadMeta(), loadEarnings(), loadPicks(), loadParams(), loadStrategyStatus()]);
             renderRegime();
             renderRecAlert();
             await initDates();
@@ -586,6 +613,72 @@
                 const res = await fetch('strategy_params.json');
                 PARAMS = await res.json();
             } catch (e) { PARAMS = null; }
+        }
+
+        async function loadStrategyStatus() {
+            const list = document.getElementById('today-plan-list');
+            const meta = document.getElementById('today-plan-meta');
+            if (!list || !meta) return;
+            try {
+                const [res, planRes] = await Promise.all([
+                    fetch('strategy/status.json', { cache: 'no-store' }),
+                    fetch('strategy/active.json', { cache: 'no-store' }).catch(() => null)
+                ]);
+                if (!res.ok) throw new Error('status not found');
+                const s = await res.json();
+                const plan = planRes && planRes.ok ? await planRes.json() : {};
+                const items = s.items || [];
+                PLAN_ITEMS = {};
+                items.forEach(i => { if (i.code) PLAN_ITEMS[i.code] = i; });
+                PLAN_AVOID = {};
+                (plan.avoid || []).forEach(a => { if (a.code) PLAN_AVOID[a.code] = a; });
+                const actionable = items.filter(i => !['hold', 'waiting', 'avoid'].includes(i.status));
+                const show = (actionable.length ? actionable : items).slice(0, 6);
+                const shortTime = (v) => String(v || '-').replace('T', ' ').slice(0, 16);
+                meta.textContent = `作戦 ${s.plan_id || '-'} / チェック ${shortTime(s.checked_at)} / データ ${shortTime(s.data_asof)}`;
+                if (!show.length) {
+                    list.innerHTML = '<div class="text-muted small">今日のトリガーはありません。</div>';
+                    return;
+                }
+                const cls = (st) => {
+                    if (['stop_hit', 'near_stop', 'max_hold'].includes(st)) return 'urgent';
+                    if (['triggered'].includes(st)) return 'entry';
+                    if (['blocked', 'blocked_waiting', 'expired'].includes(st)) return 'blocked';
+                    return 'watch';
+                };
+                list.innerHTML = show.map(i => `<div class="plan-action ${cls(i.status)}">
+                    <b>${esc(i.code)} ${esc(i.name)}</b>
+                    <span class="text-muted ms-1">${esc(i.action)}</span>
+                </div>`).join('');
+            } catch (e) {
+                meta.textContent = '作戦台帳がまだありません';
+                list.innerHTML = '<div class="text-muted small">「今日の作戦」ページで作戦を作成してください。</div>';
+            }
+        }
+
+        function planBadge(code) {
+            const avoid = PLAN_AVOID[code];
+            if (avoid) {
+                return `<span class="badge-plan avoid ms-1" title="${esc(avoid.reason || '作戦の見送り')}">作戦: 見送り</span>`;
+            }
+            const item = PLAN_ITEMS[code];
+            if (!item) return '';
+            const map = {
+                stop_hit: ['danger', '損切'],
+                near_stop: ['danger', '損切接近'],
+                tp_hit: ['watch', '利確'],
+                near_tp: ['watch', '利確接近'],
+                triggered: ['entry', '買い到達'],
+                near: ['watch', '接近'],
+                waiting: ['watch', '待機'],
+                hold: ['watch', '保有'],
+                blocked: ['danger', '条件NG'],
+                blocked_waiting: ['danger', '条件NG'],
+                expired: ['avoid', '失効'],
+                max_hold: ['danger', '期限']
+            };
+            const [cls, label] = map[item.status] || ['watch', item.status];
+            return `<span class="badge-plan ${cls} ms-1" title="${esc(item.action || '')}">作戦: ${esc(label)}</span>`;
         }
 
         function tierForPrice(price) {
@@ -1278,6 +1371,7 @@
                             <span class="company-name" onclick="showStockDetail('${s.code}')" title="${esc(s.name)}（タップで詳細・AI戦略）">${s.name}</span>
                             ${gcBadge}
                             ${sig.badgeHtml}
+                            ${planBadge(s.code)}
                         </div>
                         <div class="stock-sub-info">
                             <span class="badge ${isPrime ? 'bg-primary' : 'bg-secondary'} p-0 px-1" style="font-size:0.65rem;">${marketText}</span>

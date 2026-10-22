@@ -10,6 +10,19 @@
 
 ## 2026-10-22
 
+### 作戦台帳・トリガー監視・今日の作戦（この変更）
+- **commit**: この変更（作戦台帳とトリガー監視）
+- **種別**: 運用 / UI / ワークフロー
+- **変更**:
+  - `docs/strategy/active.json`（作戦台帳）、`status.json`（現在状態）、`events.json`（トリガー履歴）を追加。保有は**銘柄コードとOCO水準のみ**で、数量・損益額は持たない。
+  - `tools/check_strategy_plan.py` を追加。価格トリガー（押し目/ブレイク/損切/利確）、条件トリガー（地合い/セクター/決算）、期限切れを判定し、状態変化だけDiscord通知する。
+  - `docs/strategy.html`（今日の作戦）を追加。スクリーナー上部に「今日の作戦」カードと、一覧の「作戦」バッジを追加。
+  - `plan_check_intraday.yml` を追加。**平日9:00〜15:30 JSTのみ30分間隔**でチェック。`daily_main8.yml`（17時台）と `daily_main8_ai.yml`（AI実行後）にも引け後チェックを追加。
+  - `prompts/strategy_note.md` と `tools/prepare_strategy_note.py` を追加。opencode以外（Claude Code / Codex / Cursor / Gemini CLI）でも同じ手順で作戦ノート・台帳を作れるようにした。`.opencode/command/strategy-note.md` は汎用プロンプトを読む薄いラッパーに変更。
+- **根拠・検証**: `python tools/prepare_strategy_note.py`、`python tools/check_strategy_plan.py --mode eod --force`、`strategy.html` と `index.html` のヘッドレス描画を確認。2026-10-22時点で1518の損切接近（2,192まで0.4%）、4746の買い入口接近（2,000まで1.0%）を検出。
+- **影響・ロールバック**: 既存ページの挙動は維持。通知は状態変化のみ。自動発注はしない。戻す場合は追加ファイル・ワークフロー・リンクを `git revert`。
+- **関連**: `docs/strategy/*` / `docs/strategy.html` / `tools/check_strategy_plan.py` / `tools/prepare_strategy_note.py` / `prompts/strategy_note.md` / `.github/workflows/plan_check_intraday.yml` / `docs/index.html` / `AGENTS.md`
+
 ### 作戦ノートの一発生成（/strategy-note）（この変更）
 - **commit**: この変更（作戦ノート自動化）
 - **種別**: 運用 / ドキュメント / UI

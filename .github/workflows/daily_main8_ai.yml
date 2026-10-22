@@ -63,6 +63,12 @@ jobs:
           echo "python main8.py $ARGS"
           python main8.py $ARGS
 
+      - name: 作戦トリガー（AI実行後の確定チェック）
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python tools/check_strategy_plan.py --mode eod
+
       - name: コミット＆プッシュ
         run: |
           git config --global user.name "github-actions[bot]"

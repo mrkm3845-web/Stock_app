@@ -42,6 +42,17 @@ jobs:
         run: |
           python main8.py
 
+      - name: 作戦トリガー（引け後チェック）
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          hour=$(TZ=Asia/Tokyo date +%H)
+          if [ "$hour" = "17" ]; then
+            python tools/check_strategy_plan.py --mode eod
+          else
+            echo "skip: 引け後チェックは17時台のみ（現在 ${hour}時 JST）"
+          fi
+
       - name: コミット＆プッシュ
         run: |
           git config --global user.name "github-actions[bot]"

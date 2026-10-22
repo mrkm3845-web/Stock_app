@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0d6efd">
+    <meta name="description" content="今日やること・トリガー・保有OCOを、スマホで確認できる作戦ダッシュボードです。">
+    <title>今日の作戦｜スイング戦略</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.9rem; padding-bottom: 60px; }
+        .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
+        .hero { background: linear-gradient(135deg, #eef6ff, #ffffff); border-left: 5px solid #0d6efd; }
+        .action-item { border-left: 4px solid #adb5bd; background: #fff; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; }
+        .action-item.urgent { border-left-color: #e03131; background: #fff5f5; }
+        .action-item.entry { border-left-color: #2b8a3e; background: #f4fff6; }
+        .action-item.watch { border-left-color: #1971c2; background: #f1f7ff; }
+        .action-item.blocked { border-left-color: #f08c00; background: #fff9db; }
+        .status-pill { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+        .s-hold { background: #e9ecef; color: #495057; }
+        .s-near { background: #fff3bf; color: #d9480f; }
+        .s-triggered { background: #d3f9d8; color: #2b8a3e; }
+        .s-stop { background: #ffe3e3; color: #c92a2a; }
+        .s-tp { background: #e7f5ff; color: #1971c2; }
+        .s-blocked { background: #fff3bf; color: #d9480f; }
+        .s-expired { background: #e9ecef; color: #6c757d; }
+        .s-waiting { background: #eef2f7; color: #495057; }
+        table th { background-color: #212529 !important; color: #fff !important; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 0.78rem; }
+        table td { vertical-align: middle; font-size: 0.82rem; }
+        .muted-small { font-size: 0.72rem; color: #868e96; }
+        .pos { color: #d6336c; font-weight: 700; }
+        .neg { color: #1971c2; font-weight: 700; }
+        .rule { background: #f8f9fa; border-left: 4px solid #adb5bd; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.85rem; }
+        .event-item { border-left: 3px solid #adb5bd; padding: 6px 10px; margin-bottom: 6px; background: #fff; border-radius: 4px; font-size: 0.82rem; }
+    </style>
+</head>
+<body>
+<div class="container py-3" style="max-width: 980px;">
+
+    <div class="card hero p-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-signpost-split"></i> 今日の作戦</h1>
+                <small class="text-muted" id="subtitle">作戦台帳と最新価格を突き合わせた、今日やること。</small>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナー</a>
+                <a href="weekend.html" class="btn btn-outline-info btn-sm fw-bold" id="note-link"><i class="bi bi-journal-richtext me-1"></i> 作戦ノート</a>
+                <a href="weekly.html" class="btn btn-outline-success btn-sm fw-bold"><i class="bi bi-clipboard2-check me-1"></i> 週次答え合わせ</a>
+                <a href="journal.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i> 取引記録</a>
+                <button class="btn btn-outline-secondary btn-sm fw-bold" onclick="location.reload()"><i class="bi bi-arrow-clockwise me-1"></i> 更新</button>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
+            <span id="plan-badge" class="badge bg-light text-secondary border">作戦: -</span>
+            <span id="checked-badge" class="badge bg-light text-secondary border">チェック: -</span>
+            <span id="data-badge" class="badge bg-light text-secondary border">データ: -</span>
+        </div>
+    </div>
+
+    <div id="loading" class="alert alert-info">読み込み中...</div>
+    <div id="error-box" class="alert alert-warning d-none"></div>
+
+    <div id="content" class="d-none">
+        <div class="row g-2 mb-1" id="summary-cards"></div>
+
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-check2-square me-1"></i> 今日やること</h2>
+            <div id="today-actions"></div>
+            <div class="muted-small mt-2">価格がトリガーに到達しただけでは買いではありません。条件（地合い・セクター・決算）も確認してください。</div>
+        </div>
+
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-list-check me-1"></i> トリガー一覧</h2>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered align-middle mb-0">
+                    <thead><tr><th>種別</th><th>銘柄</th><th>状態</th><th>現在</th><th>入口</th><th>損切</th><th>利確</th><th>距離</th><th>今日の扱い</th></tr></thead>
+                    <tbody id="items-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-shield-exclamation me-1"></i> 見送り・条件NG</h2>
+            <div id="avoid-box"></div>
+        </div>
+
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-rulers me-1"></i> 守るルール</h2>
+            <div id="rules-box"></div>
+        </div>
+
+        <div class="card p-3">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-clock-history me-1"></i> 最近のトリガー履歴</h2>
+            <div id="events-box"></div>
+        </div>
+
+        <div class="card p-3">
+            <div class="warn">
+                <b>このページは公開されます。</b> 保有数量・損益額・口座情報は載せていません。銘柄コード・OCO水準・作戦だけです。
+                投資助言ではありません。最終判断はご自身でお願いします。
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = (v) => (v === null || v === undefined || v === '') ? '-' : Number(v).toLocaleString('ja-JP', { maximumFractionDigits: 1 });
+const pct = (v) => (v === null || v === undefined || v === '') ? '-' : (Number(v) >= 0 ? '+' : '') + Number(v).toFixed(1) + '%';
+
+const STATUS_LABEL = {
+  hold: '保有', near_stop: '損切接近', near_tp: '利確接近', stop_hit: '損切到達',
+  tp_hit: '利確到達', max_hold: '保有期限', waiting: '待機', near: '接近',
+  triggered: '買い到達', triggered_then_stop: '同日損切', blocked: '条件NG',
+  blocked_waiting: '条件NG', expired: '期限切れ', avoid: '見送り'
+};
+const STATUS_CLASS = {
+  hold: 's-hold', near_stop: 's-near', near_tp: 's-near', stop_hit: 's-stop',
+  tp_hit: 's-tp', max_hold: 's-expired', waiting: 's-waiting', near: 's-near',
+  triggered: 's-triggered', triggered_then_stop: 's-blocked', blocked: 's-blocked',
+  blocked_waiting: 's-blocked', expired: 's-expired', avoid: 's-expired'
+};
+const ACTION_CLASS = {
+  stop_hit: 'urgent', near_stop: 'urgent', triggered: 'entry', near: 'watch',
+  blocked: 'blocked', blocked_waiting: 'blocked', tp_hit: 'watch', near_tp: 'watch',
+  max_hold: 'urgent', expired: 'blocked', hold: '', waiting: ''
+};
+
+function badge(status) {
+  return `<span class="status-pill ${STATUS_CLASS[status] || 's-waiting'}">${esc(STATUS_LABEL[status] || status)}</span>`;
+}
+
+function card(label, value, sub, cls) {
+  return `<div class="col-6 col-md-3"><div class="border rounded-3 p-2 text-center h-100">
+    <div class="muted-small">${esc(label)}</div>
+    <div class="fw-bold ${cls || ''}" style="font-size:1.15rem">${esc(value)}</div>
+    <div class="muted-small">${esc(sub || '')}</div></div></div>`;
+}
+
+async function fetchJson(url) {
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`${url} (${res.status})`);
+  return res.json();
+}
+
+function render(plan, status, events) {
+  const shortTime = (v) => String(v || '-').replace('T', ' ').slice(0, 16);
+  document.getElementById('plan-badge').textContent = `作戦: ${plan.plan_id || '-'}`;
+  document.getElementById('checked-badge').textContent = `チェック: ${shortTime(status.checked_at)}`;
+  document.getElementById('data-badge').textContent = `データ: ${shortTime(status.data_asof || plan.data_date)}`;
+  if (plan.note_id) document.getElementById('note-link').href = `weekend.html?date=${encodeURIComponent(plan.note_id)}`;
+
+  const items = status.items || [];
+  const positions = items.filter(i => i.kind === 'position');
+  const watches = items.filter(i => i.kind === 'watch');
+  const market = status.market || {};
+  const breadth = market.breadth || {};
+  const bank = market.bank_sector || {};
+
+  document.getElementById('summary-cards').innerHTML =
+    card('地合い', market.regime?.risk_on ? 'リスクオン' : 'リスクオフ', `1306.T ${num(market.regime?.close)} / 200日線 ${num(market.regime?.sma)}`, market.regime?.risk_on ? 'pos' : 'neg') +
+    card('200日線上', `${num(breadth.above_sma200_pct)}%`, `${num(breadth.n)}銘柄`, '') +
+    card('25日線上', `${num(breadth.above_sma25_pct)}%`, '短期の地合い', '') +
+    card('銀行の25日線上', `${num(bank.above_sma25_pct)}%`, '30%未満は新規停止', Number(bank.above_sma25_pct) >= 30 ? 'pos' : 'neg');
+
+  document.getElementById('today-actions').innerHTML = items.length
+    ? items.map(item => `<div class="action-item ${ACTION_CLASS[item.status] || ''}">
+        <div class="d-flex justify-content-between gap-2">
+          <div class="fw-bold">${esc(item.code)} ${esc(item.name)} ${badge(item.status)}</div>
+          <div class="muted-small">現在 ${num(item.current_price)}</div>
+        </div>
+        <div class="mt-1">${esc(item.action)}</div>
+      </div>`).join('')
+    : '<div class="muted-small">トリガーはまだありません。</div>';
+
+  document.getElementById('items-body').innerHTML = items.length
+    ? items.map(item => `<tr>
+        <td>${item.kind === 'position' ? '保有' : '監視'}</td>
+        <td class="text-start"><b>${esc(item.code)}</b> ${esc(item.name)}</td>
+        <td>${badge(item.status)}</td>
+        <td>${num(item.current_price)}</td>
+        <td>${num(item.entry_price)}</td>
+        <td>${num(item.stop)}</td>
+        <td>${num(item.take_profit)}</td>
+        <td>${item.distance_pct == null ? '-' : Number(item.distance_pct).toFixed(1) + '%'}</td>
+        <td class="text-start">${esc(item.action)}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="9" class="text-muted">データがありません</td></tr>';
+
+  const avoid = plan.avoid || [];
+  const blocked = watches.filter(i => i.status === 'blocked' || i.status === 'blocked_waiting');
+  document.getElementById('avoid-box').innerHTML = (avoid.length || blocked.length)
+    ? [
+        ...blocked.map(i => `<div class="action-item blocked"><b>${esc(i.code)} ${esc(i.name)}</b>：${esc(i.action)}</div>`),
+        ...avoid.map(i => `<div class="action-item blocked"><b>${esc(i.code)} ${esc(i.name)}</b>：${esc(i.reason)}</div>`)
+      ].join('')
+    : '<div class="muted-small">見送りはありません。</div>';
+
+  document.getElementById('rules-box').innerHTML = (plan.rules || []).map(rule => `<div class="rule">${esc(rule)}</div>`).join('') || '<div class="muted-small">ルール未設定</div>';
+
+  const recent = (events.events || []).slice().reverse().slice(0, 20);
+  document.getElementById('events-box').innerHTML = recent.length
+    ? recent.map(e => `<div class="event-item"><span class="muted-small">${esc(e.at)}</span> ${badge(e.status)} <b>${esc(e.code)} ${esc(e.name)}</b> ${esc(e.action)}</div>`).join('')
+    : '<div class="muted-small">まだ履歴はありません。</div>';
+
+  document.getElementById('loading').classList.add('d-none');
+  document.getElementById('content').classList.remove('d-none');
+}
+
+async function boot() {
+  try {
+    const [plan, status, events] = await Promise.all([
+      fetchJson('strategy/active.json'),
+      fetchJson('strategy/status.json').catch(() => ({ items: [], today_actions: [] })),
+      fetchJson('strategy/events.json').catch(() => ({ events: [] }))
+    ]);
+    render(plan, status, events);
+  } catch (err) {
+    document.getElementById('loading').classList.add('d-none');
+    const box = document.getElementById('error-box');
+    box.textContent = `作戦データを読み込めませんでした：${err.message}`;
+    box.classList.remove('d-none');
+  }
+}
+
+boot();
+</script>
+</body>
+</html>

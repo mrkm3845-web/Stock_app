@@ -1,0 +1,55 @@
+name: 作戦トリガー監視（日中30分）
+
+on:
+  schedule:
+    # 平日 09:00〜15:30 JST に30分間隔（UTC 00:00〜06:30）
+    - cron: '*/30 0-6 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: strategy-plan-intraday
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy yfinance
+
+      - name: 作戦台帳をチェック
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python tools/check_strategy_plan.py --mode intraday
+
+      - name: 状態変化があればコミット
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- docs/strategy/events.json; then
+            echo "状態変化なし（statusはコミットしない）"
+            git checkout -- docs/strategy/status.json || true
+          else
+            git add docs/strategy/status.json docs/strategy/events.json
+            git commit -m "Update strategy status [skip ci]"
+            git pull --rebase -X theirs origin main || {
+              echo "競合が発生したため、ローカル生成データを優先して解決します"
+              GIT_EDITOR=true git rebase --continue
+            }
+            git push origin main
+          fi

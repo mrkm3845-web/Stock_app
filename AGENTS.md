@@ -146,6 +146,7 @@ Invoke-RestMethod -Uri "https://api.github.com/repos/mrkm3845-web/Stock_app/acti
 | `daily_main8_ai.yml` | AI推奨（平日20:17 JST）。`recommendations.json` を生成 |
 | `run_walkforward.yml` | 月次バックテスト＋パラメータ反映 |
 | `weekly_review.yml` | 週次答え合わせ（土曜09:00 JST） |
+| `plan_check_intraday.yml` | 作戦トリガー監視（平日9:00〜15:30 JSTに30分間隔） |
 
 ---
 
@@ -165,8 +166,26 @@ opencode で次のコマンドを実行します。
 追加の希望があれば後ろに書きます（例：`/strategy-note 地銀は避けたい`）。
 
 このコマンドは、ルートの最新 `tradehistory(JP)_*.csv` を読み、市場データと合わせて
-作戦ノートを作り、コミット・push まで行います。補助スクリプトは
-`tools/prepare_strategy_note.ps1` です。
+**作戦ノート**と**作戦台帳**を作り、コミット・push まで行います。
+
+### 他のハーネスでも使う
+
+opencode 以外（Claude Code / Codex / Cursor / Gemini CLI など）では、次の2つを使います。
+
+- `prompts/strategy_note.md` … 手順書（これを読ませる）
+- `python tools/prepare_strategy_note.py` … 最新CSV・市場データの集計
+
+WindowsでPythonがない場合だけ `tools/prepare_strategy_note.ps1` を使います。
+
+### 作戦台帳（実行の正）
+
+- `docs/strategy/active.json` … 保有・押し目/ブレイク・見送り・条件・ルール
+- `docs/strategy/status.json` … 現在の状態（待機/接近/到達/損切/利確/失効）
+- `docs/strategy/events.json` … トリガー履歴
+- `docs/strategy/plans/{plan_id}.json` … 古い台帳の退避
+- `docs/strategy.html` … 今日の作戦ダッシュボード（スクリーナーからリンク）
+- 価格トリガーと条件トリガーを分ける（例：3,180円に来ても銀行セクターが弱ければ買わない）
+- **AIやスコアより台帳を優先**する。AIは提案、実行は台帳
 
 ### ノートのルール
 
@@ -175,11 +194,19 @@ opencode で次のコマンドを実行します。
 - 表示ページ：`docs/weekend.html`（自動で読み込みます）
 - ノートの形：`id` / `created_at` / `data_date` / `trade_history_last_date` / `trigger` / `title` / `lead` / `sections[{id, title, icon, html}]`
 - ノートには「結論・保有とリスク・地合い・数字・前回からの変化・作戦・候補・守るルール・システム側の宿題」を書く
-- **このページは公開されます。** 保有数量・損益額・口座情報・個人情報は書かない
+- **このページは公開されます。** 保有数量・損益額・口座情報・個人情報は書かない。保有は**銘柄コードとOCO水準まで**
 - **個人の売買履歴CSVは読むだけで、絶対にコミットしない**（`.gitignore` 済み。ステージ確認もする）
 - 取引履歴と市場データの日付がズレているときは、その旨をノートに明記する
 
-作戦ノートの更新も、必要なら `CHANGELOG.md` に残します。
+### トリガー監視
+
+- 平日の市場時間中に30分間隔で `python tools/check_strategy_plan.py --mode intraday`
+- 引け後に `--mode eod` で確定チェック
+- 30分間隔は**平日9:00〜15:30 JSTのみ**。24時間ではない
+- 状態が変わったときだけDiscord通知。同じ通知を繰り返さない
+- 損切りは証券会社のOCOを必ず置く。Botは補助であり、約定を保証しない
+
+作戦ノート・台帳の更新も、必要なら `CHANGELOG.md` に残します。
 
 ---
 
