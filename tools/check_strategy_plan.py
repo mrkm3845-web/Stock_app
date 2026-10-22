@@ -174,7 +174,7 @@ def fetch_prices(codes: list[str], mode: str):
     return result, "yfinance"
 
 
-def history_fallback(codes: list[str], hist):
+def history_fallback(codes: list[str], hist, data_date: str | None = None):
     if not hist:
         return {}
     by_code = {str(item.get("code")): item for item in hist}
@@ -190,7 +190,7 @@ def history_fallback(codes: list[str], hist):
             "price": price,
             "high": price,
             "low": price,
-            "asof": "history",
+            "asof": data_date or "history",
             "source": "history-close",
         }
     return result
@@ -393,17 +393,19 @@ def main() -> int:
     watchlist = plan.get("watchlist") or []
     codes = [str(item.get("code")) for item in positions + watchlist if item.get("code")]
     prices, source = fetch_prices(codes, args.mode)
-    fallback = history_fallback(codes, hist)
+    fallback = history_fallback(codes, hist, (meta or {}).get("date"))
     for code, px in fallback.items():
         prices.setdefault(code, px)
 
     # 日中チェックは、当日の新しいデータが取れない日（休場・データ遅延）に
-    # 古い値で通知しない。
+    # 古い値で通知しない。yfinance のデータだけを「当日」とみなす。
     if args.mode == "intraday":
         fresh_dates = []
         for px in prices.values():
+            if not str(px.get("source", "")).startswith("yfinance"):
+                continue
             asof = px.get("asof")
-            if not asof or asof == "history":
+            if not asof:
                 continue
             try:
                 fresh_dates.append(datetime.fromisoformat(asof).date())

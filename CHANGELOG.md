@@ -19,6 +19,7 @@
   - `prompts/strategy_note.md` と `.opencode/command/strategy-note.md` の作成前に鮮度チェックを追加。
   - `refresh_data_ai.yml` を追加。スマホからもスクリーナー＋AIを手動更新できる。
   - `docs/strategy.html` に「データ更新（AI）」ボタンを追加。
+  - `check_strategy_plan.py` の履歴フォールバック時、`data_asof` に `history` ではなく実際の取引日を入れるよう修正。
 - **根拠・検証**: 手動実行は平日夜・週末が中心で、AIが前日価格のままになる問題（例: 8541のAI 3,255 vs 最新 3,455）を防ぐ。`tools/refresh_data_if_stale.py --check` で期待日2026-10-22、履歴2026-10-21、AI古い・価格ズレ3件を検出。
 - **影響・ロールバック**: 鮮度チェックと更新に数分かかる場合がある。AIキーがないローカルではテクニカルのみ。戻す場合は追加スクリプト・ワークフロー・プロンプトの手順を `git revert`。
 - **関連**: `tools/refresh_data_if_stale.py` / `prompts/strategy_note.md` / `.opencode/command/strategy-note.md` / `.github/workflows/refresh_data_ai.yml` / `docs/strategy.html` / `docs/guide.html` / `AGENTS.md` / `PROJECT_STATUS.md`
