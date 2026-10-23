@@ -27,28 +27,6 @@
   },
   "positions": [
     {
-      "code": "7272",
-      "name": "ヤマハ発動機",
-      "entry_price": 1864,
-      "stop": 1737,
-      "take_profit": 2142,
-      "max_hold_until": "2026-10-23",
-      "status": "trim",
-      "thesis": "低PER・高配当・上昇トレンドだが、25日線を下回り1,800割れ。",
-      "invalidation": "1,800割れ済みのため半分を手仕舞い。残りは1,737で撤退。追加買いなし。"
-    },
-    {
-      "code": "1518",
-      "name": "三井松島ホールディングス",
-      "entry_price": 2285,
-      "stop": 2192,
-      "take_profit": 2631,
-      "max_hold_until": "2026-11-17",
-      "status": "hold",
-      "thesis": "高配当・ROE11%台。25日線付近で推移。",
-      "invalidation": "2,192割れで撤退（終値待ちにしない）。2,294超えで損切りを2,200へ切り上げ。"
-    },
-    {
       "code": "6191",
       "name": "エアトリ",
       "entry_price": 1433,
@@ -56,8 +34,8 @@
       "take_profit": 1612,
       "max_hold_until": "2026-10-28",
       "status": "hold",
-      "thesis": "旅行支援材料。上昇継続だが高値圏。",
-      "invalidation": "1,310割れで撤退。1,505超えで損切りを建値へ。"
+      "thesis": "旅行支援材料。10/22終値1,447から10/23は1,414まで軟化したが、OCOの範囲内。",
+      "invalidation": "1,310割れで撤退。1,505超えで損切りを建値へ。10/28が最大保有日。"
     }
   ],
   "watchlist": [
@@ -71,7 +49,11 @@
       "stop": 1868,
       "take_profit": 2323,
       "wait_until": "2026-10-30",
-      "conditions": ["market_risk_on", "sector_ok", "earnings_ok"],
+      "conditions": [
+        "market_risk_on",
+        "sector_ok",
+        "earnings_ok"
+      ],
       "priority": "A",
       "status": "waiting",
       "thesis": "情報・通信が強い。RSI58.7まで過熱が解消し、光通信の買い増し材料も残る。",
@@ -87,27 +69,35 @@
       "stop": 3191,
       "take_profit": 3815,
       "wait_until": "2026-10-30",
-      "conditions": ["market_risk_on", "sector_ok", "earnings_ok"],
-      "priority": "B",
-      "status": "waiting",
-      "thesis": "スコア81.3・RSI54.7で過熱は薄い。高還元だが海運セクターの勢いは弱い。",
-      "invalidation": "3,191割れ、または海運の25日線上比率が30%割れ。"
+      "conditions": [
+        "market_risk_on",
+        "sector_ok",
+        "earnings_ok"
+      ],
+      "priority": "C",
+      "status": "watch_only",
+      "thesis": "10/23は海運3社そろって-2〜-3%（個別材料ではなくセクター全体安）。終値3,329で25日線3,362を下回った。",
+      "invalidation": "終値で25日線3,362を回復するまで買わない。決算11/4のため10/30以降は新規停止。"
     },
     {
       "code": "6952",
       "name": "カシオ計算機",
-      "trigger_type": "breakout",
-      "entry_price": 2335,
-      "entry_zone_low": 2296,
-      "entry_zone_high": 2335,
-      "stop": 2122,
+      "trigger_type": "pullback",
+      "entry_price": 2340,
+      "entry_zone_low": 2300,
+      "entry_zone_high": 2350,
+      "stop": 2255,
       "take_profit": 2640,
       "wait_until": "2026-10-30",
-      "conditions": ["market_risk_on", "sector_ok", "earnings_ok"],
+      "conditions": [
+        "market_risk_on",
+        "sector_ok",
+        "earnings_ok"
+      ],
       "priority": "B",
       "status": "waiting",
-      "thesis": "出来高を伴うブレイク。電気機器は強いが、損切り幅9.1%でリワード/リスクは1.4倍。",
-      "invalidation": "2,295割れ（ブレイク失敗）、または決算5日前。現金に余裕がある場合のみ小口。"
+      "thesis": "10/23に20日高値2,333を出来高2倍で上抜け（引け2,357）。ただし2,357からの損切り2,122ではR/R1.2倍で追えない。押し目再テストのみ。",
+      "invalidation": "2,255割れ（10/23安値2,260の下）、または決算5日前（11/12決算のため11/5以降）。"
     }
   ],
   "avoid": [
@@ -146,12 +136,39 @@
     "1306.Tが200日線398.7を終値で割れたら新規停止、保有は2銘柄まで",
     "銀行は25日線上比率30%超まで新規停止",
     "週間-3%で新規停止、-5%で現金化",
-    "決算5日前以内は新規見送り",
+    "決算5日前以内は新規見送り（川崎汽船は11/4決算→10/30以降は新規停止、カシオは11/12決算→11/5以降）",
     "保有は最大3銘柄、同じセクターは1銘柄、金融は1銘柄",
     "投資比率は50%以下を維持。超えている間は新規買いなし",
     "損切りを広げない・ナンピンしない",
-    "1518は2,192のOCOで機械的に切る（終値待ちにしない）",
-    "7272は1,800割れ済みのため半分を手仕舞い、残りは1,737で守る"
+    "10/23の2敗（1518 -4.2%、7272 -4.9%）を受け、新規は1銘柄だけ・1取引のリスクは1万円以内",
+    "OCOは証券会社側に必ず置く。Botは補助で約定を保証しない"
   ],
-  "updated_at": "2026-10-22T18:15:28+09:00"
+  "updated_at": "2026-10-23T15:30:00+09:00",
+  "updated_note": "2026-10-23の引け後に約定を反映。1518（OCO 2,190）と7272（引け 1,772.7）を手仕舞い、保有は6191のみ。取引履歴CSVは2026-10-22版（最終約定10/19）のままなので、次回ノート作成前に10/23分のCSVを再出力すること。",
+  "closed": [
+    {
+      "code": "1518",
+      "name": "三井松島ホールディングス",
+      "entry_price": 2285,
+      "exit_price": 2190,
+      "qty": 100,
+      "exit_reason": "stop_hit（OCO 2,192）",
+      "pnl_pct": -4.2,
+      "pnl_jpy": -9500,
+      "closed_at": "2026-10-23",
+      "lesson": "損切りを終値待ちにせずOCOで機械的に執行できた。ルールどおりの負け。"
+    },
+    {
+      "code": "7272",
+      "name": "ヤマハ発動機",
+      "entry_price": 1864,
+      "exit_price": 1772.7,
+      "qty": 100,
+      "exit_reason": "max_hold（最大保有日2026-10-23の引けで手仕舞い）",
+      "pnl_pct": -4.9,
+      "pnl_jpy": -9130,
+      "closed_at": "2026-10-23",
+      "lesson": "25日線割れ・1,800割れで前提が崩れていた。最大保有日のルールを曲げずに撤退。"
+    }
+  ]
 }
