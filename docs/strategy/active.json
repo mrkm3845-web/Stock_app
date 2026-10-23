@@ -60,26 +60,6 @@
       "invalidation": "1,868割れ、または決算5日前。現金比率50%未満の間は買わない。"
     },
     {
-      "code": "9107",
-      "name": "川崎汽船",
-      "trigger_type": "pullback",
-      "entry_price": 3350,
-      "entry_zone_low": 3277,
-      "entry_zone_high": 3413,
-      "stop": 3191,
-      "take_profit": 3815,
-      "wait_until": "2026-10-30",
-      "conditions": [
-        "market_risk_on",
-        "sector_ok",
-        "earnings_ok"
-      ],
-      "priority": "C",
-      "status": "watch_only",
-      "thesis": "10/23は海運3社そろって-2〜-3%（個別材料ではなくセクター全体安）。終値3,329で25日線3,362を下回った。",
-      "invalidation": "終値で25日線3,362を回復するまで買わない。決算11/4のため10/30以降は新規停止。"
-    },
-    {
       "code": "6952",
       "name": "カシオ計算機",
       "trigger_type": "pullback",
@@ -101,6 +81,17 @@
     }
   ],
   "avoid": [
+    {
+      "code": "9107",
+      "name": "川崎汽船",
+      "reason": "10/23は海運3社そろって-2〜-3%（個別材料ではなくセクター全体安）。終値3,329で25日線3,362を下回り、押し目の前提が崩れた。決算11/4で持ち時間も短い。",
+      "reentry_condition": "終値で25日線3,362を回復し、かつ海運3社が揃って反発。再開時は3,300〜3,330で打診、損切3,191、利確3,750、10/29までに手仕舞い。",
+      "levels": {
+        "entry": 3350,
+        "stop": 3191,
+        "take_profit": 3815
+      }
+    },
     {
       "code": "8541",
       "name": "愛媛銀行",
