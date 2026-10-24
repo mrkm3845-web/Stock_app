@@ -326,6 +326,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **確定終値の扱い**: `main8.py` の対象日は**15:30より前なら前営業日**（`get_target_date_str`）。日中に走っても当日の途中の足を確定値として保存しない。現在値が必要な場面は `check_strategy_plan.py`（yfinance）を使う。
 - **地合い・セクターの広がりは全銘柄で計算**（`excluded`＝週足下向きを除かない）。除いてから測ると上昇中の銘柄だけを集めることになり数値が上振れする（銀行が2銘柄になる等）。**10銘柄未満は参考外**とし、`sector_ok` は条件NGにする。表示は「買いやすい（リスクオン）」「慎重に（リスクオフ）」。**リスクオンは危険ではない**。
 - **DDブレーキ（精神に頼らない停止）**: 資産が直近ピークから**-10%で新規停止**、**-15%で全現金化**。再開はピーク回復後、または2週間後に地合いが「買いやすい」へ戻ってから（再開時は半分のサイズ）。**1取引リスクは5,000円（0.8%）まで**。銘柄数は**3固定**（資金60〜90万のため。検証では3銘柄は弱いが、分散より資金制約を優先し、サイズとDDブレーキで抑える）。
+- **セクター色（業種の強さ）**: 業種ごとに**緑（25日線上50%以上）/ 黄（30〜50%）/ 赤（30%未満）**を**全銘柄**で計算し、**赤はAI推奨から外す**（様子見には残す）。色はテクニカルだけで決め、ニュースは使わない。`docs/sector_colors.json` に保存し、スクリーナー・今日の作戦に表示。**閾値の見直しは 2026-12-19**（`strategy_params.json` の `sector_color.review_after`。過ぎると main8 と週次Discordが警告）。
 - 作戦台帳: `docs/strategy/active.json`。トリガーは `tools/check_strategy_plan.py` が `--mode intraday|eod` で判定し、`docs/strategy/status.json` / `events.json` を更新。ワークフロー: `plan_check_intraday.yml`（平日60分・1日7回）/ `daily_main8.yml`（17時台）/ `daily_main8_ai.yml`（AI実行後）。**日中の監視は執行の見張り番**（作戦ノートの材料には使わない）。Actionsの遅延で実起動は1〜2時間遅れ、発火しない回もあるため「リアルタイムの損切り監視」としては使わない（OCOが本体）。
 - 運用手順の一覧: [`docs/ops.html`](docs/ops.html)（自動／手動の切り分け・時刻表・Q&A）。
 - データ鮮度: 作戦ノート作成前に `tools/refresh_data_if_stale.py --refresh`。平日の夜は当日、週末は直近の金曜を期待日として、履歴・AIが古ければ `main8.py` で価格・スコア・AIをまとめて更新する。AIキーがない場合はテクニカルのみ。スマホからは `refresh_data_ai.yml`（手動データ更新）を実行。
@@ -350,6 +351,7 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **Gemini grounding PoC（b）**: クォータ回復 or 課金、および **Search Suggestions 表示のUI対応**が前提。JSON併用は未記載のため二段構成で検証。
 - **DeepSeek利用時のCI設定**: `daily_main8_ai.yml` の `env` に `DEEPSEEK_API_KEY` を追加（Secretは登録済み）。
 - **作戦トリガー監視の効果測定（11月中旬に判断）**: `docs/strategy/events.json` を見て、**intraday 実行由来の `triggered` / `near_stop` / `stop_hit` が記録されたか**を確認する。0件なら `plan_check_intraday.yml` を止め、引け後チェック＋OCOに寄せる（案C）。あわせて GitHub Actions の実測遅延（中央値+100分・約4割が発火せず）を前提に、通知の価値を評価する。
+- **セクター色の閾値見直し（2026-12-19）**: `strategy_params.json` の `sector_color`（緑50%／黄30%）を1〜2か月動かして、`docs/sector_colors.json` と `docs/picks` の色・実績で効果を確認する。赤除外で取引回数が減りすぎていないか、反転初動の取りこぼしが大きくないかを見て調整する。**それまでは閾値を変えない**（過ぎると main8 実行時と週次Discordで警告）。
 - エグジット係数（ATR損切・トレーリング・部分利確）の区分別最適化の拡張。
 - 同時保有数の頑健性検証（単一経路依存の解消）。
 - スコアのランダム対比での優位性向上（現状はリターンで勝ち・PFは同等）。

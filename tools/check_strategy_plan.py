@@ -199,6 +199,20 @@ def history_fallback(codes: list[str], hist, data_date: str | None = None):
 MIN_BREADTH_N = 10
 
 
+def sector_color_of(info, green_min=50.0, yellow_min=30.0):
+    """業種の色（main8.py と同じ基準）。緑>=50 / 黄>=30 / 赤。"""
+    if not info:
+        return None
+    pct = info.get("above_sma25_pct")
+    if pct is None:
+        return None
+    if pct >= green_min:
+        return "green"
+    if pct >= yellow_min:
+        return "yellow"
+    return "red"
+
+
 def breadth_for(hist, sector: str | None = None):
     """セクター（Noneなら全体）の広がり。
 
@@ -457,11 +471,16 @@ def main() -> int:
         if not px:
             continue
         status, action, price, high, low = evaluate_position(item, px, now, near_pct)
+        sec = sector_of(hist, code)
+        sec_b = breadth_for(hist, sec) if sec else None
         items.append(
             {
                 "code": code,
                 "name": item.get("name"),
                 "kind": "position",
+                "sector": sec,
+                "sector_color": sector_color_of(sec_b),
+                "sector_above_sma25_pct": (sec_b or {}).get("above_sma25_pct"),
                 "status": status,
                 "current_price": round(price, 1),
                 "high": round(high, 1),
@@ -484,11 +503,16 @@ def main() -> int:
         status, action, price, high, low, cond_ok, cond_reasons = evaluate_watch(
             item, px, now, near_pct, hist, meta, earnings
         )
+        sec = sector_of(hist, code)
+        sec_b = breadth_for(hist, sec) if sec else None
         items.append(
             {
                 "code": code,
                 "name": item.get("name"),
                 "kind": "watch",
+                "sector": sec,
+                "sector_color": sector_color_of(sec_b),
+                "sector_above_sma25_pct": (sec_b or {}).get("above_sma25_pct"),
                 "status": status,
                 "current_price": round(price, 1),
                 "high": round(high, 1),

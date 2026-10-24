@@ -135,10 +135,11 @@
     "liquidity": 20
   },
   "portfolio": {
-    "max_positions": 5,
-    "max_per_sector": 2,
-    "risk_per_trade_pct": 1.0,
-    "reference_capital_jpy": 1000000
+    "max_positions": 3,
+    "max_per_sector": 1,
+    "risk_per_trade_pct": 0.8,
+    "reference_capital_jpy": 600000,
+    "max_risk_per_trade_jpy": 5000
   },
   "price_filter": {
     "enabled": true,
@@ -245,5 +246,14 @@
     "shrinkage_k": 10.0,
     "min_group_trades": 8,
     "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
+  },
+  "sector_color": {
+    "enabled": true,
+    "green_min_pct": 50,
+    "yellow_min_pct": 30,
+    "block_red_in_recommend": true,
+    "min_sample": 10,
+    "review_after": "2026-12-19",
+    "note": "業種の色は全銘柄の25日線の上比率で決める（緑>=50 / 黄30-50 / 赤<30）。赤はAI推奨から外す（様子見には残す）。2026-12-19に見直し"
   }
 }

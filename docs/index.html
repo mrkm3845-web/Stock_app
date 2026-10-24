@@ -48,6 +48,11 @@
         }
         .company-name:hover { color: #0d6efd; }
         .stock-sub-info { font-size: 0.7rem; color: #6c757d; }
+        .sector-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
+        .sector-dot.green { background: #198754; }
+        .sector-dot.yellow { background: #ffc107; }
+        .sector-dot.red { background: #dc3545; }
+        .sector-dot.none { background: #ced4da; }
 
         .rakuten-link { color: #bf0000; font-weight: 700; text-decoration: underline; font-size: 0.8rem; cursor: pointer; }
         .rakuten-link:hover { color: #900000; }
@@ -502,6 +507,7 @@
         let PARAMS = null;
         let PLAN_ITEMS = {};
         let PLAN_AVOID = {};
+        let SECTOR_COLORS = {};
         let scoreThreshold = 70;
         let sortKey = "score";
         let sortDir = "desc";
@@ -512,7 +518,7 @@
 
         document.addEventListener("DOMContentLoaded", async () => {
             modalInstance = new bootstrap.Modal(document.getElementById('stockModal'));
-            await Promise.all([loadAILatest(), loadMeta(), loadEarnings(), loadPicks(), loadParams(), loadStrategyStatus()]);
+            await Promise.all([loadAILatest(), loadMeta(), loadEarnings(), loadPicks(), loadParams(), loadStrategyStatus(), loadSectorColors()]);
             renderRegime();
             renderRecAlert();
             await initDates();
@@ -849,9 +855,37 @@
             }
         }
 
+        async function loadSectorColors() {
+            try {
+                const res = await fetch('sector_colors.json', { cache: 'no-store' });
+                if (!res.ok) return;
+                const d = await res.json();
+                SECTOR_COLORS = d.colors || {};
+            } catch (e) {
+                // ファイルが無くても動く
+            }
+        }
+
+        function sectorColorOf(sector) {
+            const info = SECTOR_COLORS[sector || ''];
+            return info ? info.color : null;
+        }
+
+        function sectorDotHtml(sector) {
+            const info = SECTOR_COLORS[sector || ''] || {};
+            const c = info.color || 'none';
+            const pct = info.above_sma25_pct == null ? '-' : Number(info.above_sma25_pct).toFixed(1);
+            const tip = `${sector || '業種不明'}（25日線上 ${pct}%・${info.n || 0}銘柄）`;
+            return `<span class="sector-dot ${c}" title="${esc(tip)}"></span>`;
+        }
+
         function updateSectorOptions() {
             const sectors = [...new Set(STOCKS.map(s => s.sector))].filter(Boolean).sort();
-            const options = '<option value="ALL">全業種</option>' + sectors.map(s => `<option value="${s}">${s}</option>`).join('');
+            const mark = { green: '🟢', yellow: '🟡', red: '🔴' };
+            const options = '<option value="ALL">全業種</option>' + sectors.map(s => {
+                const m = mark[sectorColorOf(s)] || '';
+                return `<option value="${s}">${m}${s}</option>`;
+            }).join('');
             const sectorSelect = document.getElementById('filter-sector');
             if (sectorSelect) sectorSelect.innerHTML = options;
             const valueSector = document.getElementById('value-sector');
@@ -1381,7 +1415,7 @@
                         </div>
                         <div class="stock-sub-info">
                             <span class="badge ${isPrime ? 'bg-primary' : 'bg-secondary'} p-0 px-1" style="font-size:0.65rem;">${marketText}</span>
-                            <span>${esc(s.sector)}</span>
+                            <span>${sectorDotHtml(s.sector)}${esc(s.sector)}</span>
                             ${miniText}
                         </div>
                     </td>
@@ -1484,7 +1518,7 @@
                         </div>
                         <div class="stock-sub-info">
                             <span class="badge ${s.market === 'プライム' ? 'bg-primary' : 'bg-secondary'} p-0 px-1" style="font-size:0.65rem;">${s.market === 'プライム' ? 'PRM' : 'STD'}</span>
-                            <span>${esc(s.sector)}</span>
+                            <span>${sectorDotHtml(s.sector)}${esc(s.sector)}</span>
                         </div>
                     </td>
                     <td>${divTxt}</td>

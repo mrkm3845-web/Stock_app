@@ -10,6 +10,29 @@
 
 ## 2026-10-24
 
+### セクター色（業種の強さ）を追加し、赤はAI推奨から外す（この変更）
+- **commit**: この変更（セクター色）
+- **種別**: スコア/判定 / UI / ドキュメント
+- **変更**:
+  - `main8.py` に `sector_color_map()` / `apply_sector_filter()` を追加。**業種ごとに 緑（25日線上50%以上）/ 黄（30〜50%）/ 赤（30%未満）**を**全銘柄**（`excluded` を含む）で計算し、AIプロンプトにも「業種の色」を渡す。**AIが赤業種を recommend しても、機械的に watch へ格下げ**（理由を付与）。テクニカルだけで決め、ニュースは使わない。
+  - `docs/sector_colors.json` を出力（日付・設定・業種ごとの n / 25日線上% / 色）。しきい値と `review_after` は `docs/strategy_params.json` の `sector_color`。
+  - スクリーナー（`docs/index.html`）: 業種フィルタに 🟢🟡🔴、銘柄の業種に色ドット（ツールチップに25日線上%と銘柄数）。
+  - 今日の作戦（`docs/strategy.html`）: 保有・監視の業種に色ドット、凡例、**見直し予定日の表示**。
+  - `tools/check_strategy_plan.py`: 状態に `sector` / `sector_color` / `sector_above_sma25_pct` を追加。
+  - **見直しの気づき**: `sector_color.review_after = 2026-12-19`。過ぎると `main8.py` が警告を出し、**週次Discordにも「見直し時期」**を追記。今日の作戦にも残り日数を表示。
+  - `PROJECT_STATUS.md` / `docs/ops.html` にルールと見直し予定を記録。
+  - `docs/strategy_params.json` の `portfolio` を台帳に合わせた（**max_positions 3 / max_per_sector 1 / risk 0.8% / 参考資金60万 / 1取引上限5,000円**）。スクリーナー上部の「推奨: 最大◯銘柄 / 1取引リスク◯%」も一致する。
+- **根拠・検証**:
+  - 直近6週（W38〜W43・90取引）の分解で、**銀行業 17件 -7.3%**、卸売業 19件 -6.8% と弱い業種に偏っていた。AI推奨にはセクター条件が効いていなかった。
+  - 2026-10-23データでの分布（n≥10の30業種）: 緑5業種 / 黄11 / 赤14。銀行0%、情報・通信業54.9%、電気機器18.2%。
+  - `sector_color_map` と `apply_sector_filter` のスモークテスト（赤業種の recommend が watch に落ち、理由が付くこと）を確認。
+  - `check_strategy_plan.py` を実行し、保有・監視に業種色が付くことを確認。
+- **影響・ロールバック**:
+  - **赤業種の銘柄は「推奨」に出なくなります**（様子見には残る）。取引回数は減ります。
+  - 閾値は暫定。**2026-12-19 までは変えない**（変えるなら `strategy_params.json` の `sector_color`）。
+  - 戻す場合は `sector_color.enabled=false` で無効化、または `git revert`。
+- **関連**: `main8.py` / `tools/check_strategy_plan.py` / `back_tester/weekly_review.py` / `docs/strategy_params.json` / `docs/sector_colors.json` / `docs/index.html` / `docs/strategy.html` / `docs/ops.html` / `PROJECT_STATUS.md`
+
 ### 3銘柄固定・DDブレーキ・保有期間40日の選択肢を追加（この変更）
 - **commit**: この変更（DDブレーキとリスク上限）
 - **種別**: 運用 / バックテスト / UI / ドキュメント

@@ -33,6 +33,11 @@
         .neg { color: #1971c2; font-weight: 700; }
         .rule { background: #f8f9fa; border-left: 4px solid #adb5bd; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.85rem; }
         .event-item { border-left: 3px solid #adb5bd; padding: 6px 10px; margin-bottom: 6px; background: #fff; border-radius: 4px; font-size: 0.82rem; }
+        .sector-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+        .sector-dot.green { background: #198754; }
+        .sector-dot.yellow { background: #ffc107; }
+        .sector-dot.red { background: #dc3545; }
+        .sector-dot.none { background: #adb5bd; }
     </style>
 </head>
 <body>
@@ -76,6 +81,7 @@
         <div class="muted-small mt-2">自動チェックは平日60分間隔です。「手動チェック」はトリガー判定だけ、「データ更新（AI）」は価格・スコア・AIをまとめて更新します。<br>
             <b>このページは分析用ではなく、作戦台帳の水準に触れたかを見張る「実行ボード」</b>です。作戦そのもの（なぜその水準か）は夜・週末に作る<a href="weekend.html" class="fw-bold">作戦ノート</a>で決めます。監視はActionsの遅延で1〜2時間遅れることがあり、リアルタイムの約定通知ではありません。手順は<a href="ops.html" class="fw-bold">運用マニュアル</a>。</div>
         <div class="muted-small mt-1" id="dd-check"></div>
+        <div class="muted-small mt-1" id="sector-review"></div>
     </div>
 
     <div id="loading" class="alert alert-info">読み込み中...</div>
@@ -97,6 +103,12 @@
                     <thead><tr><th>種別</th><th>銘柄</th><th>状態</th><th>現在</th><th>入口</th><th>損切</th><th>利確</th><th>距離</th><th>今日の扱い</th></tr></thead>
                     <tbody id="items-body"></tbody>
                 </table>
+            </div>
+            <div class="muted-small mt-2">
+                <span class="sector-dot green"></span>緑＝業種が強い（25日線上50%以上）／
+                <span class="sector-dot yellow"></span>黄＝30〜50%／
+                <span class="sector-dot red"></span>赤＝30%未満（<b>赤はAI推奨から除外</b>）。
+                色は「その業種の全銘柄」で計算しています。
             </div>
         </div>
 
@@ -164,7 +176,7 @@ async function fetchJson(url) {
   return res.json();
 }
 
-function render(plan, status, events) {
+function render(plan, status, events, params) {
   const shortTime = (v) => String(v || '-').replace('T', ' ').slice(0, 16);
   document.getElementById('plan-badge').textContent = `作戦: ${plan.plan_id || '-'}`;
   document.getElementById('checked-badge').textContent = `チェック: ${shortTime(status.checked_at)}`;
@@ -189,16 +201,37 @@ function render(plan, status, events) {
   const ddEl = document.getElementById('dd-check');
   if (ddEl) ddEl.textContent = ddLine;
 
+  const ra = (params && params.sector_color && params.sector_color.review_after) || null;
+  const srEl = document.getElementById('sector-review');
+  if (srEl) {
+    if (ra) {
+      const days = Math.ceil((new Date(ra + 'T00:00:00') - new Date()) / 86400000);
+      srEl.textContent = days <= 0
+        ? `⚠️ セクター色の見直し時期です（${ra}）。閾値と効果を確認してください`
+        : `セクター色の見直し予定: ${ra}（あと${days}日）`;
+      srEl.className = 'muted-small mt-1' + (days <= 0 ? ' text-danger fw-bold' : '');
+    } else {
+      srEl.textContent = '';
+    }
+  }
+
   document.getElementById('summary-cards').innerHTML =
     card('地合い', regime.risk_on ? '買いやすい' : '慎重に', regimeSub, regime.risk_on ? 'pos' : 'neg') +
     card('200日線上', `${num(breadth.above_sma200_pct)}%`, sample(breadth), '') +
     card('25日線上', `${num(breadth.above_sma25_pct)}%`, `${sample(breadth)}・短期`, '') +
     card('銀行の25日線上', `${num(bank.above_sma25_pct)}%`, `${sample(bank)}・30%未満は新規停止`, Number(bank.above_sma25_pct) >= 30 ? 'pos' : 'neg');
 
+  const sectorDot = (item) => {
+    const c = item.sector_color || 'none';
+    const pct = item.sector_above_sma25_pct == null ? '-' : Number(item.sector_above_sma25_pct).toFixed(1);
+    const tip = `${item.sector || '業種不明'}（25日線上 ${pct}%）`;
+    return `<span class="sector-dot ${c}" title="${esc(tip)}"></span>`;
+  };
+
   document.getElementById('today-actions').innerHTML = items.length
     ? items.map(item => `<div class="action-item ${ACTION_CLASS[item.status] || ''}">
         <div class="d-flex justify-content-between gap-2">
-          <div class="fw-bold">${esc(item.code)} ${esc(item.name)} ${badge(item.status)}</div>
+          <div class="fw-bold">${sectorDot(item)}${esc(item.code)} ${esc(item.name)} ${badge(item.status)}</div>
           <div class="muted-small">現在 ${num(item.current_price)}</div>
         </div>
         <div class="mt-1">${esc(item.action)}</div>
@@ -208,7 +241,7 @@ function render(plan, status, events) {
   document.getElementById('items-body').innerHTML = items.length
     ? items.map(item => `<tr>
         <td>${item.kind === 'position' ? '保有' : '監視'}</td>
-        <td class="text-start"><b>${esc(item.code)}</b> ${esc(item.name)}</td>
+        <td class="text-start">${sectorDot(item)}<b>${esc(item.code)}</b> ${esc(item.name)}</td>
         <td>${badge(item.status)}</td>
         <td>${num(item.current_price)}</td>
         <td>${num(item.entry_price)}</td>
@@ -241,12 +274,13 @@ function render(plan, status, events) {
 
 async function boot() {
   try {
-    const [plan, status, events] = await Promise.all([
+    const [plan, status, events, params] = await Promise.all([
       fetchJson('strategy/active.json'),
       fetchJson('strategy/status.json').catch(() => ({ items: [], today_actions: [] })),
-      fetchJson('strategy/events.json').catch(() => ({ events: [] }))
+      fetchJson('strategy/events.json').catch(() => ({ events: [] })),
+      fetchJson('strategy_params.json').catch(() => ({}))
     ]);
-    render(plan, status, events);
+    render(plan, status, events, params || {});
   } catch (err) {
     document.getElementById('loading').classList.add('d-none');
     const box = document.getElementById('error-box');

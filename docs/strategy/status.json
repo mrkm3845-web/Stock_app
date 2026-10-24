@@ -1,6 +1,6 @@
 {
   "plan_id": "2026-10-22-1815",
-  "checked_at": "2026-10-24T10:47:20.511574+09:00",
+  "checked_at": "2026-10-24T16:10:20.574137+09:00",
   "source": "eod",
   "data_asof": "2026-10-23T00:00:00",
   "market": {
@@ -31,6 +31,9 @@
       "code": "6952",
       "name": "カシオ計算機",
       "kind": "watch",
+      "sector": "電気機器",
+      "sector_color": "red",
+      "sector_above_sma25_pct": 18.2,
       "status": "blocked",
       "current_price": 2347.5,
       "high": 2359.0,
@@ -47,13 +50,16 @@
       "source": "yfinance-1d",
       "asof": "2026-10-23T00:00:00",
       "last_notified_status": "blocked",
-      "last_notified_at": "2026-10-24T10:47:20.511574+09:00",
+      "last_notified_at": "2026-10-24T16:10:20.574137+09:00",
       "last_near_date": null
     },
     {
       "code": "6191",
       "name": "エアトリ",
       "kind": "position",
+      "sector": "サービス業",
+      "sector_color": "yellow",
+      "sector_above_sma25_pct": 37.7,
       "status": "hold",
       "current_price": 1415.0,
       "high": 1450.0,
@@ -66,13 +72,16 @@
       "source": "yfinance-1d",
       "asof": "2026-10-23T00:00:00",
       "last_notified_status": "hold",
-      "last_notified_at": "2026-10-24T10:47:20.511574+09:00",
+      "last_notified_at": "2026-10-24T16:10:20.574137+09:00",
       "last_near_date": null
     },
     {
       "code": "4746",
       "name": "東計電算",
       "kind": "watch",
+      "sector": "情報・通信業",
+      "sector_color": "green",
+      "sector_above_sma25_pct": 54.9,
       "status": "waiting",
       "current_price": 2022.0,
       "high": 2024.0,
@@ -87,7 +96,7 @@
       "source": "yfinance-1d",
       "asof": "2026-10-23T00:00:00",
       "last_notified_status": "waiting",
-      "last_notified_at": "2026-10-24T10:47:20.511574+09:00",
+      "last_notified_at": "2026-10-24T16:10:20.574137+09:00",
       "last_near_date": null
     }
   ],

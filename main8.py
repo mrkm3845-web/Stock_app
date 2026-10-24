@@ -59,6 +59,7 @@ TECHNICAL_REC_PATH = os.path.join(DOCS_DIR, "recommendations_technical.json")
 AI_LATEST_PATH = os.path.join(DOCS_DIR, "ai_strategy_latest.json")
 AI_ANALYSIS_DIR = os.path.join(DOCS_DIR, "ai_analysis")
 PICKS_DIR = os.path.join(DOCS_DIR, "picks")
+SECTOR_COLORS_PATH = os.path.join(DOCS_DIR, "sector_colors.json")
 
 # テスト用オフライン実行（既定OFF）。ネットワークを使わずローカルキャッシュのみで動かす。
 OFFLINE = False
@@ -781,8 +782,96 @@ def fetch_news_for_pool(pool, params=None):
 
 
 # ---------------------------------------------------------------- Stage2 (Gemini / DeepSeek)
-def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None):
+def sector_color_map(results, params):
+    """業種ごとの色（25日線の上比率）。全銘柄（excluded含む）で数える。
+
+    緑 >= green_min_pct / 黄 >= yellow_min_pct / 赤 それ未満。
+    「上昇中の銘柄だけ」を集めると上振れするので、除外はしない。
+    """
+    cfg = (params or {}).get("sector_color") or {}
+    green_min = float(cfg.get("green_min_pct", 50))
+    yellow_min = float(cfg.get("yellow_min_pct", 30))
+    groups = {}
+    for r in results or []:
+        if float(r.get("price") or 0) <= 0:
+            continue
+        sec = str(r.get("sector") or "")
+        if not sec:
+            continue
+        groups.setdefault(sec, []).append(r)
+    out = {}
+    for sec, rows in groups.items():
+        n = len(rows)
+        above = sum(1 for r in rows if float((r.get("ctx") or {}).get("dist_sma25_pct") or 0) > 0)
+        pct = round(above / n * 100, 1) if n else None
+        if pct is None:
+            color = "unknown"
+        elif pct >= green_min:
+            color = "green"
+        elif pct >= yellow_min:
+            color = "yellow"
+        else:
+            color = "red"
+        out[sec] = {
+            "n": n,
+            "above_sma25_pct": pct,
+            "color": color,
+            "low_sample": n < 10,
+        }
+    return out
+
+
+SECTOR_COLOR_LABELS = {"green": "緑", "yellow": "黄", "red": "赤", "unknown": "不明"}
+
+
+def _sector_color_text(info):
+    if not info:
+        return "不明"
+    return "%s(25日線上%s%%・%d銘柄)" % (
+        SECTOR_COLOR_LABELS.get(info.get("color"), "不明"),
+        info.get("above_sma25_pct"),
+        info.get("n") or 0,
+    )
+
+
+def apply_sector_filter(ai_map, sector_colors, params):
+    """赤業種の「推奨」を「様子見」に格下げする（AIの判断に任せない）。"""
+    cfg = (params or {}).get("sector_color") or {}
+    if not cfg.get("enabled", True) or not isinstance(ai_map, dict) or not sector_colors:
+        return ai_map
+    if not cfg.get("block_red_in_recommend", True):
+        return ai_map
+    blocked = 0
+    for s in ai_map.get("stocks") or []:
+        sec = str(s.get("sector") or "")
+        info = sector_colors.get(sec) or {}
+        s["sector_color"] = info.get("color")
+        s["sector_above_sma25_pct"] = info.get("above_sma25_pct")
+        s["sector_n"] = info.get("n")
+        if str(s.get("verdict")) != "recommend":
+            continue
+        if info.get("color") == "red":
+            note = "業種が赤（25日線上%s%%・%d銘柄）のため推奨から外す" % (
+                info.get("above_sma25_pct"),
+                info.get("n") or 0,
+            )
+        elif info.get("low_sample"):
+            note = "業種の銘柄数が少ない（%d銘柄・参考外）ため推奨から外す" % (info.get("n") or 0)
+        else:
+            continue
+        s["verdict"] = "watch"
+        s["sector_blocked"] = True
+        reason = str(s.get("reason") or "").strip()
+        s["reason"] = (reason + " / " + note) if reason else note
+        blocked += 1
+    if blocked:
+        print(f">> セクター色: 赤業種のため推奨から格下げ {blocked} 件")
+    return ai_map
+
+
+def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None, sector_colors=None):
     news_map = news_map or {}
+    sector_colors = sector_colors or {}
     warn_desc = {w.get("id"): w.get("description") for w in (params or {}).get("warnings", [])}
     base_date = base_date or _jst_now().strftime("%Y-%m-%d")
     lines = []
@@ -793,6 +882,7 @@ def _build_ai_prompt(pool, fund_map, news_map=None, params=None, base_date=None)
         parts = [
             f"{r['code']} {r['name']}",
             f"市場:{r['market']} 業種:{r['sector']}",
+            f"業種の色:{_sector_color_text(sector_colors.get(str(r.get('sector') or '')))}",
             f"株価:{ctx.get('price', r['price'])}円 スコア:{r['score']} 価格帯:{r.get('tier') or '-'}",
             f"グレアム理論株価:{r.get('graham_price')}円 割安度:{r.get('discount_rate')}%",
             f"GC:{r['gc_days'] if r['gc_days'] is not None else 'なし'}日前",
@@ -962,7 +1052,7 @@ def _call_gemini(user, system, params):
     return None
 
 
-def call_ai(pool, fund_map, news_map, params, base_date=None):
+def call_ai(pool, fund_map, news_map, params, base_date=None, sector_colors=None):
     ai = params.get("ai", {})
     max_picks = ai.get("max_picks", ai.get("weekly_top_picks", 5))
     max_output = int(ai.get("max_output_stocks", 15))
@@ -972,7 +1062,7 @@ def call_ai(pool, fund_map, news_map, params, base_date=None):
     retry_cap = min(ai.get("retry_candidates", 15), cap)
     caps = [cap] if retry_cap >= cap else [cap, retry_cap]
     for c in caps:
-        user = _build_ai_prompt(pool[:c], fund_map, news_map, params, base_date)
+        user = _build_ai_prompt(pool[:c], fund_map, news_map, params, base_date, sector_colors)
         res = _call_gemini(user, system, params) if provider == "gemini" else _call_deepseek(user, system, params)
         if res:
             return res
@@ -980,7 +1070,7 @@ def call_ai(pool, fund_map, news_map, params, base_date=None):
     return None
 
 
-def analyze_pool_with_ai(pool, fund_map, news_map, params, date, force_ai=False, cache_suffix=""):
+def analyze_pool_with_ai(pool, fund_map, news_map, params, date, force_ai=False, cache_suffix="", sector_colors=None):
     """1つの母集団（全体 or 価格レンジ）をAIで順位付けする。
 
     母集団ごとにキャッシュ・保存する（全体=`{date}.json`、レンジ=`{date}_range.json`）。
@@ -997,14 +1087,16 @@ def analyze_pool_with_ai(pool, fund_map, news_map, params, date, force_ai=False,
                 cached = json.load(f)
             ai_map = sanitize_ai_map(cached, pool)
             if ai_map:
+                ai_map = apply_sector_filter(ai_map, sector_colors, params)
                 print(f">> 当日のAI分析キャッシュを再利用（{label}）: {ai_file}")
                 return ai_map
             print(f">> 当日のAI分析キャッシュが無効のため再取得します（{label}）: {ai_file}")
         except Exception:
             pass
 
-    ai_map = call_ai(pool, fund_map, news_map, params, date)
+    ai_map = call_ai(pool, fund_map, news_map, params, date, sector_colors)
     ai_map = sanitize_ai_map(ai_map, pool)
+    ai_map = apply_sector_filter(ai_map, sector_colors, params)
     if ai_map:
         with open(ai_file, "w", encoding="utf-8") as f:
             json.dump(ai_map, f, ensure_ascii=False)
@@ -1041,6 +1133,7 @@ def sanitize_ai_map(ai_map, pool):
     if not isinstance(ai_map, dict):
         return None
     pool_codes = {str(r["code"]) for r in pool}
+    pool_by_code = {str(r["code"]): r for r in pool}
     stocks = ai_map.get("stocks") or []
     normalized = []
     for s in stocks:
@@ -1052,6 +1145,7 @@ def sanitize_ai_map(ai_map, pool):
         code = str(code).strip()
         if code in pool_codes:
             s["code"] = code
+            s["sector"] = (pool_by_code.get(code) or {}).get("sector")
             normalized.append(s)
     if not normalized:
         print(f">> AI応答のstocksが無効（返却={len(stocks)}件, 有効=0件）: {stocks[:2]}")
@@ -1265,6 +1359,8 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
             "code": r["code"],
             "name": r["name"],
             "sector": r["sector"],
+            "sector_color": item.get("sector_color"),
+            "sector_above_sma25_pct": item.get("sector_above_sma25_pct"),
             "price": r["price"],
             "score": r["score"],
             "feedback_delta": delta_by_code.get(r["code"], 0.0),
@@ -1596,6 +1692,35 @@ def _prune_history(keep_days):
         print(f">> 古い日別JSONを削除: {removed}件（保持 {keep_days}日）")
 
 
+def save_sector_colors_json(sector_colors, target_date, params=None):
+    """業種の色を docs/sector_colors.json に保存する（画面表示・検証用）。"""
+    cfg = (params or {}).get("sector_color") or {}
+    doc = {
+        "date": target_date,
+        "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "config": {
+            k: cfg.get(k)
+            for k in ("green_min_pct", "yellow_min_pct", "block_red_in_recommend", "review_after")
+        },
+        "colors": sector_colors,
+    }
+    try:
+        with open(SECTOR_COLORS_PATH, "w", encoding="utf-8") as f:
+            json.dump(doc, f, ensure_ascii=False, indent=2)
+        print(f">> 業種の色を保存: {SECTOR_COLORS_PATH}（{len(sector_colors)}業種）")
+    except Exception as e:  # noqa: BLE001
+        print(f">> ⚠️ 業種の色の保存に失敗: {e}")
+
+    review_after = cfg.get("review_after")
+    if review_after:
+        try:
+            ra = datetime.strptime(str(review_after), "%Y-%m-%d").date()
+            if _jst_now().date() >= ra:
+                print(f">> ⚠️ セクター色の見直し時期です（{review_after}）。閾値と効果を確認してください。")
+        except ValueError:
+            pass
+
+
 def save_history_json(all_stocks, target_date, regime=None, portfolio=None, keep_days=None):
     os.makedirs(HISTORY_DIR, exist_ok=True)
 
@@ -1842,15 +1967,18 @@ def main():
     ai_map = None
     range_ai_map = None
     news_map = {}
+    # 業種の色（テクニカル3色）。全銘柄で数え、赤は推奨から外す。
+    sector_colors = sector_color_map(results, params)
+    save_sector_colors_json(sector_colors, date, params)
     if args.ai and params.get("ai", {}).get("enabled"):
         # ニュースは両母集団ぶんを一度に取得（コードで重複排除）
         news_pool = list({r["code"]: r for r in (pool + range_pool)}.values())
         news_map = fetch_news_for_pool(news_pool, params)
-        ai_map = analyze_pool_with_ai(pool, fund_map, news_map, params, date, args.force_ai, "")
+        ai_map = analyze_pool_with_ai(pool, fund_map, news_map, params, date, args.force_ai, "", sector_colors)
         if ai_map:
             update_ai_latest(ai_map, date, news_map)
         if range_pool:
-            range_ai_map = analyze_pool_with_ai(range_pool, fund_map, news_map, params, date, args.force_ai, "_range")
+            range_ai_map = analyze_pool_with_ai(range_pool, fund_map, news_map, params, date, args.force_ai, "_range", sector_colors)
 
     # 決算日はスキャン時に取得した info から抽出済み（追加通信なし）。プール限定でなく全銘柄を対象にする。
     earnings_map = {r["code"]: r["earnings_date"] for r in results if r.get("earnings_date")}
@@ -1873,6 +2001,8 @@ def main():
                         "verdict": s.get("verdict"),
                         "entry_type": s.get("entry_type"),
                         "reason": s.get("reason"),
+                        "sector_color": s.get("sector_color"),
+                        "sector_above_sma25_pct": s.get("sector_above_sma25_pct"),
                     })
             range_stocks.sort(key=lambda x: (x.get("rank") is None, x.get("rank") if x.get("rank") is not None else 10 ** 9))
         recommendations["range"] = {

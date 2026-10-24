@@ -2096,6 +2096,25 @@ def send_discord(content):
         print(f">> ⚠️ Discord通知に失敗: {e}")
 
 
+def _sector_review_note(params):
+    """セクター色の見直し時期が近い/過ぎたときの通知文。"""
+    cfg = (params or {}).get("sector_color") or {}
+    ra = cfg.get("review_after")
+    if not ra:
+        return None
+    try:
+        d = datetime.strptime(str(ra), "%Y-%m-%d").date()
+    except ValueError:
+        return None
+    today = datetime.now().date()
+    if today >= d:
+        return f"⚠️ セクター色の見直し時期です（{ra}）。閾値と効果を確認してください"
+    days = (d - today).days
+    if days <= 14:
+        return f"セクター色の見直しが近いです（{ra}・あと{days}日）"
+    return None
+
+
 def notify_weekly_result(result):
     """週次振り返りの要点を1通にまとめる。"""
     if not result:
@@ -2116,6 +2135,12 @@ def notify_weekly_result(result):
     headline = plan.get("headline") or plan.get("summary")
     if headline:
         lines.append(f"来週: {str(headline)[:120]}")
+    try:
+        note = _sector_review_note(load_strategy_params())
+        if note:
+            lines.append(note)
+    except Exception:
+        pass
     lines.append(WEEKLY_WEB_URL)
     send_discord("\n".join(lines))
 
