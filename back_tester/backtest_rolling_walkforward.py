@@ -19,6 +19,7 @@ backtest_rolling_walkforward.py
 - 実運用の Stage2（AI）は未検証。本検証は技術スコアのランキング力と機械的エグジットのみを対象とする。
 """
 
+import copy
 import io
 import itertools
 import json
@@ -73,6 +74,9 @@ SIGNAL_GRID = [
     {"gc_window": 3, "val_ratio_min": 1.2, "avg_val_min_k": 30000},
 ]
 EXIT_MODES = ["fixed", "atr_trail"]
+
+# 保有期間の比較（週次=5 / 月次=20 / 四半期=60 営業日）
+HOLDING_PERIODS = [5, 10, 20, 40, 60]
 
 # 株価帯別エグジット最適化の探索グリッド（price_tiers の tp/sl/atr/保有日数を最適化）
 TIER_EXIT_GRID = {
@@ -834,6 +838,39 @@ def position_sizing_effect(prepared, params, folds, exit_mode="fixed"):
     return out
 
 
+def holding_period_effect(prepared, params, folds, exit_mode="fixed", holds=None):
+    """保有期間だけを変えた比較（利確/損切/ATRは据え置き）。
+
+    「週次（5日）・月次（20日）・四半期（60日）のどれが良いか」を数字で見るための検証。
+    1取引の期待値・勝率・最大DD・最大負けを並べる。設定は自動では変えない。
+    """
+    global _REGIME
+    holds = holds or HOLDING_PERIODS
+    weights = params.get("score_weights", {})
+    sig = params.get("signals", {})
+    longform = build_longform(prepared, sig, weights, CONFIG["walk_start"], CONFIG["walk_end"])
+    if longform is None:
+        return None
+    saved = _REGIME
+    _REGIME = None  # 地合いフィルタの影響を外して、保有期間だけを比べる
+    max_positions = int((params.get("portfolio") or {}).get("max_positions") or 5)
+    out = {}
+    try:
+        for hold in holds:
+            p2 = copy.deepcopy(params)
+            for tier in p2.get("price_tiers") or []:
+                tier["max_hold_days"] = int(hold)
+            trades = []
+            for (_tr_s, _tr_e, te_s, te_e) in folds:
+                trades.extend(_run_sim_mode(prepared, p2, exit_mode, longform, te_s, te_e, "top"))
+            m = per_trade_stats(trades)
+            m.update(portfolio_metrics(trades, max_positions))
+            out[str(hold)] = m
+    finally:
+        _REGIME = saved
+    return out
+
+
 def weight_ablation(prepared, params, folds, n_quantiles=10, hold_days=5):
     """各スコア成分を1つずつゼロにして「寄与」を測る（leave-one-out）。"""
     base = quantile_analysis(prepared, params, folds, n_quantiles, hold_days)
@@ -1361,6 +1398,16 @@ def _build_report_markdown(result, valid):
         for k, m in ps.items():
             lines.append(f"| {k} | {m['trade_count']} | {m['pf']} | {m['ev_pct']:+0.2f}% | {m['annualized_return_pct']:+0.2f}% | {m['max_dd_pct']}% |")
 
+    hp = result.get("holding_period_effect")
+    if hp:
+        lines += ["", "## 保有期間の比較（スコア上位K・fixed・地合いなし・利確/損切は固定）", "",
+                  "| 保有 | 件数 | 勝率 | PF | 期待値 | 年率 | 最大DD | 最大負け |",
+                  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
+        for k, m in hp.items():
+            lines.append(f"| {k}営業日 | {m['trade_count']} | {m['win_rate']}% | {m['pf']} | "
+                         f"{m['ev_pct']:+0.2f}% | {m['annualized_return_pct']:+0.2f}% | "
+                         f"{m['max_dd_pct']}% | {m['max_loss_pct']}% |")
+
     esc = result.get("entry_style_comparison")
     if esc:
         mk = esc["market"]
@@ -1531,6 +1578,15 @@ def main():
         print("\n=== 同時保有数の比較（スコア上位K, fixed・地合いなし） ===")
         for k, m in ps.items():
             print(f"  {k:18s}: PF={m['pf']} EV={m['ev_pct']}% 年率={m['annualized_return_pct']}% DD={m['max_dd_pct']}% 件数={m['trade_count']}")
+
+    hp = holding_period_effect(prepared, params, folds, exit_mode="fixed")
+    result["holding_period_effect"] = hp
+    if hp:
+        print("\n=== 保有期間の比較（スコア上位K, fixed・地合いなし・利確/損切は固定） ===")
+        for k, m in hp.items():
+            print(f"  {k:>2s}営業日: n={m['trade_count']} PF={m['pf']} EV={m['ev_pct']}% "
+                  f"勝率={m['win_rate']}% 年率={m['annualized_return_pct']}% DD={m['max_dd_pct']}% "
+                  f"最大負け={m['max_loss_pct']}%")
 
     # 以降の分析は地合いフィルタの設定を元に戻す
     _REGIME = build_regime(bench, CONFIG["regime_filter"]["sma_days"]) if CONFIG["regime_filter"]["enabled"] else None
