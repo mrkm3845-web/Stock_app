@@ -1091,15 +1091,22 @@ def compute_weekly_feedback(params):
     enabled = bool(cfg.get("feedback_enabled", False))
 
     weeks = []
+    seen_weeks = set()
     for path in glob.glob(os.path.join(WEEKLY_DIR, "*.json")):
         name = os.path.basename(path)
-        if name in ("index.json", "latest.json", "feedback.json"):
+        # index/latest/feedback に加えて、来週の作戦(plan)と長期台帳(ledger)も除外する。
+        # plan.json は week を持つため、除外しないと「W43が2週ある」状態になり
+        # 直近N週の窓を1週分消費してしまう。
+        if name in ("index.json", "latest.json", "feedback.json", "plan.json", "ledger.json"):
             continue
         try:
             with open(path, "r", encoding="utf-8") as f:
                 j = json.load(f)
-            if j.get("week"):
-                weeks.append(j)
+            week = j.get("week")
+            if not week or week in seen_weeks:
+                continue
+            seen_weeks.add(week)
+            weeks.append(j)
         except Exception:
             continue
     weeks.sort(key=lambda j: j.get("week", ""), reverse=True)

@@ -75,6 +75,7 @@
         </div>
         <div class="muted-small mt-2">自動チェックは平日60分間隔です。「手動チェック」はトリガー判定だけ、「データ更新（AI）」は価格・スコア・AIをまとめて更新します。<br>
             <b>このページは分析用ではなく、作戦台帳の水準に触れたかを見張る「実行ボード」</b>です。作戦そのもの（なぜその水準か）は夜・週末に作る<a href="weekend.html" class="fw-bold">作戦ノート</a>で決めます。監視はActionsの遅延で1〜2時間遅れることがあり、リアルタイムの約定通知ではありません。手順は<a href="ops.html" class="fw-bold">運用マニュアル</a>。</div>
+        <div class="muted-small mt-1" id="dd-check"></div>
     </div>
 
     <div id="loading" class="alert alert-info">読み込み中...</div>
@@ -177,11 +178,16 @@ function render(plan, status, events) {
   const breadth = market.breadth || {};
   const bank = market.bank_sector || {};
   const regime = market.regime || {};
+  const risk = plan.policy || {};
+  const ddLine = `DDチェック：資産が直近の最高値（ピーク）から-10%で新規停止／-15%で全現金化（例 60万なら-6万／-9万）。1取引のリスクは${num(risk.max_risk_per_trade_jpy) !== '-' ? num(risk.max_risk_per_trade_jpy) + '円' : '-'}まで`;
   const regimeGap = (regime.close && regime.sma) ? (Number(regime.close) / Number(regime.sma) - 1) * 100 : null;
   const regimeSub = regime.close
     ? `${regime.risk_on ? 'リスクオン' : 'リスクオフ'}・1306.T ${num(regime.close)} ${Number(regime.close) >= Number(regime.sma) ? '＞' : '＜'} 200日線 ${num(regime.sma)}（${pct(regimeGap)}）／${regime.risk_on ? '割れたら新規停止' : '新規停止中'}`
     : 'データなし';
   const sample = (b) => `${num(b.n)}銘柄${Number(b.n) < 10 ? '（参考外）' : ''}`;
+
+  const ddEl = document.getElementById('dd-check');
+  if (ddEl) ddEl.textContent = ddLine;
 
   document.getElementById('summary-cards').innerHTML =
     card('地合い', regime.risk_on ? '買いやすい' : '慎重に', regimeSub, regime.risk_on ? 'pos' : 'neg') +

@@ -83,11 +83,11 @@ TIER_EXIT_GRID = {
     "fixed": {
         "tp_pct": [0.05, 0.08, 0.12, 0.15],
         "sl_pct": [0.02, 0.03, 0.05, 0.07],
-        "max_hold_days": [7, 14, 20],
+        "max_hold_days": [7, 14, 20, 40],
     },
     "atr_trail": {
         "atr_sl_mult": [1.5, 2.0, 2.5, 3.0],
-        "max_hold_days": [7, 14, 20],
+        "max_hold_days": [7, 14, 20, 40],
     },
 }
 TIER_EXIT_MIN_TRADES_TEST = 100
