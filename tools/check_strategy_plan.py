@@ -196,14 +196,19 @@ def history_fallback(codes: list[str], hist, data_date: str | None = None):
     return result
 
 
+MIN_BREADTH_N = 10
+
+
 def breadth_for(hist, sector: str | None = None):
+    """セクター（Noneなら全体）の広がり。
+
+    週足が下向きの銘柄（excluded）も含めて数える。除外してから
+    「25日線の上比率」を測ると、上昇中の銘柄だけを集めることになり
+    数値が上振れする（銀行のように母数が消える）ため。
+    """
     if not hist:
         return None
-    items = [
-        item
-        for item in hist
-        if not item.get("excluded") and float(item.get("price") or 0) > 0
-    ]
+    items = [item for item in hist if float(item.get("price") or 0) > 0]
     if sector:
         items = [item for item in items if str(item.get("sector")) == sector]
     if not items:
@@ -213,6 +218,7 @@ def breadth_for(hist, sector: str | None = None):
     ret5 = [float(item.get("ctx", {}).get("ret_5d_pct") or 0) for item in items]
     return {
         "n": len(items),
+        "low_sample": len(items) < MIN_BREADTH_N,
         "above_sma25_pct": round(above25 / len(items) * 100, 1),
         "above_sma200_pct": round(above200 / len(items) * 100, 1),
         "avg_ret5_pct": round(sum(ret5) / len(ret5), 2) if ret5 else None,
@@ -254,9 +260,12 @@ def check_conditions(item, hist, meta, earnings):
             if not b:
                 ok = False
                 reasons.append(f"{sector or 'セクター'}のデータ不足")
+            elif b["n"] < MIN_BREADTH_N:
+                ok = False
+                reasons.append(f"{sector}の銘柄数が少ない（{b['n']}銘柄・参考外）")
             elif b["above_sma25_pct"] < 30:
                 ok = False
-                reasons.append(f"{sector}の25日線上{b['above_sma25_pct']}%")
+                reasons.append(f"{sector}の25日線上{b['above_sma25_pct']}%（{b['n']}銘柄）")
         elif condition == "earnings_ok":
             info = (earnings or {}).get("items", {}).get(str(item.get("code"))) or {}
             days = info.get("days_until")

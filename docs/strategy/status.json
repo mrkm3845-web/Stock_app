@@ -1,27 +1,29 @@
 {
   "plan_id": "2026-10-22-1815",
-  "checked_at": "2026-10-23T15:09:20.540950+09:00",
+  "checked_at": "2026-10-24T10:47:20.511574+09:00",
   "source": "eod",
   "data_asof": "2026-10-23T00:00:00",
   "market": {
     "regime": {
       "ticker": "1306.T",
-      "close": 420.6,
-      "sma": 398.7,
+      "close": 416.3,
+      "sma": 399.1,
       "sma_days": 200,
       "risk_on": true
     },
     "breadth": {
-      "n": 1150,
-      "above_sma25_pct": 80.2,
-      "above_sma200_pct": 86.1,
-      "avg_ret5_pct": 2.0
+      "n": 2913,
+      "low_sample": false,
+      "above_sma25_pct": 33.9,
+      "above_sma200_pct": 52.0,
+      "avg_ret5_pct": -1.97
     },
     "bank_sector": {
-      "n": 2,
+      "n": 77,
+      "low_sample": false,
       "above_sma25_pct": 0.0,
-      "above_sma200_pct": 100.0,
-      "avg_ret5_pct": 0.12
+      "above_sma200_pct": 75.3,
+      "avg_ret5_pct": -8.64
     }
   },
   "items": [
@@ -29,21 +31,23 @@
       "code": "6952",
       "name": "カシオ計算機",
       "kind": "watch",
-      "status": "triggered",
-      "current_price": 2352.5,
+      "status": "blocked",
+      "current_price": 2347.5,
       "high": 2359.0,
       "low": 2260.0,
       "entry_price": 2340,
       "stop": 2255,
       "take_profit": 2640,
-      "distance_pct": 0.5313496280552604,
-      "conditions_ok": true,
-      "condition_reasons": [],
-      "action": "買い入口2,340に到達。約定したらOCO 2,255/2,640",
+      "distance_pct": 0.3194888178913738,
+      "conditions_ok": false,
+      "condition_reasons": [
+        "電気機器の25日線上18.2%（203銘柄）"
+      ],
+      "action": "入口2,340に到達したが条件NG（電気機器の25日線上18.2%（203銘柄））",
       "source": "yfinance-1d",
       "asof": "2026-10-23T00:00:00",
-      "last_notified_status": "triggered",
-      "last_notified_at": "2026-10-23T13:33:03.512932+09:00",
+      "last_notified_status": "blocked",
+      "last_notified_at": "2026-10-24T10:47:20.511574+09:00",
       "last_near_date": null
     },
     {
@@ -51,18 +55,18 @@
       "name": "エアトリ",
       "kind": "position",
       "status": "hold",
-      "current_price": 1417.0,
+      "current_price": 1415.0,
       "high": 1450.0,
       "low": 1414.0,
       "entry_price": 1433,
       "stop": 1310,
       "take_profit": 1612,
-      "distance_pct": 7.5511644318983775,
+      "distance_pct": 7.420494699646643,
       "action": "保有継続",
       "source": "yfinance-1d",
       "asof": "2026-10-23T00:00:00",
       "last_notified_status": "hold",
-      "last_notified_at": "2026-10-22T18:17:19.966647+09:00",
+      "last_notified_at": "2026-10-24T10:47:20.511574+09:00",
       "last_near_date": null
     },
     {
@@ -70,25 +74,25 @@
       "name": "東計電算",
       "kind": "watch",
       "status": "waiting",
-      "current_price": 2020.0,
+      "current_price": 2022.0,
       "high": 2024.0,
       "low": 1990.0,
       "entry_price": 1975,
       "stop": 1868,
       "take_profit": 2323,
-      "distance_pct": 2.2277227722772275,
+      "distance_pct": 2.324431256181998,
       "conditions_ok": true,
       "condition_reasons": [],
       "action": "買い入口1,975待ち",
       "source": "yfinance-1d",
       "asof": "2026-10-23T00:00:00",
       "last_notified_status": "waiting",
-      "last_notified_at": "2026-10-22T18:17:19.966647+09:00",
+      "last_notified_at": "2026-10-24T10:47:20.511574+09:00",
       "last_near_date": null
     }
   ],
   "today_actions": [
-    "6952 カシオ計算機：買い入口2,340に到達。約定したらOCO 2,255/2,640",
+    "6952 カシオ計算機：入口2,340に到達したが条件NG（電気機器の25日線上18.2%（203銘柄））",
     "6191 エアトリ：保有継続",
     "4746 東計電算：買い入口1,975待ち"
   ]

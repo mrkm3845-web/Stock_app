@@ -60,6 +60,7 @@
             <li><a href="#loop">AIの学びノート（継続改善のしくみ）</a></li>
             <li><a href="#today-plan">今日の作戦（トリガー通知）</a></li>
             <li><a href="#strategy-note">作戦ノート（起動したタイミングの作戦）</a></li>
+            <li><a href="#market-regime">地合い（「買いやすい／慎重に」の意味）</a></li>
             <li><a href="#glossary">用語集</a></li>
             <li><a href="#caution">注意事項</a></li>
         </ol>
@@ -492,6 +493,49 @@
     </div>
 
     <!-- 7 -->
+    <div class="card p-3" id="market-regime">
+        <h2 class="section">地合い（「買いやすい／慎重に」の意味）</h2>
+        <p class="mb-2">
+            今日の作戦やスクリーナーの上部に出る<b>「地合い」</b>は、<b>市場全体が買いに向いているか</b>を表します。
+        </p>
+        <div class="warn">
+            <b>「リスクオン」は「危険」ではありません。</b><br>
+            リスクオン＝投資家が<b>積極的にリスクを取っている</b>＝<b>買いやすい</b>。<br>
+            リスクオフ＝投資家が<b>リスクを避けている</b>＝<b>慎重にすべき</b>。<br>
+            <span class="ex">「リスク資産」も「危険な資産」ではなく「値動きする資産（株・為替）」の意味です。</span>
+        </div>
+        <h3 class="sub">どうやって決めている？</h3>
+        <div class="plain">
+            銘柄を1つだけ見ます。<b>1306.T（TOPIX連動ETF＝日本株全体）</b>の終値が、
+            <b>200日移動平均線</b>（過去200日の平均）より上か下かです。
+            <ul class="mb-0 mt-1">
+                <li><b>上なら「買いやすい」</b>（リスクオン）</li>
+                <li><b>下なら「慎重に」</b>（リスクオフ）→ 台帳のルールでは<b>新規停止・保有は2銘柄まで</b></li>
+            </ul>
+        </div>
+        <h3 class="sub">地合いは3層で見ています</h3>
+        <div class="table-responsive mb-2">
+            <table class="table table-sm table-bordered align-middle">
+                <thead><tr><th style="width:110px">層</th><th>見ているもの</th></tr></thead>
+                <tbody>
+                    <tr><td><b>① 全体</b></td><td>1306.T が200日線の上か下か（＝「買いやすい／慎重に」）</td></tr>
+                    <tr><td><b>② 広がり</b></td><td>全銘柄のうち何%が25日線・200日線より上か（数字の下に「◯銘柄」と表示）</td></tr>
+                    <tr><td><b>③ セクター</b></td><td><b>買いたい銘柄の業種</b>の25日線上比率が30%以上か（銘柄ごとに違う）</td></tr>
+                    <tr><td><b>＋ 決算</b></td><td>決算5日前以内なら新規は見送り</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip mb-2">
+            <b>「銀行の25日線上」は一例です。</b>銀行を買うときだけ効く条件で、他の銘柄には関係ありません。
+            数字の下に<b>「◯銘柄」</b>と出ます。<b>10銘柄未満は「参考外」</b>（少数の結果なので判断に使わない）。
+        </div>
+        <div class="plain mb-0">
+            <b>読み方の例：</b>「地合い 買いやすい／200日線上 52%／電気機器の25日線上 18%」
+            → 全体は買いやすいが、<b>電気機器は弱いのでその銘柄は買わない</b>。
+        </div>
+    </div>
+
+    <!-- 8 -->
     <div class="card p-3" id="glossary">
         <h2 class="section">8. 用語集</h2>
         <div class="table-responsive">

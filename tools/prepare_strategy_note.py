@@ -222,11 +222,9 @@ def enrich_positions(positions, hist):
 def compute_breadth_and_sectors(hist):
     if not hist:
         return None, []
-    valid = [
-        item
-        for item in hist
-        if not item.get("excluded") and float(item.get("price") or 0) > 0
-    ]
+    # 週足が下向き（excluded）の銘柄も含めて数える。除外してから広がりを測ると
+    # 「上昇中の銘柄だけ」を集めることになり、数値が上振れする（銀行など母数が消える）。
+    valid = [item for item in hist if float(item.get("price") or 0) > 0]
     if not valid:
         return None, []
 
@@ -268,6 +266,7 @@ def compute_breadth_and_sectors(hist):
             {
                 "sector": sector,
                 "n": len(items),
+                "low_sample": len(items) < 10,
                 "avg_ret5_pct": round(sum(g5) / len(g5), 2),
                 "avg_ret20_pct": round(sum(g20) / len(g20), 2),
                 "above_sma25_pct": pct(

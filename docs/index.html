@@ -698,10 +698,11 @@
             let html = '';
             const r = META && META.regime;
             if (r && typeof r.risk_on !== 'undefined') {
-                const tip = `${r.ticker} ${r.close} vs SMA${r.sma_days} ${r.sma}`;
+                const gap = (r.close && r.sma) ? (Number(r.close) / Number(r.sma) - 1) * 100 : null;
+                const tip = `1306.T（TOPIX連動ETF） ${r.close} ${Number(r.close) >= Number(r.sma) ? '>' : '<'} ${r.sma_days}日線 ${r.sma}${gap === null ? '' : `（${gap > 0 ? '+' : ''}${gap.toFixed(1)}%）`}。リスクオン=買いやすい / リスクオフ=慎重に`;
                 html += r.risk_on
-                    ? `<span class="badge bg-success-subtle text-success border border-success" title="${tip}">地合い: risk-on</span>`
-                    : `<span class="badge bg-danger-subtle text-danger border border-danger" title="${tip}">地合い: risk-off</span>`;
+                    ? `<span class="badge bg-success-subtle text-success border border-success" title="${tip}">地合い: 買いやすい</span>`
+                    : `<span class="badge bg-danger-subtle text-danger border border-danger" title="${tip}">地合い: 慎重に</span>`;
             }
             const pg = META && META.portfolio;
             if (pg) {

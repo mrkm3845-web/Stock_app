@@ -176,12 +176,18 @@ function render(plan, status, events) {
   const market = status.market || {};
   const breadth = market.breadth || {};
   const bank = market.bank_sector || {};
+  const regime = market.regime || {};
+  const regimeGap = (regime.close && regime.sma) ? (Number(regime.close) / Number(regime.sma) - 1) * 100 : null;
+  const regimeSub = regime.close
+    ? `${regime.risk_on ? 'リスクオン' : 'リスクオフ'}・1306.T ${num(regime.close)} ${Number(regime.close) >= Number(regime.sma) ? '＞' : '＜'} 200日線 ${num(regime.sma)}（${pct(regimeGap)}）／${regime.risk_on ? '割れたら新規停止' : '新規停止中'}`
+    : 'データなし';
+  const sample = (b) => `${num(b.n)}銘柄${Number(b.n) < 10 ? '（参考外）' : ''}`;
 
   document.getElementById('summary-cards').innerHTML =
-    card('地合い', market.regime?.risk_on ? 'リスクオン' : 'リスクオフ', `1306.T ${num(market.regime?.close)} / 200日線 ${num(market.regime?.sma)}`, market.regime?.risk_on ? 'pos' : 'neg') +
-    card('200日線上', `${num(breadth.above_sma200_pct)}%`, `${num(breadth.n)}銘柄`, '') +
-    card('25日線上', `${num(breadth.above_sma25_pct)}%`, '短期の地合い', '') +
-    card('銀行の25日線上', `${num(bank.above_sma25_pct)}%`, '30%未満は新規停止', Number(bank.above_sma25_pct) >= 30 ? 'pos' : 'neg');
+    card('地合い', regime.risk_on ? '買いやすい' : '慎重に', regimeSub, regime.risk_on ? 'pos' : 'neg') +
+    card('200日線上', `${num(breadth.above_sma200_pct)}%`, sample(breadth), '') +
+    card('25日線上', `${num(breadth.above_sma25_pct)}%`, `${sample(breadth)}・短期`, '') +
+    card('銀行の25日線上', `${num(bank.above_sma25_pct)}%`, `${sample(bank)}・30%未満は新規停止`, Number(bank.above_sma25_pct) >= 30 ? 'pos' : 'neg');
 
   document.getElementById('today-actions').innerHTML = items.length
     ? items.map(item => `<div class="action-item ${ACTION_CLASS[item.status] || ''}">
