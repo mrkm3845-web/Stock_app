@@ -1,9 +1,9 @@
 {
-  "version": "2026-10-17",
-  "generated_at": "2026-10-17T15:20:50",
+  "version": "2026-10-24",
+  "generated_at": "2026-10-24T01:57:32",
   "source_backtest": {
-    "run_id": "20261017151925",
-    "generated_at": "2026-10-17T15:19:25"
+    "run_id": "20261024015524",
+    "generated_at": "2026-10-24T01:55:24"
   },
   "price_tiers": [
     {
@@ -12,8 +12,8 @@
       "min": 500,
       "max": 1000,
       "tp_pct": 0.12,
-      "sl_pct": 0.05,
-      "max_hold_days": 14,
+      "sl_pct": 0.07,
+      "max_hold_days": 20,
       "atr_sl_mult": 2.0
     },
     {
@@ -23,7 +23,7 @@
       "max": 2000,
       "tp_pct": 0.15,
       "sl_pct": 0.07,
-      "max_hold_days": 7,
+      "max_hold_days": 20,
       "atr_sl_mult": 3.0
     },
     {
@@ -41,10 +41,10 @@
       "name": "中高位 3000〜6000円",
       "min": 3000,
       "max": 6000,
-      "tp_pct": 0.12,
-      "sl_pct": 0.02,
-      "max_hold_days": 14,
-      "atr_sl_mult": 2.5
+      "tp_pct": 0.15,
+      "sl_pct": 0.03,
+      "max_hold_days": 20,
+      "atr_sl_mult": 2.0
     },
     {
       "id": "high",
