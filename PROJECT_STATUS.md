@@ -186,7 +186,8 @@ flowchart LR
 - [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示（決算日・需給水準・過熱警戒も同様）。`strategy_params` / `recommendations` / `earnings` / `meta` を読み、利確/損切・推奨株数を index と統一。OCO既定値とCSV取込も価格帯別ルールで算出。
 - [`docs/weekend.html`](docs/weekend.html): **作戦ノート**。`docs/weekend/index.json` と `docs/weekend/{date}.json` を読み、起動したタイミングの分析・作戦・リスク管理をスマホ向けに表示。opencode の `/strategy-note` で最新の取引履歴と市場データから生成する。公開ページのため、保有数量・損益額・口座情報は載せない。
 - [`docs/strategy.html`](docs/strategy.html): **今日の作戦**。`docs/strategy/active.json`（台帳）・`status.json`（現在状態）・`events.json`（履歴）を読み、今日やること・価格/条件トリガー・保有OCO・見送り理由を表示。平日9:05〜15:05 JSTに60分間隔＋引け後に `tools/check_strategy_plan.py` がチェックし、状態変化をDiscord通知する。**この監視は分析用ではなく執行の見張り番**（作戦ノート生成には使わない）。Actionsの遅延で**1〜2時間遅れの後追い検知**であり、リアルタイム通知ではない。公開ページのため、保有数量・損益額は載せない。
-- [`docs/ops.html`](docs/ops.html): **運用マニュアル**。裏で自動で動くこと（6ワークフロー・時刻・出力・失敗時）と、自分が手動でやること（朝のOCO確認・売買後の台帳更新・夜/週末の作戦ノート・データ更新・月次確認）を1ページに整理。画面の役割分担（要約/実行/記録）、通知の意味、制約（Actions遅延・通知が来ない≠安全）、ファイル早見表、Q&A、用語集。`index.html` / `strategy.html` / `weekend.html` / `guide.html` からリンク。
+- [`docs/ops.html`](docs/ops.html): **運用マニュアル**。裏で自動で動くこと（6ワークフロー・時刻・出力・失敗時）と、自分が手動でやること（朝のOCO確認・売買後の台帳更新・夜/週末の作戦ノート・データ更新・月次確認）を1ページに整理。画面の役割分担（要約/実行/記録）、通知の意味、制約（Actions遅延・通知が来ない≠安全）、ファイル早見表、Q&A、用語集。冒頭に**「どのページをいつ見るか」早見表**。8ページすべてからリンク。
+- **ヘッダーの共通化**: 8ページのナビを **スクリーナー / 今日の作戦 / 取引記録 / 振り返り / 作戦ノート / その他（AIの学び・見方ガイド・運用マニュアル）** に統一。今日の作戦の「手動チェック」「データ更新（AI）」「再読み込み」は**「操作」**にまとめた（JS不要の `<details>`）。
 - **推奨の母集団トグル**: index.html のスイング画面に「全体 / ◯円未満（`price_filter`）」トグル。レンジ選択時は `recommendations.json` の `range.min_price/max_price` に入る**全銘柄を表示**し、AI判定列は `range.stocks` のレンジAIに差し替える（評価済みのみ・参考。`currentAI`/`aiVerdictPriority` を表示中母集団に応じて切替）。**並び順は全体/レンジとも選択中の `sortKey` を常に優先**し、AI順位で固定しない（既定はスコア順）。全体選択時は従来どおり `ai_strategy_latest.json`。
 - 旧 `main7.html` / `index_main6_backup.html` は退避。
 
@@ -320,10 +321,13 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 
 - ワークフロー実行時は、**どのワークフローを実行するか宣言してから**実行する（`AGENTS.md`）。
 - 作戦ノート: opencode の `/strategy-note` で、最新の `tradehistory(JP)_*.csv` と市場データから `docs/weekend/` に生成（補助: `tools/prepare_strategy_note.py`、Windows代替: `tools/prepare_strategy_note.ps1`）。他のハーネスは `prompts/strategy_note.md` を使う。
+- **作戦の作り直し判定**: `tools/plan_staleness.py` が「直近の確定終値（15:30前は前営業日）」と「取引履歴の最終約定日」で判定する。`0 FRESH` なら**上書きしない**、`4 PARTIAL`（当日の途中データ）なら**作らない**、`2 STALE_PRICE`／`3 STALE_TRADES` のときだけ更新する。`/strategy-note` はこの判定から始まる。
+- **確定終値の扱い**: `main8.py` の対象日は**15:30より前なら前営業日**（`get_target_date_str`）。日中に走っても当日の途中の足を確定値として保存しない。現在値が必要な場面は `check_strategy_plan.py`（yfinance）を使う。
 - 作戦台帳: `docs/strategy/active.json`。トリガーは `tools/check_strategy_plan.py` が `--mode intraday|eod` で判定し、`docs/strategy/status.json` / `events.json` を更新。ワークフロー: `plan_check_intraday.yml`（平日60分・1日7回）/ `daily_main8.yml`（17時台）/ `daily_main8_ai.yml`（AI実行後）。**日中の監視は執行の見張り番**（作戦ノートの材料には使わない）。Actionsの遅延で実起動は1〜2時間遅れ、発火しない回もあるため「リアルタイムの損切り監視」としては使わない（OCOが本体）。
 - 運用手順の一覧: [`docs/ops.html`](docs/ops.html)（自動／手動の切り分け・時刻表・Q&A）。
 - データ鮮度: 作戦ノート作成前に `tools/refresh_data_if_stale.py --refresh`。平日の夜は当日、週末は直近の金曜を期待日として、履歴・AIが古ければ `main8.py` で価格・スコア・AIをまとめて更新する。AIキーがない場合はテクニカルのみ。スマホからは `refresh_data_ai.yml`（手動データ更新）を実行。
-- ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）/ `weekly_review.yml`（土曜09:00）/ `plan_check_intraday.yml`（平日60分）/ `refresh_data_ai.yml`（手動データ更新）。
+- ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）/ `weekly_review.yml`（土曜09:00）/ `plan_check_intraday.yml`（平日60分）/ `refresh_data_ai.yml`（手動データ更新）/ `notify_plan_update.yml`（作戦台帳の更新をDiscord通知）。
+- **Discord通知**: ①AI推奨（AI実行後） ②作戦トリガー（状態変化のみ） ③**作戦更新**（`active.json` のpush時・更新のたび） ④**週次振り返り**（土曜の答え合わせ後、最新週の1通）。
 - **非営業日スキップ**: `main8.py` は JPX 取引所カレンダー（`pandas_market_calendars`）で**土日祝・取引所休場を判定してスキップ**。週次レビューもベンチマークの実営業日で非営業日のシグナルを除外する。カレンダー未導入時は安全側（営業日扱い）にフォールバック。
 
 ---

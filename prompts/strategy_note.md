@@ -40,7 +40,29 @@
 
 ## 2. 最新データを集める
 
-### 2-1. 価格・スコア・AIの鮮度チェック
+### 2-1. 作り直す必要があるか判定（最初に必ず）
+
+**確定終値**を基準に、台帳を作り直す必要があるかを判定する。
+
+```bash
+uv run --no-project --python 3.11 --with pandas_market_calendars python tools/plan_staleness.py
+```
+
+終了コードで分岐する。
+
+| コード | 意味 | すること |
+| :--- | :--- | :--- |
+| **0 FRESH** | 期待日の確定終値で最新・売買の変化なし | **何も作らず「更新不要」と報告して終了** |
+| **2 STALE_PRICE** | 価格が古い／台帳の基準日が古い | 2-2 に進む |
+| **3 STALE_TRADES** | 価格は最新だが売買が新しい | 2-2 に進む（台帳を更新する） |
+| **4 PARTIAL** | 当日の途中データが入っている | **作戦を作らず停止**し「引け後（15:30以降）に作り直してください」と報告 |
+| **5 / 6** | 台帳・価格データがない | 2-2 に進む |
+
+- 期待日は「**15:30より前なら前営業日**」。日中に作っても当日の途中値は使わない。
+- `FRESH` でも、ユーザーが「作り直して」と明示したときだけ続行してよい（その旨を最初に伝える）。
+- `--json` を付けると機械的に読める。
+
+### 2-2. 価格・スコア・AIの鮮度チェック
 
 まず次を実行する。**数分かかることがある**。
 
@@ -54,7 +76,19 @@ uv run --no-project --python 3.11 --with pandas_market_calendars python tools/re
 - AIが古いままの場合は、ノートに「AI基準日が古い」と明記し、**スコアと作戦台帳を優先**する
 - どうしても今すぐAIも更新したい場合は、今日の作戦ページの「データ更新（AI）」をGitHub Actionsから実行する
 
-### 2-2. 作戦用コンテキストを作る
+更新したら、**もう一度 2-1 の判定を実行する**。
+
+```bash
+python tools/plan_staleness.py
+```
+
+- `0 FRESH` / `3 STALE_TRADES` になった → 2-3 に進む
+- それでも `2 STALE_PRICE` のまま → **作戦を作らず停止**し、「価格データが更新できませんでした」と報告する
+- `4 PARTIAL` → **作戦を作らず停止**し、「引け後（15:30以降）に作り直してください」と報告する
+
+**古い価格で作戦を作らないこと。** 止まる方が、1日前の値段で台帳を作るより安全。
+
+### 2-3. 作戦用コンテキストを作る
 
 ```bash
 python tools/prepare_strategy_note.py
@@ -173,12 +207,17 @@ python tools/prepare_strategy_note.py
 `docs/strategy/active.json` を、ノートと同じ `plan_id` で作る。
 古い台帳がある場合は `docs/strategy/plans/{old_plan_id}.json` に退避する。
 
+- `data_date` は **2-1 で確認した「期待する取引日」＝使った確定終値の日付**にする（当日の途中値は使わない）
+- `trade_history_last_date` は**取引履歴CSVの最終約定日**にする（`tools/plan_staleness.py --json` の `trade_history_last_date`）
+- この2つが揃っていないと、次回「更新不要」の判定ができず、毎回作り直しになる
+
 ### 必須フィールド
 
 ```json
 {
   "plan_id": "2026-10-22-1512",
   "created_at": "2026-10-22T15:12:31+09:00",
+  "updated_at": "2026-10-22T15:12:31+09:00",
   "data_date": "2026-10-21",
   "trade_history_last_date": "2026-10-19",
   "valid_until": "2026-10-30",
@@ -290,6 +329,7 @@ git push origin main
 
 - `rejected` のときは `git pull --rebase origin main` してから再push
 - push後、GitHub Pages の反映を確認する（通常30〜60秒）
+- pushすると `docs/strategy/active.json` の変更を検知して、**Discordに「作戦更新」通知**が自動で飛ぶ（`notify_plan_update.yml`）。`updated_at` を更新しておくこと（通知の時刻に使う）
 - 反映URL:
   - 今日の作戦: `https://mrkm3845-web.github.io/Stock_app/strategy.html`
   - 作戦ノート: `https://mrkm3845-web.github.io/Stock_app/weekend.html?date={timestamp}`

@@ -36,6 +36,7 @@ import math
 import os
 import re
 import sys
+import urllib.request
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -2049,6 +2050,69 @@ def resolve_weeks(args):
     return sorted(weeks)
 
 
+# --------------------------------------------------------------------------- 通知
+WEEKLY_WEB_URL = "https://mrkm3845-web.github.io/Stock_app/weekly.html"
+
+
+def _fmt_pct(value, digits=1):
+    try:
+        return f"{float(value):+.{digits}f}%"
+    except (TypeError, ValueError):
+        return "-"
+
+
+def _fmt_rate(value):
+    try:
+        return f"{float(value) * 100:.0f}%"
+    except (TypeError, ValueError):
+        return "-"
+
+
+def send_discord(content):
+    """DISCORD_WEBHOOK_URL があれば1通送る（無ければ静かにスキップ）。"""
+    url = os.environ.get("DISCORD_WEBHOOK_URL") or ""
+    if not url:
+        print(">> Discord通知: DISCORD_WEBHOOK_URL が無いためスキップ")
+        return
+    data = json.dumps({"content": content}).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=data,
+        headers={"Content-Type": "application/json", "User-Agent": "StockApp/1.0"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            resp.read()
+        print(">> Discord通知を送信しました")
+    except Exception as e:  # noqa: BLE001
+        print(f">> ⚠️ Discord通知に失敗: {e}")
+
+
+def notify_weekly_result(result):
+    """週次振り返りの要点を1通にまとめる。"""
+    if not result:
+        return
+    s = result.get("summary") or {}
+    lines = [
+        f"【週次振り返り {result.get('week')}】{result.get('start')}〜{result.get('end')}",
+        f"約定 {s.get('n_filled') or 0}件 / 勝率 {_fmt_rate(s.get('win_rate'))} / 平均 {_fmt_pct(s.get('avg_return_pct'))}",
+        f"TOPIX {_fmt_pct(s.get('avg_benchmark_pct'))} / 超過 {_fmt_pct(s.get('avg_excess_pct'))}",
+    ]
+    best = s.get("best") or {}
+    worst = s.get("worst") or {}
+    if best:
+        lines.append(f"ベスト {best.get('name')}（{best.get('code')}） {_fmt_pct(best.get('return_net_pct'))}")
+    if worst:
+        lines.append(f"ワースト {worst.get('name')}（{worst.get('code')}） {_fmt_pct(worst.get('return_net_pct'))}")
+    plan = (result.get("next_week_plan") or {}).get("plan") or {}
+    headline = plan.get("headline") or plan.get("summary")
+    if headline:
+        lines.append(f"来週: {str(headline)[:120]}")
+    lines.append(WEEKLY_WEB_URL)
+    send_discord("\n".join(lines))
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -2127,6 +2191,13 @@ def main():
         print(f">> ⚠️ フィードバック計算に失敗（結果は出力済み）: {e}")
         import traceback
         traceback.print_exc()
+
+    # 通知は最新週の1通だけ（--all で過去週をまとめて作っても通知は1回）
+    try:
+        if results:
+            notify_weekly_result(results[-1])
+    except Exception as e:  # noqa: BLE001
+        print(f">> ⚠️ Discord通知の作成に失敗: {e}")
 
 
 if __name__ == "__main__":

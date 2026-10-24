@@ -48,8 +48,17 @@
             <div class="d-flex flex-wrap gap-2">
                 <a href="index.html" class="btn btn-light btn-sm fw-bold"><i class="bi bi-sliders me-1"></i>スクリーナー</a>
                 <a href="strategy.html" class="btn btn-outline-light btn-sm fw-bold"><i class="bi bi-signpost-split me-1"></i>今日の作戦</a>
+                <a href="journal.html" class="btn btn-outline-light btn-sm fw-bold"><i class="bi bi-journal-bookmark-fill me-1"></i>取引記録</a>
+                <a href="weekly.html" class="btn btn-outline-light btn-sm fw-bold"><i class="bi bi-clipboard2-check me-1"></i>振り返り</a>
                 <a href="weekend.html" class="btn btn-outline-light btn-sm fw-bold"><i class="bi bi-journal-richtext me-1"></i>作戦ノート</a>
-                <a href="guide.html" class="btn btn-outline-light btn-sm fw-bold"><i class="bi bi-question-circle me-1"></i>見方ガイド</a>
+                <details style="position:relative;display:inline-block">
+                    <summary class="btn btn-outline-light btn-sm fw-bold" style="list-style:none;display:block;cursor:pointer;">その他 <i class="bi bi-caret-down-fill" style="font-size:0.65rem;"></i></summary>
+                    <div class="dropdown-menu show" style="right:0;left:auto;top:100%;margin-top:.25rem;">
+                        <a class="dropdown-item" href="playbook.html"><i class="bi bi-mortarboard me-2"></i>AIの学び</a>
+                        <a class="dropdown-item" href="guide.html"><i class="bi bi-question-circle me-2"></i>見方ガイド</a>
+                        <a class="dropdown-item" href="ops.html"><i class="bi bi-gear-wide-connected me-2"></i>運用マニュアル</a>
+                    </div>
+                </details>
             </div>
         </div>
         <div class="mt-3 muted-small">
@@ -103,6 +112,25 @@
         </div>
         <div class="auto mb-0">
             <b>自動で回っているもの:</b> 平日5回のスクリーニング → 夜にAI分析 → 日中7回のトリガー監視 → 土曜に週次答え合わせ → 月1回バックテスト。人が押さなくても進みます。
+        </div>
+
+        <h3 class="sub"><i class="bi bi-compass me-1"></i>どのページを、いつ見るか</h3>
+        <div class="table-responsive mb-0">
+            <table class="table table-sm table-bordered align-middle">
+                <thead><tr><th style="width:90px">いつ</th><th style="width:170px">ページ</th><th>何のため</th></tr></thead>
+                <tbody>
+                    <tr><td>毎朝</td><td><a href="strategy.html"><b>今日の作戦</b></a></td><td>OCOが生きているか、今日やること</td></tr>
+                    <tr><td>日中</td><td><a href="strategy.html">今日の作戦</a>（通知が来たら）</td><td>損切接近・買い到達の確認</td></tr>
+                    <tr><td>売買した日</td><td><a href="journal.html">取引記録</a> → ノート更新</td><td>約定を記録し、台帳を更新する</td></tr>
+                    <tr><td>夜・週末</td><td><a href="weekend.html">作戦ノート</a></td><td>なぜその水準かを決める（＝台帳をつくる）</td></tr>
+                    <tr><td>土曜</td><td><a href="weekly.html">振り返り</a></td><td>先週の答え合わせ</td></tr>
+                    <tr><td>月1回</td><td>その他 → <a href="playbook.html">AIの学び</a></td><td>検証の傾向を確認</td></tr>
+                    <tr><td>迷ったとき</td><td>その他 → <a href="guide.html">見方ガイド</a> / <a href="ops.html">運用マニュアル</a></td><td>読み方・手順</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="muted-small mt-2 mb-0">
+            どのページも右上の並びは同じです（スクリーナー / 今日の作戦 / 取引記録 / 振り返り / 作戦ノート / その他）。
         </div>
     </div>
 
@@ -284,10 +312,26 @@
         <h3 class="sub"><i class="bi bi-moon-stars me-1"></i>4-3. 夜・週末の作戦づくり（15〜30分）</h3>
         <ol class="mb-2">
             <li>opencode で <span class="kbd">/strategy-note</span>（追加の希望があれば後ろに書く）</li>
-            <li>中で<b>データの鮮度チェック</b>が走り、古ければ自動で更新されます（数分かかります）</li>
+            <li>最初に<b>「作り直す必要があるか」の判定</b>が走ります（下の表）</li>
+            <li>古ければ<b>データの鮮度チェック</b>と更新が自動で走ります（数分かかります）</li>
             <li>作戦ノート（なぜそう決めたか＝記録）と作戦台帳（今日の水準＝実行）が更新される</li>
-            <li>コミット・push まで自動で行われ、数分後に公開ページへ反映</li>
+            <li>コミット・push まで自動で行われ、数分後に公開ページへ反映＋Discordに通知</li>
         </ol>
+        <div class="table-responsive mb-2">
+            <table class="table table-sm table-bordered align-middle">
+                <thead><tr><th style="width:150px">判定</th><th>どうなる</th></tr></thead>
+                <tbody>
+                    <tr><td><b>更新不要</b></td><td>その日の確定終値で最新で、売買の変化もなし → <b>何も上書きしません</b>（ノートも台帳も作りません）</td></tr>
+                    <tr><td><b>価格が古い</b></td><td>データを更新してから作り直します。それでも古ければ<b>停止</b>します</td></tr>
+                    <tr><td><b>売買が新しい</b></td><td>同じ終値でも、約定に合わせて台帳を作り直します</td></tr>
+                    <tr><td><b>当日の途中データ</b></td><td><b>作りません</b>。「引け後（15:30以降）に作り直してください」と止まります</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="warn mb-2">
+            <b>作戦は「確定した終値」で作ります。</b>15:30より前は前営業日の終値を使います（当日の途中の値では作りません）。
+            昼休みや前場に作ると、<b>前日終値ベース</b>になるか、当日の途中データが入っていれば止まります。
+        </div>
         <div class="plain mb-2">
             <b>中で起きていること:</b>
             <code>tools/refresh_data_if_stale.py --refresh</code> →（古ければ）<code>main8.py</code> →
@@ -316,6 +360,10 @@
                     <tr>
                         <td>データが最新か確認</td>
                         <td><code>uv run --no-project --python 3.11 --with pandas_market_calendars python tools/refresh_data_if_stale.py --check</code></td>
+                    </tr>
+                    <tr>
+                        <td>作戦を作り直す必要があるか判定</td>
+                        <td><code>python tools/plan_staleness.py</code></td>
                     </tr>
                     <tr>
                         <td>古ければ更新（AIも）</td>
@@ -385,10 +433,10 @@
     <!-- 6 -->
     <div class="card p-3" id="notify">
         <h2 class="section">6. 通知の種類と意味</h2>
-        <p class="mb-2">Discord に届く通知は<b>2種類だけ</b>です。</p>
+        <p class="mb-2">Discord に届く通知は<b>4種類</b>です。</p>
         <div class="table-responsive mb-2">
             <table class="table table-sm table-bordered align-middle">
-                <thead><tr><th style="width:150px">通知</th><th style="width:150px">いつ来る</th><th>内容</th></tr></thead>
+                <thead><tr><th style="width:150px">通知</th><th style="width:180px">いつ来る</th><th>内容</th></tr></thead>
                 <tbody>
                     <tr>
                         <td><b>AI推奨</b></td>
@@ -399,6 +447,16 @@
                         <td><b>作戦トリガー</b></td>
                         <td>日中の監視／引け後チェック</td>
                         <td>損切・利確・買い入口に<b>触れたとき</b>、条件が崩れたとき（<b>状態が変わったときだけ</b>）</td>
+                    </tr>
+                    <tr>
+                        <td><b>作戦更新</b></td>
+                        <td>作戦台帳（<code>active.json</code>）が更新されたとき</td>
+                        <td>plan_id・基準日・保有/監視/見送りの件数・今日やること。<b>更新のたびに1通</b>（「更新不要」では送りません）</td>
+                    </tr>
+                    <tr>
+                        <td><b>週次振り返り</b></td>
+                        <td>土曜 09:00 の答え合わせ後</td>
+                        <td>約定件数・勝率・平均リターン・TOPIX超過・ベスト/ワースト・来週の要点</td>
                     </tr>
                 </tbody>
             </table>
@@ -445,17 +503,23 @@
             相場が急に動いたとき、Botは間に合いません。
         </div>
 
+        <div class="plain">
+            <b>5. 価格は「確定終値」で扱う。</b>スクリーナー・スコア・作戦は、<b>15:30より前なら前営業日</b>の終値を使います。
+            日中に「データ更新（AI）」を押しても、当日の途中の値は入りません（現在値は「今日の作戦」が見ます）。
+            スクリーナーと取引記録が日中に動かないのは、このためです。
+        </div>
+
         <div class="tip">
-            <b>5. 何が正か。</b>迷ったら<b>作戦台帳 → スコア → AI</b>の順。AIは提案、実行は台帳です。
+            <b>6. 何が正か。</b>迷ったら<b>作戦台帳 → スコア → AI</b>の順。AIは提案、実行は台帳です。
         </div>
 
         <div class="plain">
-            <b>6. 公開ページです。</b>保有<b>数量・損益額・口座情報・個人情報は載せない</b>。保有は銘柄コードとOCO水準まで。
+            <b>7. 公開ページです。</b>保有<b>数量・損益額・口座情報・個人情報は載せない</b>。保有は銘柄コードとOCO水準まで。
             取引履歴CSVは<b>読むだけでコミットしない</b>。
         </div>
 
         <div class="plain mb-0">
-            <b>7. 投資助言ではありません。</b>「儲かる」とは言えません。最終判断はご自身で。データは作成時点のものです。
+            <b>8. 投資助言ではありません。</b>「儲かる」とは言えません。最終判断はご自身で。データは作成時点のものです。
         </div>
     </div>
 

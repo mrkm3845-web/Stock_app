@@ -148,6 +148,7 @@ Invoke-RestMethod -Uri "https://api.github.com/repos/mrkm3845-web/Stock_app/acti
 | `run_walkforward.yml` | 月次バックテスト＋パラメータ反映 |
 | `weekly_review.yml` | 週次答え合わせ（土曜09:00 JST） |
 | `plan_check_intraday.yml` | 作戦トリガー監視（平日9:05〜15:05 JSTに60分間隔） |
+| `notify_plan_update.yml` | 作戦台帳が更新されたらDiscordへ「作戦更新」通知（更新のたび） |
 | `refresh_data_ai.yml` | 手動データ更新（スクリーナー＋AI。スマホからも実行可） |
 
 ---
@@ -172,7 +173,18 @@ opencode で次のコマンドを実行します。
 
 ### 作成前のデータ更新
 
-作戦ノートを作る前に、必ず鮮度を確認します。
+作戦ノートを作る前に、**まず作り直す必要があるかを判定**します。
+
+```bash
+python tools/plan_staleness.py
+```
+
+- `0`（更新不要）: その日の**確定終値**で最新・売買の変化なし → **何も上書きせず終了**
+- `2`（価格が古い）/ `3`（売買が新しい）: 下のデータ更新へ進む
+- `4`（当日の途中データ）: **作戦を作らず停止**。「引け後（15:30以降）に作り直す」
+- 期待日は「**15:30より前なら前営業日**」。日中に作っても当日の途中値は使わない
+
+価格・スコア・AIの鮮度を確認し、古ければ更新します。
 
 ```bash
 uv run --no-project --python 3.11 --with pandas_market_calendars python tools/refresh_data_if_stale.py --refresh
@@ -180,6 +192,7 @@ uv run --no-project --python 3.11 --with pandas_market_calendars python tools/re
 
 - 平日の夜は当日の引け、週末は直近の金曜を期待日として判定
 - 履歴・AIが古ければ `main8.py` で**価格・スコア・AIをまとめて更新**（数分）
+- 更新後にもう一度 `plan_staleness.py` を実行し、**古いまま／途中データなら停止**（古い価格で台帳を作らない）
 - AIキーがなければテクニカルのみ更新し、AIが古いままならその旨をノートに明記
 - AIも今すぐ更新したいときは、今日の作戦ページの「データ更新（AI）」（`refresh_data_ai.yml`）を実行
 

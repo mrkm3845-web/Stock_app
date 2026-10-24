@@ -361,7 +361,28 @@ def fmt_action(item, status, price, action):
     }.get(status, "・")
     code = item.get("code")
     name = item.get("name")
-    return f"{emoji} {code} {name}：{action}（現在 {price:,.0f}）"
+    return f"{emoji} {name}（{code}）：{action}（現在 {price:,.0f}）"
+
+
+def fmt_plan_update(plan, status):
+    """作戦台帳が更新されたときの通知文（push時にも使う）。"""
+    items = status.get("items") or []
+    plan_id = plan.get("plan_id") or "-"
+    updated = plan.get("updated_at") or plan.get("created_at") or "-"
+    n_pos = len(plan.get("positions") or [])
+    n_watch = len(plan.get("watchlist") or [])
+    n_avoid = len(plan.get("avoid") or [])
+    lines = [
+        f"【作戦更新】{plan_id}",
+        f"基準日 {plan.get('data_date') or '-'} / 更新 {str(updated).replace('T', ' ')[:16]}",
+        f"保有 {n_pos} / 監視 {n_watch} / 見送り {n_avoid}",
+    ]
+    for item in items[:10]:
+        lines.append(fmt_action(item, item.get("status"), item.get("current_price") or 0, item.get("action") or ""))
+    if len(items) > 10:
+        lines.append(f"…ほか {len(items) - 10} 件")
+    lines.append(WEB_URL)
+    return "\n".join(lines)
 
 
 def main() -> int:
@@ -371,6 +392,7 @@ def main() -> int:
     parser.add_argument("--no-write", action="store_true", help="ファイル更新しない")
     parser.add_argument("--force", action="store_true", help="時間外・状態変化なしでも通知")
     parser.add_argument("--summary", action="store_true", help="今日の作戦サマリも送る")
+    parser.add_argument("--notify-plan", action="store_true", help="作戦台帳の更新通知を送る（push時用）")
     args = parser.parse_args()
 
     now = now_jst()
@@ -554,6 +576,8 @@ def main() -> int:
             DISCORD_URL,
             f"【今日の作戦】{plan.get('plan_id')}\n" + "\n".join(lines) + f"\n{WEB_URL}",
         )
+    if args.notify_plan:
+        send_discord(DISCORD_URL, fmt_plan_update(plan, status))
     return 0
 
 

@@ -1,0 +1,39 @@
+name: 作戦更新の通知
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/strategy/active.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notify-plan-update
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy yfinance
+
+      - name: 作戦台帳の更新をDiscordへ通知
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python tools/check_strategy_plan.py --mode eod --force --no-write --notify-plan

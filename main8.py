@@ -79,11 +79,21 @@ def _jst_now():
 
 
 def get_target_date_str():
-    """実行日付（トレーディングデー）を日本時間基準で返す。JST 9:00 前は前営業日扱い。"""
+    """実行日付（トレーディングデー）を日本時間基準で返す。
+
+    15:30（大引け）より前は「前営業日」を対象にする。
+    日中に実行しても当日の途中の足を確定値として保存しないためのガード。
+    当日の現在値が必要な場面は tools/check_strategy_plan.py（yfinance）を使う。
+    """
     now = _jst_now()
-    if now.hour < 9:
-        return (now - timedelta(days=1)).strftime("%Y-%m-%d")
-    return now.strftime("%Y-%m-%d")
+    if (now.hour, now.minute) >= (15, 30):
+        return now.strftime("%Y-%m-%d")
+    day = now.date() - timedelta(days=1)
+    for _ in range(10):
+        if is_market_open_day(day.isoformat()):
+            return day.strftime("%Y-%m-%d")
+        day -= timedelta(days=1)
+    return day.strftime("%Y-%m-%d")
 
 
 _MARKET_CAL = None

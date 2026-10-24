@@ -8,6 +8,33 @@
 
 ---
 
+## 2026-10-24
+
+### 作戦を「確定終値」で作る保証・更新不要スキップ・Discord通知（この変更）
+- **commit**: この変更（確定終値・通知・ナビ整理）
+- **種別**: ワークフロー / 運用 / UI / ドキュメント
+- **変更**:
+  - **`tools/plan_staleness.py` を追加**（読み取りのみ）。直近の**確定終値**（15:30より前なら前営業日）と取引履歴の最終約定日で、台帳を作り直す必要があるかを判定する。`0 FRESH` / `2 STALE_PRICE` / `3 STALE_TRADES` / `4 PARTIAL`（当日の途中データ）/ `5 NO_PLAN` / `6 NO_DATA`。
+  - **`main8.py` の対象日を「15:30より前は前営業日」に変更**（`get_target_date_str`）。日中に走っても当日の途中の足を確定値として保存しない（遅延した朝のジョブがザラ場中に走る場合の対策）。営業日判定で祝日・週末もさかのぼる。
+  - `prompts/strategy_note.md`: 手順の冒頭に「作り直す必要があるかの判定」を追加。**FRESHなら何も作らず終了**、**古いまま／途中データなら停止**（古い価格で台帳を作らない）。`data_date` は期待取引日、`trade_history_last_date` はCSVの最終約定日を必須に。`updated_at` を追加。
+  - `tools/check_strategy_plan.py`: `--notify-plan` を追加（作戦更新の通知文）。通知の銘柄表記を **「銘柄名（コード）」** に統一。
+  - **`notify_plan_update.yml` を追加**。`docs/strategy/active.json` が push されたら Discord に【作戦更新】を送る（`--mode eod --force --no-write --notify-plan`）。「更新不要」では送らない。
+  - **`weekly_review.py` に Discord 通知**を追加（最新週の1通：約定件数・勝率・平均・TOPIX超過・ベスト/ワースト・来週の要点）。`weekly_review.yml` に `DISCORD_WEBHOOK_URL` を追加。
+  - **8ページのヘッダーを統一**（スクリーナー / 今日の作戦 / 取引記録 / 振り返り / 作戦ノート / その他）。今日の作戦の「手動チェック」「データ更新（AI）」「再読み込み」は**「操作」**に集約（JS不要の `<details>`）。
+  - `docs/ops.html` に**「どのページをいつ見るか」早見表**、確定終値の扱い、判定の分岐、通知4種（AI推奨/トリガー/作戦更新/週次）を追記。
+- **根拠・検証**:
+  - `plan_staleness.py` の実測: 2026-10-24時点で `STALE_PRICE`（期待 10/23 / 履歴 10/22）、`--date 2026-10-22T10:00` で `PARTIAL` を確認。
+  - `check_strategy_plan.py --mode eod --force --no-write --notify-plan` が exit 0 で動作し、通知文（plan_id・基準日・更新時刻・保有/監視/見送り件数・今日やること）を確認。
+  - `py_compile` で変更したPythonの構文を確認。8ページのHTMLタグ対応検証とChromeヘッドレス描画（ナビ・「その他」「操作」の開閉）を確認。
+- **影響・ロールバック**:
+  - **日中に `main8.py` を実行しても当日の途中値は入らなくなります**（スクリーナーは前日終値のまま）。日中の現在値は「今日の作戦」が見ます。
+  - 土日・祝日に手動更新すると、直近の営業日を対象にします（欠損した回を埋められます）。
+  - 作戦の push ごとにDiscord通知が飛びます（1日に複数回更新すれば複数回）。
+  - 戻す場合は `git revert`。`main8.py` の対象日は `(now.hour, now.minute) >= (15, 30)` を `now.hour >= 9` に戻す。
+- **関連**: `tools/plan_staleness.py` / `main8.py` / `tools/check_strategy_plan.py` / `prompts/strategy_note.md` / `.github/workflows/notify_plan_update.yml` / `.github/workflows/weekly_review.yml` / `back_tester/weekly_review.py` / `docs/*.html` / `AGENTS.md` / `PROJECT_STATUS.md`
+
+---
+
 ## 2026-10-23
 
 ### 作戦台帳を10/23の約定に合わせて更新（この変更）
