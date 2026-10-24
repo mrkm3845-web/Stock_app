@@ -2,7 +2,7 @@
   "week": "2026-W40",
   "start": "2026-09-28",
   "end": "2026-10-02",
-  "generated_at": "2026-10-17T02:23:14",
+  "generated_at": "2026-10-24T02:43:24",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -13,20 +13,20 @@
   },
   "summary": {
     "picks_total": 21,
-    "n_filled": 12,
+    "n_filled": 18,
     "n_not_filled": 3,
-    "n_pending": 6,
+    "n_pending": 0,
     "n_no_data": 0,
     "n_entered": 18,
-    "fill_rate": 0.8,
-    "avg_return_pct": -3.551,
-    "median_return_pct": -8.882,
-    "win_rate": 0.25,
-    "avg_benchmark_pct": -0.797,
-    "avg_excess_pct": -2.753,
-    "beat_benchmark_rate": 0.417,
-    "rule_avg_return_pct": -3.551,
-    "rule_win_rate": 0.25,
+    "fill_rate": 0.857,
+    "avg_return_pct": -7.507,
+    "median_return_pct": -9.469,
+    "win_rate": 0.167,
+    "avg_benchmark_pct": -1.335,
+    "avg_excess_pct": -6.172,
+    "beat_benchmark_rate": 0.278,
+    "rule_avg_return_pct": -7.507,
+    "rule_win_rate": 0.167,
     "avg_weekly_return_pct": -0.453,
     "weekly_win_rate": 0.556,
     "n_missed_evaluated": 3,
@@ -35,15 +35,17 @@
     "missed_down_count": 1,
     "missed_up_avg_pct": 5.21,
     "missed_down_avg_pct": -3.1,
+    "score_versions": [],
+    "experiment_ids": [],
     "best": {
       "code": "3131",
       "name": "シンデン・ハイテックス",
       "return_net_pct": 13.231
     },
     "worst": {
-      "code": "8362",
-      "name": "福井銀行",
-      "return_net_pct": -13.9595
+      "code": "7826",
+      "name": "フルヤ金属",
+      "return_net_pct": -19.1063
     }
   },
   "trades": [
@@ -53,6 +55,8 @@
       "sector": "電気機器",
       "signal_date": "2026-09-28",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -112,6 +116,8 @@
       "sector": "銀行業",
       "signal_date": "2026-09-28",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -171,6 +177,8 @@
       "sector": "銀行業",
       "signal_date": "2026-09-28",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -230,6 +238,8 @@
       "sector": "電気機器",
       "signal_date": "2026-09-29",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -289,6 +299,8 @@
       "sector": "銀行業",
       "signal_date": "2026-09-29",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -348,6 +360,8 @@
       "sector": "銀行業",
       "signal_date": "2026-09-29",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -407,6 +421,8 @@
       "sector": "電気機器",
       "signal_date": "2026-09-30",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -451,6 +467,8 @@
       "sector": "銀行業",
       "signal_date": "2026-09-30",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 99.9,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -510,6 +528,8 @@
       "sector": "銀行業",
       "signal_date": "2026-09-30",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 99.8,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -569,6 +589,8 @@
       "sector": "機械",
       "signal_date": "2026-09-30",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 98.8,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -592,21 +614,31 @@
       },
       "fill_date": "2026-10-07",
       "fill_price": 1993.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-23",
+        "price": 1879.0,
+        "reason": "損切り",
+        "return_net_pct": -6.0024
+      },
       "exit_weekly": {
         "date": "2026-10-09",
         "price": 1895.0,
         "return_net_pct": -5.202,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-23",
+        "price": 1879.0,
+        "reason": "損切り",
+        "return_net_pct": -6.0024
+      },
+      "return_gross_pct": -5.72,
+      "return_net_pct": -6.0024,
+      "return_rule_pct": -6.0024,
       "return_weekly_pct": -5.202,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -5.4549,
+      "excess_pct": -0.5475,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -618,6 +650,8 @@
       "sector": "卸売業",
       "signal_date": "2026-09-30",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 96.8,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -641,21 +675,31 @@
       },
       "fill_date": "2026-10-01",
       "fill_price": 38600.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-21",
+        "price": 33050.0,
+        "reason": "保有期限",
+        "return_net_pct": -14.6347
+      },
       "exit_weekly": {
         "date": "2026-10-02",
         "price": 37450.0,
         "return_net_pct": -3.2699,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-21",
+        "price": 33050.0,
+        "reason": "保有期限",
+        "return_net_pct": -14.6347
+      },
+      "return_gross_pct": -14.3782,
+      "return_net_pct": -14.6347,
+      "return_rule_pct": -14.6347,
       "return_weekly_pct": -3.2699,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -1.503,
+      "excess_pct": -13.1317,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -667,6 +711,8 @@
       "sector": "電気機器",
       "signal_date": "2026-10-01",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -711,6 +757,8 @@
       "sector": "卸売業",
       "signal_date": "2026-10-01",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -770,6 +818,8 @@
       "sector": "その他製品",
       "signal_date": "2026-10-01",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -793,21 +843,31 @@
       },
       "fill_date": "2026-10-02",
       "fill_price": 11960.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-19",
+        "price": 9850.0,
+        "reason": "損切り",
+        "return_net_pct": -17.8888
+      },
       "exit_weekly": {
         "date": "2026-10-02",
         "price": 11840.0,
         "return_net_pct": -1.2999,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-19",
+        "price": 9850.0,
+        "reason": "損切り",
+        "return_net_pct": -17.8888
+      },
+      "return_gross_pct": -17.6421,
+      "return_net_pct": -17.8888,
+      "return_rule_pct": -17.8888,
       "return_weekly_pct": -1.2999,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -1.1099,
+      "excess_pct": -16.7789,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -819,6 +879,8 @@
       "sector": "銀行業",
       "signal_date": "2026-10-01",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 99.6,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -878,6 +940,8 @@
       "sector": "卸売業",
       "signal_date": "2026-10-01",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 98.1,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -901,21 +965,31 @@
       },
       "fill_date": "2026-10-02",
       "fill_price": 40200.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-20",
+        "price": 33614.0,
+        "reason": "損切り",
+        "return_net_pct": -16.6336
+      },
       "exit_weekly": {
         "date": "2026-10-02",
         "price": 37450.0,
         "return_net_pct": -7.1199,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-20",
+        "price": 33614.0,
+        "reason": "損切り",
+        "return_net_pct": -16.6336
+      },
+      "return_gross_pct": -16.3831,
+      "return_net_pct": -16.6336,
+      "return_rule_pct": -16.6336,
       "return_weekly_pct": -7.1199,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -2.3371,
+      "excess_pct": -14.2965,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -927,6 +1001,8 @@
       "sector": "その他製品",
       "signal_date": "2026-10-02",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -950,21 +1026,31 @@
       },
       "fill_date": "2026-10-05",
       "fill_price": 12140.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-19",
+        "price": 9850.0,
+        "reason": "損切り",
+        "return_net_pct": -19.1063
+      },
       "exit_weekly": {
         "date": "2026-10-09",
         "price": 11250.0,
         "return_net_pct": -7.6087,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-19",
+        "price": 9850.0,
+        "reason": "損切り",
+        "return_net_pct": -19.1063
+      },
+      "return_gross_pct": -18.8633,
+      "return_net_pct": -19.1063,
+      "return_rule_pct": -19.1063,
       "return_weekly_pct": -7.6087,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -2.0877,
+      "excess_pct": -17.0186,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -976,6 +1062,8 @@
       "sector": "卸売業",
       "signal_date": "2026-10-02",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -1035,6 +1123,8 @@
       "sector": "電気機器",
       "signal_date": "2026-10-02",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 100.0,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -1079,6 +1169,8 @@
       "sector": "銀行業",
       "signal_date": "2026-10-02",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 99.6,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -1138,6 +1230,8 @@
       "sector": "卸売業",
       "signal_date": "2026-10-02",
       "source": "ai",
+      "score_version": null,
+      "experiment_id": null,
       "score": 98.1,
       "verdict": "recommend",
       "verdict_label": "推奨",
@@ -1161,21 +1255,31 @@
       },
       "fill_date": "2026-10-09",
       "fill_price": 41000.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-20",
+        "price": 33614.0,
+        "reason": "損切り",
+        "return_net_pct": -18.2602
+      },
       "exit_weekly": {
         "date": "2026-10-09",
         "price": 39650.0,
         "return_net_pct": -3.5824,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-20",
+        "price": 33614.0,
+        "reason": "損切り",
+        "return_net_pct": -18.2602
+      },
+      "return_gross_pct": -18.0146,
+      "return_net_pct": -18.2602,
+      "return_rule_pct": -18.2602,
       "return_weekly_pct": -3.5824,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -1.9728,
+      "excess_pct": -16.2874,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -4518,88 +4622,88 @@
     "1": {
       "n_per_day": 1,
       "picks": 5,
-      "n_filled": 2,
-      "n_pending": 1,
-      "fill_rate": 0.5,
-      "avg_return_pct": 8.524,
-      "median_return_pct": 8.524,
-      "win_rate": 1.0,
-      "avg_excess_pct": 7.87,
+      "n_filled": 3,
+      "n_pending": 0,
+      "fill_rate": 0.6,
+      "avg_return_pct": -0.686,
+      "median_return_pct": 8.137,
+      "win_rate": 0.667,
+      "avg_excess_pct": -0.426,
       "best": {
         "code": "6668",
         "name": "アドテック　プラズマ　テクノロジー",
         "return_net_pct": 8.9121
       },
       "worst": {
-        "code": "6668",
-        "name": "アドテック　プラズマ　テクノロジー",
-        "return_net_pct": 8.1366
+        "code": "7826",
+        "name": "フルヤ金属",
+        "return_net_pct": -19.1063
       }
     },
     "3": {
       "n_per_day": 3,
       "picks": 15,
-      "n_filled": 10,
-      "n_pending": 2,
-      "fill_rate": 0.769,
-      "avg_return_pct": -2.245,
-      "median_return_pct": -4.551,
-      "win_rate": 0.3,
-      "avg_excess_pct": -1.414,
+      "n_filled": 12,
+      "n_pending": 0,
+      "fill_rate": 0.8,
+      "avg_return_pct": -4.954,
+      "median_return_pct": -8.882,
+      "win_rate": 0.25,
+      "avg_excess_pct": -3.995,
       "best": {
         "code": "3131",
         "name": "シンデン・ハイテックス",
         "return_net_pct": 13.231
       },
       "worst": {
-        "code": "8362",
-        "name": "福井銀行",
-        "return_net_pct": -13.9595
+        "code": "7826",
+        "name": "フルヤ金属",
+        "return_net_pct": -19.1063
       }
     },
     "5": {
       "n_per_day": 5,
       "picks": 21,
-      "n_filled": 12,
-      "n_pending": 6,
-      "fill_rate": 0.8,
-      "avg_return_pct": -3.551,
-      "median_return_pct": -8.882,
-      "win_rate": 0.25,
-      "avg_excess_pct": -2.753,
+      "n_filled": 18,
+      "n_pending": 0,
+      "fill_rate": 0.857,
+      "avg_return_pct": -7.507,
+      "median_return_pct": -9.469,
+      "win_rate": 0.167,
+      "avg_excess_pct": -6.172,
       "best": {
         "code": "3131",
         "name": "シンデン・ハイテックス",
         "return_net_pct": 13.231
       },
       "worst": {
-        "code": "8362",
-        "name": "福井銀行",
-        "return_net_pct": -13.9595
+        "code": "7826",
+        "name": "フルヤ金属",
+        "return_net_pct": -19.1063
       }
     }
   },
   "breakdown": {
     "by_entry_type": {
       "追いかけ": {
-        "n": 10,
-        "avg": -4.688,
-        "median": -9.003,
-        "win_rate": 0.2
+        "n": 14,
+        "avg": -8.34,
+        "median": -10.078,
+        "win_rate": 0.143
       },
       "押し目待ち": {
-        "n": 2,
-        "avg": 2.135,
-        "median": 2.135,
-        "win_rate": 0.5
+        "n": 4,
+        "avg": -4.592,
+        "median": -7.482,
+        "win_rate": 0.25
       }
     },
     "by_overheat": {
       "低": {
-        "n": 10,
-        "avg": -4.688,
-        "median": -9.003,
-        "win_rate": 0.2
+        "n": 16,
+        "avg": -8.713,
+        "median": -10.078,
+        "win_rate": 0.125
       },
       "中": {
         "n": 2,
@@ -4621,54 +4725,61 @@
         "median": -9.469,
         "win_rate": 0.0
       },
+      "機械": {
+        "n": 1,
+        "avg": -6.002,
+        "median": -6.002,
+        "win_rate": 0.0
+      },
       "卸売業": {
+        "n": 5,
+        "avg": -9.052,
+        "median": -14.635,
+        "win_rate": 0.2
+      },
+      "その他製品": {
         "n": 2,
-        "avg": 2.135,
-        "median": 2.135,
-        "win_rate": 0.5
+        "avg": -18.498,
+        "median": -18.498,
+        "win_rate": 0.0
       }
     },
     "by_verdict": {
       "推奨": {
-        "n": 12,
-        "avg": -3.551,
-        "median": -8.882,
-        "win_rate": 0.25
+        "n": 18,
+        "avg": -7.507,
+        "median": -9.469,
+        "win_rate": 0.167
       }
     }
   },
   "notes": [
-    "まだ決済が確定していない建玉（未確定）が6件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
     "買わずに見送った3件は、翌日に成行で買っていれば平均+2.44%でした（上昇2件/下落1件）。押し目を待つあまり、上がった銘柄に乗れなかった（機会損失）ことを意味します。",
-    "約定して決済まで確定した12件の1件あたり平均損益は-3.55%でした。同じ期間の市場平均（TOPIX）は-0.80%なので、市場を2.75%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
+    "約定して決済まで確定した18件の1件あたり平均損益は-7.51%でした。同じ期間の市場平均（TOPIX）は-1.33%なので、市場を6.17%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
     "技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 +0.02）。スコアが高い＝上がる、とは言えない週でした。",
     "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均+1.79%ポイント良い結果でした。AIの強気判定がある程度機能したことを示します。"
   ],
   "actions": [
-    "過熱度『低』（48件・平均-4.571%）は 減点 -0.72。",
-    "過熱度『中』（13件・平均-0.53%）は 加点 +1.79。"
+    "過熱度『低』（56件・平均-6.511%）は 減点 -0.93。",
+    "過熱度『中』（15件・平均-1.335%）は 加点 +2.45。"
   ],
   "feedback": {
     "enabled": true,
     "window_weeks": 6,
-    "n_filled": 62,
-    "baseline_avg_pct": -3.699,
+    "n_filled": 71,
+    "baseline_avg_pct": -5.417,
     "overheat_delta": {
-      "low": -0.72,
-      "moderate": 1.79
+      "low": -0.93,
+      "moderate": 2.45
     },
     "overheat_stats": {
       "low": {
-        "n": 48,
-        "avg": -4.571
+        "n": 56,
+        "avg": -6.511
       },
       "moderate": {
-        "n": 13,
-        "avg": -0.53
-      },
-      "strong": {
-        "n": 1,
-        "avg": -3.035
+        "n": 15,
+        "avg": -1.335
       }
     },
     "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
