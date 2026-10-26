@@ -1,6 +1,6 @@
 {
   "date": "2026-10-26",
-  "generated_at": "2026-10-27T02:26:17",
+  "generated_at": "2026-10-27T08:10:40",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -10,19 +10,19 @@
   "colors": {
     "水産・農林業": {
       "n": 11,
-      "above_sma25_pct": 36.4,
-      "color": "yellow",
+      "above_sma25_pct": 54.5,
+      "color": "green",
       "low_sample": false
     },
     "建設業": {
       "n": 130,
-      "above_sma25_pct": 27.7,
-      "color": "red",
+      "above_sma25_pct": 36.9,
+      "color": "yellow",
       "low_sample": false
     },
     "不動産業": {
       "n": 106,
-      "above_sma25_pct": 30.2,
+      "above_sma25_pct": 43.4,
       "color": "yellow",
       "low_sample": false
     },
@@ -34,74 +34,74 @@
     },
     "鉱業": {
       "n": 5,
-      "above_sma25_pct": 20.0,
-      "color": "red",
+      "above_sma25_pct": 40.0,
+      "color": "yellow",
       "low_sample": true
     },
     "その他製品": {
       "n": 84,
-      "above_sma25_pct": 38.1,
+      "above_sma25_pct": 42.9,
       "color": "yellow",
       "low_sample": false
     },
     "サービス業": {
-      "n": 318,
-      "above_sma25_pct": 38.1,
+      "n": 321,
+      "above_sma25_pct": 34.6,
       "color": "yellow",
       "low_sample": false
     },
     "卸売業": {
-      "n": 256,
-      "above_sma25_pct": 37.1,
+      "n": 259,
+      "above_sma25_pct": 42.1,
       "color": "yellow",
       "low_sample": false
     },
     "医薬品": {
       "n": 38,
-      "above_sma25_pct": 65.8,
+      "above_sma25_pct": 68.4,
       "color": "green",
       "low_sample": false
     },
     "食料品": {
       "n": 115,
-      "above_sma25_pct": 64.3,
+      "above_sma25_pct": 67.8,
       "color": "green",
       "low_sample": false
     },
     "情報・通信業": {
-      "n": 327,
-      "above_sma25_pct": 54.7,
+      "n": 328,
+      "above_sma25_pct": 55.8,
       "color": "green",
       "low_sample": false
     },
     "陸運業": {
       "n": 56,
-      "above_sma25_pct": 57.1,
+      "above_sma25_pct": 64.3,
       "color": "green",
       "low_sample": false
     },
     "精密機器": {
       "n": 41,
-      "above_sma25_pct": 24.4,
+      "above_sma25_pct": 26.8,
       "color": "red",
       "low_sample": false
     },
     "小売業": {
       "n": 264,
-      "above_sma25_pct": 43.2,
+      "above_sma25_pct": 47.7,
       "color": "yellow",
       "low_sample": false
     },
     "電気機器": {
       "n": 203,
-      "above_sma25_pct": 18.2,
+      "above_sma25_pct": 18.7,
       "color": "red",
       "low_sample": false
     },
     "化学": {
       "n": 190,
-      "above_sma25_pct": 30.0,
-      "color": "yellow",
+      "above_sma25_pct": 28.9,
+      "color": "red",
       "low_sample": false
     },
     "金属製品": {
@@ -112,37 +112,37 @@
     },
     "繊維製品": {
       "n": 39,
-      "above_sma25_pct": 30.8,
-      "color": "yellow",
+      "above_sma25_pct": 28.2,
+      "color": "red",
       "low_sample": false
     },
     "ガラス・土石製品": {
       "n": 45,
-      "above_sma25_pct": 4.4,
+      "above_sma25_pct": 6.7,
       "color": "red",
       "low_sample": false
     },
     "輸送用機器": {
       "n": 71,
-      "above_sma25_pct": 23.9,
+      "above_sma25_pct": 22.5,
       "color": "red",
       "low_sample": false
     },
     "電気・ガス業": {
       "n": 26,
-      "above_sma25_pct": 23.1,
-      "color": "red",
+      "above_sma25_pct": 42.3,
+      "color": "yellow",
       "low_sample": false
     },
     "パルプ・紙": {
       "n": 24,
-      "above_sma25_pct": 33.3,
+      "above_sma25_pct": 37.5,
       "color": "yellow",
       "low_sample": false
     },
     "その他金融業": {
       "n": 34,
-      "above_sma25_pct": 14.7,
+      "above_sma25_pct": 11.8,
       "color": "red",
       "low_sample": false
     },
@@ -154,31 +154,31 @@
     },
     "ゴム製品": {
       "n": 16,
-      "above_sma25_pct": 31.2,
-      "color": "yellow",
+      "above_sma25_pct": 50.0,
+      "color": "green",
       "low_sample": false
     },
     "鉄鋼": {
       "n": 35,
-      "above_sma25_pct": 17.1,
+      "above_sma25_pct": 28.6,
       "color": "red",
       "low_sample": false
     },
     "機械": {
       "n": 196,
-      "above_sma25_pct": 14.8,
+      "above_sma25_pct": 16.8,
       "color": "red",
       "low_sample": false
     },
     "銀行業": {
       "n": 77,
-      "above_sma25_pct": 0.0,
+      "above_sma25_pct": 1.3,
       "color": "red",
       "low_sample": false
     },
     "証券、商品先物取引業": {
       "n": 30,
-      "above_sma25_pct": 10.0,
+      "above_sma25_pct": 6.7,
       "color": "red",
       "low_sample": false
     },
@@ -190,13 +190,13 @@
     },
     "海運業": {
       "n": 11,
-      "above_sma25_pct": 18.2,
-      "color": "red",
+      "above_sma25_pct": 45.5,
+      "color": "yellow",
       "low_sample": false
     },
     "倉庫・運輸関連業": {
       "n": 29,
-      "above_sma25_pct": 31.0,
+      "above_sma25_pct": 48.3,
       "color": "yellow",
       "low_sample": false
     },
