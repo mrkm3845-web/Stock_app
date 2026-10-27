@@ -1,78 +1,52 @@
 {
-  "plan_id": "2026-10-22-1815",
-  "checked_at": "2026-10-24T16:10:20.574137+09:00",
+  "plan_id": "2026-10-28-0625",
+  "checked_at": "2026-10-28T06:28:40.649959+09:00",
   "source": "eod",
-  "data_asof": "2026-10-23T00:00:00",
+  "data_asof": "2026-10-27",
   "market": {
     "regime": {
       "ticker": "1306.T",
-      "close": 416.3,
-      "sma": 399.1,
+      "close": 418.4,
+      "sma": 399.4,
       "sma_days": 200,
       "risk_on": true
     },
     "breadth": {
-      "n": 2913,
+      "n": 2912,
       "low_sample": false,
-      "above_sma25_pct": 33.9,
-      "above_sma200_pct": 52.0,
-      "avg_ret5_pct": -1.97
+      "above_sma25_pct": 36.7,
+      "above_sma200_pct": 52.8,
+      "avg_ret5_pct": -1.68
     },
     "bank_sector": {
       "n": 77,
       "low_sample": false,
-      "above_sma25_pct": 0.0,
+      "above_sma25_pct": 1.3,
       "above_sma200_pct": 75.3,
-      "avg_ret5_pct": -8.64
+      "avg_ret5_pct": -7.39
     }
   },
   "items": [
-    {
-      "code": "6952",
-      "name": "カシオ計算機",
-      "kind": "watch",
-      "sector": "電気機器",
-      "sector_color": "red",
-      "sector_above_sma25_pct": 18.2,
-      "status": "blocked",
-      "current_price": 2347.5,
-      "high": 2359.0,
-      "low": 2260.0,
-      "entry_price": 2340,
-      "stop": 2255,
-      "take_profit": 2640,
-      "distance_pct": 0.3194888178913738,
-      "conditions_ok": false,
-      "condition_reasons": [
-        "電気機器の25日線上18.2%（203銘柄）"
-      ],
-      "action": "入口2,340に到達したが条件NG（電気機器の25日線上18.2%（203銘柄））",
-      "source": "yfinance-1d",
-      "asof": "2026-10-23T00:00:00",
-      "last_notified_status": "blocked",
-      "last_notified_at": "2026-10-24T16:10:20.574137+09:00",
-      "last_near_date": null
-    },
     {
       "code": "6191",
       "name": "エアトリ",
       "kind": "position",
       "sector": "サービス業",
       "sector_color": "yellow",
-      "sector_above_sma25_pct": 37.7,
-      "status": "hold",
-      "current_price": 1415.0,
-      "high": 1450.0,
-      "low": 1414.0,
+      "sector_above_sma25_pct": 34.6,
+      "status": "max_hold",
+      "current_price": 1421.0,
+      "high": 1421.0,
+      "low": 1421.0,
       "entry_price": 1433,
       "stop": 1310,
       "take_profit": 1612,
-      "distance_pct": 7.420494699646643,
-      "action": "保有継続",
-      "source": "yfinance-1d",
-      "asof": "2026-10-23T00:00:00",
-      "last_notified_status": "hold",
-      "last_notified_at": "2026-10-24T16:10:20.574137+09:00",
+      "distance_pct": 7.811400422237861,
+      "action": "最大保有日2026-10-28。引けで手仕舞いを検討",
+      "source": "history-close",
+      "asof": "2026-10-27",
+      "last_notified_status": "max_hold",
+      "last_notified_at": "2026-10-28T06:28:40.649959+09:00",
       "last_near_date": null
     },
     {
@@ -81,28 +55,27 @@
       "kind": "watch",
       "sector": "情報・通信業",
       "sector_color": "green",
-      "sector_above_sma25_pct": 54.9,
+      "sector_above_sma25_pct": 55.8,
       "status": "waiting",
-      "current_price": 2022.0,
-      "high": 2024.0,
-      "low": 1990.0,
-      "entry_price": 1975,
-      "stop": 1868,
-      "take_profit": 2323,
-      "distance_pct": 2.324431256181998,
+      "current_price": 2042.0,
+      "high": 2042.0,
+      "low": 2042.0,
+      "entry_price": 2000,
+      "stop": 1891,
+      "take_profit": 2348,
+      "distance_pct": 2.056807051909892,
       "conditions_ok": true,
       "condition_reasons": [],
-      "action": "買い入口1,975待ち",
-      "source": "yfinance-1d",
-      "asof": "2026-10-23T00:00:00",
+      "action": "買い入口2,000待ち",
+      "source": "history-close",
+      "asof": "2026-10-27",
       "last_notified_status": "waiting",
-      "last_notified_at": "2026-10-24T16:10:20.574137+09:00",
+      "last_notified_at": "2026-10-28T06:28:40.649959+09:00",
       "last_near_date": null
     }
   ],
   "today_actions": [
-    "6952 カシオ計算機：入口2,340に到達したが条件NG（電気機器の25日線上18.2%（203銘柄））",
-    "6191 エアトリ：保有継続",
-    "4746 東計電算：買い入口1,975待ち"
+    "6191 エアトリ：最大保有日2026-10-28。引けで手仕舞いを検討",
+    "4746 東計電算：買い入口2,000待ち"
   ]
 }
