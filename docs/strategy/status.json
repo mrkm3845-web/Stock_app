@@ -1,6 +1,6 @@
 {
   "plan_id": "2026-10-28-0625",
-  "checked_at": "2026-10-28T06:28:40.649959+09:00",
+  "checked_at": "2026-10-28T14:45:57.079235+09:00",
   "source": "eod",
   "data_asof": "2026-10-27",
   "market": {
@@ -46,36 +46,11 @@
       "source": "history-close",
       "asof": "2026-10-27",
       "last_notified_status": "max_hold",
-      "last_notified_at": "2026-10-28T06:28:40.649959+09:00",
-      "last_near_date": null
-    },
-    {
-      "code": "4746",
-      "name": "東計電算",
-      "kind": "watch",
-      "sector": "情報・通信業",
-      "sector_color": "green",
-      "sector_above_sma25_pct": 55.8,
-      "status": "waiting",
-      "current_price": 2042.0,
-      "high": 2042.0,
-      "low": 2042.0,
-      "entry_price": 2000,
-      "stop": 1891,
-      "take_profit": 2348,
-      "distance_pct": 2.056807051909892,
-      "conditions_ok": true,
-      "condition_reasons": [],
-      "action": "買い入口2,000待ち",
-      "source": "history-close",
-      "asof": "2026-10-27",
-      "last_notified_status": "waiting",
-      "last_notified_at": "2026-10-28T06:28:40.649959+09:00",
+      "last_notified_at": "2026-10-28T14:45:57.079235+09:00",
       "last_near_date": null
     }
   ],
   "today_actions": [
-    "6191 エアトリ：最大保有日2026-10-28。引けで手仕舞いを検討",
-    "4746 東計電算：買い入口2,000待ち"
+    "6191 エアトリ：最大保有日2026-10-28。引けで手仕舞いを検討"
   ]
 }
