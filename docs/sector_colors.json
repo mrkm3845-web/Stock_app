@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-28",
-  "generated_at": "2026-10-29T08:17:51",
+  "date": "2026-10-29",
+  "generated_at": "2026-10-30T00:20:39",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -45,14 +45,14 @@
       "low_sample": false
     },
     "サービス業": {
-      "n": 318,
+      "n": 321,
       "above_sma25_pct": 25.5,
       "color": "red",
       "low_sample": false
     },
     "卸売業": {
-      "n": 256,
-      "above_sma25_pct": 35.2,
+      "n": 259,
+      "above_sma25_pct": 35.1,
       "color": "yellow",
       "low_sample": false
     },
@@ -69,7 +69,7 @@
       "low_sample": false
     },
     "情報・通信業": {
-      "n": 327,
+      "n": 329,
       "above_sma25_pct": 45.6,
       "color": "yellow",
       "low_sample": false
