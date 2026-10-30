@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-29",
-  "generated_at": "2026-10-30T08:22:16",
+  "date": "2026-10-30",
+  "generated_at": "2026-10-31T00:08:15",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -88,7 +88,7 @@
     },
     "小売業": {
       "n": 264,
-      "above_sma25_pct": 34.8,
+      "above_sma25_pct": 34.5,
       "color": "yellow",
       "low_sample": false
     },
