@@ -2,7 +2,7 @@
   "week": "2026-W43",
   "start": "2026-10-19",
   "end": "2026-10-23",
-  "generated_at": "2026-10-24T02:43:31",
+  "generated_at": "2026-10-31T03:30:53",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -13,28 +13,28 @@
   },
   "summary": {
     "picks_total": 24,
-    "n_filled": 6,
+    "n_filled": 11,
     "n_not_filled": 3,
     "n_pending": 10,
-    "n_no_data": 5,
-    "n_entered": 16,
-    "fill_rate": 0.667,
-    "avg_return_pct": -2.895,
-    "median_return_pct": -2.489,
-    "win_rate": 0.0,
-    "avg_benchmark_pct": -0.819,
-    "avg_excess_pct": -2.075,
-    "beat_benchmark_rate": 0.167,
-    "rule_avg_return_pct": -2.895,
-    "rule_win_rate": 0.0,
-    "avg_weekly_return_pct": -4.921,
-    "weekly_win_rate": 0.125,
+    "n_no_data": 0,
+    "n_entered": 21,
+    "fill_rate": 0.786,
+    "avg_return_pct": -2.417,
+    "median_return_pct": -3.155,
+    "win_rate": 0.091,
+    "avg_benchmark_pct": -0.787,
+    "avg_excess_pct": -1.631,
+    "beat_benchmark_rate": 0.182,
+    "rule_avg_return_pct": -2.417,
+    "rule_win_rate": 0.091,
+    "avg_weekly_return_pct": -3.701,
+    "weekly_win_rate": 0.19,
     "n_missed_evaluated": 3,
-    "missed_avg_pct": -1.735,
-    "missed_up_count": 1,
-    "missed_down_count": 2,
-    "missed_up_avg_pct": 2.007,
-    "missed_down_avg_pct": -3.606,
+    "missed_avg_pct": 1.53,
+    "missed_up_count": 2,
+    "missed_down_count": 1,
+    "missed_up_avg_pct": 4.85,
+    "missed_down_avg_pct": -5.11,
     "score_versions": [
       "v3-research_upside-2026-10-18"
     ],
@@ -42,9 +42,9 @@
       "research_upside_v3_2026-10"
     ],
     "best": {
-      "code": "4203",
-      "name": "住友ベークライト",
-      "return_net_pct": -0.2996
+      "code": "8541",
+      "name": "愛媛銀行",
+      "return_net_pct": 15.2844
     },
     "worst": {
       "code": "3132",
@@ -318,21 +318,31 @@
       },
       "fill_date": "2026-10-23",
       "fill_price": 3250.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-30",
+        "price": 3758.0,
+        "reason": "利確",
+        "return_net_pct": 15.2844
+      },
       "exit_weekly": {
         "date": "2026-10-23",
         "price": 3255.0,
         "return_net_pct": -0.1462,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-30",
+        "price": 3758.0,
+        "reason": "利確",
+        "return_net_pct": 15.2844
+      },
+      "return_gross_pct": 15.6308,
+      "return_net_pct": 15.2844,
+      "return_rule_pct": 15.2844,
       "return_weekly_pct": -0.1462,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -0.6336,
+      "excess_pct": 15.918,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -369,21 +379,31 @@
       },
       "fill_date": "2026-10-21",
       "fill_price": 1810.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-29",
+        "price": 1721.0,
+        "reason": "損切り",
+        "return_net_pct": -5.2019
+      },
       "exit_weekly": {
         "date": "2026-10-23",
         "price": 1763.5,
         "return_net_pct": -2.8609,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-29",
+        "price": 1721.0,
+        "reason": "損切り",
+        "return_net_pct": -5.2019
+      },
+      "return_gross_pct": -4.9171,
+      "return_net_pct": -5.2019,
+      "return_rule_pct": -5.2019,
       "return_weekly_pct": -2.8609,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -1.5844,
+      "excess_pct": -3.6175,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -639,21 +659,31 @@
       },
       "fill_date": "2026-10-23",
       "fill_price": 2000.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-30",
+        "price": 1896.0,
+        "reason": "損切り",
+        "return_net_pct": -5.484
+      },
       "exit_weekly": {
         "date": "2026-10-23",
         "price": 2012.0,
         "return_net_pct": 0.2987,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-30",
+        "price": 1896.0,
+        "reason": "損切り",
+        "return_net_pct": -5.484
+      },
+      "return_gross_pct": -5.2,
+      "return_net_pct": -5.484,
+      "return_rule_pct": -5.484,
       "return_weekly_pct": 0.2987,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -0.6336,
+      "excess_pct": -4.8504,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -739,22 +769,27 @@
         "entry_zone_high": 4725.0,
         "wait_days": 10
       },
-      "fill_date": null,
-      "fill_price": null,
-      "status": "not_filled",
+      "fill_date": "2026-10-29",
+      "fill_price": 4680.0,
+      "status": "pending",
       "exit_oco": null,
-      "exit_weekly": null,
+      "exit_weekly": {
+        "date": "2026-10-30",
+        "price": 4639.0,
+        "return_net_pct": -1.173,
+        "source": "intraday_1130"
+      },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": null,
+      "return_weekly_pct": -1.173,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
-      "missed_return_pct": -2.1029,
-      "missed_entry_date": "2026-10-22",
-      "missed_exit_date": "2026-10-23"
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     },
     {
       "code": "6058",
@@ -1047,21 +1082,31 @@
       },
       "fill_date": "2026-10-23",
       "fill_price": 3050.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-30",
+        "price": 2864.0,
+        "reason": "損切り",
+        "return_net_pct": -6.3796
+      },
       "exit_weekly": {
         "date": "2026-10-23",
         "price": 3000.0,
         "return_net_pct": -1.934,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-10-30",
+        "price": 2864.0,
+        "reason": "損切り",
+        "return_net_pct": -6.3796
+      },
+      "return_gross_pct": -6.0984,
+      "return_net_pct": -6.3796,
+      "return_rule_pct": -6.3796,
       "return_weekly_pct": -1.934,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -0.6336,
+      "excess_pct": -5.746,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -1098,7 +1143,7 @@
       },
       "fill_date": null,
       "fill_price": null,
-      "status": "no_data",
+      "status": "not_filled",
       "exit_oco": null,
       "exit_weekly": null,
       "exit_rule": null,
@@ -1109,9 +1154,9 @@
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
-      "missed_return_pct": null,
-      "missed_entry_date": null,
-      "missed_exit_date": null
+      "missed_return_pct": 7.6939,
+      "missed_entry_date": "2026-10-26",
+      "missed_exit_date": "2026-10-30"
     },
     {
       "code": "6058",
@@ -1142,16 +1187,21 @@
         "entry_zone_high": 2054.0,
         "wait_days": 10
       },
-      "fill_date": null,
-      "fill_price": null,
-      "status": "no_data",
+      "fill_date": "2026-10-29",
+      "fill_price": 2050.0,
+      "status": "pending",
       "exit_oco": null,
-      "exit_weekly": null,
+      "exit_weekly": {
+        "date": "2026-10-30",
+        "price": 2099.0,
+        "return_net_pct": 2.0835,
+        "source": "intraday_1130"
+      },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": null,
+      "return_weekly_pct": 2.0835,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -1188,16 +1238,21 @@
         "entry_zone_high": 3413.0,
         "wait_days": 10
       },
-      "fill_date": null,
-      "fill_price": null,
-      "status": "no_data",
+      "fill_date": "2026-10-30",
+      "fill_price": 3515.0,
+      "status": "pending",
       "exit_oco": null,
-      "exit_weekly": null,
+      "exit_weekly": {
+        "date": "2026-10-30",
+        "price": 3515.0,
+        "return_net_pct": -0.2996,
+        "source": "intraday_1130"
+      },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": null,
+      "return_weekly_pct": -0.2996,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -1234,16 +1289,21 @@
         "entry_zone_high": 8299.0,
         "wait_days": 10
       },
-      "fill_date": null,
-      "fill_price": null,
-      "status": "no_data",
+      "fill_date": "2026-10-26",
+      "fill_price": 7600.0,
+      "status": "pending",
       "exit_oco": null,
-      "exit_weekly": null,
+      "exit_weekly": {
+        "date": "2026-10-30",
+        "price": 8125.0,
+        "return_net_pct": 6.5877,
+        "source": "intraday_1130"
+      },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": null,
+      "return_weekly_pct": 6.5877,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
@@ -1280,18 +1340,33 @@
         "entry_zone_high": 3237.0,
         "wait_days": 10
       },
-      "fill_date": null,
-      "fill_price": null,
-      "status": "no_data",
-      "exit_oco": null,
-      "exit_weekly": null,
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
-      "return_weekly_pct": null,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "fill_date": "2026-10-26",
+      "fill_price": 3085.0,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-10-30",
+        "price": 2864.0,
+        "reason": "損切り",
+        "return_net_pct": -7.4418
+      },
+      "exit_weekly": {
+        "date": "2026-10-30",
+        "price": 2903.0,
+        "return_net_pct": -6.1814,
+        "source": "intraday_1130"
+      },
+      "exit_rule": {
+        "date": "2026-10-30",
+        "price": 2864.0,
+        "reason": "損切り",
+        "return_net_pct": -7.4418
+      },
+      "return_gross_pct": -7.1637,
+      "return_net_pct": -7.4418,
+      "return_rule_pct": -7.4418,
+      "return_weekly_pct": -6.1814,
+      "benchmark_pct": -0.2516,
+      "excess_pct": -7.1902,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -1300,11 +1375,11 @@
   ],
   "ranking": {
     "k": null,
-    "n": 160,
-    "spearman": -0.131,
-    "top_avg_pct": -7.039,
-    "bottom_avg_pct": -5.596,
-    "spread_pct": -1.443,
+    "n": 200,
+    "spearman": -0.148,
+    "top_avg_pct": -6.613,
+    "bottom_avg_pct": -4.172,
+    "spread_pct": -2.441,
     "rows": [
       {
         "signal_date": "2026-10-19",
@@ -3545,31 +3620,591 @@
         "return_net_pct": -0.4316,
         "benchmark_pct": -1.4927,
         "excess_pct": 1.0611
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6098",
+        "name": "リクルートホールディングス",
+        "sector": "サービス業",
+        "score": 90.0,
+        "entry_date": "2026-10-26",
+        "entry_price": 18705.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 19010.0,
+        "return_net_pct": 1.3261,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 1.7215
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "8541",
+        "name": "愛媛銀行",
+        "sector": "銀行業",
+        "score": 90.0,
+        "entry_date": "2026-10-26",
+        "entry_price": 3430.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 3705.0,
+        "return_net_pct": 7.6939,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 8.0893
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "2612",
+        "name": "かどや製油",
+        "sector": "食料品",
+        "score": 88.8,
+        "entry_date": "2026-10-26",
+        "entry_price": 2937.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 3125.0,
+        "return_net_pct": 6.0824,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 6.4777
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6668",
+        "name": "アドテック　プラズマ　テクノロジー",
+        "sector": "電気機器",
+        "score": 87.8,
+        "entry_date": "2026-10-26",
+        "entry_price": 4745.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 4505.0,
+        "return_net_pct": -5.3424,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -4.947
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "3156",
+        "name": "レスター",
+        "sector": "卸売業",
+        "score": 87.4,
+        "entry_date": "2026-10-26",
+        "entry_price": 5880.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 5600.0,
+        "return_net_pct": -5.0472,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -4.6518
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "3132",
+        "name": "マクニカホールディングス",
+        "sector": "卸売業",
+        "score": 87.1,
+        "entry_date": "2026-10-26",
+        "entry_price": 4112.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 3847.0,
+        "return_net_pct": -6.7248,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -6.3294
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "8766",
+        "name": "東京海上ホールディングス",
+        "sector": "保険業",
+        "score": 86.8,
+        "entry_date": "2026-10-26",
+        "entry_price": 572.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 579.8,
+        "return_net_pct": 1.06,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 1.4554
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "9147",
+        "name": "ＮＩＰＰＯＮ　ＥＸＰＲＥＳＳホールディングス",
+        "sector": "陸運業",
+        "score": 85.7,
+        "entry_date": "2026-10-26",
+        "entry_price": 5824.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 5939.0,
+        "return_net_pct": 1.6691,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 2.0645
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6724",
+        "name": "セイコーエプソン",
+        "sector": "電気機器",
+        "score": 85.4,
+        "entry_date": "2026-10-26",
+        "entry_price": 3362.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 3269.0,
+        "return_net_pct": -3.0575,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -2.6621
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "2492",
+        "name": "インフォマート",
+        "sector": "サービス業",
+        "score": 84.7,
+        "entry_date": "2026-10-26",
+        "entry_price": 804.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 763.0,
+        "return_net_pct": -5.3838,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -4.9884
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "3374",
+        "name": "内外テック",
+        "sector": "卸売業",
+        "score": 84.4,
+        "entry_date": "2026-10-26",
+        "entry_price": 4485.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 4400.0,
+        "return_net_pct": -2.1891,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -1.7937
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "4746",
+        "name": "東計電算",
+        "sector": "情報・通信業",
+        "score": 83.9,
+        "entry_date": "2026-10-26",
+        "entry_price": 2025.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 1960.0,
+        "return_net_pct": -3.4998,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -3.1044
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "7480",
+        "name": "スズデン",
+        "sector": "卸売業",
+        "score": 83.7,
+        "entry_date": "2026-10-26",
+        "entry_price": 3665.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 3420.0,
+        "return_net_pct": -6.9644,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -6.569
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "2531",
+        "name": "宝ホールディングス",
+        "sector": "食料品",
+        "score": 82.4,
+        "entry_date": "2026-10-26",
+        "entry_price": 2906.5,
+        "exit_date": "2026-10-30",
+        "exit_price": 2801.0,
+        "return_net_pct": -3.9185,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -3.5231
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6058",
+        "name": "ベクトル",
+        "sector": "サービス業",
+        "score": 81.9,
+        "entry_date": "2026-10-26",
+        "entry_price": 2168.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 2099.0,
+        "return_net_pct": -3.4727,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -3.0773
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6448",
+        "name": "ブラザー工業",
+        "sector": "電気機器",
+        "score": 81.6,
+        "entry_date": "2026-10-26",
+        "entry_price": 4842.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 4639.0,
+        "return_net_pct": -4.4795,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -4.0841
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6191",
+        "name": "エアトリ",
+        "sector": "サービス業",
+        "score": 81.4,
+        "entry_date": "2026-10-26",
+        "entry_price": 1434.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 1398.0,
+        "return_net_pct": -2.8025,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -2.4071
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "9107",
+        "name": "川崎汽船",
+        "sector": "海運業",
+        "score": 81.3,
+        "entry_date": "2026-10-26",
+        "entry_price": 3364.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 3515.0,
+        "return_net_pct": 4.1757,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 4.5711
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "4203",
+        "name": "住友ベークライト",
+        "sector": "化学",
+        "score": 80.9,
+        "entry_date": "2026-10-26",
+        "entry_price": 7600.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 8125.0,
+        "return_net_pct": 6.5877,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 6.983
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "2175",
+        "name": "エス・エム・エス",
+        "sector": "サービス業",
+        "score": 80.7,
+        "entry_date": "2026-10-26",
+        "entry_price": 2623.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 2563.0,
+        "return_net_pct": -2.5802,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -2.1848
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "7867",
+        "name": "タカラトミー",
+        "sector": "その他製品",
+        "score": 80.6,
+        "entry_date": "2026-10-26",
+        "entry_price": 4600.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 4776.0,
+        "return_net_pct": 3.5151,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 3.9105
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "7832",
+        "name": "バンダイナムコホールディングス",
+        "sector": "その他製品",
+        "score": 80.3,
+        "entry_date": "2026-10-26",
+        "entry_price": 6259.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 6161.0,
+        "return_net_pct": -1.8606,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -1.4652
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "7552",
+        "name": "ハピネット",
+        "sector": "卸売業",
+        "score": 79.9,
+        "entry_date": "2026-10-26",
+        "entry_price": 5820.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 6030.0,
+        "return_net_pct": 3.2979,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 3.6933
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6742",
+        "name": "京三製作所",
+        "sector": "電気機器",
+        "score": 79.7,
+        "entry_date": "2026-10-26",
+        "entry_price": 1062.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 1030.0,
+        "return_net_pct": -3.3037,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -2.9083
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "428A",
+        "name": "サイプレス・ホールディングス",
+        "sector": "小売業",
+        "score": 79.5,
+        "entry_date": "2026-10-26",
+        "entry_price": 1752.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 1681.0,
+        "return_net_pct": -4.3399,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -3.9445
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "9104",
+        "name": "商船三井",
+        "sector": "海運業",
+        "score": 78.7,
+        "entry_date": "2026-10-26",
+        "entry_price": 7290.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 7562.0,
+        "return_net_pct": 3.4204,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 3.8158
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6135",
+        "name": "牧野フライス製作所",
+        "sector": "機械",
+        "score": 78.6,
+        "entry_date": "2026-10-26",
+        "entry_price": 3085.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 2903.0,
+        "return_net_pct": -6.1814,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -5.786
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "8848",
+        "name": "レオパレス２１",
+        "sector": "不動産業",
+        "score": 78.5,
+        "entry_date": "2026-10-26",
+        "entry_price": 998.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 989.0,
+        "return_net_pct": -1.1987,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -0.8033
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6027",
+        "name": "弁護士ドットコム",
+        "sector": "サービス業",
+        "score": 78.1,
+        "entry_date": "2026-10-26",
+        "entry_price": 4795.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 4700.0,
+        "return_net_pct": -2.2748,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -1.8795
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "7713",
+        "name": "シグマ光機",
+        "sector": "精密機器",
+        "score": 78.1,
+        "entry_date": "2026-10-26",
+        "entry_price": 3295.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 2981.0,
+        "return_net_pct": -9.8006,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -9.4052
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "5018",
+        "name": "ＭＯＲＥＳＣＯ",
+        "sector": "石油・石炭製品",
+        "score": 77.7,
+        "entry_date": "2026-10-26",
+        "entry_price": 2930.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 2737.0,
+        "return_net_pct": -6.8668,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -6.4715
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "9110",
+        "name": "ＮＳユナイテッド海運",
+        "sector": "海運業",
+        "score": 77.6,
+        "entry_date": "2026-10-26",
+        "entry_price": 10530.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 10540.0,
+        "return_net_pct": -0.2049,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 0.1905
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6952",
+        "name": "カシオ計算機",
+        "sector": "電気機器",
+        "score": 77.5,
+        "entry_date": "2026-10-26",
+        "entry_price": 2365.5,
+        "exit_date": "2026-10-30",
+        "exit_price": 2204.5,
+        "return_net_pct": -7.0853,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -6.69
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "3994",
+        "name": "マネーフォワード",
+        "sector": "情報・通信業",
+        "score": 77.2,
+        "entry_date": "2026-10-26",
+        "entry_price": 6706.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 6776.0,
+        "return_net_pct": 0.7412,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 1.1365
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "9101",
+        "name": "日本郵船",
+        "sector": "海運業",
+        "score": 77.2,
+        "entry_date": "2026-10-26",
+        "entry_price": 7177.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 7510.0,
+        "return_net_pct": 4.3264,
+        "benchmark_pct": -0.3954,
+        "excess_pct": 4.7217
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "7976",
+        "name": "三菱鉛筆",
+        "sector": "その他製品",
+        "score": 77.1,
+        "entry_date": "2026-10-26",
+        "entry_price": 3650.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 3585.0,
+        "return_net_pct": -2.075,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -1.6797
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "3276",
+        "name": "ＪＰＭＣ",
+        "sector": "不動産業",
+        "score": 76.9,
+        "entry_date": "2026-10-26",
+        "entry_price": 2312.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 2243.0,
+        "return_net_pct": -3.275,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -2.8797
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6138",
+        "name": "ダイジェット工業",
+        "sector": "機械",
+        "score": 76.7,
+        "entry_date": "2026-10-26",
+        "entry_price": 1872.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 1847.0,
+        "return_net_pct": -1.631,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -1.2356
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "2121",
+        "name": "ＭＩＸＩ",
+        "sector": "情報・通信業",
+        "score": 76.5,
+        "entry_date": "2026-10-26",
+        "entry_price": 3985.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 3825.0,
+        "return_net_pct": -4.3026,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -3.9072
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "2371",
+        "name": "カカクコム",
+        "sector": "サービス業",
+        "score": 76.5,
+        "entry_date": "2026-10-26",
+        "entry_price": 3775.0,
+        "exit_date": "2026-10-30",
+        "exit_price": 3722.0,
+        "return_net_pct": -1.6993,
+        "benchmark_pct": -0.3954,
+        "excess_pct": -1.3039
       }
     ]
   },
   "ai_calibration": {
     "by_verdict": {
       "recommend": {
-        "n": 19,
-        "avg": -6.197,
-        "median": -3.899,
-        "win_rate": 0.053
-      },
-      "watch": {
         "n": 25,
-        "avg": -4.647,
-        "median": -3.085,
+        "avg": -4.641,
+        "median": -3.634,
         "win_rate": 0.16
       },
+      "watch": {
+        "n": 32,
+        "avg": -3.661,
+        "median": -2.814,
+        "win_rate": 0.219
+      },
       "caution": {
-        "n": 15,
-        "avg": -3.972,
-        "median": -2.949,
-        "win_rate": 0.333
+        "n": 17,
+        "avg": -3.104,
+        "median": -1.604,
+        "win_rate": 0.412
       }
     },
-    "recommend_minus_watch_pct": -1.55,
+    "recommend_minus_watch_pct": -0.98,
     "rows": [
       {
         "signal_date": "2026-10-19",
@@ -3983,6 +4618,111 @@
         "verdict": "caution",
         "rank": 15,
         "return_net_pct": -2.9494
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "9107",
+        "verdict": "recommend",
+        "rank": 1,
+        "return_net_pct": 4.1757
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "4203",
+        "verdict": "recommend",
+        "rank": 2,
+        "return_net_pct": 6.5877
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6135",
+        "verdict": "recommend",
+        "rank": 3,
+        "return_net_pct": -6.1814
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "8541",
+        "verdict": "recommend",
+        "rank": 4,
+        "return_net_pct": 7.6939
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6952",
+        "verdict": "recommend",
+        "rank": 5,
+        "return_net_pct": -7.0853
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6058",
+        "verdict": "recommend",
+        "rank": 6,
+        "return_net_pct": -3.4727
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "9104",
+        "verdict": "watch",
+        "rank": 7,
+        "return_net_pct": 3.4204
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "4746",
+        "verdict": "watch",
+        "rank": 8,
+        "return_net_pct": -3.4998
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "6448",
+        "verdict": "watch",
+        "rank": 9,
+        "return_net_pct": -4.4795
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "2612",
+        "verdict": "watch",
+        "rank": 10,
+        "return_net_pct": 6.0824
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "2371",
+        "verdict": "watch",
+        "rank": 11,
+        "return_net_pct": -1.6993
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "8766",
+        "verdict": "watch",
+        "rank": 12,
+        "return_net_pct": 1.06
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "7832",
+        "verdict": "watch",
+        "rank": 13,
+        "return_net_pct": -1.8606
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "7867",
+        "verdict": "caution",
+        "rank": 14,
+        "return_net_pct": 3.5151
+      },
+      {
+        "signal_date": "2026-10-23",
+        "code": "7552",
+        "verdict": "caution",
+        "rank": 15,
+        "return_net_pct": 3.2979
       }
     ]
   },
@@ -3990,30 +4730,38 @@
     "1": {
       "n_per_day": 1,
       "picks": 5,
-      "n_filled": 0,
-      "n_pending": 3,
-      "fill_rate": 0.0,
-      "avg_return_pct": null,
-      "median_return_pct": null,
-      "win_rate": null,
-      "avg_excess_pct": null,
-      "best": null,
-      "worst": null
+      "n_filled": 1,
+      "n_pending": 2,
+      "fill_rate": 0.333,
+      "avg_return_pct": 15.284,
+      "median_return_pct": 15.284,
+      "win_rate": 1.0,
+      "avg_excess_pct": 15.918,
+      "best": {
+        "code": "8541",
+        "name": "愛媛銀行",
+        "return_net_pct": 15.2844
+      },
+      "worst": {
+        "code": "8541",
+        "name": "愛媛銀行",
+        "return_net_pct": 15.2844
+      }
     },
     "3": {
       "n_per_day": 3,
       "picks": 15,
-      "n_filled": 3,
-      "n_pending": 8,
+      "n_filled": 6,
+      "n_pending": 7,
       "fill_rate": 0.75,
-      "avg_return_pct": -3.655,
-      "median_return_pct": -3.155,
-      "win_rate": 0.0,
-      "avg_excess_pct": -2.872,
+      "avg_return_pct": -1.061,
+      "median_return_pct": -4.178,
+      "win_rate": 0.167,
+      "avg_excess_pct": -0.194,
       "best": {
-        "code": "4203",
-        "name": "住友ベークライト",
-        "return_net_pct": -0.2996
+        "code": "8541",
+        "name": "愛媛銀行",
+        "return_net_pct": 15.2844
       },
       "worst": {
         "code": "3132",
@@ -4024,17 +4772,17 @@
     "5": {
       "n_per_day": 5,
       "picks": 24,
-      "n_filled": 6,
+      "n_filled": 11,
       "n_pending": 10,
-      "fill_rate": 0.667,
-      "avg_return_pct": -2.895,
-      "median_return_pct": -2.489,
-      "win_rate": 0.0,
-      "avg_excess_pct": -2.075,
+      "fill_rate": 0.786,
+      "avg_return_pct": -2.417,
+      "median_return_pct": -3.155,
+      "win_rate": 0.091,
+      "avg_excess_pct": -1.631,
       "best": {
-        "code": "4203",
-        "name": "住友ベークライト",
-        "return_net_pct": -0.2996
+        "code": "8541",
+        "name": "愛媛銀行",
+        "return_net_pct": 15.2844
       },
       "worst": {
         "code": "3132",
@@ -4046,18 +4794,18 @@
   "breakdown": {
     "by_entry_type": {
       "押し目待ち": {
-        "n": 6,
-        "avg": -2.895,
-        "median": -2.489,
-        "win_rate": 0.0
+        "n": 11,
+        "avg": -2.417,
+        "median": -3.155,
+        "win_rate": 0.091
       }
     },
     "by_overheat": {
       "低": {
-        "n": 6,
-        "avg": -2.895,
-        "median": -2.489,
-        "win_rate": 0.0
+        "n": 11,
+        "avg": -2.417,
+        "median": -3.155,
+        "win_rate": 0.091
       }
     },
     "by_sector": {
@@ -4079,46 +4827,70 @@
         "median": -1.841,
         "win_rate": 0.0
       },
+      "銀行業": {
+        "n": 1,
+        "avg": 15.284,
+        "median": 15.284,
+        "win_rate": 1.0
+      },
+      "輸送用機器": {
+        "n": 1,
+        "avg": -5.202,
+        "median": -5.202,
+        "win_rate": 0.0
+      },
+      "情報・通信業": {
+        "n": 1,
+        "avg": -5.484,
+        "median": -5.484,
+        "win_rate": 0.0
+      },
       "海運業": {
         "n": 1,
         "avg": -2.72,
         "median": -2.72,
         "win_rate": 0.0
+      },
+      "機械": {
+        "n": 2,
+        "avg": -6.911,
+        "median": -6.911,
+        "win_rate": 0.0
       }
     },
     "by_verdict": {
       "推奨": {
-        "n": 6,
-        "avg": -2.895,
-        "median": -2.489,
-        "win_rate": 0.0
+        "n": 11,
+        "avg": -2.417,
+        "median": -3.155,
+        "win_rate": 0.091
       }
     }
   },
   "notes": [
     "まだ決済が確定していない建玉（未確定）が10件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
-    "買わずに見送った3件は、翌日に成行で買っていれば平均-1.74%でした（上昇1件/下落2件）。待ったことで、下がる銘柄を避けられた（回避できた）ことを意味します。",
-    "約定して決済まで確定した6件の1件あたり平均損益は-2.90%でした。同じ期間の市場平均（TOPIX）は-0.82%なので、市場を2.08%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
-    "技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 -0.13）。スコアが高い＝上がる、とは言えない週でした。",
-    "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均1.55%ポイント悪い結果でした。AIの強気判定が裏目に出た週なので、次回は慎重に見ます。"
+    "買わずに見送った3件は、翌日に成行で買っていれば平均+1.53%でした（上昇2件/下落1件）。押し目を待つあまり、上がった銘柄に乗れなかった（機会損失）ことを意味します。",
+    "約定して決済まで確定した11件の1件あたり平均損益は-2.42%でした。同じ期間の市場平均（TOPIX）は-0.79%なので、市場を1.63%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
+    "技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 -0.15）。スコアが高い＝上がる、とは言えない週でした。",
+    "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均0.98%ポイント悪い結果でした。AIの強気判定が裏目に出た週なので、次回は慎重に見ます。"
   ],
   "actions": [
-    "過熱度『低』（56件・平均-6.511%）は 減点 -0.93。",
-    "過熱度『中』（15件・平均-1.335%）は 加点 +2.45。"
+    "過熱度『低』（64件・平均-6.074%）は 減点 -0.78。",
+    "過熱度『中』（15件・平均-1.335%）は 加点 +2.30。"
   ],
   "feedback": {
     "enabled": true,
     "window_weeks": 6,
-    "n_filled": 71,
-    "baseline_avg_pct": -5.417,
+    "n_filled": 79,
+    "baseline_avg_pct": -5.174,
     "overheat_delta": {
-      "low": -0.93,
-      "moderate": 2.45
+      "low": -0.78,
+      "moderate": 2.3
     },
     "overheat_stats": {
       "low": {
-        "n": 56,
-        "avg": -6.511
+        "n": 64,
+        "avg": -6.074
       },
       "moderate": {
         "n": 15,
@@ -4127,159 +4899,5 @@
     },
     "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
   },
-  "next_week_plan": {
-    "generated_at": "2026-10-24T02:44:05",
-    "week": "2026-W44",
-    "based_on_date": "2026-10-23",
-    "provider": "deepseek",
-    "model": "deepseek-flash",
-    "candidates": [
-      {
-        "code": "8541",
-        "name": "愛媛銀行",
-        "score": 90.0,
-        "verdict": "recommend"
-      },
-      {
-        "code": "6058",
-        "name": "ベクトル",
-        "score": 81.9,
-        "verdict": "recommend"
-      },
-      {
-        "code": "9107",
-        "name": "川崎汽船",
-        "score": 81.3,
-        "verdict": "recommend"
-      },
-      {
-        "code": "4203",
-        "name": "住友ベークライト",
-        "score": 80.9,
-        "verdict": "recommend"
-      },
-      {
-        "code": "6135",
-        "name": "牧野フライス製作所",
-        "score": 78.6,
-        "verdict": "recommend"
-      },
-      {
-        "code": "6098",
-        "name": "リクルートホールディングス",
-        "score": 90.1,
-        "verdict": null
-      },
-      {
-        "code": "2612",
-        "name": "かどや製油",
-        "score": 88.6,
-        "verdict": null
-      },
-      {
-        "code": "6668",
-        "name": "アドテック　プラズマ　テクノロジー",
-        "score": 87.3,
-        "verdict": null
-      },
-      {
-        "code": "8766",
-        "name": "東京海上ホールディングス",
-        "score": 87.1,
-        "verdict": null
-      },
-      {
-        "code": "3156",
-        "name": "レスター",
-        "score": 86.8,
-        "verdict": null
-      },
-      {
-        "code": "3132",
-        "name": "マクニカホールディングス",
-        "score": 86.5,
-        "verdict": null
-      },
-      {
-        "code": "6724",
-        "name": "セイコーエプソン",
-        "score": 85.3,
-        "verdict": null
-      },
-      {
-        "code": "6862",
-        "name": "ミナトホールディングス",
-        "score": 85.0,
-        "verdict": null
-      },
-      {
-        "code": "3374",
-        "name": "内外テック",
-        "score": 84.5,
-        "verdict": null
-      },
-      {
-        "code": "2492",
-        "name": "インフォマート",
-        "score": 84.3,
-        "verdict": null
-      }
-    ],
-    "plan": {
-      "market_view": "直近のOCO6件は平均-2.90%、勝率0%、TOPIX超過-2.08%（金曜-4.92%）と強い逆風。金曜急落後のリスクオフで、過熱株の追いかけより押し目限定・打診買いが妥当。来週は上方修正や自社株買いなど材料があり、RSI50前後で過熱のない銘柄を、損切り浅めのOCOで拾う。",
-      "top_pick": {
-        "code": "6135",
-        "name": "牧野フライス製作所",
-        "reason": "自社株買いとJIMTOF材料、RSI50.5で過熱なし。押し目3100円なら損切り浅くリスクリワード良好",
-        "entry_strategy": "押し目指値3100円（寄り付き直後は待ち、3100円以下で分割。反発確認後の成行も可）",
-        "entry_price": 3100,
-        "tp_price": 3528,
-        "sl_price": 2864,
-        "scenario": "3100円近辺まで下げて反発し、JIMTOF・自社株買いを材料に3528円を試す。3100円を明確に割る場合は買わず、約定後は2864円割れで撤退。",
-        "confidence": "中"
-      },
-      "backups": [
-        {
-          "code": "8541",
-          "name": "愛媛銀行",
-          "reason": "上方修正とPBR0.9、RSI52.5で過熱なし。3370円押し目限定なら銀行の防御性も魅力",
-          "entry_strategy": "押し目指値3370円（3148〜3370円、深追いしない）",
-          "entry_price": 3370
-        },
-        {
-          "code": "4203",
-          "name": "住友ベークライト",
-          "reason": "半導体封止材増強、DC直後でRSI39.5。7720円の支持近辺まで下げた時のみ拾う",
-          "entry_strategy": "押し目指値7720円（7245円割れは見送り）",
-          "entry_price": 7720
-        },
-        {
-          "code": "9107",
-          "name": "川崎汽船",
-          "reason": "上方修正は強いが52週位置0.975。3515円は追わず3277〜3300円の押し目限定",
-          "entry_strategy": "押し目指値3300円（3277円割れは見送り）",
-          "entry_price": 3300
-        }
-      ],
-      "avoid": [
-        {
-          "code": "6058",
-          "reason": "25日乖離+9.26%、52週位置0.989で高値圏。PBR4.18で急騰後の追いかけは危険"
-        },
-        {
-          "code": "6098",
-          "reason": "RSI72.9、25日乖離+8.85%、52週位置0.994。過熱強く押し目なし"
-        },
-        {
-          "code": "2612",
-          "reason": "RSI73.6、52週位置1.0。高値掴みリスク大"
-        },
-        {
-          "code": "8766",
-          "reason": "RSI74.6、25日乖離+13.86%、52週位置1.0。過熱で追随不要"
-        }
-      ],
-      "risk_notes": "金曜急落後のリスクオフで、押し目指値が刺さらない、または刺さって続落する可能性がある。OCOは約定後必ず設定し、損切りは機械的に実行する。材料日付が先付きに見える候補は情報鮮度を必ず確認する。"
-    }
-  }
+  "next_week_plan": null
 }

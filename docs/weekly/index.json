@@ -1,19 +1,27 @@
 [
   {
+    "week": "2026-W44",
+    "start": "2026-10-26",
+    "end": "2026-10-30",
+    "avg_return_pct": -6.128,
+    "win_rate": 0.0,
+    "n_filled": 1
+  },
+  {
     "week": "2026-W43",
     "start": "2026-10-19",
     "end": "2026-10-23",
-    "avg_return_pct": -2.895,
-    "win_rate": 0.0,
-    "n_filled": 6
+    "avg_return_pct": -2.417,
+    "win_rate": 0.091,
+    "n_filled": 11
   },
   {
     "week": "2026-W42",
     "start": "2026-10-12",
     "end": "2026-10-16",
-    "avg_return_pct": -7.752,
+    "avg_return_pct": -7.332,
     "win_rate": 0.0,
-    "n_filled": 14
+    "n_filled": 16
   },
   {
     "week": "2026-W41",
