@@ -1,3 +1,3 @@
 ﻿gc_window,val_ratio_min,avg_val_min_k,exit_mode,train_count,test_count,test_win_rate,test_pf,test_ev_pct,test_annualized_return_pct,test_max_dd_pct,test_sharpe,test_consec_losses,test_max_loss_pct
-3,1.2,30000,atr_trail,16575,4495,41.78,1.4,1.63,13.49,59.48,0.52,67,-43.2
-3,1.2,30000,fixed,16575,4495,35.15,1.35,1.13,19.48,56.29,0.71,102,-7.28
+3,1.2,30000,atr_trail,16575,4495,40.87,1.49,1.99,24.22,56.34,0.76,67,-36.05
+3,1.2,30000,fixed,16575,4495,34.51,1.39,1.31,12.8,56.29,0.53,102,-7.28
