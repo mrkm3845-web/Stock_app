@@ -13,6 +13,7 @@ opencode 以外のハーネス（Claude Code / Codex / Cursor / Gemini CLI な�
 
 ## 最低限の実行順
 
+0. 取引履歴（`tradehistory(JP)_*.csv`）の添付があれば、`tradehistory(JP)_{添付日}.csv` として**リポジトリ直下に保存**（読むだけ・絶対にコミットしない）
 1. `git fetch origin main` と `git status --porcelain`
 2. 価格・スコア・AIの鮮度チェック（古ければ更新。数分かかる）
    ```bash

@@ -8,6 +8,24 @@
 
 ---
 
+## 2026-11-02
+
+### 取引履歴の添付をルート保存する手順を追加し、作戦ノートを11/02版で更新（この変更）
+- **commit**: この変更（取引履歴の添付運用）
+- **種別**: ドキュメント / 運用
+- **変更**:
+  - `prompts/strategy_note.md` に「0-1. 取引履歴の添付があったら保存する」を追加。添付された `tradehistory(JP)_*.csv` は作業前にリポジトリ直下へ保存し、**読むだけでコミットしない**（`.gitignore` 済み・`git add` 前に `git diff --cached --name-only` で確認）。
+  - `.opencode/command/strategy-note.md` の実行順にも同じ手順（0番）を追加。
+  - 作戦ノート `docs/weekend/2026-11-02-0628.json` と台帳を更新。データ基準日 2026-10-30、取引履歴は2026-11-02版（最終約定 2026-10-29）。
+  - 台帳の保有を三洋貿易（3176）に更新し、OCO 1,110 / 1,230 とサイズ半減の指示、新規は東京海上（8766）の550押し目1銘柄に変更。
+- **根拠・検証**:
+  - 11/02版CSV（32,530バイト・156行）をルートに保存し、`prepare_strategy_note.py` で保有1銘柄（3176）と10/28のエアトリ（6191）売却1,371（-6,200円）を確認。
+  - `check_strategy_plan.py --mode eod --force` で状態を作り直し（3176「保有継続」・8766「買い入口550待ち」）。JSON検証済み、取引履歴はステージしていない。
+- **影響・ロールバック**: 添付のたびにルートへCSVが増える（コミットはされない）。戻す場合はプロンプトの追記を `git revert`。
+- **関連**: `prompts/strategy_note.md` / `.opencode/command/strategy-note.md` / `docs/weekend/2026-11-02-0628.json` / `docs/weekend/index.json` / `docs/strategy/active.json` / `docs/strategy/status.json` / `docs/strategy/events.json`
+
+---
+
 ## 2026-10-24
 
 ### セクター色（業種の強さ）を追加し、赤はAI推奨から外す（この変更）

@@ -1,56 +1,81 @@
 {
-  "plan_id": "2026-10-28-0625",
-  "checked_at": "2026-10-28T14:45:57.079235+09:00",
+  "plan_id": "2026-11-02-0628",
+  "checked_at": "2026-11-02T06:31:03.536888+09:00",
   "source": "eod",
-  "data_asof": "2026-10-27",
+  "data_asof": "2026-10-30",
   "market": {
     "regime": {
       "ticker": "1306.T",
-      "close": 418.4,
-      "sma": 399.4,
+      "close": 416.4,
+      "sma": 400.7,
       "sma_days": 200,
       "risk_on": true
     },
     "breadth": {
-      "n": 2912,
+      "n": 2913,
       "low_sample": false,
-      "above_sma25_pct": 36.7,
-      "above_sma200_pct": 52.8,
-      "avg_ret5_pct": -1.68
+      "above_sma25_pct": 30.1,
+      "above_sma200_pct": 49.2,
+      "avg_ret5_pct": -0.55
     },
     "bank_sector": {
       "n": 77,
       "low_sample": false,
-      "above_sma25_pct": 1.3,
-      "above_sma200_pct": 75.3,
-      "avg_ret5_pct": -7.39
+      "above_sma25_pct": 5.2,
+      "above_sma200_pct": 85.7,
+      "avg_ret5_pct": 5.27
     }
   },
   "items": [
     {
-      "code": "6191",
-      "name": "エアトリ",
+      "code": "3176",
+      "name": "三洋貿易",
       "kind": "position",
-      "sector": "サービス業",
+      "sector": "卸売業",
       "sector_color": "yellow",
-      "sector_above_sma25_pct": 34.6,
-      "status": "max_hold",
-      "current_price": 1421.0,
-      "high": 1421.0,
-      "low": 1421.0,
-      "entry_price": 1433,
-      "stop": 1310,
-      "take_profit": 1612,
-      "distance_pct": 7.811400422237861,
-      "action": "最大保有日2026-10-28。引けで手仕舞いを検討",
+      "sector_above_sma25_pct": 32.8,
+      "status": "hold",
+      "current_price": 1147.0,
+      "high": 1147.0,
+      "low": 1147.0,
+      "entry_price": 1175,
+      "stop": 1110,
+      "take_profit": 1230,
+      "distance_pct": 3.225806451612903,
+      "action": "保有継続",
       "source": "history-close",
-      "asof": "2026-10-27",
-      "last_notified_status": "max_hold",
-      "last_notified_at": "2026-10-28T14:45:57.079235+09:00",
+      "asof": "2026-10-30",
+      "last_notified_status": "hold",
+      "last_notified_at": "2026-11-02T06:31:03.536888+09:00",
+      "last_near_date": null
+    },
+    {
+      "code": "8766",
+      "name": "東京海上ホールディングス",
+      "kind": "watch",
+      "sector": "保険業",
+      "sector_color": "green",
+      "sector_above_sma25_pct": 70.0,
+      "status": "waiting",
+      "current_price": 579.0,
+      "high": 579.0,
+      "low": 579.0,
+      "entry_price": 550,
+      "stop": 519,
+      "take_profit": 652,
+      "distance_pct": 5.008635578583765,
+      "conditions_ok": true,
+      "condition_reasons": [],
+      "action": "買い入口550待ち",
+      "source": "history-close",
+      "asof": "2026-10-30",
+      "last_notified_status": "waiting",
+      "last_notified_at": "2026-11-02T06:31:03.536888+09:00",
       "last_near_date": null
     }
   ],
   "today_actions": [
-    "6191 エアトリ：最大保有日2026-10-28。引けで手仕舞いを検討"
+    "3176 三洋貿易：保有継続",
+    "8766 東京海上ホールディングス：買い入口550待ち"
   ]
 }
