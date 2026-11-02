@@ -1,8 +1,8 @@
 {
   "plan_id": "2026-11-02-0628",
-  "checked_at": "2026-11-02T06:45:48.269214+09:00",
+  "checked_at": "2026-11-02T13:14:32.398205+09:00",
   "source": "eod",
-  "data_asof": "2026-10-30T00:00:00",
+  "data_asof": null,
   "market": {
     "regime": {
       "ticker": "1306.T",
@@ -26,56 +26,6 @@
       "avg_ret5_pct": 5.27
     }
   },
-  "items": [
-    {
-      "code": "3176",
-      "name": "三洋貿易",
-      "kind": "position",
-      "sector": "卸売業",
-      "sector_color": "yellow",
-      "sector_above_sma25_pct": 32.8,
-      "status": "hold",
-      "current_price": 1147.0,
-      "high": 1205.0,
-      "low": 1140.0,
-      "entry_price": 1175,
-      "stop": 1114,
-      "take_profit": 1230,
-      "distance_pct": 2.877070619006103,
-      "action": "保有継続",
-      "source": "yfinance-1d",
-      "asof": "2026-10-30T00:00:00",
-      "last_notified_status": "hold",
-      "last_notified_at": "2026-11-02T06:45:48.269214+09:00",
-      "last_near_date": null
-    },
-    {
-      "code": "8766",
-      "name": "東京海上ホールディングス",
-      "kind": "watch",
-      "sector": "保険業",
-      "sector_color": "green",
-      "sector_above_sma25_pct": 70.0,
-      "status": "waiting",
-      "current_price": 579.4,
-      "high": 586.3,
-      "low": 570.7,
-      "entry_price": 550,
-      "stop": 519,
-      "take_profit": 652,
-      "distance_pct": 5.07421870473586,
-      "conditions_ok": true,
-      "condition_reasons": [],
-      "action": "買い入口550待ち",
-      "source": "yfinance-1d",
-      "asof": "2026-10-30T00:00:00",
-      "last_notified_status": "waiting",
-      "last_notified_at": "2026-11-02T06:45:48.269214+09:00",
-      "last_near_date": null
-    }
-  ],
-  "today_actions": [
-    "3176 三洋貿易：保有継続",
-    "8766 東京海上ホールディングス：買い入口550待ち"
-  ]
+  "items": [],
+  "today_actions": []
 }
