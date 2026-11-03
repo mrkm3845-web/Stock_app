@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T05:54:28",
+  "generated_at": "2026-11-03T10:39:30",
   "date": "2026-11-02",
   "horizon_days": 14,
   "items": {
@@ -3811,11 +3811,6 @@
     "3853": {
       "date": "2025-08-07",
       "days_until": -452,
-      "soon": false
-    },
-    "3854": {
-      "date": "2025-09-04",
-      "days_until": -424,
       "soon": false
     }
   }
