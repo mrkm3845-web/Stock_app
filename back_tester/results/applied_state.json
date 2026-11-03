@@ -1,8 +1,8 @@
 {
-  "applied_at": "2026-11-02T21:38:26",
-  "run_id": "20261102213612",
+  "applied_at": "2026-11-03T19:22:13",
+  "run_id": "20261103192021",
   "tiers": {
-    "run_id": "20261102213612",
+    "run_id": "20261103192021",
     "items": [
       {
         "tier": "low",
@@ -42,7 +42,7 @@
           "pf": 2.22,
           "consec_losses": 51,
           "max_loss_pct": -36.05,
-          "total_return_pct": 1312.92,
+          "total_return_pct": 1312.93,
           "annualized_return_pct": 101.36,
           "max_dd_pct": 24.99,
           "sharpe": 2.17
