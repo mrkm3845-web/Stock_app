@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-02",
-  "generated_at": "2026-11-04T09:02:18",
+  "date": "2026-11-04",
+  "generated_at": "2026-11-05T01:27:31",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -69,8 +69,8 @@
       "low_sample": false
     },
     "情報・通信業": {
-      "n": 329,
-      "above_sma25_pct": 28.6,
+      "n": 328,
+      "above_sma25_pct": 28.7,
       "color": "red",
       "low_sample": false
     },
@@ -106,7 +106,7 @@
     },
     "金属製品": {
       "n": 78,
-      "above_sma25_pct": 20.5,
+      "above_sma25_pct": 19.2,
       "color": "red",
       "low_sample": false
     },
