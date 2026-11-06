@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-05",
-  "generated_at": "2026-11-06T09:21:02",
+  "date": "2026-11-06",
+  "generated_at": "2026-11-07T00:59:55",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -40,19 +40,19 @@
     },
     "その他製品": {
       "n": 82,
-      "above_sma25_pct": 34.1,
+      "above_sma25_pct": 32.9,
       "color": "yellow",
       "low_sample": false
     },
     "サービス業": {
       "n": 320,
-      "above_sma25_pct": 37.8,
+      "above_sma25_pct": 37.5,
       "color": "yellow",
       "low_sample": false
     },
     "卸売業": {
       "n": 257,
-      "above_sma25_pct": 31.9,
+      "above_sma25_pct": 31.1,
       "color": "yellow",
       "low_sample": false
     },
@@ -70,7 +70,7 @@
     },
     "情報・通信業": {
       "n": 328,
-      "above_sma25_pct": 37.2,
+      "above_sma25_pct": 37.5,
       "color": "yellow",
       "low_sample": false
     },
@@ -100,13 +100,13 @@
     },
     "化学": {
       "n": 191,
-      "above_sma25_pct": 33.0,
+      "above_sma25_pct": 33.5,
       "color": "yellow",
       "low_sample": false
     },
     "金属製品": {
       "n": 78,
-      "above_sma25_pct": 24.4,
+      "above_sma25_pct": 25.6,
       "color": "red",
       "low_sample": false
     },
@@ -142,13 +142,13 @@
     },
     "その他金融業": {
       "n": 33,
-      "above_sma25_pct": 48.5,
+      "above_sma25_pct": 42.4,
       "color": "yellow",
       "low_sample": false
     },
     "証券、商品先物取引業": {
       "n": 30,
-      "above_sma25_pct": 20.0,
+      "above_sma25_pct": 16.7,
       "color": "red",
       "low_sample": false
     },
@@ -160,8 +160,8 @@
     },
     "ゴム製品": {
       "n": 16,
-      "above_sma25_pct": 43.8,
-      "color": "yellow",
+      "above_sma25_pct": 50.0,
+      "color": "green",
       "low_sample": false
     },
     "鉄鋼": {
@@ -196,7 +196,7 @@
     },
     "倉庫・運輸関連業": {
       "n": 29,
-      "above_sma25_pct": 13.8,
+      "above_sma25_pct": 10.3,
       "color": "red",
       "low_sample": false
     },
