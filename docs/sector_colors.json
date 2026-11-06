@@ -1,6 +1,6 @@
 {
   "date": "2026-11-06",
-  "generated_at": "2026-11-07T00:59:55",
+  "generated_at": "2026-11-07T03:03:02",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -69,8 +69,8 @@
       "low_sample": false
     },
     "情報・通信業": {
-      "n": 328,
-      "above_sma25_pct": 37.5,
+      "n": 329,
+      "above_sma25_pct": 37.4,
       "color": "yellow",
       "low_sample": false
     },
