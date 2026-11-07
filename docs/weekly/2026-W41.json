@@ -2,7 +2,7 @@
   "week": "2026-W41",
   "start": "2026-10-05",
   "end": "2026-10-09",
-  "generated_at": "2026-10-31T03:30:47",
+  "generated_at": "2026-11-07T03:55:57",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -13,22 +13,22 @@
   },
   "summary": {
     "picks_total": 23,
-    "n_filled": 23,
+    "n_filled": 21,
     "n_not_filled": 0,
     "n_pending": 0,
-    "n_no_data": 0,
-    "n_entered": 23,
+    "n_no_data": 2,
+    "n_entered": 21,
     "fill_rate": 1.0,
-    "avg_return_pct": -6.025,
+    "avg_return_pct": -5.915,
     "median_return_pct": -6.969,
-    "win_rate": 0.174,
-    "avg_benchmark_pct": -1.844,
-    "avg_excess_pct": -4.18,
-    "beat_benchmark_rate": 0.174,
-    "rule_avg_return_pct": -6.025,
-    "rule_win_rate": 0.174,
-    "avg_weekly_return_pct": -5.937,
-    "weekly_win_rate": 0.13,
+    "win_rate": 0.19,
+    "avg_benchmark_pct": -1.942,
+    "avg_excess_pct": -3.973,
+    "beat_benchmark_rate": 0.19,
+    "rule_avg_return_pct": -5.915,
+    "rule_win_rate": 0.19,
+    "avg_weekly_return_pct": -5.64,
+    "weekly_win_rate": 0.143,
     "n_missed_evaluated": 0,
     "missed_avg_pct": null,
     "missed_up_count": 0,
@@ -200,33 +200,18 @@
         "entry_zone_high": 5634.0,
         "wait_days": 10
       },
-      "fill_date": "2026-10-08",
-      "fill_price": 5630.0,
-      "status": "filled",
-      "exit_oco": {
-        "date": "2026-10-09",
-        "price": 5258.0,
-        "reason": "損切り",
-        "return_net_pct": -6.8872
-      },
-      "exit_weekly": {
-        "date": "2026-10-09",
-        "price": 5210.0,
-        "return_net_pct": -7.7372,
-        "source": "intraday_1130"
-      },
-      "exit_rule": {
-        "date": "2026-10-09",
-        "price": 5258.0,
-        "reason": "損切り",
-        "return_net_pct": -6.8872
-      },
-      "return_gross_pct": -6.6075,
-      "return_net_pct": -6.8872,
-      "return_rule_pct": -6.8872,
-      "return_weekly_pct": -7.7372,
-      "benchmark_pct": -0.8725,
-      "excess_pct": -6.0147,
+      "fill_date": null,
+      "fill_price": null,
+      "status": "no_data",
+      "exit_oco": null,
+      "exit_weekly": null,
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": null,
+      "benchmark_pct": null,
+      "excess_pct": null,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -1298,33 +1283,18 @@
         "entry_zone_high": 5786.0,
         "wait_days": 10
       },
-      "fill_date": "2026-10-14",
-      "fill_price": 5200.0,
-      "status": "filled",
-      "exit_oco": {
-        "date": "2026-10-14",
-        "price": 4826.0,
-        "reason": "損切り",
-        "return_net_pct": -7.4703
-      },
-      "exit_weekly": {
-        "date": "2026-10-16",
-        "price": 4675.0,
-        "return_net_pct": -10.3655,
-        "source": "intraday_1130"
-      },
-      "exit_rule": {
-        "date": "2026-10-14",
-        "price": 4826.0,
-        "reason": "損切り",
-        "return_net_pct": -7.4703
-      },
-      "return_gross_pct": -7.1923,
-      "return_net_pct": -7.4703,
-      "return_rule_pct": -7.4703,
-      "return_weekly_pct": -10.3655,
-      "benchmark_pct": -0.7597,
-      "excess_pct": -6.7106,
+      "fill_date": null,
+      "fill_price": null,
+      "status": "no_data",
+      "exit_oco": null,
+      "exit_weekly": null,
+      "exit_rule": null,
+      "return_gross_pct": null,
+      "return_net_pct": null,
+      "return_rule_pct": null,
+      "return_weekly_pct": null,
+      "benchmark_pct": null,
+      "excess_pct": null,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -1455,11 +1425,11 @@
   ],
   "ranking": {
     "k": null,
-    "n": 200,
-    "spearman": -0.252,
-    "top_avg_pct": -4.863,
-    "bottom_avg_pct": -2.237,
-    "spread_pct": -2.626,
+    "n": 195,
+    "spearman": -0.225,
+    "top_avg_pct": -4.54,
+    "bottom_avg_pct": -2.207,
+    "spread_pct": -2.333,
     "rows": [
       {
         "signal_date": "2026-10-05",
@@ -1516,20 +1486,6 @@
         "return_net_pct": -8.2382,
         "benchmark_pct": -1.8274,
         "excess_pct": -6.4108
-      },
-      {
-        "signal_date": "2026-10-05",
-        "code": "7384",
-        "name": "プロクレアホールディングス",
-        "sector": "銀行業",
-        "score": 100.0,
-        "entry_date": "2026-10-06",
-        "entry_price": 5930.0,
-        "exit_date": "2026-10-09",
-        "exit_price": 5210.0,
-        "return_net_pct": -12.4048,
-        "benchmark_pct": -1.8274,
-        "excess_pct": -10.5774
       },
       {
         "signal_date": "2026-10-05",
@@ -2079,20 +2035,6 @@
       },
       {
         "signal_date": "2026-10-06",
-        "code": "7384",
-        "name": "プロクレアホールディングス",
-        "sector": "銀行業",
-        "score": 100.0,
-        "entry_date": "2026-10-07",
-        "entry_price": 6030.0,
-        "exit_date": "2026-10-09",
-        "exit_price": 5210.0,
-        "return_net_pct": -13.8575,
-        "benchmark_pct": -2.23,
-        "excess_pct": -11.6275
-      },
-      {
-        "signal_date": "2026-10-06",
         "code": "8362",
         "name": "福井銀行",
         "sector": "銀行業",
@@ -2622,20 +2564,6 @@
         "return_net_pct": -0.9672,
         "benchmark_pct": -1.3309,
         "excess_pct": 0.3637
-      },
-      {
-        "signal_date": "2026-10-07",
-        "code": "7384",
-        "name": "プロクレアホールディングス",
-        "sector": "銀行業",
-        "score": 100.0,
-        "entry_date": "2026-10-08",
-        "entry_price": 5800.0,
-        "exit_date": "2026-10-09",
-        "exit_price": 5210.0,
-        "return_net_pct": -10.4415,
-        "benchmark_pct": -1.3309,
-        "excess_pct": -9.1106
       },
       {
         "signal_date": "2026-10-07",
@@ -3297,20 +3225,6 @@
       },
       {
         "signal_date": "2026-10-08",
-        "code": "7384",
-        "name": "プロクレアホールディングス",
-        "sector": "銀行業",
-        "score": 99.2,
-        "entry_date": "2026-10-09",
-        "entry_price": 5500.0,
-        "exit_date": "2026-10-09",
-        "exit_price": 5210.0,
-        "return_net_pct": -5.5565,
-        "benchmark_pct": 0.0491,
-        "excess_pct": -5.6055
-      },
-      {
-        "signal_date": "2026-10-08",
         "code": "8392",
         "name": "大分銀行",
         "sector": "銀行業",
@@ -3843,20 +3757,6 @@
       },
       {
         "signal_date": "2026-10-09",
-        "code": "7384",
-        "name": "プロクレアホールディングス",
-        "sector": "銀行業",
-        "score": 97.5,
-        "entry_date": "2026-10-13",
-        "entry_price": 5420.0,
-        "exit_date": "2026-10-16",
-        "exit_price": 4675.0,
-        "return_net_pct": -14.0038,
-        "benchmark_pct": -0.8549,
-        "excess_pct": -13.1489
-      },
-      {
-        "signal_date": "2026-10-09",
         "code": "8344",
         "name": "山形銀行",
         "sector": "銀行業",
@@ -4266,16 +4166,16 @@
   "ai_calibration": {
     "by_verdict": {
       "recommend": {
-        "n": 25,
-        "avg": -4.876,
-        "median": -4.963,
-        "win_rate": 0.24
+        "n": 23,
+        "avg": -4.152,
+        "median": -4.866,
+        "win_rate": 0.261
       },
       "watch": {
-        "n": 41,
-        "avg": -4.758,
-        "median": -4.666,
-        "win_rate": 0.268
+        "n": 38,
+        "avg": -4.348,
+        "median": -4.573,
+        "win_rate": 0.289
       },
       "caution": {
         "n": 9,
@@ -4290,7 +4190,7 @@
         "win_rate": 0.0
       }
     },
-    "recommend_minus_watch_pct": -0.118,
+    "recommend_minus_watch_pct": 0.196,
     "rows": [
       {
         "signal_date": "2026-10-05",
@@ -4305,13 +4205,6 @@
         "verdict": "recommend",
         "rank": 2,
         "return_net_pct": -3.9665
-      },
-      {
-        "signal_date": "2026-10-05",
-        "code": "7384",
-        "verdict": "recommend",
-        "rank": 3,
-        "return_net_pct": -12.4048
       },
       {
         "signal_date": "2026-10-05",
@@ -4462,13 +4355,6 @@
       },
       {
         "signal_date": "2026-10-06",
-        "code": "7384",
-        "verdict": "watch",
-        "rank": 10,
-        "return_net_pct": -13.8575
-      },
-      {
-        "signal_date": "2026-10-06",
         "code": "8344",
         "verdict": "watch",
         "rank": 11,
@@ -4543,13 +4429,6 @@
         "verdict": "recommend",
         "rank": 5,
         "return_net_pct": -0.9672
-      },
-      {
-        "signal_date": "2026-10-07",
-        "code": "7384",
-        "verdict": "watch",
-        "rank": 6,
-        "return_net_pct": -10.4415
       },
       {
         "signal_date": "2026-10-07",
@@ -4700,13 +4579,6 @@
       },
       {
         "signal_date": "2026-10-08",
-        "code": "7384",
-        "verdict": "watch",
-        "rank": 13,
-        "return_net_pct": -5.5565
-      },
-      {
-        "signal_date": "2026-10-08",
         "code": "8344",
         "verdict": "watch",
         "rank": 14,
@@ -4746,13 +4618,6 @@
         "verdict": "recommend",
         "rank": 4,
         "return_net_pct": -9.2594
-      },
-      {
-        "signal_date": "2026-10-09",
-        "code": "7384",
-        "verdict": "recommend",
-        "rank": 5,
-        "return_net_pct": -14.0038
       },
       {
         "signal_date": "2026-10-09",
@@ -4851,13 +4716,13 @@
     "3": {
       "n_per_day": 3,
       "picks": 15,
-      "n_filled": 15,
+      "n_filled": 13,
       "n_pending": 0,
       "fill_rate": 1.0,
-      "avg_return_pct": -4.863,
-      "median_return_pct": -6.887,
-      "win_rate": 0.2,
-      "avg_excess_pct": -3.14,
+      "avg_return_pct": -4.507,
+      "median_return_pct": -5.888,
+      "win_rate": 0.231,
+      "avg_excess_pct": -2.644,
       "best": {
         "code": "6668",
         "name": "アドテック　プラズマ　テクノロジー",
@@ -4872,13 +4737,13 @@
     "5": {
       "n_per_day": 5,
       "picks": 23,
-      "n_filled": 23,
+      "n_filled": 21,
       "n_pending": 0,
       "fill_rate": 1.0,
-      "avg_return_pct": -6.025,
+      "avg_return_pct": -5.915,
       "median_return_pct": -6.969,
-      "win_rate": 0.174,
-      "avg_excess_pct": -4.18,
+      "win_rate": 0.19,
+      "avg_excess_pct": -3.973,
       "best": {
         "code": "6668",
         "name": "アドテック　プラズマ　テクノロジー",
@@ -4894,10 +4759,10 @@
   "breakdown": {
     "by_entry_type": {
       "押し目待ち": {
-        "n": 14,
-        "avg": -2.972,
-        "median": -5.346,
-        "win_rate": 0.286
+        "n": 12,
+        "avg": -2.271,
+        "median": -4.546,
+        "win_rate": 0.333
       },
       "追いかけ": {
         "n": 9,
@@ -4908,16 +4773,16 @@
     },
     "by_overheat": {
       "中": {
-        "n": 8,
-        "avg": -1.439,
-        "median": -4.806,
-        "win_rate": 0.375
+        "n": 7,
+        "avg": -0.66,
+        "median": -4.006,
+        "win_rate": 0.429
       },
       "低": {
-        "n": 15,
-        "avg": -8.471,
-        "median": -7.678,
-        "win_rate": 0.067
+        "n": 14,
+        "avg": -8.542,
+        "median": -8.908,
+        "win_rate": 0.071
       }
     },
     "by_sector": {
@@ -4934,9 +4799,9 @@
         "win_rate": 0.5
       },
       "銀行業": {
-        "n": 5,
-        "avg": -8.069,
-        "median": -7.47,
+        "n": 3,
+        "avg": -8.663,
+        "median": -9.782,
         "win_rate": 0.0
       },
       "その他製品": {
@@ -4966,39 +4831,39 @@
     },
     "by_verdict": {
       "推奨": {
-        "n": 23,
-        "avg": -6.025,
+        "n": 21,
+        "avg": -5.915,
         "median": -6.969,
-        "win_rate": 0.174
+        "win_rate": 0.19
       }
     }
   },
   "notes": [
-    "約定して決済まで確定した23件の1件あたり平均損益は-6.03%でした。同じ期間の市場平均（TOPIX）は-1.84%なので、市場を4.18%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
-    "今週は技術スコアが逆に効きました（順位相関 -0.25）。スコア上位ほどむしろ弱かった週で、ランキングの見直し候補です。",
-    "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均0.12%ポイント悪い結果でした。AIの強気判定が裏目に出た週なので、次回は慎重に見ます。"
+    "約定して決済まで確定した21件の1件あたり平均損益は-5.92%でした。同じ期間の市場平均（TOPIX）は-1.94%なので、市場を3.97%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
+    "今週は技術スコアが逆に効きました（順位相関 -0.23）。スコア上位ほどむしろ弱かった週で、ランキングの見直し候補です。",
+    "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均+0.20%ポイント良い結果でした。AIの強気判定がある程度機能したことを示します。"
   ],
   "actions": [
-    "過熱度『低』（64件・平均-6.074%）は 減点 -0.78。",
-    "過熱度『中』（15件・平均-1.335%）は 加点 +2.30。"
+    "過熱度『低』（81件・平均-6.336%）は 減点 -0.58。",
+    "過熱度『中』（11件・平均-0.911%）は 加点 +2.50。"
   ],
   "feedback": {
     "enabled": true,
     "window_weeks": 6,
-    "n_filled": 79,
-    "baseline_avg_pct": -5.174,
+    "n_filled": 92,
+    "baseline_avg_pct": -5.688,
     "overheat_delta": {
-      "low": -0.78,
-      "moderate": 2.3
+      "low": -0.58,
+      "moderate": 2.5
     },
     "overheat_stats": {
       "low": {
-        "n": 64,
-        "avg": -6.074
+        "n": 81,
+        "avg": -6.336
       },
       "moderate": {
-        "n": 15,
-        "avg": -1.335
+        "n": 11,
+        "avg": -0.911
       }
     },
     "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"

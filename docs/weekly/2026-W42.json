@@ -2,7 +2,7 @@
   "week": "2026-W42",
   "start": "2026-10-12",
   "end": "2026-10-16",
-  "generated_at": "2026-10-31T03:30:50",
+  "generated_at": "2026-11-07T03:55:59",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -13,19 +13,19 @@
   },
   "summary": {
     "picks_total": 19,
-    "n_filled": 16,
+    "n_filled": 18,
     "n_not_filled": 1,
-    "n_pending": 2,
+    "n_pending": 0,
     "n_no_data": 0,
     "n_entered": 18,
-    "fill_rate": 0.941,
-    "avg_return_pct": -7.332,
+    "fill_rate": 0.947,
+    "avg_return_pct": -7.467,
     "median_return_pct": -7.389,
     "win_rate": 0.0,
-    "avg_benchmark_pct": -0.906,
-    "avg_excess_pct": -6.426,
-    "beat_benchmark_rate": 0.0,
-    "rule_avg_return_pct": -7.332,
+    "avg_benchmark_pct": -1.79,
+    "avg_excess_pct": -5.677,
+    "beat_benchmark_rate": 0.056,
+    "rule_avg_return_pct": -7.467,
     "rule_win_rate": 0.0,
     "avg_weekly_return_pct": -5.31,
     "weekly_win_rate": 0.111,
@@ -862,21 +862,31 @@
       },
       "fill_date": "2026-10-22",
       "fill_price": 2210.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-11-06",
+        "price": 2081.0,
+        "reason": "損切り",
+        "return_net_pct": -6.1192
+      },
       "exit_weekly": {
         "date": "2026-10-23",
         "price": 2185.0,
         "return_net_pct": -1.4274,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-11-06",
+        "price": 2081.0,
+        "reason": "損切り",
+        "return_net_pct": -6.1192
+      },
+      "return_gross_pct": -5.8371,
+      "return_net_pct": -6.1192,
+      "return_rule_pct": -6.1192,
       "return_weekly_pct": -1.4274,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -9.0953,
+      "excess_pct": 2.9761,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -974,21 +984,31 @@
       },
       "fill_date": "2026-10-19",
       "fill_price": 3326.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-11-06",
+        "price": 2970.0,
+        "reason": "損切り",
+        "return_net_pct": -10.971
+      },
       "exit_weekly": {
         "date": "2026-10-23",
         "price": 3255.0,
         "return_net_pct": -2.4279,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-11-06",
+        "price": 2970.0,
+        "reason": "損切り",
+        "return_net_pct": -10.971
+      },
+      "return_gross_pct": -10.7035,
+      "return_net_pct": -10.971,
+      "return_rule_pct": -10.971,
       "return_weekly_pct": -2.4279,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -8.6236,
+      "excess_pct": -2.3474,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -3897,13 +3917,13 @@
     "3": {
       "n_per_day": 3,
       "picks": 12,
-      "n_filled": 10,
-      "n_pending": 1,
-      "fill_rate": 0.909,
-      "avg_return_pct": -6.788,
-      "median_return_pct": -6.585,
+      "n_filled": 11,
+      "n_pending": 0,
+      "fill_rate": 0.917,
+      "avg_return_pct": -7.169,
+      "median_return_pct": -6.76,
       "win_rate": 0.0,
-      "avg_excess_pct": -5.569,
+      "avg_excess_pct": -5.276,
       "best": {
         "code": "2612",
         "name": "かどや製油",
@@ -3918,13 +3938,13 @@
     "5": {
       "n_per_day": 5,
       "picks": 19,
-      "n_filled": 16,
-      "n_pending": 2,
-      "fill_rate": 0.941,
-      "avg_return_pct": -7.332,
+      "n_filled": 18,
+      "n_pending": 0,
+      "fill_rate": 0.947,
+      "avg_return_pct": -7.467,
       "median_return_pct": -7.389,
       "win_rate": 0.0,
-      "avg_excess_pct": -6.426,
+      "avg_excess_pct": -5.677,
       "best": {
         "code": "2612",
         "name": "かどや製油",
@@ -3940,8 +3960,8 @@
   "breakdown": {
     "by_entry_type": {
       "押し目待ち": {
-        "n": 15,
-        "avg": -7.406,
+        "n": 17,
+        "avg": -7.54,
         "median": -8.018,
         "win_rate": 0.0
       },
@@ -3960,8 +3980,8 @@
         "win_rate": 0.0
       },
       "低": {
-        "n": 14,
-        "avg": -7.689,
+        "n": 16,
+        "avg": -7.796,
         "median": -7.389,
         "win_rate": 0.0
       }
@@ -4009,6 +4029,12 @@
         "median": -5.185,
         "win_rate": 0.0
       },
+      "その他製品": {
+        "n": 1,
+        "avg": -6.119,
+        "median": -6.119,
+        "win_rate": 0.0
+      },
       "精密機器": {
         "n": 1,
         "avg": -2.24,
@@ -4016,9 +4042,9 @@
         "win_rate": 0.0
       },
       "銀行業": {
-        "n": 1,
-        "avg": -11.142,
-        "median": -11.142,
+        "n": 2,
+        "avg": -11.056,
+        "median": -11.056,
         "win_rate": 0.0
       },
       "輸送用機器": {
@@ -4030,41 +4056,40 @@
     },
     "by_verdict": {
       "推奨": {
-        "n": 16,
-        "avg": -7.332,
+        "n": 18,
+        "avg": -7.467,
         "median": -7.389,
         "win_rate": 0.0
       }
     }
   },
   "notes": [
-    "まだ決済が確定していない建玉（未確定）が2件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
     "買わずに見送った1件は、翌日に成行で買っていれば平均+2.79%でした（上昇1件/下落0件）。押し目を待つあまり、上がった銘柄に乗れなかった（機会損失）ことを意味します。",
-    "約定して決済まで確定した16件の1件あたり平均損益は-7.33%でした。同じ期間の市場平均（TOPIX）は-0.91%なので、市場を6.43%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
+    "約定して決済まで確定した18件の1件あたり平均損益は-7.47%でした。同じ期間の市場平均（TOPIX）は-1.79%なので、市場を5.68%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
     "技術スコアの順位と、その後の上がり具合はゆるやかに一致しました（順位相関 +0.24）。スコア上位ほどよく上がる傾向が、今週は見られました。",
     "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均2.50%ポイント悪い結果でした。AIの強気判定が裏目に出た週なので、次回は慎重に見ます。"
   ],
   "actions": [
-    "過熱度『低』（64件・平均-6.074%）は 減点 -0.78。",
-    "過熱度『中』（15件・平均-1.335%）は 加点 +2.30。"
+    "過熱度『低』（81件・平均-6.336%）は 減点 -0.58。",
+    "過熱度『中』（11件・平均-0.911%）は 加点 +2.50。"
   ],
   "feedback": {
     "enabled": true,
     "window_weeks": 6,
-    "n_filled": 79,
-    "baseline_avg_pct": -5.174,
+    "n_filled": 92,
+    "baseline_avg_pct": -5.688,
     "overheat_delta": {
-      "low": -0.78,
-      "moderate": 2.3
+      "low": -0.58,
+      "moderate": 2.5
     },
     "overheat_stats": {
       "low": {
-        "n": 64,
-        "avg": -6.074
+        "n": 81,
+        "avg": -6.336
       },
       "moderate": {
-        "n": 15,
-        "avg": -1.335
+        "n": 11,
+        "avg": -0.911
       }
     },
     "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"

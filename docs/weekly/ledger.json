@@ -1,50 +1,158 @@
 {
-  "updated_at": "2026-10-31T03:31:09",
+  "updated_at": "2026-11-07T03:56:37",
   "weeks": [
+    {
+      "week": "2026-W45",
+      "start": "2026-11-02",
+      "end": "2026-11-06",
+      "generated_at": "2026-11-07T03:56:05",
+      "prompt_versions": [
+        "2026-10-18-1"
+      ],
+      "strategy_version": "2026-11-06",
+      "provider": "deepseek",
+      "model": "deepseek-flash",
+      "summary": {
+        "picks_total": 9,
+        "n_filled": 4,
+        "n_pending": 1,
+        "n_not_filled": 1,
+        "fill_rate": 0.8,
+        "avg_return_pct": -2.224,
+        "median_return_pct": -1.569,
+        "win_rate": 0.0,
+        "avg_excess_pct": -0.032,
+        "avg_benchmark_pct": -2.192,
+        "avg_weekly_return_pct": -6.693,
+        "weekly_win_rate": 0.0
+      },
+      "ai_calibration": {
+        "by_verdict": {
+          "recommend": {
+            "n": 7,
+            "avg": -7.415,
+            "median": -6.539,
+            "win_rate": 0.0
+          },
+          "watch": {
+            "n": 28,
+            "avg": -4.193,
+            "median": -3.234,
+            "win_rate": 0.179
+          },
+          "caution": {
+            "n": 9,
+            "avg": -0.93,
+            "median": -0.952,
+            "win_rate": 0.222
+          }
+        },
+        "recommend_minus_watch_pct": -3.222
+      },
+      "ranking": {
+        "n": 120,
+        "spearman": -0.1,
+        "top_avg_pct": -5.237,
+        "bottom_avg_pct": -2.682,
+        "spread_pct": -2.555
+      },
+      "breakdown": {
+        "by_entry_type": {
+          "押し目待ち": {
+            "n": 3,
+            "avg": -2.865,
+            "median": -2.839,
+            "win_rate": 0.0
+          },
+          "追いかけ": {
+            "n": 1,
+            "avg": -0.3,
+            "median": -0.3,
+            "win_rate": 0.0
+          }
+        },
+        "by_overheat": {
+          "低": {
+            "n": 4,
+            "avg": -2.224,
+            "median": -1.569,
+            "win_rate": 0.0
+          }
+        },
+        "by_sector": {
+          "陸運業": {
+            "n": 1,
+            "avg": -5.457,
+            "median": -5.457,
+            "win_rate": 0.0
+          },
+          "海運業": {
+            "n": 3,
+            "avg": -1.146,
+            "median": -0.3,
+            "win_rate": 0.0
+          }
+        },
+        "by_verdict": {
+          "推奨": {
+            "n": 4,
+            "avg": -2.224,
+            "median": -1.569,
+            "win_rate": 0.0
+          }
+        }
+      },
+      "plan": {
+        "target_week": "2026-W46",
+        "top_pick_code": "7272",
+        "top_pick_name": "ヤマハ発動機",
+        "confidence": "中"
+      }
+    },
     {
       "week": "2026-W44",
       "start": "2026-10-26",
       "end": "2026-10-30",
-      "generated_at": "2026-10-31T03:30:55",
+      "generated_at": "2026-11-07T03:56:03",
       "prompt_versions": [
         "2026-10-18-1"
       ],
-      "strategy_version": "2026-10-24",
-      "provider": "deepseek",
-      "model": "deepseek-flash",
+      "strategy_version": "2026-11-06",
+      "provider": null,
+      "model": null,
       "summary": {
         "picks_total": 12,
-        "n_filled": 1,
-        "n_pending": 5,
-        "n_not_filled": 3,
-        "fill_rate": 0.25,
-        "avg_return_pct": -6.128,
-        "median_return_pct": -6.128,
+        "n_filled": 10,
+        "n_pending": 0,
+        "n_not_filled": 2,
+        "fill_rate": 0.833,
+        "avg_return_pct": -3.84,
+        "median_return_pct": -2.968,
         "win_rate": 0.0,
-        "avg_excess_pct": -4.998,
-        "avg_benchmark_pct": -1.131,
-        "avg_weekly_return_pct": -0.733,
-        "weekly_win_rate": 0.667
+        "avg_excess_pct": -1.344,
+        "avg_benchmark_pct": -2.496,
+        "avg_weekly_return_pct": -5.097,
+        "weekly_win_rate": 0.4
       },
       "ai_calibration": {
         "by_verdict": {
           "watch": {
-            "n": 33,
-            "avg": -1.796,
-            "median": -0.819,
-            "win_rate": 0.364
+            "n": 43,
+            "avg": -4.005,
+            "median": -2.347,
+            "win_rate": 0.302
           },
           "recommend": {
-            "n": 12,
-            "avg": -1.104,
-            "median": 0.353,
-            "win_rate": 0.667
+            "n": 15,
+            "avg": -3.446,
+            "median": 0.281,
+            "win_rate": 0.533
           },
           "caution": {
-            "n": 13,
-            "avg": -2.23,
-            "median": 1.025,
-            "win_rate": 0.615
+            "n": 15,
+            "avg": -3.168,
+            "median": 0.597,
+            "win_rate": 0.533
           },
           "avoid": {
             "n": 1,
@@ -59,80 +167,99 @@
             "win_rate": 1.0
           }
         },
-        "recommend_minus_watch_pct": 0.692
+        "recommend_minus_watch_pct": 0.559
       },
       "ranking": {
-        "n": 160,
-        "spearman": -0.033,
-        "top_avg_pct": -3.351,
-        "bottom_avg_pct": -2.52,
-        "spread_pct": -0.831
+        "n": 200,
+        "spearman": -0.1,
+        "top_avg_pct": -5.001,
+        "bottom_avg_pct": -3.413,
+        "spread_pct": -1.588
       },
       "breakdown": {
         "by_entry_type": {
           "押し目待ち": {
-            "n": 1,
-            "avg": -6.128,
-            "median": -6.128,
+            "n": 10,
+            "avg": -3.84,
+            "median": -2.968,
             "win_rate": 0.0
           }
         },
         "by_overheat": {
           "低": {
-            "n": 1,
-            "avg": -6.128,
-            "median": -6.128,
+            "n": 10,
+            "avg": -3.84,
+            "median": -2.968,
             "win_rate": 0.0
           }
         },
         "by_sector": {
-          "卸売業": {
+          "サービス業": {
             "n": 1,
-            "avg": -6.128,
-            "median": -6.128,
+            "avg": -3.533,
+            "median": -3.533,
+            "win_rate": 0.0
+          },
+          "保険業": {
+            "n": 2,
+            "avg": -2.968,
+            "median": -2.968,
+            "win_rate": 0.0
+          },
+          "卸売業": {
+            "n": 2,
+            "avg": -6.754,
+            "median": -6.754,
+            "win_rate": 0.0
+          },
+          "海運業": {
+            "n": 4,
+            "avg": -3.286,
+            "median": -2.713,
+            "win_rate": 0.0
+          },
+          "化学": {
+            "n": 1,
+            "avg": -2.284,
+            "median": -2.284,
             "win_rate": 0.0
           }
         },
         "by_verdict": {
           "推奨": {
-            "n": 1,
-            "avg": -6.128,
-            "median": -6.128,
+            "n": 10,
+            "avg": -3.84,
+            "median": -2.968,
             "win_rate": 0.0
           }
         }
       },
-      "plan": {
-        "target_week": "2026-W45",
-        "top_pick_code": "9104",
-        "top_pick_name": "商船三井",
-        "confidence": "中"
-      }
+      "plan": null
     },
     {
       "week": "2026-W43",
       "start": "2026-10-19",
       "end": "2026-10-23",
-      "generated_at": "2026-10-31T03:30:53",
+      "generated_at": "2026-11-07T03:56:01",
       "prompt_versions": [
         "2026-10-18-1"
       ],
-      "strategy_version": "2026-10-24",
+      "strategy_version": "2026-11-06",
       "provider": null,
       "model": null,
       "summary": {
         "picks_total": 24,
-        "n_filled": 11,
-        "n_pending": 10,
-        "n_not_filled": 3,
-        "fill_rate": 0.786,
-        "avg_return_pct": -2.417,
-        "median_return_pct": -3.155,
-        "win_rate": 0.091,
-        "avg_excess_pct": -1.631,
-        "avg_benchmark_pct": -0.787,
-        "avg_weekly_return_pct": -3.701,
-        "weekly_win_rate": 0.19
+        "n_filled": 21,
+        "n_pending": 2,
+        "n_not_filled": 1,
+        "fill_rate": 0.955,
+        "avg_return_pct": -3.916,
+        "median_return_pct": -4.957,
+        "win_rate": 0.095,
+        "avg_excess_pct": -2.037,
+        "avg_benchmark_pct": -1.879,
+        "avg_weekly_return_pct": -4.142,
+        "weekly_win_rate": 0.174
       },
       "ai_calibration": {
         "by_verdict": {
@@ -167,49 +294,61 @@
       "breakdown": {
         "by_entry_type": {
           "押し目待ち": {
-            "n": 11,
-            "avg": -2.417,
-            "median": -3.155,
-            "win_rate": 0.091
+            "n": 20,
+            "avg": -3.637,
+            "median": -4.694,
+            "win_rate": 0.1
+          },
+          "追いかけ": {
+            "n": 1,
+            "avg": -9.49,
+            "median": -9.49,
+            "win_rate": 0.0
           }
         },
         "by_overheat": {
           "低": {
-            "n": 11,
-            "avg": -2.417,
-            "median": -3.155,
-            "win_rate": 0.091
+            "n": 21,
+            "avg": -3.916,
+            "median": -4.957,
+            "win_rate": 0.095
           }
         },
         "by_sector": {
+          "銀行業": {
+            "n": 4,
+            "avg": -4.347,
+            "median": -10.27,
+            "win_rate": 0.25
+          },
           "卸売業": {
-            "n": 1,
-            "avg": -7.51,
-            "median": -7.51,
+            "n": 2,
+            "avg": -10.597,
+            "median": -10.597,
             "win_rate": 0.0
           },
           "化学": {
-            "n": 2,
-            "avg": -1.727,
-            "median": -1.727,
+            "n": 3,
+            "avg": -2.804,
+            "median": -3.155,
             "win_rate": 0.0
           },
           "電気機器": {
-            "n": 2,
-            "avg": -1.841,
-            "median": -1.841,
+            "n": 3,
+            "avg": -2.705,
+            "median": -2.258,
             "win_rate": 0.0
-          },
-          "銀行業": {
-            "n": 1,
-            "avg": 15.284,
-            "median": 15.284,
-            "win_rate": 1.0
           },
           "輸送用機器": {
             "n": 1,
             "avg": -5.202,
             "median": -5.202,
+            "win_rate": 0.0
+          },
+          "海運業": {
+            "n": 4,
+            "avg": -5.007,
+            "median": -3.91,
             "win_rate": 0.0
           },
           "情報・通信業": {
@@ -218,11 +357,11 @@
             "median": -5.484,
             "win_rate": 0.0
           },
-          "海運業": {
+          "食料品": {
             "n": 1,
-            "avg": -2.72,
-            "median": -2.72,
-            "win_rate": 0.0
+            "avg": 17.417,
+            "median": 17.417,
+            "win_rate": 1.0
           },
           "機械": {
             "n": 2,
@@ -233,10 +372,10 @@
         },
         "by_verdict": {
           "推奨": {
-            "n": 11,
-            "avg": -2.417,
-            "median": -3.155,
-            "win_rate": 0.091
+            "n": 21,
+            "avg": -3.916,
+            "median": -4.957,
+            "win_rate": 0.095
           }
         }
       },
@@ -246,24 +385,24 @@
       "week": "2026-W42",
       "start": "2026-10-12",
       "end": "2026-10-16",
-      "generated_at": "2026-10-31T03:30:50",
+      "generated_at": "2026-11-07T03:55:59",
       "prompt_versions": [
         "2026-10-01-1"
       ],
-      "strategy_version": "2026-10-24",
+      "strategy_version": "2026-11-06",
       "provider": null,
       "model": null,
       "summary": {
         "picks_total": 19,
-        "n_filled": 16,
-        "n_pending": 2,
+        "n_filled": 18,
+        "n_pending": 0,
         "n_not_filled": 1,
-        "fill_rate": 0.941,
-        "avg_return_pct": -7.332,
+        "fill_rate": 0.947,
+        "avg_return_pct": -7.467,
         "median_return_pct": -7.389,
         "win_rate": 0.0,
-        "avg_excess_pct": -6.426,
-        "avg_benchmark_pct": -0.906,
+        "avg_excess_pct": -5.677,
+        "avg_benchmark_pct": -1.79,
         "avg_weekly_return_pct": -5.31,
         "weekly_win_rate": 0.111
       },
@@ -306,8 +445,8 @@
       "breakdown": {
         "by_entry_type": {
           "押し目待ち": {
-            "n": 15,
-            "avg": -7.406,
+            "n": 17,
+            "avg": -7.54,
             "median": -8.018,
             "win_rate": 0.0
           },
@@ -326,8 +465,8 @@
             "win_rate": 0.0
           },
           "低": {
-            "n": 14,
-            "avg": -7.689,
+            "n": 16,
+            "avg": -7.796,
             "median": -7.389,
             "win_rate": 0.0
           }
@@ -375,6 +514,12 @@
             "median": -5.185,
             "win_rate": 0.0
           },
+          "その他製品": {
+            "n": 1,
+            "avg": -6.119,
+            "median": -6.119,
+            "win_rate": 0.0
+          },
           "精密機器": {
             "n": 1,
             "avg": -2.24,
@@ -382,9 +527,9 @@
             "win_rate": 0.0
           },
           "銀行業": {
-            "n": 1,
-            "avg": -11.142,
-            "median": -11.142,
+            "n": 2,
+            "avg": -11.056,
+            "median": -11.056,
             "win_rate": 0.0
           },
           "輸送用機器": {
@@ -396,8 +541,8 @@
         },
         "by_verdict": {
           "推奨": {
-            "n": 16,
-            "avg": -7.332,
+            "n": 18,
+            "avg": -7.467,
             "median": -7.389,
             "win_rate": 0.0
           }
@@ -409,40 +554,40 @@
       "week": "2026-W41",
       "start": "2026-10-05",
       "end": "2026-10-09",
-      "generated_at": "2026-10-31T03:30:47",
+      "generated_at": "2026-11-07T03:55:57",
       "prompt_versions": [
         "2026-10-01-1"
       ],
-      "strategy_version": "2026-10-24",
+      "strategy_version": "2026-11-06",
       "provider": null,
       "model": null,
       "summary": {
         "picks_total": 23,
-        "n_filled": 23,
+        "n_filled": 21,
         "n_pending": 0,
         "n_not_filled": 0,
         "fill_rate": 1.0,
-        "avg_return_pct": -6.025,
+        "avg_return_pct": -5.915,
         "median_return_pct": -6.969,
-        "win_rate": 0.174,
-        "avg_excess_pct": -4.18,
-        "avg_benchmark_pct": -1.844,
-        "avg_weekly_return_pct": -5.937,
-        "weekly_win_rate": 0.13
+        "win_rate": 0.19,
+        "avg_excess_pct": -3.973,
+        "avg_benchmark_pct": -1.942,
+        "avg_weekly_return_pct": -5.64,
+        "weekly_win_rate": 0.143
       },
       "ai_calibration": {
         "by_verdict": {
           "recommend": {
-            "n": 25,
-            "avg": -4.876,
-            "median": -4.963,
-            "win_rate": 0.24
+            "n": 23,
+            "avg": -4.152,
+            "median": -4.866,
+            "win_rate": 0.261
           },
           "watch": {
-            "n": 41,
-            "avg": -4.758,
-            "median": -4.666,
-            "win_rate": 0.268
+            "n": 38,
+            "avg": -4.348,
+            "median": -4.573,
+            "win_rate": 0.289
           },
           "caution": {
             "n": 9,
@@ -457,22 +602,22 @@
             "win_rate": 0.0
           }
         },
-        "recommend_minus_watch_pct": -0.118
+        "recommend_minus_watch_pct": 0.196
       },
       "ranking": {
-        "n": 200,
-        "spearman": -0.252,
-        "top_avg_pct": -4.863,
-        "bottom_avg_pct": -2.237,
-        "spread_pct": -2.626
+        "n": 195,
+        "spearman": -0.225,
+        "top_avg_pct": -4.54,
+        "bottom_avg_pct": -2.207,
+        "spread_pct": -2.333
       },
       "breakdown": {
         "by_entry_type": {
           "押し目待ち": {
-            "n": 14,
-            "avg": -2.972,
-            "median": -5.346,
-            "win_rate": 0.286
+            "n": 12,
+            "avg": -2.271,
+            "median": -4.546,
+            "win_rate": 0.333
           },
           "追いかけ": {
             "n": 9,
@@ -483,16 +628,16 @@
         },
         "by_overheat": {
           "中": {
-            "n": 8,
-            "avg": -1.439,
-            "median": -4.806,
-            "win_rate": 0.375
+            "n": 7,
+            "avg": -0.66,
+            "median": -4.006,
+            "win_rate": 0.429
           },
           "低": {
-            "n": 15,
-            "avg": -8.471,
-            "median": -7.678,
-            "win_rate": 0.067
+            "n": 14,
+            "avg": -8.542,
+            "median": -8.908,
+            "win_rate": 0.071
           }
         },
         "by_sector": {
@@ -509,9 +654,9 @@
             "win_rate": 0.5
           },
           "銀行業": {
-            "n": 5,
-            "avg": -8.069,
-            "median": -7.47,
+            "n": 3,
+            "avg": -8.663,
+            "median": -9.782,
             "win_rate": 0.0
           },
           "その他製品": {
@@ -541,10 +686,10 @@
         },
         "by_verdict": {
           "推奨": {
-            "n": 23,
-            "avg": -6.025,
+            "n": 21,
+            "avg": -5.915,
             "median": -6.969,
-            "win_rate": 0.174
+            "win_rate": 0.19
           }
         }
       },
