@@ -1,29 +1,29 @@
 {
   "enabled": true,
-  "generated_at": "2026-11-07T03:56:05",
+  "generated_at": "2026-11-14T04:19:51",
   "window_weeks": 6,
   "weeks": [
+    "2026-W46",
     "2026-W45",
     "2026-W44",
     "2026-W43",
     "2026-W42",
-    "2026-W41",
-    "2026-W40"
+    "2026-W41"
   ],
-  "n_filled": 92,
-  "baseline_avg_pct": -5.688,
+  "n_filled": 76,
+  "baseline_avg_pct": -5.15,
   "overheat_delta": {
-    "low": -0.58,
-    "moderate": 2.5
+    "low": -0.42,
+    "moderate": 1.69
   },
   "overheat_stats": {
     "low": {
-      "n": 81,
-      "avg": -6.336
+      "n": 67,
+      "avg": -5.628
     },
     "moderate": {
-      "n": 11,
-      "avg": -0.911
+      "n": 9,
+      "avg": -1.587
     }
   },
   "max_delta": 3.0,
