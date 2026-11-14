@@ -1,8 +1,8 @@
 {
-  "applied_at": "2026-11-07T17:41:49",
-  "run_id": "20261107174007",
+  "applied_at": "2026-11-14T17:52:04",
+  "run_id": "20261114175050",
   "tiers": {
-    "run_id": "20261107174007",
+    "run_id": "20261114175050",
     "items": [
       {
         "tier": "low",
@@ -14,10 +14,10 @@
           "max_hold_days": 40
         },
         "test": {
-          "trade_count": 363,
-          "win_rate": 53.17,
-          "ev_pct": 4.29,
-          "pf": 2.27,
+          "trade_count": 364,
+          "win_rate": 53.02,
+          "ev_pct": 4.26,
+          "pf": 2.25,
           "consec_losses": 22,
           "max_loss_pct": -7.28,
           "total_return_pct": 54.72,
@@ -36,9 +36,9 @@
           "max_hold_days": 40
         },
         "test": {
-          "trade_count": 951,
-          "win_rate": 45.64,
-          "ev_pct": 5.46,
+          "trade_count": 952,
+          "win_rate": 45.59,
+          "ev_pct": 5.44,
           "pf": 2.22,
           "consec_losses": 51,
           "max_loss_pct": -36.05,
