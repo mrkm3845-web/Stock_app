@@ -8,6 +8,36 @@
 
 ---
 
+## 2026-11-15
+
+### 履歴差分・リスク上限・週次作戦キャッシュ/通知の不具合修正、過熱度lowエントリー指針と3,000円以下候補の統合、日中60分cronの整理（この変更）
+- **commit**: この変更（2026-11-15 現状分析・改善計画の実装）
+- **種別**: スクリーナー / 週次レビュー / AIプロンプト / ワークフロー / ドキュメント
+- **変更**:
+  1. **`main8.py` `_diff_counts()` の gzip 対応**: `docs/history/{date}.json.gz`（および `latest.json.gz`）を優先して読み込み、平文 `.json` にフォールバックする `_read_history_file()` を追加。履歴 gzip 化以降、毎回 `added = 全銘柄, updated = 0` となり「株価データ変更なし」判定が効かなくなっていた不具合を修正。
+  2. **`main8.py` 推奨株数の1トレード最大許容損失額キャップ**: `build_recommendations()` で `portfolio.max_risk_per_trade_jpy`（現行 `5000` 円）を読み取り、`min(reference_capital_jpy * risk_per_trade_pct / 100, max_risk_per_trade_jpy)` をリスク予算として `suggested_qty` を算出。`portfolio_guide` にも `max_risk_per_trade_jpy` を出力。
+  3. **`weekly_review.py` 来週の作戦キャッシュ・候補・Discord通知の改善**:
+     - `build_next_week_plan()` のキャッシュ再利用条件に `score_version == SCORE_VERSION` と `prompt_version == PROMPT_VERSION` を追加し、`--force-plan` オプション（`weekly_review.yml` の `workflow_dispatch` 入力含む）を新設。
+     - `_load_latest_candidates()` に `recommendations.json` の `picks_in_range`（3,000円以下レンジ推奨）を統合し、`_plan_system_prompt()` で標準口座（60万円・100株単位）で実行可能な3,000円以下銘柄を `top_pick` または `backups` に必ず含めるよう明記。
+     - `notify_weekly_result()` が存在しない `headline`/`summary` ではなく `plan.json` の実キー（`top_pick` / `market_view`）を参照し、週次Discord通知に来週の本命（`銘柄名（コード）`）と総括を出力するよう修正。
+     - `.github/workflows/weekly_review.yml` のキャッシュキーを `github.run_id` から `hashFiles('docs/history/dates.json')` に変更。
+  4. **AIプロンプトの過熱度別エントリー指針の精緻化（`PROMPT_VERSION = 2026-11-15-1`）**:
+     - ウォークフォワード検証（2026-11-14）の `entry_style_comparison` 結果（`overheat_level == low` では成行 PF 1.43 > 押し目指値 PF 1.36、`moderate` では押し目指値 PF 1.53 > 成行 1.02、`high` では押し目指値 PF 2.50 > 成行 0.90）に基づき、`overheat_level == low` かつルール推奨入口が `breakout_chase` の銘柄を反射的に深い `pullback_wait` にしないよう `_ai_system_prompt()` と `_plan_system_prompt()` を更新。
+  5. **作戦トリガー監視（`plan_check_intraday.yml`）の11月中旬効果測定と定期実行停止（案C）**:
+     - `docs/strategy/events.json` の実績（2026-10-25以降の日中イベント発火0件、GitHub Actions 遅延中央値約100分・発火率約6割）を確認し、`PROJECT_STATUS.md` の計画（案C）通り平日60分間隔の `schedule` を停止し `workflow_dispatch`（手動実行）のみに変更。自動トリガー監視は引け後EOD（17:17 / 20:17 JST）と証券会社のOCO注文に集約。
+  6. **作戦ノート `2026-11-15-2348` と作戦台帳の更新**: 2026-11-13の確定終値（1306.T 415.5・200日線比+3.23%、25日線上比率41.9%、5日平均+4.92%）と保有ゼロに基づき、東京海上ホールディングス（8766）の572円押し目（損切547・利確647・100株リスク2,500円・R/R 3.0）を優先度A、豊田合成（7282）の1,035円押し目（損切985・利確1,185・100株リスク5,000円・R/R 3.0）を優先度Bとして監視台帳に登録（同時保有上限1銘柄）。
+  7. **ドキュメント同期**: `PROJECT_STATUS.md`、`docs/ops.html`、`docs/strategy.html`、`AGENTS.md`、`back_tester/README.md` を現行仕様に合わせて更新。
+- **根拠・検証**:
+  - 2026-11-14 ウォークフォワード OOS（15フォールド）: スコア分位スプレッド +0.391% / Spearman +0.919、株価帯別 OOS は `low`（500〜1,000円）PF 2.25・期待値 +4.26%・年率 +26.92%（40日保有）、`mid_low`（1,000〜2,000円）PF 2.22・期待値 +5.44%・年率 +28.43%（40日保有）。
+  - 2026-W46 週次答え合わせ: AI推奨の見送り14件の成行追随仮想リターン平均 +3.62%（勝率78.6%）と、過熱度 `low` での過度な `pullback_wait` による取り逃がしを確認。
+  - `py_compile` による構文チェック、`_diff_counts`（`2026-11-13.json.gz` 読込で `added=0, updated=0` となること）、`build_recommendations`（`max_risk_per_trade_jpy` キャップ動作）、`weekly_review.py`（`_load_latest_candidates` の `picks_in_range` 統合・`--force-plan`・Discord通知文面生成）をローカル検証。
+- **影響・ロールバック**:
+  - スコア計算式（`SCORE_VERSION = v3-research_upside-2026-10-18`）やセクター色閾値は不変。AIプロンプト版が `2026-11-15-1` に進み、次回のAI分析・週次作戦から反映される。
+  - 戻す場合は該当コミットを `git revert`。
+- **関連**: `common/version.py` / `main8.py` / `back_tester/weekly_review.py` / `.github/workflows/weekly_review.yml` / `.github/workflows/plan_check_intraday.yml` / `PROJECT_STATUS.md` / `docs/ops.html` / `docs/strategy.html` / `AGENTS.md` / `back_tester/README.md`
+
+---
+
 ## 2026-11-07
 
 ### AGENTS.md の共通ルールをグローバル設定（`~/.config/opencode/AGENTS.md`）へ移動（この変更）

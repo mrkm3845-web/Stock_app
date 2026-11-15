@@ -133,7 +133,7 @@ Invoke-RestMethod -Uri "https://api.github.com/repos/mrkm3845-web/Stock_app/acti
 | `daily_main8_ai.yml` | AI推奨（平日20:17 JST）。`recommendations.json` を生成 |
 | `run_walkforward.yml` | 月次バックテスト＋パラメータ反映 |
 | `weekly_review.yml` | 週次答え合わせ（土曜09:00 JST） |
-| `plan_check_intraday.yml` | 作戦トリガー監視（平日9:05〜15:05 JSTに60分間隔） |
+| `plan_check_intraday.yml` | 作戦トリガー監視（日中・手動実行。自動監視は引け後EODに集約） |
 | `notify_plan_update.yml` | 作戦台帳が更新されたらDiscordへ「作戦更新」通知（更新のたび） |
 | `refresh_data_ai.yml` | 手動データ更新（スクリーナー＋AI。スマホからも実行可） |
 
@@ -214,9 +214,8 @@ WindowsでPythonがない場合だけ `tools/prepare_strategy_note.ps1` を使�
 
 ### 作戦トリガー監視
 
-- 平日の市場時間中に60分間隔で `python tools/check_strategy_plan.py --mode intraday`
-- 引け後に `--mode eod` で確定チェック
-- 60分間隔は**平日9:05〜15:05 JSTのみ**。24時間ではない（1日7回）
+- 引け後に `daily_main8.yml`（17時台）と `daily_main8_ai.yml`（20時台）が `python tools/check_strategy_plan.py --mode eod` で確定チェック
+- 日中に現在値で確認したいときは `plan_check_intraday.yml`（手動 `workflow_dispatch`）またはローカルで `python tools/check_strategy_plan.py --mode intraday` を実行（平日60分間隔の自動cronは2026-11-15の効果測定で停止し、日中は証券会社OCO＋引け後EODに集約）
 - 状態が変わったときだけDiscord通知。同じ通知を繰り返さない
 - **地合い・セクターの広がりは全銘柄で計算する**（`excluded`＝週足下向きを除かない）。除くと上昇中の銘柄だけを集めることになり数値が上振れする（銀行が2銘柄になる等）。**10銘柄未満は参考外**で `sector_ok` は条件NG
 - **これは分析用ではなく「執行の見張り番」**。作戦ノートの生成・更新には使わない（ノートは夜・週末に作る別物）

@@ -7,7 +7,7 @@
 
 ---
 
-## 2026-10-18 現状サマリ（次セッションはここから）
+## 2026-11-15 現状サマリ（次セッションはここから）
 
 **ドキュメントの役割**
 - **このファイル（PROJECT_STATUS.md）**: 現行仕様・実験状態・残タスクの**正**。最初に読む。
@@ -23,45 +23,52 @@
   - 5日 上位5期待値 **+0.27% → +0.66%**、大負け率 **13.9% → 8.5%**
   - 20日 **1.27% → 3.23%**、大負け **13.2% → 5.2%**
   - 学習期(〜2024)/検証期(2025〜)の両方で改善
+- **2026-11-14 ウォークフォワード検証（v3・15フォールド）**:
+  - スコア分位分析（H=5日）: 上位−下位スプレッド **+0.391%** / Spearman **+0.919** / プラス期間率 **73.3%（11/15）**
+  - 株価帯別 OOS: **低位（500〜1,000円）PF 2.25・期待値 +4.26%**、**中低位（1,000〜2,000円）PF 2.22・期待値 +5.44%** がガード通過し `max_hold_days=40` が `strategy_params.json` に自動反映済み（2,000円以上帯は OOS 年率マイナスのため不通過）
+  - 過熱度別エントリー比較: **過熱度 low は成行が押し目指値に優位（PF 1.43 vs 1.36）**、**moderate（PF 1.53 vs 1.02）・high（PF 2.50 vs 0.90）は押し目指値が優位**
 
 **実験タグ（重要）**
 - `score_version = v3-research_upside-2026-10-18` / `experiment_id = research_upside_v3_2026-10`（[`common/version.py`](common/version.py)）
-- 保存: `docs/picks/{date}.json`・`docs/history/meta.json`・`docs/recommendations*.json`
+- 保存: `docs/picks/{date}.json`・`docs/history/meta.json`・`docs/recommendations*.json`・`docs/weekly/plan.json`
 - 週次: 各取引 `trades[]` と `summary.score_versions/experiment_ids`、`weekly.html` の気づき欄、`results/weekly_review_{week}.md` 冒頭
 - 目的: 「どの週がv3（research_upside由来）の検証か」を後から追跡する
 
-**AIプロンプト（2026-10-18）**
-- `PROMPT_VERSION = 2026-10-18-1`
+**AIプロンプト（2026-11-15 更新）**
+- `PROMPT_VERSION = 2026-11-15-1`
 - 候補に**型サマリ**（直近3日以内の GC(20,60)/DC(5,25)/DC(20,60)/ダブルボトム/レンジ/カップ/フラッグ）を付与し、`型:` 行を注入
-- システムプロンプトに**過去検証メモ**（GC(20,60)直後・DB・フラッグは平均劣後、DC・押し目は相対良好／参考程度）を追加（週次プランにも同様）
+- システムプロンプトに**過去検証メモ**＋**過熱度 low では反射的に深い `pullback_wait` にせず `breakout_chase`/浅い押し目を許容（取り逃がし防止）、moderate/strong/extreme は押し目・打診・見送りを徹底**する指針を反映
+- 週次プラン（`weekly_review.py`）の候補に **`picks_in_range`（3,000円以下レンジ推奨）** を統合し、標準口座（60万円・100株単位）で実行可能な3,000円以下銘柄を `top_pick` または `backups` に必ず含めるよう改善
 
-**研究ツール（再現用）**
-- [`research_patterns.py`](back_tester/research_patterns.py): 型のイベントスタディ
-- [`research_upside.py`](back_tester/research_upside.py): 右裾＋上位K期待値。**オフライン既定・進捗バー・キャッシュ・`--max-minutes`**
-- [`validate_score.py`](back_tester/validate_score.py): v2 vs v3 の高速比較
-- キャッシュ: `back_tester/data/upside_cache/`（gitignore済）。初回約80秒→再実行約11秒
+**2026-11-15 修正・整理済みの項目**
+- `main8.py`:
+  - `_diff_counts()` が gzip 化後の `.json.gz` を読めず毎回「全件新規」になっていた不具合を修正（`.json.gz` 優先＋`.json` フォールバック）
+  - `build_recommendations()` の推奨株数（`suggested_qty`）計算に `portfolio.max_risk_per_trade_jpy`（5,000円上限）を適用し、`portfolio_guide` にも出力
+- `back_tester/weekly_review.py` & `weekly_review.yml`:
+  - `build_next_week_plan()` のキャッシュ判定に `score_version` / `prompt_version` を追加し、`--force-plan` フラグ（Actions 入力含む）を新設
+  - `notify_weekly_result()` が `plan.json` の実キー（`market_view` / `top_pick`）を参照して Discord に来週の本命と総括を送るよう修正
+  - `weekly_review.yml` の Actions キャッシュキーを `hashFiles('docs/history/dates.json')` ベースに修正
+- `plan_check_intraday.yml`（11月中旬の効果測定タスク完了）:
+  - 10/25以降の日中トリガー発火0件・Actions 遅延中央値約100分を踏まえ、**平日60分間隔の自動スケジュールを停止（案C採用）**。日中は証券会社OCO＋必要時の手動実行（`workflow_dispatch`）とし、自動監視は引け後EOD（17:17 / 20:17 JST）に集約
 
-**実験の現在状態（2026-10-18）**
-- 10-16のAIを手動実行し、**v3タグ付き5銘柄**を生成（`docs/picks/2026-10-16.json`）
-- W42の答え合わせを再生成し、**タグ表示を確認**（10-16ピックは翌営業日待ちで `no_data`）
-- `docs/weekly/plan.json`（来週の作戦）は **10-16基準の旧プランをキャッシュ再利用**中。**10-19以降に基準日が進むと自動でv3に更新**される
+- 作戦ノート・作戦台帳（2026-11-15 更新）:
+  - `docs/weekend/2026-11-15-2348.json` と `docs/strategy/active.json`（`plan_id = 2026-11-15-2348`）を `2026-11-13` 確定終値・保有株ゼロで更新済み（優先度A：東京海上ホールディングス（8766）572円押し目、優先度B：豊田合成（7282）1,035円押し目、同時保有上限1銘柄）
 
 **次にやること**
-1. 週次プランのキャッシュキーに `score_version` を追加（または `--force-plan`）→ 同日内でもv3で再生成
-2. パターンオーバーレイ（DC/GC/DB/フラッグの小さな並び順補正）をウォークフォワード検証してから反映
-3. v3での月次ウォークフォワード（`run_walkforward.yml`）を確認
-4. 4〜8週間の週次答え合わせでv3の実運用を観測（1週間で判断しない）
+1. 4〜8週間の週次答え合わせで v3（`v3-research_upside-2026-10-18`）と `PROMPT_VERSION = 2026-11-15-1` の実運用を継続観測（12月中旬までスコア重み・セクター色閾値は固定）
+2. `2026-12-19` 以降にセクター色（`sector_color`）の閾値と赤業種除外の効果を検証
+3. パターンオーバーレイ（DC/GC/DB/フラッグの小さな並び順補正）をウォークフォワード検証してから反映
 
 ---
 
 ## 0. 30秒サマリ
 
 - 日本株スクリーナー（プライム+スタンダード 約3,100銘柄）。全銘柄をスキャン → **スコア上位40を候補に AI（Gemini/DeepSeek 切替可）が順位付け** → 「推奨/様子見」を提示。AI入力には **Google News RSS の材料**を注入。
-- **現行スコアは v3（トレンド＋流動性）**: 200日線傾き30 / 52週高値位置25 / 流動性20 / 200日線乖離15（+40%超は減点）/ 120日リターン10（+120%超は減点）。詳細は冒頭の「2026-10-18 現状サマリ」。
+- **現行スコアは v3（トレンド＋流動性）**: 200日線傾き30 / 52週高値位置25 / 流動性20 / 200日線乖離15（+40%超は減点）/ 120日リターン10（+120%超は減点）。詳細は冒頭の「2026-11-15 現状サマリ」。
 - バックテストは**同一リポジトリ内の [`back_tester/`](back_tester/)**。**毎月 第1土曜にガード付きで `docs/strategy_params.json` へ自動反映**。
-- **週次答え合わせ** [`back_tester/weekly_review.py`](back_tester/weekly_review.py) を新設。日々の推奨・技術上位を1週間（月〜金）単位で実際の値動きと突き合わせ、**毎週 土曜09:00 JSTに `docs/weekly.html` へ自動生成**。
-- フロントは GitHub Pages（[`docs/index.html`](docs/index.html) / [`docs/journal.html`](docs/journal.html)）。
-- ワークフローは4本（技術スクリーニング / AI分析 / 月次バックテスト / 週次答え合わせ）。
+- **週次答え合わせ** [`back_tester/weekly_review.py`](back_tester/weekly_review.py) を運用中。日々の推奨・技術上位を1週間（月〜金）単位で実際の値動きと突き合わせ、**毎週 土曜09:00 JSTに `docs/weekly.html`・`docs/weekly/ledger.json`・`docs/ai_playbook.json`（[`docs/playbook.html`](docs/playbook.html)）へ自動生成**。
+- フロントは GitHub Pages（[`docs/index.html`](docs/index.html) / [`docs/strategy.html`](docs/strategy.html) / [`docs/journal.html`](docs/journal.html) / [`docs/weekly.html`](docs/weekly.html) / [`docs/weekend.html`](docs/weekend.html) / [`docs/playbook.html`](docs/playbook.html) / [`docs/guide.html`](docs/guide.html) / [`docs/ops.html`](docs/ops.html)）。
+- ワークフローは7本（技術スクリーニング / AI分析 / 月次バックテスト / 週次答え合わせ / 作戦トリガー手動チェック / 手動データ更新 / 作戦更新通知）。
 
 ---
 
@@ -164,7 +171,7 @@ flowchart LR
   - **業種集中の上限**: `portfolio.max_per_sector`（既定2）を守り、同一業種は最大2銘柄まで採用。
 - **エグジットは「ルール基本」**: 利確 = 価格×(1+`price_tiers.tp_pct`)、損切 = 価格 − `price_tiers.atr_sl_mult`×ATR14。**AIの tp/sl は `advice` に参照保持**（表示上はルール優先）。
 - **高値掴み防止（エントリー判定）**: 25日線乖離・RSI14・5日リターン・寄付ギャップ・上ヒゲ等から過熱度（低/中/強/極）を算出し、`entry_type`（`breakout_chase`/`pullback_wait`/`probe_only`/`wait`）を決定。**上昇銘柄を除外せず、押し目ゾーン（5日線・ATR押し）を提示**して入口を調整する。AIが強気でも過熱が強い時の成行追いかけは `probe_only` へ自動格下げ（ルール安全網）。`pullback_wait` も `recommend` のまま推奨に残し、`entry_type` で区別する。
-- **リスクベースの推奨株数**: `参考資金 × risk% ÷ 損切幅`（`portfolio` セクション）。`probe_only` は `entry_guard.probe_qty_factor` で小口に縮小。
+- **リスクベースの推奨株数**: `min(参考資金 × risk%, max_risk_per_trade_jpy) ÷ 損切幅`（`portfolio` セクション）。`probe_only` は `entry_guard.probe_qty_factor` で小口に縮小。
 - **決算接近の警告**: スキャン時の `.info` から次回決算日を抽出（`earningsTimestampStart`、追加通信なし）→ `docs/earnings.json` とおすすめに `earnings_date`/`earnings_soon`。
 - **地合い**: `1306.T`（TOPIX ETF）が200日線より上か（risk-on/off）を `meta.json.regime` に出力（**表示のみ・選定フィルタはOFF**）。
 - **Discord通知**: AI実行時は「AI推奨（本日）」として `recommend` のみを送信。**0件の日は「本日はAI推奨はありません（様子見）＋総評」**を送信。通常実行時は「技術スコア ランキング」。利確/損切は価格帯別ルール値。
@@ -185,8 +192,8 @@ flowchart LR
 - [`docs/guide.html`](docs/guide.html): **はじめての人向け見方ガイド**。一覧・バッジ・並び替え・モーダル（決算日/需給水準/エントリー判定）・用語集・注意を平易に解説。index.html / journal.html のヘッダからリンク。
 - [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示（決算日・需給水準・過熱警戒も同様）。`strategy_params` / `recommendations` / `earnings` / `meta` を読み、利確/損切・推奨株数を index と統一。OCO既定値とCSV取込も価格帯別ルールで算出。
 - [`docs/weekend.html`](docs/weekend.html): **作戦ノート**。`docs/weekend/index.json` と `docs/weekend/{date}.json` を読み、起動したタイミングの分析・作戦・リスク管理をスマホ向けに表示。opencode の `/strategy-note` で最新の取引履歴と市場データから生成する。公開ページのため、保有数量・損益額・口座情報は載せない。
-- [`docs/strategy.html`](docs/strategy.html): **今日の作戦**。`docs/strategy/active.json`（台帳）・`status.json`（現在状態）・`events.json`（履歴）を読み、今日やること・価格/条件トリガー・保有OCO・見送り理由を表示。平日9:05〜15:05 JSTに60分間隔＋引け後に `tools/check_strategy_plan.py` がチェックし、状態変化をDiscord通知する。**この監視は分析用ではなく執行の見張り番**（作戦ノート生成には使わない）。Actionsの遅延で**1〜2時間遅れの後追い検知**であり、リアルタイム通知ではない。公開ページのため、保有数量・損益額は載せない。
-- [`docs/ops.html`](docs/ops.html): **運用マニュアル**。裏で自動で動くこと（6ワークフロー・時刻・出力・失敗時）と、自分が手動でやること（朝のOCO確認・売買後の台帳更新・夜/週末の作戦ノート・データ更新・月次確認）を1ページに整理。画面の役割分担（要約/実行/記録）、通知の意味、制約（Actions遅延・通知が来ない≠安全）、ファイル早見表、Q&A、用語集。冒頭に**「どのページをいつ見るか」早見表**。8ページすべてからリンク。
+- [`docs/strategy.html`](docs/strategy.html): **今日の作戦**。`docs/strategy/active.json`（台帳）・`status.json`（現在状態）・`events.json`（履歴）を読み、今日やること・価格/条件トリガー・保有OCO・見送り理由を表示。引け後（17:17 / 20:17 JST）の自動チェックおよび必要時の手動チェックで `tools/check_strategy_plan.py` が判定し、状態変化をDiscord通知する（平日60分間隔の自動スケジュールは2026-11-15の効果測定により停止し、日中は証券会社OCO＋手動チェックに集約）。**この監視は分析用ではなく執行の見張り番**（作戦ノート生成には使わない）。公開ページのため、保有数量・損益額は載せない。
+- [`docs/ops.html`](docs/ops.html): **運用マニュアル**。裏で自動で動くこと（ワークフロー・時刻・出力・失敗時）と、自分が手動でやること（朝のOCO確認・売買後の台帳更新・夜/週末の作戦ノート・データ更新・月次確認）を1ページに整理。画面の役割分担（要約/実行/記録）、通知の意味、制約（Actions遅延・通知が来ない≠安全）、ファイル早見表、Q&A、用語集。冒頭に**「どのページをいつ見るか」早見表**。8ページすべてからリンク。
 - **ヘッダーの共通化**: 8ページのナビを **スクリーナー / 今日の作戦 / 取引記録 / 振り返り / 作戦ノート / その他（AIの学び・見方ガイド・運用マニュアル）** に統一。今日の作戦の「手動チェック」「データ更新（AI）」「再読み込み」は**「操作」**にまとめた（JS不要の `<details>`）。
 - **推奨の母集団トグル**: index.html のスイング画面に「全体 / ◯円未満（`price_filter`）」トグル。レンジ選択時は `recommendations.json` の `range.min_price/max_price` に入る**全銘柄を表示**し、AI判定列は `range.stocks` のレンジAIに差し替える（評価済みのみ・参考。`currentAI`/`aiVerdictPriority` を表示中母集団に応じて切替）。**並び順は全体/レンジとも選択中の `sortKey` を常に優先**し、AI順位で固定しない（既定はスコア順）。全体選択時は従来どおり `ai_strategy_latest.json`。
 - 旧 `main7.html` / `index_main6_backup.html` は退避。
@@ -203,7 +210,7 @@ flowchart LR
 
 **入力（Stage1候補 → プロンプト）**
 - 候補 = スコア上位 `max_calls_per_run`（40）。プロンプトには技術（乖離/RSI/ATR/需給/エントリー判定/過熱）＋ファンダ＋決算＋**ニュース**を注入。
-- **型コンテキスト（2026-10-18〜）**: 候補レコードに `pattern_summary`（直近3日以内の GC(20,60)/DC(5,25)/DC(20,60)/ダブルボトム/レンジ/カップ/フラッグ）を付与し、プロンプトに `型:` 行を注入。システムプロンプトには**過去検証メモ**（GC(20,60)直後・DB・フラッグは平均劣後、DC・押し目は相対良好／参考程度）を追加。`PROMPT_VERSION=2026-10-18-1`。週次プランのシステムプロンプトにも同じメモを前置。
+- **型コンテキスト（2026-10-18〜 / 2026-11-15更新）**: 候補レコードに `pattern_summary`（直近3日以内の GC(20,60)/DC(5,25)/DC(20,60)/ダブルボトム/レンジ/カップ/フラッグ）を付与し、プロンプトに `型:` 行を注入。システムプロンプトには**過去検証メモ**と**過熱度別エントリー指針（過熱度 low では反射的に深い押し目待ちにせず成行/浅い押し目を優先、moderate/strong/extreme では押し目・打診・見送りを徹底）**を記載。`PROMPT_VERSION=2026-11-15-1`。週次プランのシステムプロンプトにも同じ検証知見と3,000円以下レンジ推奨の組込みルールを反映。
 - **ニュース**: `ai.news_source`（`gnews`=Google News RSS（既定）/ `yfinance` / `hybrid`）、`ai.news_days`（14）、`ai.news_max`（5）。企業名検索→直近N日→重複除去。※日本株の yfinance `.news` はほぼ空（PoC: 5銘柄すべて0件）。プロンプトの「ニュース」欄には先頭3件を注入。
 - 画像は渡さない（テキストのみ）。
 
@@ -267,8 +274,8 @@ flowchart LR
 ## 8. 主要パラメータ（[`docs/strategy_params.json`](docs/strategy_params.json)）
 
 - `score_weights`: `{pos_52w:25, dist_sma200:15, sma200_slope:30, ret_120d:10, liquidity:20}`（v3）
-- `price_tiers`: 価格帯ごとの `tp_pct` / `sl_pct` / `max_hold_days` / `atr_sl_mult`（バックテストが自動更新）
-- `portfolio`: `{max_positions:5, max_per_sector:2, risk_per_trade_pct:1.0, reference_capital_jpy:1000000}`（`max_per_sector` は同一業種の同時採用上限）
+- `price_tiers`: 価格帯ごとの `tp_pct` / `sl_pct` / `max_hold_days` / `atr_sl_mult`（バックテストが自動更新。2026-11-14の月次更新で `low` / `mid_low` は `max_hold_days: 40`）
+- `portfolio`: `{max_positions:3, max_per_sector:1, risk_per_trade_pct:0.8, max_risk_per_trade_jpy:5000, reference_capital_jpy:600000}`（`max_per_sector` は同一業種の同時採用上限、`max_risk_per_trade_jpy` は1取引の最大許容損失額）
 - `price_filter`: `{enabled, min_price, max_price}`。**第2母集団（価格レンジ）の定義**。全体推奨（無制限）とは別に、レンジ内だけを母集団としてAIが順位付けし、`recommendations.json` の `picks_in_range` に「その中での確実性順の推奨」を併記する（値がさ回避・1取引リスク抑制が狙い）。フロントはレンジ選択時、**価格レンジ内の全銘柄を表示し、AI判定列はレンジAI（評価済みのみ・参考）に差し替える**。並び順は選択中のソートを尊重（既定はスコア順）。CLI `--min-price`/`--max-price` で上書き可（指定時は有効化）。
 - `signals`: gc_window 等（新スコアでは未使用。出力互換のため保持）
 - `warnings`: 低位/中位の出来高4倍超に加え、**価格帯非依存の過熱警告**（`overheat_sma25`/`overheat_rsi`/`overheat_ret5`/`overheat_gap`/`reject_upper_shadow`/`blowoff_combo`）
@@ -327,10 +334,10 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 - **地合い・セクターの広がりは全銘柄で計算**（`excluded`＝週足下向きを除かない）。除いてから測ると上昇中の銘柄だけを集めることになり数値が上振れする（銀行が2銘柄になる等）。**10銘柄未満は参考外**とし、`sector_ok` は条件NGにする。表示は「買いやすい（リスクオン）」「慎重に（リスクオフ）」。**リスクオンは危険ではない**。
 - **DDブレーキ（精神に頼らない停止）**: 資産が直近ピークから**-10%で新規停止**、**-15%で全現金化**。再開はピーク回復後、または2週間後に地合いが「買いやすい」へ戻ってから（再開時は半分のサイズ）。**1取引リスクは5,000円（0.8%）まで**。銘柄数は**3固定**（資金60〜90万のため。検証では3銘柄は弱いが、分散より資金制約を優先し、サイズとDDブレーキで抑える）。
 - **セクター色（業種の強さ）**: 業種ごとに**緑（25日線上50%以上）/ 黄（30〜50%）/ 赤（30%未満）**を**全銘柄**で計算し、**赤はAI推奨から外す**（様子見には残す）。色はテクニカルだけで決め、ニュースは使わない。`docs/sector_colors.json` に保存し、スクリーナー・今日の作戦に表示。**閾値の見直しは 2026-12-19**（`strategy_params.json` の `sector_color.review_after`。過ぎると main8 と週次Discordが警告）。
-- 作戦台帳: `docs/strategy/active.json`。トリガーは `tools/check_strategy_plan.py` が `--mode intraday|eod` で判定し、`docs/strategy/status.json` / `events.json` を更新。ワークフロー: `plan_check_intraday.yml`（平日60分・1日7回）/ `daily_main8.yml`（17時台）/ `daily_main8_ai.yml`（AI実行後）。**日中の監視は執行の見張り番**（作戦ノートの材料には使わない）。Actionsの遅延で実起動は1〜2時間遅れ、発火しない回もあるため「リアルタイムの損切り監視」としては使わない（OCOが本体）。
+- 作戦台帳: `docs/strategy/active.json`。トリガーは `tools/check_strategy_plan.py` が `--mode intraday|eod` で判定し、`docs/strategy/status.json` / `events.json` を更新。ワークフロー: `daily_main8.yml`（17時台 EOD）/ `daily_main8_ai.yml`（AI実行後 EOD）/ `plan_check_intraday.yml`（日中・手動実行のみ）。**日中の自動60分監視は2026-11-15の効果測定（10/25以降の日中発火0件・Actions遅延中央値100分）により停止（案C）し、日中は証券会社OCO＋必要時の手動実行に集約**。
 - 運用手順の一覧: [`docs/ops.html`](docs/ops.html)（自動／手動の切り分け・時刻表・Q&A）。
 - データ鮮度: 作戦ノート作成前に `tools/refresh_data_if_stale.py --refresh`。平日の夜は当日、週末は直近の金曜を期待日として、履歴・AIが古ければ `main8.py` で価格・スコア・AIをまとめて更新する。AIキーがない場合はテクニカルのみ。スマホからは `refresh_data_ai.yml`（手動データ更新）を実行。
-- ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）/ `weekly_review.yml`（土曜09:00）/ `plan_check_intraday.yml`（平日60分）/ `refresh_data_ai.yml`（手動データ更新）/ `notify_plan_update.yml`（作戦台帳の更新をDiscord通知）。
+- ワークフロー: `daily_main8.yml`（平日5回）/ `daily_main8_ai.yml`（20:17 JST）/ `run_walkforward.yml`（月次）/ `weekly_review.yml`（土曜09:00）/ `plan_check_intraday.yml`（日中・手動実行）/ `refresh_data_ai.yml`（手動データ更新）/ `notify_plan_update.yml`（作戦台帳の更新をDiscord通知）。
 - **Discord通知**: ①AI推奨（AI実行後） ②作戦トリガー（状態変化のみ） ③**作戦更新**（`active.json` のpush時・更新のたび） ④**週次振り返り**（土曜の答え合わせ後、最新週の1通）。
 - **非営業日スキップ**: `main8.py` は JPX 取引所カレンダー（`pandas_market_calendars`）で**土日祝・取引所休場を判定してスキップ**。週次レビューもベンチマークの実営業日で非営業日のシグナルを除外する。カレンダー未導入時は安全側（営業日扱い）にフォールバック。
 
@@ -340,17 +347,15 @@ uv run --no-project --python 3.11 --with pandas --with numpy --with requests --w
 
 **残タスク**
 - **v3の実運用観測（進行中）**: 10-16のv3ピックは10/19以降に約定→順次確定。**4〜8週間**の週次答え合わせで判断（`score_version` タグで追跡）。1週間の結果で良し悪しを決めない。
-- **週次プランのキャッシュキー**: 現在は `based_on_date` のみでプランを再利用するため、同日中にスコア版が変わっても旧プランが残る。`score_version` をキャッシュ条件に含める or `--force-plan` を追加（10-19以降は基準日が進めば自動更新）。
+- **週次プランのキャッシュキー（完了・2026-11-15）**: `based_on_date` に加え `score_version` / `prompt_version` をキャッシュ条件に追加し、`--force-plan` フラグも実装済み。
 - **パターンオーバーレイ（未実装）**: DC/GC/DB/フラッグの小さな並び順補正を、ウォークフォワードでOOS検証してから `strategy_params` へ。
-- **v3の月次ウォークフォワード**: 11/7の定期実行または手動で確認。`apply_optimal_params` は `score_weights` を上書きしないため、v3は手動検証のまま。
-- **週次答え合わせの還元（校正）**: Phase B（実績に基づく**過熱度別スコア補正**を `weekly_feedback` に反映し `main8` の並び順へ）を実装済み。今後 `docs/picks` が蓄積し過熱度・entry_type のサンプルが増えると補正が有効化される（現在は再構成データで過熱度が「低」に偏り、補正0＝観測のみ）。十分に貯まったら `entry_guard` 等（Phase C）へ拡張。
-- **週次スナップショットの蓄積**: `docs/picks/{date}.json` が今後蓄積される（過去分は `history`/`ai_analysis` から復元＝「復元」表示）。AI判定の校正は蓄積後に精度が上がる。
-- **過熱指標・押し目エントリーのバックテスト定期検証**: 実装済み・初回反映済み（`entry_guard`: moderate=1.5ATR/10日、high=1.5ATR/5日）。以降は月次 `run_walkforward.yml` で再検証し、ガード通過時に `entry_guard` を更新。
+- **v3の月次ウォークフォワード（初回確認済み・2026-11-14）**: 15フォールドで上位−下位スプレッド +0.391% / Spearman 0.919、`low`・`mid_low` の保有期間40日化がガード通過して自動反映済み。`apply_optimal_params` は `score_weights` を上書きしないため、v3重みは引き続き固定観測。
+- **週次答え合わせの還元（校正）**: Phase B（実績に基づく**過熱度別スコア補正**を `weekly_feedback` に反映し `main8` の並び順へ）を実装済み。また長期台帳 `docs/weekly/ledger.json` とAIプレイブック `docs/ai_playbook.json`（Phase 1＝観測のみ）も稼働中。
+- **週次スナップショットの蓄積**: `docs/picks/{date}.json` が蓄積中（W43以降は実スナップショット100%）。
+- **過熱指標・押し目エントリーのバックテスト定期検証**: 実装済み・反映済み（`entry_guard`: moderate=0.5ATR/10日、high=1.5ATR/3日）。以降は月次 `run_walkforward.yml` で再検証し、ガード通過時に `entry_guard` を更新。
 - **AI有界オーバーレイ（総合=S+Δ）**: 設計は確定（Δ∈{−10..+10}、根拠必須、`docs/ai_overlay/{date}.json` ログ＋校正）。**未実装**。
-- **ニュース源の効果検証**: Google News RSS を既定化済み。次回AI実行成功時に「材料の具体性・記事の妥当性」を確認。
 - **Gemini grounding PoC（b）**: クォータ回復 or 課金、および **Search Suggestions 表示のUI対応**が前提。JSON併用は未記載のため二段構成で検証。
-- **DeepSeek利用時のCI設定**: `daily_main8_ai.yml` の `env` に `DEEPSEEK_API_KEY` を追加（Secretは登録済み）。
-- **作戦トリガー監視の効果測定（11月中旬に判断）**: `docs/strategy/events.json` を見て、**intraday 実行由来の `triggered` / `near_stop` / `stop_hit` が記録されたか**を確認する。0件なら `plan_check_intraday.yml` を止め、引け後チェック＋OCOに寄せる（案C）。あわせて GitHub Actions の実測遅延（中央値+100分・約4割が発火せず）を前提に、通知の価値を評価する。
+- **作戦トリガー監視の効果測定（完了・2026-11-15）**: `docs/strategy/events.json` を確認し、10/25以降に intraday 実行由来のイベントが0件だったため、案Cに従い `plan_check_intraday.yml` の定期スケジュールを停止（引け後チェック＋証券会社OCO＋必要時の手動実行に集約）。
 - **セクター色の閾値見直し（2026-12-19）**: `strategy_params.json` の `sector_color`（緑50%／黄30%）を1〜2か月動かして、`docs/sector_colors.json` と `docs/picks` の色・実績で効果を確認する。赤除外で取引回数が減りすぎていないか、反転初動の取りこぼしが大きくないかを見て調整する。**それまでは閾値を変えない**（過ぎると main8 実行時と週次Discordで警告）。
 - エグジット係数（ATR損切・トレーリング・部分利確）の区分別最適化の拡張。
 - 同時保有数の頑健性検証（単一経路依存の解消）。

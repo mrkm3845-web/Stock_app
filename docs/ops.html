@@ -164,10 +164,10 @@
                         <td><b>OCOが入っているか確認</b>（前日に約定していないかも）</td>
                     </tr>
                     <tr>
-                        <td class="text-center"><span class="time-badge">09:05〜15:05</span></td>
-                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
-                        <td>作戦トリガー監視を<b>1時間ごと7回</b>。入口・損切・利確に触れたかを判定</td>
-                        <td>Discord通知が来たら<b>今日の作戦</b>を開く</td>
+                        <td class="text-center"><span class="time-badge">日中（必要時）</span></td>
+                        <td class="text-center"><span class="tag tag-manual">手動</span></td>
+                        <td>日中の損切・利確は<b>証券会社のOCO注文</b>が自動執行。現在値で台帳判定を見たいときだけ「手動チェック」を押す</td>
+                        <td>必要時のみ<b>今日の作戦</b>から手動チェック（普段は不要）</td>
                     </tr>
                     <tr>
                         <td class="text-center"><span class="time-badge">15:30</span></td>
@@ -247,9 +247,9 @@
                         <td>スコア上位40をAIが順位付けし、推奨を作る。Discordに通知</td>
                     </tr>
                     <tr>
-                        <td><b>作戦トリガー監視</b><br><span class="muted-small">plan_check_intraday.yml</span></td>
-                        <td>平日 09:05〜15:05 の<b>1時間ごと7回</b></td>
-                        <td>作戦台帳の水準に現在値が触れたかを判定。状態が変わったときだけDiscord通知</td>
+                        <td><b>作戦トリガー監視（日中）</b><br><span class="muted-small">plan_check_intraday.yml</span></td>
+                        <td class="text-center">予約なし（手動）</td>
+                        <td>日中に作戦台帳の水準に現在値が触れたかをその場で判定（自動チェックは17時台・20時台の引け後EODに集約）</td>
                     </tr>
                     <tr>
                         <td><b>週次答え合わせ</b><br><span class="muted-small">weekly_review.yml</span></td>

@@ -1,31 +1,83 @@
 {
-  "plan_id": "2026-11-11-0626",
-  "checked_at": "2026-11-11T06:30:52.405841+09:00",
+  "plan_id": "2026-11-15-2348",
+  "checked_at": "2026-11-15T23:52:32.963040+09:00",
   "source": "eod",
-  "data_asof": null,
+  "data_asof": "2026-11-13",
   "market": {
     "regime": {
       "ticker": "1306.T",
-      "close": 402.1,
-      "sma": 401.8,
+      "close": 415.5,
+      "sma": 402.5,
       "sma_days": 200,
       "risk_on": true
     },
     "breadth": {
       "n": 2905,
       "low_sample": false,
-      "above_sma25_pct": 24.4,
-      "above_sma200_pct": 39.8,
-      "avg_ret5_pct": -3.37
+      "above_sma25_pct": 41.9,
+      "above_sma200_pct": 48.0,
+      "avg_ret5_pct": 4.92
     },
     "bank_sector": {
       "n": 77,
       "low_sample": false,
-      "above_sma25_pct": 3.9,
-      "above_sma200_pct": 58.4,
-      "avg_ret5_pct": -8.1
+      "above_sma25_pct": 28.6,
+      "above_sma200_pct": 81.8,
+      "avg_ret5_pct": 9.54
     }
   },
-  "items": [],
-  "today_actions": []
+  "items": [
+    {
+      "code": "8766",
+      "name": "東京海上ホールディングス",
+      "kind": "watch",
+      "sector": "保険業",
+      "sector_color": "green",
+      "sector_above_sma25_pct": 60.0,
+      "status": "waiting",
+      "current_price": 597.0,
+      "high": 597.0,
+      "low": 597.0,
+      "entry_price": 572,
+      "stop": 547,
+      "take_profit": 647,
+      "distance_pct": 4.1876046901172534,
+      "conditions_ok": true,
+      "condition_reasons": [],
+      "action": "買い入口572待ち",
+      "source": "history-close",
+      "asof": "2026-11-13",
+      "last_notified_status": "waiting",
+      "last_notified_at": "2026-11-15T23:52:32.963040+09:00",
+      "last_near_date": null
+    },
+    {
+      "code": "7282",
+      "name": "豊田合成",
+      "kind": "watch",
+      "sector": "輸送用機器",
+      "sector_color": "yellow",
+      "sector_above_sma25_pct": 45.8,
+      "status": "waiting",
+      "current_price": 1071.0,
+      "high": 1071.0,
+      "low": 1071.0,
+      "entry_price": 1035,
+      "stop": 985,
+      "take_profit": 1185,
+      "distance_pct": 3.361344537815126,
+      "conditions_ok": true,
+      "condition_reasons": [],
+      "action": "買い入口1,035待ち",
+      "source": "history-close",
+      "asof": "2026-11-13",
+      "last_notified_status": "waiting",
+      "last_notified_at": "2026-11-15T23:52:32.963040+09:00",
+      "last_near_date": null
+    }
+  ],
+  "today_actions": [
+    "8766 東京海上ホールディングス：買い入口572待ち",
+    "7282 豊田合成：買い入口1,035待ち"
+  ]
 }

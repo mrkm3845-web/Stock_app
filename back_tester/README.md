@@ -36,7 +36,7 @@
 - 研究: `research_patterns.py`（型）、`research_upside.py`（右裾＋上位K）、`validate_score.py`（v2 vs v3）。
 - `research_upside.py` は**オフライン既定**（`back_tester/data/backtest_cache` のCSVのみ）・**進捗バー**・**ディスクキャッシュ**（`back_tester/data/upside_cache/`）・`--max-minutes`。初回約80秒 / 再実行約11秒。
 - **実験タグ**: `score_version` / `experiment_id` を picks/history/recommendations/週次に刻印（`common/version.py`）。
-- 週次プラン（`docs/weekly/plan.json`）は `based_on_date` 一致でキャッシュ再利用するため、同日中のスコア版変更では再生成されない（10-19以降に基準日が進めば自動更新）。
+- 週次プラン（`docs/weekly/plan.json`）は `based_on_date`・`score_version`・`prompt_version` がすべて一致するときにキャッシュ再利用する（`--force-plan` で強制再生成可）。
 
 ---
 
@@ -212,8 +212,8 @@ CI は [`weekly_review.yml`](../.github/workflows/weekly_review.yml) が**毎週
 - 小さなサンプルで重みを動かさない（過学習回避）ことを優先する。
 
 ### 8-6. 来週の作戦（AI深掘り）
-- 金曜大引け後の最新候補（`docs/recommendations.json` の推奨 ＋ `docs/history/latest.json` のスコア上位プール）を、**毎日のAI順位より踏み込んで**深掘りし、**来週一番のおすすめ（top_pick）**・補欠・回避・入口/OCO（利確/損切）・シナリオ・リスクを生成する。
+- 金曜大引け後の最新候補（`docs/recommendations.json` の全体推奨 `picks` ＋ 3,000円以下レンジ推奨 `picks_in_range` ＋ `docs/history/latest.json.gz` のスコア上位プール）を、**毎日のAI順位より踏み込んで**深掘りし、**来週一番のおすすめ（top_pick）**・補欠・回避・入口/OCO（利確/損切）・シナリオ・リスクを生成する。標準口座（60万円・100株単位）で発注できるよう、`top_pick` または `backups` には必ず3,000円以下の銘柄を含める。
 - ペルソナ（`common/persona.py`）を毎日のAIプロンプトと共通で前置。答え合わせ結果（`summary`）と `weekly_feedback` も入力に含める（必ずしも従う必要はない）。
-- 出力: `docs/weekly/plan.json`。`docs/weekly.html` の**最下段**「来週の作戦（AI深掘り）」に表示。
+- 出力: `docs/weekly/plan.json`（`score_version` / `prompt_version` を刻印）。`docs/weekly.html` の**最下段**「来週の作戦（AI深掘り）」に表示し、週次Discord通知にも `top_pick` と `market_view` を含める。
 - **フォールバック**: APIキー未設定・失敗時は生成せず、実績からの自動補正（テンプレ）を表示。
-- 設定: `weekly_review.plan_enabled` / `plan_candidates`。CLI: `--no-plan` で生成をスキップ。
+- 設定: `weekly_review.plan_enabled` / `plan_candidates`。CLI: `--no-plan` で生成をスキップ、`--force-plan` で既存キャッシュを無視して再生成。

@@ -929,9 +929,12 @@ def _ai_system_prompt(max_picks=5, max_output=15):
         "ファンダメンタルの観点で1位から順位づけしてください。"
         f"verdict=recommend は本当に買い推奨できる銘柄だけに付け、件数を無理に埋めないでください（該当が無ければ0件で構いません。上限{max_picks}件）。"
         "【最重要】イナゴ買いによる高値掴みの防止を最優先してください。"
-        "短期急騰・移動平均からの大きな乖離・RSI高値・窓開け・上ヒゲ拒否などの過熱サインがある銘柄では、"
+        "短期急騰・移動平均からの大きな乖離・RSI高値・窓開け・上ヒゲ拒否などの過熱サイン（過熱度 moderate / strong / extreme）がある銘柄では、"
         "現在値での成行追いかけ（breakout_chase）を推奨せず、押し目（pullback_wait）や打診（probe_only）に切り替えるか、"
-        "見送り（wait）にしてください。ただしトレンドと上昇余地が強く、過熱が軽度なら追いかけ（breakout_chase）を許容します。"
+        "見送り（wait）にしてください。"
+        "一方、ウォークフォワード検証（OOS）では『過熱度 low』かつルール推奨入口が breakout_chase の銘柄は成行/浅い押し目の方が深い指値待ちより期待値が高く、"
+        "過度に深い pullback_wait にすると約定せず取り逃がし（機会損失）になります。過熱度 low でトレンドとカタリストが揃う銘柄は、"
+        "反射的に深い pullback_wait にせず breakout_chase または5日線近辺の浅いエントリーを優先してください。"
         "【過去検証メモ（参考）】日本株の短期〜スイング検証では、GC(20,60)直後・ダブルボトム・フラッグ/ペナントは平均リターンが市場平均を下回る傾向、"
         "DC(5,25)/DC(20,60)直後や押し目は相対的に良好でした。ただし平均的な傾向であり、型だけに依存せず、トレンド・過熱回避・決算を優先してください。"
         "entry_type は次から1つだけ選んでください: "
@@ -1297,6 +1300,7 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
     portfolio = params.get("portfolio", {})
     risk_pct = portfolio.get("risk_per_trade_pct", 1.0)
     ref_cap = portfolio.get("reference_capital_jpy", 1000000)
+    max_risk_jpy = portfolio.get("max_risk_per_trade_jpy")
     max_per_sector = portfolio.get("max_per_sector")
     eg = params.get("entry_guard", {})
     earnings_map = earnings_map or {}
@@ -1346,9 +1350,12 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
         else:
             sl_price = _to_num(item.get("sl_price"))
 
-        # リスクベースの推奨サイズ（参考資金 × リスク% ÷ 損切幅）。打診は小口に縮小。
+        # リスクベースの推奨サイズ（min(参考資金 × リスク%, 1トレード許容上限円) ÷ 損切幅）。打診は小口に縮小。
         stop_dist = (r["price"] - sl_price) if (sl_price and r["price"] > sl_price) else None
-        base_qty = int((ref_cap * (risk_pct / 100.0)) // stop_dist) if stop_dist else None
+        risk_budget_jpy = ref_cap * (risk_pct / 100.0)
+        if max_risk_jpy is not None:
+            risk_budget_jpy = min(risk_budget_jpy, float(max_risk_jpy))
+        base_qty = int(risk_budget_jpy // stop_dist) if stop_dist else None
         qty_factor = eg.get("probe_qty_factor", 0.5) if entry_type == "probe_only" else 1.0
         suggested_qty = int(base_qty * qty_factor) if base_qty else None
 
@@ -1420,6 +1427,7 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
             "max_positions": portfolio.get("max_positions", 5),
             "max_per_sector": max_per_sector,
             "risk_per_trade_pct": risk_pct,
+            "max_risk_per_trade_jpy": max_risk_jpy,
             "reference_capital_jpy": ref_cap,
         },
         "overall": overall,
@@ -1869,26 +1877,37 @@ def send_recommendations_to_discord(recommendations, added_count, updated_count,
     _post(msg)
 
 
+def _read_history_file(base_noext):
+    """docs/history/{date}.json.gz（優先）または .json を読み込む。"""
+    gz_path = f"{base_noext}.json.gz"
+    if os.path.exists(gz_path):
+        try:
+            with gzip.open(gz_path, "rt", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    json_path = f"{base_noext}.json"
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return None
+
+
 def _diff_counts(target_date, new_batch):
     """前回データとの差分（新規数・更新数）を通知用に算出する（データは全件上書き保存）。"""
-    target_file = os.path.join(HISTORY_DIR, f"{target_date}.json")
-    latest_file = os.path.join(HISTORY_DIR, "latest.json")
+    target_base = os.path.join(HISTORY_DIR, str(target_date))
+    latest_base = os.path.join(HISTORY_DIR, "latest")
 
-    existing = []
-    if os.path.exists(target_file):
-        try:
-            with open(target_file, "r", encoding="utf-8") as f:
-                existing = json.load(f)
-        except Exception:
-            pass
-    elif os.path.exists(latest_file):
-        try:
-            with open(latest_file, "r", encoding="utf-8") as f:
-                existing = json.load(f)
-        except Exception:
-            pass
+    existing = _read_history_file(target_base)
+    if existing is None:
+        existing = _read_history_file(latest_base)
+    if not isinstance(existing, list):
+        existing = []
 
-    prev = {s["code"]: s for s in existing}
+    prev = {s["code"]: s for s in existing if isinstance(s, dict) and "code" in s}
     added = sum(1 for s in new_batch if s["code"] not in prev)
     updated = sum(1 for s in new_batch if s["code"] in prev and prev[s["code"]] != s)
     return added, updated

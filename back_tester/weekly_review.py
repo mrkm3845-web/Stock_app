@@ -1523,7 +1523,7 @@ def _load_json(path):
         return None
 
 
-def _cand_from_pick(p, hist):
+def _cand_from_pick(p, hist, in_range=False):
     h = hist or {}
     ctx = h.get("ctx") or {}
     return {
@@ -1533,6 +1533,7 @@ def _cand_from_pick(p, hist):
         "price": _to_num(p.get("price")) or _to_num(h.get("price")),
         "score": _to_num(p.get("score")) or _to_num(h.get("score")),
         "verdict": p.get("verdict"),
+        "in_range": bool(in_range),
         "entry_type": p.get("entry_type"),
         "entry_type_label": p.get("entry_type_label"),
         "entry_price": _to_num(p.get("entry_price")),
@@ -1555,7 +1556,7 @@ def _cand_from_pick(p, hist):
 
 
 def _load_latest_candidates(params, limit):
-    """金曜時点の最新候補を返す（AI推奨 → スコア上位プールの順、重複除去）。"""
+    """金曜時点の最新候補を返す（AI推奨[全体 + 3,000円以下レンジ] → スコア上位プールの順、重複除去）。"""
     rec = _load_json(RECOMMENDATIONS_PATH)
     hist = _read_json_maybe_gz(os.path.join(HISTORY_DIR, "latest")) or []
     hist_by_code = {r.get("code"): r for r in hist if r.get("code")}
@@ -1570,7 +1571,15 @@ def _load_latest_candidates(params, limit):
         code = p.get("code")
         if not code or code in seen:
             continue
-        cands.append(_cand_from_pick(p, hist_by_code.get(code)))
+        price_val = _to_num(p.get("price"))
+        cands.append(_cand_from_pick(p, hist_by_code.get(code), in_range=bool(price_val and price_val <= 3000)))
+        seen.add(code)
+
+    for p in (rec or {}).get("picks_in_range") or []:
+        code = p.get("code")
+        if not code or code in seen:
+            continue
+        cands.append(_cand_from_pick(p, hist_by_code.get(code), in_range=True))
         seen.add(code)
 
     pool = sorted([r for r in hist if not r.get("excluded")], key=lambda r: -(r.get("score") or 0))
@@ -1581,10 +1590,12 @@ def _load_latest_candidates(params, limit):
         if not code or code in seen:
             continue
         ctx = r.get("ctx") or {}
+        price_val = _to_num(r.get("price"))
         cands.append({
             "code": code, "name": r.get("name"), "sector": r.get("sector"),
-            "price": _to_num(r.get("price")), "score": _to_num(r.get("score")),
-            "verdict": None, "entry_type": None, "entry_type_label": None,
+            "price": price_val, "score": _to_num(r.get("score")),
+            "verdict": None, "in_range": bool(price_val and price_val <= 3000),
+            "entry_type": None, "entry_type_label": None,
             "entry_price": None, "entry_zone_low": None, "entry_zone_high": None,
             "overheat_label": None,
             "rsi14": _to_num(ctx.get("rsi14")), "dist_sma25_pct": _to_num(ctx.get("dist_sma25_pct")),
@@ -1604,8 +1615,9 @@ def _plan_candidate_lines(cands):
     lines = []
     for c in cands:
         fund = c.get("fundamentals") or {}
+        range_tag = " [3000円以下レンジ推奨]" if c.get("in_range") else ""
         parts = [
-            f"{c['code']} {c.get('name')}",
+            f"{c['code']} {c.get('name')}{range_tag}",
             f"業種:{c.get('sector')}",
             f"株価:{c.get('price')}円 スコア:{c.get('score')}",
             f"AI判定:{c.get('verdict')} 入口:{c.get('entry_type_label') or c.get('entry_type') or '-'}",
@@ -1630,10 +1642,13 @@ def _plan_system_prompt():
     return (
         PERSONA_JA + "\n"
         "【過去検証メモ（参考）】日本株の短期〜スイング検証では、GC(20,60)直後・ダブルボトム・フラッグ/ペナントは平均リターンが市場平均を下回る傾向、DC直後・押し目は相対的に良好。ただし平均傾向であり、型だけに依存せずトレンド・過熱回避・決算を優先する。\n"
+        "またウォークフォワード検証（OOS）では株価500〜2,000円帯（および1単元100株で少額口座でも買える3,000円以下帯）に統計的優位性が集中しており、"
+        "過熱度『軽度（low）』では深い指値待ちより成行/浅い押し目の方が期待値が高い一方、過熱度『やや過熱〜過熱（moderate/high）』では押し目指値が有利である。\n"
         "あなたは日本株の週次スイング戦略の責任者である。金曜大引け後の最新候補と、直近の答え合わせ結果を踏まえて"
         "『来週の作戦』を練る。毎日のAI順位より踏み込み、候補を深掘りして『来週一番のおすすめ（top_pick）』を1つ選び、"
         "入口・OCO（利確指値/損切逆指値）・想定シナリオ・リスクを具体的に示す。"
-        "イナゴ買い・高値掴みの防止を最優先し、過熱が強い銘柄は追いかけず押し目・打診に留める。"
+        "【重要】標準口座（参考資金60万円・100株単位・最大3銘柄）で実際に発注できるよう、top_pick または backups には必ず3,000円以下（[3000円以下レンジ推奨]）の実行可能な銘柄を含めること。"
+        "イナゴ買い・高値掴みの防止を最優先し、過熱が強い銘柄は追いかけず押し目・打診に留める一方、過熱が軽度でトレンド・材料が強い銘柄は深い押し目待ちにしすぎて取り逃がさないようにする。"
         "答え合わせ結果には必ずしも従わなくてよいが、同じ失敗を繰り返さない工夫を示す。"
         "文章は投資初心者にも分かる平易な日本語で書き、専門用語（RSI、25日乖離、ATR、PBR等）には括弧で短い意味を添える。"
         "market_view は『直近の結果（数値）→ 地合い → 来週の構え』の順で書く。"
@@ -1650,7 +1665,7 @@ def _plan_system_prompt():
     )
 
 
-def build_next_week_plan(params, summary=None, feedback=None):
+def build_next_week_plan(params, summary=None, feedback=None, force_plan=False):
     """来週の作戦をAIで深掘り生成する。キー未設定/失敗時は None（呼び出し側でフォールバック）。"""
     cfg = params.get("weekly_review", {})
     if not cfg.get("plan_enabled", True):
@@ -1663,8 +1678,15 @@ def build_next_week_plan(params, summary=None, feedback=None):
 
     plan_path = os.path.join(WEEKLY_DIR, "plan.json")
     cached = _load_json(plan_path)
-    if cached and cached.get("based_on_date") == based and cached.get("plan"):
-        print(f">> 来週の作戦: 既存プランを再利用（{based}）")
+    if (
+        not force_plan
+        and cached
+        and cached.get("based_on_date") == based
+        and cached.get("score_version") == SCORE_VERSION
+        and cached.get("prompt_version") == PROMPT_VERSION
+        and cached.get("plan")
+    ):
+        print(f">> 来週の作戦: 既存プランを再利用（{based} / {PROMPT_VERSION}）")
         return cached
 
     ai = params.get("ai", {})
@@ -1709,10 +1731,12 @@ def build_next_week_plan(params, summary=None, feedback=None):
         "generated_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "week": _next_week_label(based),
         "based_on_date": based,
+        "score_version": SCORE_VERSION,
+        "prompt_version": PROMPT_VERSION,
         "provider": provider,
         "model": ai.get("model"),
         "candidates": [{"code": c["code"], "name": c.get("name"), "score": c.get("score"),
-                        "verdict": c.get("verdict")} for c in cands],
+                        "verdict": c.get("verdict"), "in_range": c.get("in_range", False)} for c in cands],
         "plan": _json_safe(res),
     }
     return plan
@@ -2132,9 +2156,15 @@ def notify_weekly_result(result):
     if worst:
         lines.append(f"ワースト {worst.get('name')}（{worst.get('code')}） {_fmt_pct(worst.get('return_net_pct'))}")
     plan = (result.get("next_week_plan") or {}).get("plan") or {}
-    headline = plan.get("headline") or plan.get("summary")
+    top_pick = plan.get("top_pick") if isinstance(plan.get("top_pick"), dict) else {}
+    headline = plan.get("market_view") or plan.get("headline") or plan.get("summary")
+    if top_pick and top_pick.get("code"):
+        tp_name = top_pick.get("name") or ""
+        tp_code = top_pick.get("code")
+        tp_strat = top_pick.get("entry_strategy") or ""
+        lines.append(f"来週の本命: {tp_name}（{tp_code}） {tp_strat}".strip())
     if headline:
-        lines.append(f"来週: {str(headline)[:120]}")
+        lines.append(f"来週の見立て: {str(headline)[:120]}")
     try:
         note = _sector_review_note(load_strategy_params())
         if note:
@@ -2157,6 +2187,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="historyにある全週を生成（遡及）")
     parser.add_argument("--no-fetch", action="store_true", help="ネット取得をせずキャッシュのみ使用")
     parser.add_argument("--no-plan", action="store_true", help="来週の作戦(AI深掘り)を生成しない")
+    parser.add_argument("--force-plan", action="store_true", help="既存のplan.jsonキャッシュを無視して来週の作戦を再生成する")
     args = parser.parse_args()
 
     params = load_strategy_params()
@@ -2203,7 +2234,7 @@ def main():
         plan = None
         if not args.no_plan:
             latest_summary = results[-1]["summary"] if results else None
-            plan = build_next_week_plan(params, latest_summary, fb_summary)
+            plan = build_next_week_plan(params, latest_summary, fb_summary, force_plan=args.force_plan)
             write_plan(plan)
         for r in results:
             r["actions"] = actions

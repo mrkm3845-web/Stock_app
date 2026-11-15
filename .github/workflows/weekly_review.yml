@@ -15,6 +15,11 @@ on:
         required: false
         type: boolean
         default: false
+      force_plan:
+        description: '既存のplan.jsonキャッシュを無視して来週の作戦を再生成する'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -41,7 +46,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: back_tester/data/weekly_cache
-          key: weekly-cache-${{ runner.os }}-${{ github.run_id }}
+          key: weekly-cache-${{ runner.os }}-${{ hashFiles('docs/history/dates.json') }}
           restore-keys: |
             weekly-cache-${{ runner.os }}-
 
@@ -51,12 +56,16 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
+          EXTRA_ARGS=""
+          if [ "${{ inputs.force_plan }}" = "true" ]; then
+            EXTRA_ARGS="--force-plan"
+          fi
           if [ -n "${{ inputs.week }}" ]; then
-            python back_tester/weekly_review.py --week "${{ inputs.week }}"
+            python back_tester/weekly_review.py --week "${{ inputs.week }}" $EXTRA_ARGS
           elif [ "${{ inputs.all }}" = "true" ]; then
-            python back_tester/weekly_review.py --all
+            python back_tester/weekly_review.py --all $EXTRA_ARGS
           else
-            python back_tester/weekly_review.py
+            python back_tester/weekly_review.py $EXTRA_ARGS
           fi
 
       - name: 結果をコミット＆プッシュ
