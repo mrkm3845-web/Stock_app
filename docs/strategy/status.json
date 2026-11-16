@@ -1,6 +1,6 @@
 {
   "plan_id": "2026-11-15-2348",
-  "checked_at": "2026-11-15T23:52:32.963040+09:00",
+  "checked_at": "2026-11-16T18:00:00+09:00",
   "source": "eod",
   "data_asof": "2026-11-13",
   "market": {
@@ -28,30 +28,6 @@
   },
   "items": [
     {
-      "code": "8766",
-      "name": "東京海上ホールディングス",
-      "kind": "watch",
-      "sector": "保険業",
-      "sector_color": "green",
-      "sector_above_sma25_pct": 60.0,
-      "status": "waiting",
-      "current_price": 597.0,
-      "high": 597.0,
-      "low": 597.0,
-      "entry_price": 572,
-      "stop": 547,
-      "take_profit": 647,
-      "distance_pct": 4.1876046901172534,
-      "conditions_ok": true,
-      "condition_reasons": [],
-      "action": "買い入口572待ち",
-      "source": "history-close",
-      "asof": "2026-11-13",
-      "last_notified_status": "waiting",
-      "last_notified_at": "2026-11-15T23:52:32.963040+09:00",
-      "last_near_date": null
-    },
-    {
       "code": "7282",
       "name": "豊田合成",
       "kind": "watch",
@@ -72,12 +48,11 @@
       "source": "history-close",
       "asof": "2026-11-13",
       "last_notified_status": "waiting",
-      "last_notified_at": "2026-11-15T23:52:32.963040+09:00",
+      "last_notified_at": "2026-11-16T18:00:00+09:00",
       "last_near_date": null
     }
   ],
   "today_actions": [
-    "8766 東京海上ホールディングス：買い入口572待ち",
     "7282 豊田合成：買い入口1,035待ち"
   ]
 }
