@@ -1,29 +1,29 @@
 {
   "plan_id": "2026-11-15-2348",
-  "checked_at": "2026-11-16T18:00:00+09:00",
+  "checked_at": "2026-11-16T23:55:02.895634+09:00",
   "source": "eod",
-  "data_asof": "2026-11-13",
+  "data_asof": "2026-11-16",
   "market": {
     "regime": {
       "ticker": "1306.T",
-      "close": 415.5,
-      "sma": 402.5,
+      "close": 410.9,
+      "sma": 402.7,
       "sma_days": 200,
       "risk_on": true
     },
     "breadth": {
       "n": 2905,
       "low_sample": false,
-      "above_sma25_pct": 41.9,
-      "above_sma200_pct": 48.0,
-      "avg_ret5_pct": 4.92
+      "above_sma25_pct": 39.5,
+      "above_sma200_pct": 47.0,
+      "avg_ret5_pct": 2.07
     },
     "bank_sector": {
       "n": 77,
       "low_sample": false,
-      "above_sma25_pct": 28.6,
-      "above_sma200_pct": 81.8,
-      "avg_ret5_pct": 9.54
+      "above_sma25_pct": 16.9,
+      "above_sma200_pct": 70.1,
+      "avg_ret5_pct": 3.34
     }
   },
   "items": [
@@ -33,20 +33,20 @@
       "kind": "watch",
       "sector": "輸送用機器",
       "sector_color": "yellow",
-      "sector_above_sma25_pct": 45.8,
+      "sector_above_sma25_pct": 36.1,
       "status": "waiting",
-      "current_price": 1071.0,
-      "high": 1071.0,
-      "low": 1071.0,
+      "current_price": 1061.0,
+      "high": 1061.0,
+      "low": 1061.0,
       "entry_price": 1035,
       "stop": 985,
       "take_profit": 1185,
-      "distance_pct": 3.361344537815126,
+      "distance_pct": 2.4505183788878417,
       "conditions_ok": true,
       "condition_reasons": [],
       "action": "買い入口1,035待ち",
       "source": "history-close",
-      "asof": "2026-11-13",
+      "asof": "2026-11-16",
       "last_notified_status": "waiting",
       "last_notified_at": "2026-11-16T18:00:00+09:00",
       "last_near_date": null
