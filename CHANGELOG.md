@@ -8,6 +8,30 @@
 
 ---
 
+## 2026-11-16
+
+### Gemini Google Search Grounding（リアルタイムWeb検索）による上位候補の決算日・IR・悪材料の自動裏取りを実装（この変更）
+- **commit**: この変更（Gemini Google Search Grounding 実装）
+- **種別**: AI連携 / スクリーナー / 週次レビュー / ドキュメント
+- **変更**:
+  1. **`main8.py` に Stage 2.5（Gemini Google Search Grounding）を追加**:
+     - `_call_gemini_grounding()`: `tools: [{"google_search": {}}]` を用いてリアルタイムWeb検索を実行。JSONが直接抽出できない場合のみ検索ツールなしでJSON構造化する二段構成を採用し、429クォータ超過・通信失敗時は安全にスキップする。
+     - `ground_candidates_with_gemini()`: 一次選別（DeepSeek）の上位候補（最大 `ai.grounding_max_stocks=10` 件）について、株探・TDnet・企業IR等から「次回決算発表予定日」「直近決算・IR要点」「致命的悪材料」を調査し、`docs/ai_analysis/{date}_grounding.json` にキャッシュ保存。
+     - `apply_grounding_filter()`: yfinance で欠損していた決算日を `results`（および `docs/earnings.json`）へ補完し、基準日から `ai.earnings_block_days`（既定 `7` 暦日≒5営業日）以内に決算がある銘柄および致命的悪材料（`has_fatal_risk=True`）のある銘柄を機械的に `recommend` → `watch` へ格下げ。
+  2. **`back_tester/weekly_review.py` への統合**:
+     - `build_next_week_plan()` で `ground_candidates_with_gemini()` を呼び出し（同日キャッシュ再利用）、`決算:` / `Web確認IR:` / `Web懸念:` を候補行に注入。`_plan_system_prompt()` にも決算接近・悪材料銘柄を `avoid` へ回す指示を追加。
+  3. **設定・版管理の更新**:
+     - `docs/strategy_params.json` の `ai` セクションに `grounding_enabled: true`, `grounding_model: "gemini-2.5-flash"`, `grounding_max_stocks: 10`, `earnings_block_days: 7` を追加。
+     - `common/version.py` の `PROMPT_VERSION` を `"2026-11-16-1"` に更新。
+- **根拠・検証**:
+  - 2026-11-16 に東京海上ホールディングス（8766）の yfinance 決算日が `null` のまま 11/19（木）中間決算が迫っていた事例を受け、一次選別後の少数精鋭のみ Web 検索で決算日・悪材料を機械的に裏取りするハイブリッド設計を採用。
+  - `py_compile` とモックテスト（`_call_gemini_grounding` の二段JSON構造化、`apply_grounding_filter` による決算接近・悪材料の `recommend` → `watch` 格下げ、決算日補完、`weekly_review` のキャッシュ・プロンプト注入）をローカルで検証。
+- **影響・ロールバック**:
+  - `GEMINI_API_KEY` 未設定や無料枠429時は現行 DeepSeek 判定のままフォールバックし、日次バッチが止まることはない。無効化する場合は `strategy_params.json` の `ai.grounding_enabled` を `false` に変更するか `git revert`。
+- **関連**: `main8.py` / `back_tester/weekly_review.py` / `docs/strategy_params.json` / `common/version.py` / `PROJECT_STATUS.md` / `back_tester/README.md`
+
+---
+
 ## 2026-11-15
 
 ### 履歴差分・リスク上限・週次作戦キャッシュ/通知の不具合修正、過熱度lowエントリー指針と3,000円以下候補の統合、日中60分cronの整理（この変更）

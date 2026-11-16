@@ -34,11 +34,12 @@
 - 週次: 各取引 `trades[]` と `summary.score_versions/experiment_ids`、`weekly.html` の気づき欄、`results/weekly_review_{week}.md` 冒頭
 - 目的: 「どの週がv3（research_upside由来）の検証か」を後から追跡する
 
-**AIプロンプト（2026-11-15 更新）**
-- `PROMPT_VERSION = 2026-11-15-1`
+**AIプロンプト・Web裏取り（2026-11-16 更新）**
+- `PROMPT_VERSION = 2026-11-16-1`
 - 候補に**型サマリ**（直近3日以内の GC(20,60)/DC(5,25)/DC(20,60)/ダブルボトム/レンジ/カップ/フラッグ）を付与し、`型:` 行を注入
 - システムプロンプトに**過去検証メモ**＋**過熱度 low では反射的に深い `pullback_wait` にせず `breakout_chase`/浅い押し目を許容（取り逃がし防止）、moderate/strong/extreme は押し目・打診・見送りを徹底**する指針を反映
-- 週次プラン（`weekly_review.py`）の候補に **`picks_in_range`（3,000円以下レンジ推奨）** を統合し、標準口座（60万円・100株単位）で実行可能な3,000円以下銘柄を `top_pick` または `backups` に必ず含めるよう改善
+- **Gemini Google Search Grounding（Stage 2.5・2026-11-16 実装）**: 一次選別（DeepSeek）の後、上位最大10銘柄に対して Gemini API（`google_search` ツール・二段構成）で**次回決算発表日・直近決算内容・致命的悪材料**をリアルタイムWeb検索で裏取りし、yfinance で欠損していた決算日を補完、**決算7暦日以内または致命的悪材料のある銘柄は機械的に `recommend` → `watch` へ格下げ**（結果を `docs/ai_analysis/{date}_grounding.json` にキャッシュ）。`GEMINI_API_KEY` 未設定やクォータ制限時は DeepSeek 結果のまま安全にフォールバック
+- 週次プラン（`weekly_review.py`）の候補に **`picks_in_range`（3,000円以下レンジ推奨）** と上記 Grounding 裏取りを統合し、標準口座（60万円・100株単位）で実行可能な3,000円以下銘柄を `top_pick` または `backups` に必ず含めるよう改善
 
 **2026-11-15 修正・整理済みの項目**
 - `main8.py`:
@@ -219,11 +220,11 @@ flowchart LR
 - `verdict` は `recommend/watch/neutral/caution/avoid`。`entry_type`（`breakout_chase`/`pullback_wait`/`probe_only`/`wait`）。`reason`等は各60文字以内。
 - 応答の `code` を文字列正規化して候補プールと突合（`sanitize_ai_map`）。
 
-**保存**
-- `ai_analysis/{date}.json`（生キャッシュ）＋ `ai_strategy_latest.json`（銘柄別最新）。
+**保存・裏取り**
+- `ai_analysis/{date}.json`（生キャッシュ）＋ `ai_analysis/{date}_grounding.json`（Gemini Google Search Grounding の裏取り結果キャッシュ）＋ `ai_strategy_latest.json`（銘柄別最新）。
+- **Gemini Google Search Grounding（実装済み・2026-11-16）**: `ai.grounding_enabled=true`（既定 `gemini-2.5-flash`、上位 `grounding_max_stocks=10` 件、`earnings_block_days=7` 日）。`tools:[{"google_search":{}}]` を使い、JSON抽出できない場合のみ検索なし2段目で構造化する二段構成。yfinance の決算日欠損を補完し、決算接近・致命的悪材料を `recommend` から自動除外する。
 
 **検討中（未実装）**
-- **Gemini Google Search grounding**: `tools:[{googleSearch:{}}]`、引用=`groundingMetadata`、Gemini3系は月5,000クエリ無料。採用時は**Search Suggestions表示義務**＋**JSON構造化は二段構成推奨**。
 - **AI有界オーバーレイ**（総合=S+Δ、Δ∈{−10..+10}）: 設計済み・未実装。
 
 ---

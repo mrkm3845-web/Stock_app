@@ -1055,6 +1055,264 @@ def _call_gemini(user, system, params):
     return None
 
 
+def _call_gemini_grounding(user_prompt, system_prompt, params):
+    """Gemini API + Google Search Grounding（リアルタイムWeb検索）で候補の決算日・IR・悪材料を調査する。
+
+    仕様上の注意:
+      - Gemini の Google Search ツール有効時は responseMimeType='application/json' と同時指定すると
+        モデルによって 400 InvalidArgument となるため、Step 1 は検索付きテキスト応答として取得する。
+      - Step 1 のテキストから直接 JSON が抽出できれば1回の通信で完了し、抽出できない場合のみ
+        Step 2（検索なし・JSON強制）で構造化する二段構成とする。
+    """
+    key = os.environ.get("GEMINI_API_KEY")
+    if not key or OFFLINE:
+        return None
+    ai = (params or {}).get("ai") or {}
+    primary = ai.get("grounding_model") or "gemini-2.5-flash"
+    models = [primary]
+    for m in ("gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro"):
+        if m not in models:
+            models.append(m)
+
+    last_err = None
+    for model in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        payload = {
+            "systemInstruction": {"parts": [{"text": system_prompt}]},
+            "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
+            "tools": [{"google_search": {}}],
+            "generationConfig": {"temperature": 0.1},
+        }
+        for attempt in range(3):
+            try:
+                resp = requests.post(url, params={"key": key}, json=payload, timeout=120)
+                if resp.status_code in (500, 502, 503, 504):
+                    last_err = f"{resp.status_code} {resp.reason} ({model})"
+                    time.sleep(min(2 ** attempt, 10))
+                    continue
+                if resp.status_code == 429:
+                    last_err = f"429 quota/rate limit ({model})"
+                    print(f">> Gemini Grounding ({model}) クォータ/レート制限のためスキップします")
+                    break
+                if resp.status_code == 400:
+                    last_err = f"400 {resp.text[:180]} ({model})"
+                    break
+                resp.raise_for_status()
+                data = resp.json()
+                cand = (data.get("candidates") or [{}])[0]
+                parts = (cand.get("content") or {}).get("parts") or []
+                text = "\n".join(p.get("text", "") for p in parts if isinstance(p, dict) and p.get("text"))
+                gmeta = cand.get("groundingMetadata") or {}
+                queries = gmeta.get("webSearchQueries") or []
+                sources = []
+                for ch in gmeta.get("groundingChunks") or []:
+                    web = (ch or {}).get("web") or {}
+                    if web.get("uri") or web.get("title"):
+                        sources.append({"title": web.get("title"), "uri": web.get("uri")})
+
+                parsed = _extract_json(text)
+                if parsed is None and text.strip():
+                    # Step 2: 検索結果テキストを JSON へ構造化（検索ツールなし・responseMimeType指定）
+                    fmt_payload = {
+                        "systemInstruction": {
+                            "parts": [{"text": "与えられた調査メモを、指定されたJSON形式（{\"stocks\":[...]}）のみに変換して返してください。"}]
+                        },
+                        "contents": [{"role": "user", "parts": [{"text": text}]}],
+                        "generationConfig": {"temperature": 0.0, "responseMimeType": "application/json"},
+                    }
+                    fmt_resp = requests.post(url, params={"key": key}, json=fmt_payload, timeout=60)
+                    if fmt_resp.status_code == 200:
+                        fmt_cand = (fmt_resp.json().get("candidates") or [{}])[0]
+                        fmt_parts = (fmt_cand.get("content") or {}).get("parts") or [{}]
+                        parsed = _extract_json(fmt_parts[0].get("text", "") or "")
+
+                if isinstance(parsed, dict) and isinstance(parsed.get("stocks"), list):
+                    return {
+                        "model": model,
+                        "queries": queries,
+                        "sources": sources[:20],
+                        "stocks": parsed["stocks"],
+                    }
+                last_err = f"{model} Grounding JSON抽出失敗 (len={len(text)})"
+            except Exception as e:
+                last_err = f"{e} ({model})"
+                break
+        print(f">> Gemini Grounding ({model}) 失敗: {last_err}")
+    return None
+
+
+def ground_candidates_with_gemini(candidates, base_date, params, force_ai=False):
+    """上位候補（最大 grounding_max_stocks 件）の次回決算発表日・直近決算内容・悪材料をGoogle検索で裏取りする。
+
+    返り値: {code: {next_earnings_date, last_earnings_note, bad_news, has_fatal_risk}} の辞書（失敗時は {}）。
+    """
+    ai = (params or {}).get("ai") or {}
+    if not ai.get("grounding_enabled", True) or OFFLINE:
+        return {}
+    if not os.environ.get("GEMINI_API_KEY"):
+        return {}
+    if not candidates:
+        return {}
+
+    os.makedirs(AI_ANALYSIS_DIR, exist_ok=True)
+    cache_file = os.path.join(AI_ANALYSIS_DIR, f"{base_date}_grounding.json")
+    max_n = int(ai.get("grounding_max_stocks", 10) or 10)
+    targets = []
+    seen = set()
+    for c in candidates:
+        code = str(c.get("code") or "").strip()
+        if not code or code in seen:
+            continue
+        seen.add(code)
+        targets.append({"code": code, "name": c.get("name") or "", "earnings_date": c.get("earnings_date")})
+        if len(targets) >= max_n:
+            break
+
+    if not targets:
+        return {}
+
+    cached_by_code = {}
+    if os.path.exists(cache_file) and not force_ai:
+        try:
+            with open(cache_file, "r", encoding="utf-8") as f:
+                cached_doc = json.load(f)
+            for item in (cached_doc or {}).get("stocks") or []:
+                if isinstance(item, dict) and item.get("code"):
+                    cached_by_code[str(item["code"]).strip()] = item
+            if all(t["code"] in cached_by_code for t in targets):
+                print(f">> 当日のGemini Groundingキャッシュを再利用: {cache_file}（{len(cached_by_code)}銘柄）")
+                return cached_by_code
+        except Exception:
+            pass
+
+    lines = [
+        f"基準日: {base_date}",
+        "以下の日本株について、Google検索（株探・TDnet適時開示・Yahoo!ファイナンス・企業IR等）を使い、",
+        "1) 次回の決算発表予定日（YYYY-MM-DD。すでに直近で発表済みで次回日程が未定、または基準日より前の日付しかない場合は、その次の四半期予定日が分かればYYYY-MM-DD、不明ならnull）",
+        "2) 直近1〜2ヶ月の決算発表結果や業績修正・増配・自社株買いの要点（last_earnings_note、40文字以内）",
+        "3) 直近1ヶ月の致命的な悪材料（下方修正・不祥事・情報漏洩・公募増資・大幅減益など。無ければnull）",
+        "を調べてください。",
+        "",
+        "【調査対象銘柄】",
+    ]
+    for t in targets:
+        ed_txt = t["earnings_date"] or "未取得"
+        lines.append(f"- {t['code']} {t['name']}（手元の決算日データ: {ed_txt}）")
+
+    system_prompt = (
+        "あなたは日本株の企業調査アナリストです。Google検索で最新の決算発表予定日と適時開示・IRニュースを確認し、"
+        "必ず以下のJSON形式のみを出力してください（Markdownコードブロックや説明文は不要）:\n"
+        '{"stocks":[{"code":"銘柄コード4桁","next_earnings_date":"YYYY-MM-DDまたはnull",'
+        '"last_earnings_note":"直近決算やIRの要点(40文字以内)","bad_news":"悪材料(無ければnull)",'
+        '"has_fatal_risk":false}]}'
+    )
+    print(f">> Gemini Google Search Grounding で上位候補 {len(targets)} 銘柄の決算日・IRを裏取り中...")
+    res = _call_gemini_grounding("\n".join(lines), system_prompt, params)
+    if not res or not res.get("stocks"):
+        return cached_by_code
+
+    date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    for item in res["stocks"]:
+        if not isinstance(item, dict) or not item.get("code"):
+            continue
+        code = str(item["code"]).strip()
+        ned = str(item.get("next_earnings_date") or "").strip()
+        item["next_earnings_date"] = ned if date_re.match(ned) else None
+        item["has_fatal_risk"] = bool(item.get("has_fatal_risk"))
+        cached_by_code[code] = item
+
+    save_doc = {
+        "date": base_date,
+        "generated_at": _jst_now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "model": res.get("model"),
+        "queries": res.get("queries") or [],
+        "sources": res.get("sources") or [],
+        "stocks": list(cached_by_code.values()),
+    }
+    try:
+        with open(cache_file, "w", encoding="utf-8") as f:
+            json.dump(save_doc, f, ensure_ascii=False, indent=2)
+        print(f">> Gemini Grounding 結果を保存: {cache_file}（{len(cached_by_code)}銘柄）")
+    except Exception as e:
+        print(f">> ⚠️ Gemini Grounding 保存失敗: {e}")
+    return cached_by_code
+
+
+def apply_grounding_filter(results, ai_map, range_ai_map, grounding_by_code, base_date, params):
+    """Grounding（Web検索）で判明した決算日・悪材料を銘柄データとAI判定へ反映する。
+
+    1. yfinance で欠損していた次回決算日（next_earnings_date）を補完する。
+    2. 基準日から earnings_block_days（既定7暦日≒5営業日）以内に決算発表がある銘柄は、
+       verdict='recommend' を機械的に 'watch' へ格下げし、理由に決算日を明記する（決算またぎ防止）。
+    3. has_fatal_risk=True（致命的な悪材料あり）の銘柄も 'recommend' から 'watch' へ格下げする。
+    """
+    if not grounding_by_code:
+        return
+    ai_cfg = (params or {}).get("ai") or {}
+    block_days = int(ai_cfg.get("earnings_block_days", 7) or 7)
+
+    # 1. 全銘柄レコード（results）の決算日を補完
+    for r in results or []:
+        code = str(r.get("code") or "")
+        g = grounding_by_code.get(code)
+        if not g:
+            continue
+        ned = g.get("next_earnings_date")
+        if ned:
+            du = _days_until(ned, base_date)
+            # 基準日以降（未来または当日）の決算日なら補完・上書き
+            if du is not None and du >= 0:
+                r["earnings_date"] = ned
+
+    # 2. AIマップ（全体・レンジ）の判定と材料メモを更新
+    downgraded = 0
+    for amap in (ai_map, range_ai_map):
+        if not isinstance(amap, dict):
+            continue
+        for s in amap.get("stocks") or []:
+            code = str(s.get("code") or "")
+            g = grounding_by_code.get(code)
+            if not g:
+                continue
+            ned = g.get("next_earnings_date")
+            ir_note = str(g.get("last_earnings_note") or "").strip()
+            bad = str(g.get("bad_news") or "").strip()
+            if bad.lower() in ("none", "null", "なし", "特になし"):
+                bad = ""
+
+            if ir_note and ir_note.lower() not in ("none", "null", "不明"):
+                cur_note = str(s.get("news_note") or "").strip()
+                if not cur_note or cur_note == "要確認":
+                    s["news_note"] = f"[Web確認] {ir_note}"
+                elif ir_note not in cur_note:
+                    s["news_note"] = _truncate_text(f"{cur_note} / [Web確認] {ir_note}", 90)
+
+            if str(s.get("verdict")) != "recommend":
+                continue
+
+            if ned:
+                du = _days_until(ned, base_date)
+                if du is not None and 0 <= du <= block_days:
+                    note = f"Web検索で決算発表接近（{ned}・あと{du}日）を確認したため様子見へ格下げ"
+                    s["verdict"] = "watch"
+                    s["earnings_blocked"] = True
+                    reason = str(s.get("reason") or "").strip()
+                    s["reason"] = (reason + " / " + note) if reason else note
+                    downgraded += 1
+                    continue
+
+            if g.get("has_fatal_risk") and bad:
+                note = f"Web検索で懸念材料（{bad}）を確認したため様子見へ格下げ"
+                s["verdict"] = "watch"
+                s["risk_blocked"] = True
+                reason = str(s.get("reason") or "").strip()
+                s["reason"] = (reason + " / " + note) if reason else note
+                downgraded += 1
+
+    if downgraded:
+        print(f">> Gemini Grounding: 決算接近・懸念材料により推奨から格下げ {downgraded} 件")
+
+
 def call_ai(pool, fund_map, news_map, params, base_date=None, sector_colors=None):
     ai = params.get("ai", {})
     max_picks = ai.get("max_picks", ai.get("weekly_top_picks", 5))
@@ -1994,10 +2252,23 @@ def main():
         news_pool = list({r["code"]: r for r in (pool + range_pool)}.values())
         news_map = fetch_news_for_pool(news_pool, params)
         ai_map = analyze_pool_with_ai(pool, fund_map, news_map, params, date, args.force_ai, "", sector_colors)
-        if ai_map:
-            update_ai_latest(ai_map, date, news_map)
         if range_pool:
             range_ai_map = analyze_pool_with_ai(range_pool, fund_map, news_map, params, date, args.force_ai, "_range", sector_colors)
+
+        # Stage 2.5: Gemini Google Search Grounding で推奨・上位候補の次回決算日・IR・悪材料を裏取り
+        pool_by_code = {r["code"]: r for r in (pool + range_pool)}
+        ground_targets = []
+        for amap in (ai_map, range_ai_map):
+            if isinstance(amap, dict):
+                for s in sorted(amap.get("stocks") or [], key=lambda x: (x.get("verdict") != "recommend", _ai_rank(x) or 999)):
+                    c = s.get("code")
+                    if c and c in pool_by_code:
+                        ground_targets.append(pool_by_code[c])
+        grounding_by_code = ground_candidates_with_gemini(ground_targets, date, params, force_ai=args.force_ai)
+        if grounding_by_code:
+            apply_grounding_filter(results, ai_map, range_ai_map, grounding_by_code, date, params)
+        if ai_map:
+            update_ai_latest(ai_map, date, news_map)
 
     # 決算日はスキャン時に取得した info から抽出済み（追加通信なし）。プール限定でなく全銘柄を対象にする。
     earnings_map = {r["code"]: r["earnings_date"] for r in results if r.get("earnings_date")}

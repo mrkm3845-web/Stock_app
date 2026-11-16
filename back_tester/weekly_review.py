@@ -1630,6 +1630,10 @@ def _plan_candidate_lines(cands):
             parts.append(f"型:{c.get('pattern_summary')}")
         if c.get("earnings_date"):
             parts.append(f"決算:{c['earnings_date']}")
+        if c.get("web_ir"):
+            parts.append(f"Web確認IR:{c['web_ir']}")
+        if c.get("web_bad"):
+            parts.append(f"Web懸念:{c['web_bad']}")
         if c.get("reason"):
             parts.append(f"AI理由:{c['reason']}")
         if c.get("news_note"):
@@ -1648,6 +1652,7 @@ def _plan_system_prompt():
         "『来週の作戦』を練る。毎日のAI順位より踏み込み、候補を深掘りして『来週一番のおすすめ（top_pick）』を1つ選び、"
         "入口・OCO（利確指値/損切逆指値）・想定シナリオ・リスクを具体的に示す。"
         "【重要】標準口座（参考資金60万円・100株単位・最大3銘柄）で実際に発注できるよう、top_pick または backups には必ず3,000円以下（[3000円以下レンジ推奨]）の実行可能な銘柄を含めること。"
+        "また『決算:』『Web確認IR:』『Web懸念:』が記載されている場合は必ず確認し、決算発表が5営業日以内に迫っている銘柄や致命的な悪材料がある銘柄は top_pick / backups に選ばず avoid に回すこと。"
         "イナゴ買い・高値掴みの防止を最優先し、過熱が強い銘柄は追いかけず押し目・打診に留める一方、過熱が軽度でトレンド・材料が強い銘柄は深い押し目待ちにしすぎて取り逃がさないようにする。"
         "答え合わせ結果には必ずしも従わなくてよいが、同じ失敗を繰り返さない工夫を示す。"
         "文章は投資初心者にも分かる平易な日本語で書き、専門用語（RSI、25日乖離、ATR、PBR等）には括弧で短い意味を添える。"
@@ -1699,6 +1704,33 @@ def build_next_week_plan(params, summary=None, feedback=None, force_plan=False):
         print(">> 来週の作戦: DEEPSEEK_API_KEY 未設定のためスキップ（テンプレ作戦を表示）")
         return None
 
+    try:
+        from main8 import _call_deepseek, _call_gemini, ground_candidates_with_gemini  # 遅延import（重い依存を避ける）
+    except Exception as e:
+        print(f">> 来週の作戦: AIモジュールの読み込みに失敗: {e}")
+        return None
+
+    # Gemini Google Search Grounding で候補の次回決算日・IR・悪材料を裏取り（当日キャッシュがあれば再利用）
+    try:
+        grounding_by_code = ground_candidates_with_gemini(cands, based, params, force_ai=force_plan)
+    except Exception as e:
+        print(f">> 来週の作戦: Gemini Grounding スキップ ({e})")
+        grounding_by_code = {}
+
+    if grounding_by_code:
+        for c in cands:
+            g = grounding_by_code.get(str(c.get("code") or ""))
+            if not g:
+                continue
+            if g.get("next_earnings_date"):
+                c["earnings_date"] = g["next_earnings_date"]
+            ir_note = str(g.get("last_earnings_note") or "").strip()
+            if ir_note and ir_note.lower() not in ("none", "null", "不明"):
+                c["web_ir"] = ir_note
+            bad = str(g.get("bad_news") or "").strip()
+            if bad and bad.lower() not in ("none", "null", "なし", "特になし"):
+                c["web_bad"] = bad
+
     ctx_lines = ["【直近の答え合わせ（参考）】"]
     if summary:
         ctx_lines.append(
@@ -1713,12 +1745,6 @@ def build_next_week_plan(params, summary=None, feedback=None, force_plan=False):
     ctx_lines.append("")
     ctx_lines.append("【候補銘柄】")
     user = "\n".join(ctx_lines) + "\n" + _plan_candidate_lines(cands)
-
-    try:
-        from main8 import _call_deepseek, _call_gemini  # 遅延import（重い依存を避ける）
-    except Exception as e:
-        print(f">> 来週の作戦: AIモジュールの読み込みに失敗: {e}")
-        return None
 
     print(f">> 来週の作戦: AIで生成中（候補 {len(cands)} 銘柄 / provider={provider}）")
     system = _plan_system_prompt()

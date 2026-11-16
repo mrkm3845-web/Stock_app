@@ -213,6 +213,7 @@ CI は [`weekly_review.yml`](../.github/workflows/weekly_review.yml) が**毎週
 
 ### 8-6. 来週の作戦（AI深掘り）
 - 金曜大引け後の最新候補（`docs/recommendations.json` の全体推奨 `picks` ＋ 3,000円以下レンジ推奨 `picks_in_range` ＋ `docs/history/latest.json.gz` のスコア上位プール）を、**毎日のAI順位より踏み込んで**深掘りし、**来週一番のおすすめ（top_pick）**・補欠・回避・入口/OCO（利確/損切）・シナリオ・リスクを生成する。標準口座（60万円・100株単位）で発注できるよう、`top_pick` または `backups` には必ず3,000円以下の銘柄を含める。
+- `main8.ground_candidates_with_gemini()` を呼び出し（`docs/ai_analysis/{date}_grounding.json` の当日キャッシュがあれば再利用）、次回決算発表日・直近決算IR・悪材料を `決算:` / `Web確認IR:` / `Web懸念:` として注入する（決算5営業日以内や悪材料銘柄は `avoid` へ誘導）。
 - ペルソナ（`common/persona.py`）を毎日のAIプロンプトと共通で前置。答え合わせ結果（`summary`）と `weekly_feedback` も入力に含める（必ずしも従う必要はない）。
 - 出力: `docs/weekly/plan.json`（`score_version` / `prompt_version` を刻印）。`docs/weekly.html` の**最下段**「来週の作戦（AI深掘り）」に表示し、週次Discord通知にも `top_pick` と `market_view` を含める。
 - **フォールバック**: APIキー未設定・失敗時は生成せず、実績からの自動補正（テンプレ）を表示。
