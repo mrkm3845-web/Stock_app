@@ -144,10 +144,10 @@
     "trailing_plan": "1550突破でトレール、1470割れ撤退",
     "sector": "サービス業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 40.9,
+    "sector_above_sma25_pct": 44.1,
     "sector_n": 320,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -1349,48 +1349,12 @@
     "trailing_plan": "5319割れで警戒、5000割れ撤退",
     "sector": "その他製品",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 34.1,
+    "sector_above_sma25_pct": 37.8,
     "sector_n": 82,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
-    "news_headlines": [
-      {
-        "title": "タカラトミーアーツより「ポケピース アイドルマイクチャーム」が12月5日発売。11月16日よりPOP UP STOREで先行発売",
-        "source": "Nintendo DREAM WEB",
-        "domain": "ndw.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE9ZUW5RUjJqUXBVemxCQTVPR2RmLS1abnJMVlBlRHR5S25DYktwWGFHVWp2OEZLU25OMnNlTG1uTTJoQnRWd296MVhXYTVic2hGbkZsckR3?oc=5"
-      },
-      {
-        "title": "【アナリスト予想】タカラトミー、27年3月期経常予想。対前週1.4%下降。(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOcnRsdHl2Q091YVppNWNjcGpiM0wwOGhzMFRsZDEwZTdRZXlQay1MV0pYZEtuQWFfR2ZmVUh6ejc2eU1WQkJlQ1NMc2hib0JvanZSM1hZcXBDeWV1amMxUXFqSXpXSW51cFlMVVl1WnBjSzBaLW9EMnlwd241Zm5lbUtCbmxOaUE?oc=5"
-      },
-      {
-        "title": "【出品予定】2026年11月17日(火)は、ガチャガチャ・食玩・コレクショントイ15タイトルの出品予定です!!",
-        "source": "Howl.Link",
-        "domain": "t.co",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiO0FVX3lxTE5UYWZPQ2dTMmRRM1lWZTQ2WVRqcGxTaWpqR3B6WkJMd1VHQnU4TGVSYldJVVdFQ0ZQNHlZ?oc=5"
-      },
-      {
-        "title": "Duel Masters Pure PLAY'S 【漫画】やよいれき 【ストーリー原案/監修】野島央州（タカラトミー）",
-        "source": "週刊コロコロコミック",
-        "domain": "corocoro.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE4xX3FtX0Q2MXhaZjZVNDNqcVNzU3ROYndNX05OdDhtRmtJSFdEUnEyRDRjM1BVSlFLZE8xUlBIdWVQZHpnMl9lWGlkbnpydEY0WmJKcHdZaWhHN1A5RHE0b1BpYw?oc=5"
-      },
-      {
-        "title": "【アナリスト評価】タカラトミー、レーティング強気を継続、目標株価6,200円に引上げ（日系中堅証券）(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNSjFRNGRCQ3pHcGJVWThxYnBKRjYwOG91YWtJa0JYQ2VpbnpTTVZ0VGhDV2JCcDNVSVhkRWpKRmg0bmFyLXktR3N1cDI3Y2JyRHkwZlkya2ZZLUFNdk9fcTNXTkdCVlk4S3FPbVdKUXBJS3MzN09TMWRsV1FkaTYtUmNLcVNnUk0?oc=5"
-      }
-    ]
+    "news_headlines": []
   },
   "7931": {
     "code": "7931",
@@ -6329,25 +6293,18 @@
     "trailing_plan": "3200超えでトレール、終値5日線割れ撤退",
     "sector": "食料品",
     "sector_color": "green",
-    "sector_above_sma25_pct": 67.0,
+    "sector_above_sma25_pct": 60.9,
     "sector_n": 115,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
         "title": "かどや製油争奪戦、大株主の三井物産がJ－オイル案支持－関係者",
-        "source": "Bloomberg",
+        "source": "Bloomberg.com",
         "domain": "bloomberg.com",
         "date": "2026-11-16",
         "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE1ua1MwbGlPdlJYbV85QUpnaENfRW5HM2tUczJfbHBEX2FwNVpmZlZTWHVqWnBvYXY4NHcwUm1WMFlsR2E1elhZZWwzZjlybnQtbklSWG5HQ1J6blVsa3RpN1JDMjlmelA3d3Nlc0NhcEJiNng5TjlV?oc=5"
-      },
-      {
-        "title": "かどや製油[2612]：半期報告書－第70期(2026/04/01－2027/03/31) (有価証券報告書) ：日経会社情報DIGITAL",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBvSml1UEFQMWhsSHY1eFAtaEljYWw3X3JuNkJ3bEVBRElqSlAwN3JTam1kU1VMNlRSVVM0X1Rua1Z1VWJuSkREQTRDMTc4cmRtRm9WWW5pQTI1Umc0YkVuS3BWN09ZWDB6dE84Mw?oc=5"
       },
       {
         "title": "かどや製油で前代未聞の買収合戦《三井、三菱、創業家が…》／「モデルプレス」運営会社が行う“怪しすぎるタイアップ営業“／エヌビディア不倫報道の裏側…「週刊文春」企業インサイドリポート【11月8日～11月14日】",
@@ -6369,6 +6326,13 @@
         "domain": "finance.yahoo.co.jp",
         "date": "2026-11-12",
         "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5zbnVDWjVIVmZnQ2tOZlRzREVLdmthN2pqQWhadXljUG1oZE9pUHpMdXZncVVWLUZTYUo4TnIzMWRwX19jbC1La2pfVVJuVi1yUnlWb1gwbm9DbFJhUG1zYzRuXzR1V0t6UGF2V1ZhdHJhbzZWZGc?oc=5"
+      },
+      {
+        "title": "【かどや製油】買収提案の経緯やインテグラル･創業家株主によるTOB賛同理由を説明",
+        "source": "食品産業新聞社ニュースWEB",
+        "domain": "ssnp.co.jp",
+        "date": "2026-11-12",
+        "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTE02a3VneWpLakJnTmxIaERSN0NwYjlVNEdLSTU5NXNRZVZQYVFHaDNsRWwxUmZ5WS0xd3hURzM1Y0llTy1DZWUwNXRn?oc=5"
       }
     ]
   },
@@ -6759,18 +6723,18 @@
     "trailing_plan": "6718割れで調整入り警戒",
     "sector": "卸売業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 40.1,
+    "sector_above_sma25_pct": 43.6,
     "sector_n": 257,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
         "title": "本日の【上場来高値更新】 Ｆ＆ＬＣ、ハピネットなど45銘柄",
         "source": "株探",
-        "domain": "s.kabutan.jp",
+        "domain": "kabutan.jp",
         "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9lRklnd1NrWE4zYlpWRmplS2dtMlVGN0JqOHZjSDlhLTFNN0R3NlcxUVg4dkxJeGQ3SjZUM1J6RTE1QWxUYjB5cXU0TUpvM0FZN0E?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE8wVzFCSjVJLXF3QkJaVDFHajlFOXgzTWRMaTkzWHBPY0VmNVQ1QjRibnYxN243SnNGUzQwOUVNMGNhTU5yYy1MN0M5Y1JES2VjbXlXLWZGZmU2SkFzSnplRA?oc=5"
       },
       {
         "title": "【カプセルトイ関連株】Ｘトレンド入りで１９６０億円市場に再脚光、ハピネットやバンダイナムコなど６社に商機",
@@ -6780,11 +6744,18 @@
         "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBybVFtdlJWcEdDNF96UHRFd29Ja3VqRE02bjBYOENTazhhLWNuNE1oc2trNkFTY0RLVF9jeGpGamtDMEJ1VW5YcFk5dk5jYlhIYmF6bQ?oc=5"
       },
       {
-        "title": "今週の【上場来高値銘柄】トリドール、ゼンショＨＤ、ハピネットなど54銘柄",
-        "source": "株探",
-        "domain": "kabutan.jp",
+        "title": "今週の【上場来高値銘柄】トリドール、ゼンショＨＤ、ハピネットなど54銘柄(株探ニュース)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
         "date": "2026-11-14",
-        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE81cE5aMjFzc3p5YTZ0UzFMeE1lX2RsaEUyVFE3RXlzc2NXUEJhNE5panZmV1FIZEU4RS16WndNT04wSHo1TG1hYjRCcjRzX1RMTzM3Tjk4Si0xaWp0NkdYbg?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOaGFhSGJ0b1dqbHgxNThhM0ZkaFM5NWVRNGN6MVA3VzdFVnZkSzhpb1JfdXJ2VkJTdzZMUGRmeWZJaWxXbGhONW9hcjdFVGJ3NGtLRzJXbEdQVkFuMnk0QTItVjlNSk5weWoxUXREVDVzUkNTMzBldmt2SExRSFlUcVZmYVk1ckU?oc=5"
+      },
+      {
+        "title": "今週の【上場来高値銘柄】トリドール、ゼンショＨＤ、ハピネットなど54銘柄",
+        "source": "ライブドアニュース",
+        "domain": "news.livedoor.com",
+        "date": "2026-11-14",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE56ZFBBV2FIX1V1MXpaN2dKTVVjNXM0dmVmWjlPTVFSd0NQa1RhUlFqNmc1blF2NzNQekRoQ18xLUQyWFFya3hvT2tnQzRjX0x1a2VPWVVEazNNeEdQTnhr?oc=5"
       },
       {
         "title": "TVアニメ「とある暗部の少女共棲」Blu-ray＆DVD 2027年3月31日(水)より発売!",
@@ -6792,13 +6763,6 @@
         "domain": "mantan-web.jp",
         "date": "2026-11-14",
         "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE80Z3NwcFNqanR2VUlFOGdEREtKbkJtaWtGN0E2bUZVd0RDQVhfTzJMbzU2TG5jSThuaDZ6UVRmV09QbVo0OFRYa09kd2xkMjd6dEhObmZGdnlUN1ZmaGF3S010TlNScmJFLVRQU2E3T1JnekNrb1E?oc=5"
-      },
-      {
-        "title": "【ゲームエンタメ株概況(11/13)】アカツキとハピネットが高値更新 「SAKAMOTO DAYS」の大ヒットで好決算のエイベックスは大幅続伸 業績予想減額のKLabは大幅続落",
-        "source": "gamebiz【ゲームビズ】",
-        "domain": "gamebiz.jp",
-        "date": "2026-11-13",
-        "url": "https://news.google.com/rss/articles/CBMiREFVX3lxTE5LMGdOaWoybW5UdWluYWdoOFA5ZkhoUnlGYnA5MzNZNjlyWW1CeGEyZngtUTF6NzJ0N0I1ZTMzWUViVF9Q?oc=5"
       }
     ]
   },
@@ -7946,10 +7910,10 @@
     "trailing_plan": "12200割れ注意、押し目待ち",
     "sector": "サービス業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 40.9,
+    "sector_above_sma25_pct": 44.1,
     "sector_n": 320,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -8046,7 +8010,7 @@
     "sector_above_sma25_pct": 64.5,
     "sector_n": 265,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -8102,14 +8066,14 @@
     "trailing_plan": "4300で一部利確、5日線割れ撤退",
     "sector": "情報・通信業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 36.6,
+    "sector_above_sma25_pct": 33.2,
     "sector_n": 328,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
-        "title": "日経エンタメ株指数、MIXIを採用 初の定期見直し",
+        "title": "日経エンタメ・コンテンツ株指数、MIXIを採用 初の定期見直し",
         "source": "日本経済新聞",
         "domain": "nikkei.com",
         "date": "2026-11-16",
@@ -8258,48 +8222,12 @@
     "trailing_plan": "7020突破で検討、6791割れ撤退",
     "sector": "医薬品",
     "sector_color": "green",
-    "sector_above_sma25_pct": 71.1,
+    "sector_above_sma25_pct": 63.2,
     "sector_n": 38,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
-    "news_headlines": [
-      {
-        "title": "治癒切除不能な進行・再発胃がん治療薬「TAK-921」 厚労省が先駆的医薬品指定 武田薬品",
-        "source": "医薬通信社",
-        "domain": "iyakutsushinsha.com",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMi1wJBVV95cUxQbUQ2VlV5T3lNM2g2MEtxOENUS0xMT1ZNR2VLNHI4bFNwQTBkVFp2UFZibTVNdHpnY1lYblZFa1lheXdVamM0UGZlMlh4eFVpVWc2dHdUNXgwOFRSdVBFb01Hc0hBZXA4T3c2RkM2MkVSQWktNnBHUEx3UDlmTlhvZGVLMFo1bThDd3MyOTFSZHJJQkxOSnlaRGJRYmN4WGtuekw1RER0bV9INlBILWwzNk5feDVYV01kbnVQUWF0ODFzTGZnWHpLQjhXS0szQmNQeFB3MXNBd0p6V3Jud1ZITkxjTVJSV2JXb0hsYmNrbS0wY0lyWDE2OG1fdGFEM3JDN0lraW14RDA0QVhKQlVXQl9TUGlRNENqSllhcHNEQkhHRjhiQ1dPeUVad0ljZGhlY29BdmY3TGVnN3ZkTlBKVnRkQ2ppU3JfUFFVMU9jcUlWLVl6eWtZ?oc=5"
-      },
-      {
-        "title": "アルコタツグ タバテカンを先駆的薬指定 厚労省、武田のCLDN18.2ADC | 日刊薬業 - 医薬品産業の総合情報サイト",
-        "source": "日刊薬業",
-        "domain": "nk.jiho.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE83ZWVYdjJ5bVFHeVVhNWVzWmdhNjFpMTRmSGpuc2w2eW9ta0gxRlpjVDBEdllIRjFmWDBjOVVMbGFGTTdkTzY1VA?oc=5"
-      },
-      {
-        "title": "葉酸受容体α陽性のプラチナ製剤、抵抗性再発卵巣がん治療薬「エラヒア」発売 武田薬品",
-        "source": "医薬通信社",
-        "domain": "iyakutsushinsha.com",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMi1gJBVV95cUxQcUhDUlYzSVBxb3Q0Yi1Hd1ZqTVJMaHdXTHdodzQwcHNjUzhGZFVsazNEUkQ5dFc1dmdkakZhV3JSbFZmSktfVzRkdnZCTi10UVdtMG0wVE5Bd21zdFNZVklHWmZWc0lBVkppc2dfWVpIcHJySnFGRkQ3dHRyOUlBNjJ0YlM3bnIzMUZ6dmNiX25xTU1XWGIxbzBIR0NjZGtOcUplaG5RVUg1TGxya194Uk9sWXhMcjlyTDVZSEszODJfYWl5WUFTVFBOX0dlUnUyWEgySWExbTQxcEEwX25iY19Od04zYUVkb1lHa3k2bm1SU3o5YWtFdnhWZ0wwQm9BRDItb0VHbXRUZFJ2eE8wdXVyOFFxbXN1WXdqSmhkNGtJM1pJb080VTVNa1U5eXE4NThfNC1CRW1RRV9GVWg0dWFHVUNsRFRtd2JlOGlENTRBeGZqYnc?oc=5"
-      },
-      {
-        "title": "｢ディフェンシブ｣だけじゃない！注目の製薬3銘柄に重要な魅力",
-        "source": "四季報オンライン",
-        "domain": "shikiho.toyokeizai.net",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE1ycEZMSGdacjdYTUlOXzVUU2UxTEZKZ2lTOUcxcE5TYm0wRVpQU2Z1SUgwaVhSbkhPTE1USG95TXV4bjhBY05nNDJ5X3NsMTFSd0NXU1MtWQ?oc=5"
-      },
-      {
-        "title": "ナルコレプシータイプ1治療薬「オベポレクストン」 日本薬学会医薬化学部会賞受賞 武田薬品",
-        "source": "医薬通信社",
-        "domain": "iyakutsushinsha.com",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMi2wJBVV95cUxNak95UnNicU9RckNfck1KR3lMYWFIM2lhRUR5dlpuRDVuYzdsZkdzRll3cnZQbFhGUXhkWFFqbmRrZDdiZHAwM2lMb2I2VklTZ2ttNzBrdHprYjJNNkJMZTNGTzBoOU1ZSHZ3ekF2VkJ6cmFIbWplel9fYU5NYjJOOWVNUktHOUtuUk1DenVjZjh3dzE0N1g2Wm9UVlJuTk9PYWI4QmhOU1RNUVhpTGNRTEh6alh0LUhBblBWTDA2b1lKVTVuMFZSXzg5UDl3VGNNejdZOHkyeXNUeGF4TnJJbUxRVVVxSGUwYWl5dnlJR1ZoalFlRUFObS1XRmdrdzR1alZhbmh2R3ltVFc1M3YyQTREamhSRWozVE5LSXdFa1lKNnVNbGpWM3dnRWVTOWFvd3cxMmpYTG5fNUh3VkZBX2pmWklOeGhBN2tlaFRELXd6Sk43NV9XLTJjbw?oc=5"
-      }
-    ]
+    "news_headlines": []
   },
   "3399": {
     "code": "3399",
@@ -8351,16 +8279,9 @@
     "sector_above_sma25_pct": 64.5,
     "sector_n": 265,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
-      {
-        "title": "「この時代仕方ない」「”無印”も情報漏えいしてたんだ」街の声も諦めムード 最大2726万件流出の可能性…「無印良品」展開の社長が会見で謝罪 「リスト型攻撃」で新たに約27万件の流出可能性…どんな攻撃？",
-        "source": "Excite エキサイト",
-        "domain": "excite.co.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5mTldsWEVZdEhHenBKUEZVNFE0RUtaX09uem1XeEx6UUd1dFF4c0E5OU95VFFzeDE3endrVHlKcVIxeGktY0E3LXNkN21FZG9IRExmSVdORENCYlVPTWtCUThvakQyOExzSFRCSG5R?oc=5"
-      },
       {
         "title": "「この時代仕方ない」「”無印”も情報漏えいしてたんだ」街の声も諦めムード 最大2726万件流出の可能性…「無印良品」展開の社長が会見で謝罪 「リスト型攻撃」で新たに約27万件の流出可能性…どんな攻撃?（FNNプライムオンライン）",
         "source": "Yahoo!ニュース",
@@ -8388,6 +8309,13 @@
         "domain": "nishinippon.co.jp",
         "date": "2026-11-15",
         "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE9ycERTS01tZFBjekpfQ1RYZExNZF9hQ2FJWHFlM0lkdFVRYmFwT2tNX0dRRHdPZEp6d1VlUXlmeHUyTzJlTjVLUk93VDVsQzJUd1FQX0Nhaw?oc=5"
+      },
+      {
+        "title": "無印良品「21年で役目終えたクレカ番号全桁放置」「初動対応で油断」 形だけの防御の末路【記者会見を読む】",
+        "source": "ITmedia",
+        "domain": "atmarkit.itmedia.co.jp",
+        "date": "2026-11-13",
+        "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5VZ3RxN0FYMm4waGdGTDBlUGNDN3V2WkFsM1hvWEc5REJ2eldSQTMxS05EakxLVEFNY2pGUDF0eFpYMlloYWwtbFVEVHBhSGNpQWRtQW9UQXotS2ZDclExd3JsRkxNbm9raTh5NGt3WFJfUQ?oc=5"
       }
     ]
   },
@@ -8467,10 +8395,10 @@
     "trailing_plan": "4066割れで警戒、3900割れ撤退",
     "sector": "化学",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 41.4,
+    "sector_above_sma25_pct": 44.5,
     "sector_n": 191,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -8496,10 +8424,10 @@
       },
       {
         "title": "SHISEIDO THE STORE訪日外国人向け120分のプレミアム美容体験！団体ツアーにも対応した特別美容プログラム「Global Beauty Journey」が本格始動",
-        "source": "Infoseek",
-        "domain": "news.infoseek.co.jp",
+        "source": "クレアウェブ",
+        "domain": "crea.bunshun.jp",
         "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE1ZOFRubG0wWGVUYms0XzNraGZBSFdlYnNKeXptbGlJeDBTNFFGRkN5ZElMbm5nUFZabXFnZlBQZlN0MkF5QUthQ1FRMWtmaXZBT2d4ZHkzV05HZW5lTkNOYUdVUE9Cd1BKa1lKdFRBcFJ6UQ?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5adkRwOTVvRTduTVNNblhqNXZmNG5Lb09meE1MdEF0Sm9xNk1pZ0FybmMxN1VMX3lxa0FvWFc1RFA1ZmV3UV81OEM3cXE2ak44aTlzMnZublRBcGVMcE1MRmI0bGw1aTkzSXNIbXdFLUdZdw?oc=5"
       },
       {
         "title": "【この秋冬発売の新作スキンケア&ヘアケア8選】資生堂のマルチオイルやリファブラシなど、最新のアイテムをチェック！",
@@ -8586,10 +8514,10 @@
     "trailing_plan": "6423突破でトレール、5930割れ撤退",
     "sector": "情報・通信業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 36.6,
+    "sector_above_sma25_pct": 33.2,
     "sector_n": 328,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -8750,10 +8678,10 @@
     "trailing_plan": "1632割れで調整加速警戒",
     "sector": "医薬品",
     "sector_color": "green",
-    "sector_above_sma25_pct": 71.1,
+    "sector_above_sma25_pct": 63.2,
     "sector_n": 38,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -8791,45 +8719,9 @@
     "sector_above_sma25_pct": 64.5,
     "sector_n": 265,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
-    "news_headlines": [
-      {
-        "title": "【すき家】「Sukiシェイク 塩バターキャラメル」発売 濃厚でコクのある味わいが、秋冬にぴったりな一杯！",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1lRmdiNThZZWE3dVFiQVdPVGZRLWN6U21NbGczc01ITUx1S3UzTXkzMm5GUFhDU3R5cTQwdTdoa0FtZGk2RWtMY2s5QkNLMnBGMHpxRnE5MTNfMVJiYTZ0c280TXdlMEJlTkE?oc=5"
-      },
-      {
-        "title": "はま寿司、やわらかな「あぶらがれい」が“110円”！「旨ねた冬祭り」で炙り大切りのどぐろや一本穴子も提供",
-        "source": "グルメ Watch",
-        "domain": "gourmet.watch.impress.co.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE51NzJqMnpLRE1obklTYmFncXNyaURkbzZEaUtFRVZLYW5XS2RjTWRZS1ZXQ05uSjVyNWpLTWZuSlRzc0dRcUM1NG80NnhmRFBIdS11RFFzZDFkSjVqa1ZiNFN0RlB6Sks5VEE?oc=5"
-      },
-      {
-        "title": "【はま寿司】やわらかな「あぶらがれい」が100円（税込110円）！ 「はま寿司の旨ねた冬祭り」開催！",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9YUjlEX1hxX1NWanUtNTQxYzIxcWFXa3RGUVNISUtZU1doRlVaMzZweVd3eTdScGY2Q09fNkM0bGRhN1FyYklCUWxiTDlEMFpMakh6c0ZONTNvSDN6b3p4bkxxdklBVC13Zmc?oc=5"
-      },
-      {
-        "title": "はま寿司、都内トンブリで新店舗オープン",
-        "source": "日刊タイビジネス",
-        "domain": "nikkantb.com",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiSEFVX3lxTFB2aFhabC0zN2szTlE0VUVuOTBoR2RXQ3AtYjhSYUVsU3lvWk9kc0t2OFNBOWVqaDVvay1CYUwtbUdnY0I5aUptQQ?oc=5"
-      },
-      {
-        "title": "ゼンショーHD・小川洋平社長「売上高15兆円達成は私の責任」",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFA2QjlEdXVicTNjRzJtZ3prclRMZlpZbl94ZzFMQXFPTHRoMHp2X3dBNldPZlg3QmgzSGVQY3hEMTM1R0twSlZrOS1KTUx6UUYwU1N2ZmVaUktKMlBpaFhCcjMtRjc3bUtSZzlUdQ?oc=5"
-      }
-    ]
+    "news_headlines": []
   },
   "3994": {
     "code": "3994",
@@ -8906,48 +8798,12 @@
     "trailing_plan": "3200で一部利確、2960割れ撤退",
     "sector": "食料品",
     "sector_color": "green",
-    "sector_above_sma25_pct": 67.0,
+    "sector_above_sma25_pct": 60.9,
     "sector_n": 115,
     "date": "2026-11-16",
-    "updated_at": "2026-11-16T23:55:02",
+    "updated_at": "2026-11-17T06:05:30",
     "prompt_version": "2026-11-16-1",
-    "news_headlines": [
-      {
-        "title": "寿スピリッツ---大幅続伸、上半期決算は想定を上振れる着地に",
-        "source": "株探",
-        "domain": "kabutan.jp",
-        "date": "2026-11-05",
-        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE0wS09fLXQ5MkFpV0tubXVCUmJEVjB6em8xdnFMN2FBcTFPdzRzV00xUl80NmF3cFhuWEhWY19wcERSMW5GWmJCQndXVlVrdEhVLUVOWlJyQWhiTHZxTVpfNw?oc=5"
-      },
-      {
-        "title": "寿スピリッツ、２７年３月期第２四半期累計の営業益は２３％増(ウエルスアドバイザー)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-05",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQLTE2RXRCVU5NcTRrOVg4bHVtc29kRkpXakZzZWRFTU1DaGQ0OGQwdDRhdGFUd0UyNktkUUItc0tCV0dETTctX08zVDM1NTFHWHRZajNyTDlacmMwSFZYYnVQWkdGWGczbTg1WWlxekp3MXFBS3REbzdyVlZkYUpSdV9xajFVNEk?oc=5"
-      },
-      {
-        "title": "寿スピリッツ、上期経常が23％増益で着地・7-9月期も25％増益",
-        "source": "株探",
-        "domain": "kabutan.jp",
-        "date": "2026-11-04",
-        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE56alZQOUE3X3hlb3hWWlU5Nlk0MDI1eFFWRHl4SmJqcU5YbElRUEY5aGxUbEZjOFktRGhUMnhvcWFxSVcwbDIzMzhFS0c3NEtjYWc?oc=5"
-      },
-      {
-        "title": "寿スピリッツ(株)【2222】：決算情報",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-04",
-        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFB2dlp3cEIwd1M4OTZQam9nTl9mZUlaZVpPcDZ6bnpDazJCY25yeHBiWFdKYm1iSVlYV3hjbVdqWjBvSm1YVVZFbEZTb2M5WV9GdHRhSnVfV2RLV3d6ckEtaA?oc=5"
-      },
-      {
-        "title": "【決算速報】寿スピリッツ、上期経常が23％増益で着地・7-9月期も25％増益(株探ニュース)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-04",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQM0haQVBVY3hoOEFGVnZYTmVMOGxJSXI3YjQ3Vjl4MGx1bzNBUG8yNHNESnRWaWg5dG82Z3hZZ0tqZmpWSGRhclJHRzA0VEhHZTFJcHR1dnFEWVA1eXU3bGdtZ1loUGwtV3FERVRaelY2Zlp5a2hBRjd5bk1fNklaU2tQNmpyaGc?oc=5"
-      }
-    ]
+    "news_headlines": []
   },
   "9888": {
     "code": "9888",
