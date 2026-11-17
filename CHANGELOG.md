@@ -8,6 +8,23 @@
 
 ---
 
+## 2026-11-18
+
+### DiscordブリーフィングのGemini失敗時にDeepSeekへフォールバックするよう改修（この変更）
+- **commit**: この変更（daily_briefing DeepSeek フォールバック）
+- **種別**: AI連携 / ワークフロー / 通知
+- **変更**:
+  1. `tools/daily_briefing.py`: `_call_deepseek_briefing()` を追加し、`generate_ai_briefing()` で Gemini（`gemini-3-flash-preview` / `gemini-3.1-pro-preview`）が未設定・429・エラー等で失敗した場合に `DEEPSEEK_API_KEY`（`deepseek-chat` → `deepseek-flash`）へフォールバックして AI 要約を生成するよう改修（Web検索ツールなしのため入力JSONの事実のみで要約する注記を付与）。
+  2. `.github/workflows/daily_briefing.yml`: `DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}` を環境変数に追加。
+- **根拠・検証**:
+  - 2026-11-17 夜の `daily_briefing.yml` テスト実行にて `gemini-3.1-pro-preview HTTP 429`（Paid Tier 未設定）により定量サマリへフォールバックしたため、追加課金設定なしで既存の DeepSeek 枠へ繋ぐ暫定フォールバックを実装。
+  - `python -m py_compile tools/daily_briefing.py` およびモックテスト（`GEMINI_API_KEY=''` で `deepseek-chat (fallback)` が返ること）をローカルで検証。
+- **影響・ロールバック**:
+  - Gemini 側が 429 等で落ちても DeepSeek が使えれば AI 要約が生成される（判定欄に `deepseek-chat (fallback)` と表示）。戻す場合は該当コミットを `git revert`。
+- **関連**: `tools/daily_briefing.py` / `.github/workflows/daily_briefing.yml`
+
+---
+
 ## 2026-11-17
 
 ### 自律調査＆Discordブリーフィング（朝・昼・引け前・夜）と GAS 定刻起動・CSV更新催促を実装（この変更）

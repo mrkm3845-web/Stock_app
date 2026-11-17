@@ -544,11 +544,63 @@ def _slot_mission(slot: str) -> str:
     )
 
 
+def _call_deepseek_briefing(system_prompt: str, user_prompt: str, api_key: str) -> tuple[str | None, str]:
+    """Gemini失敗時のフォールバックとして DeepSeek API でブリーフィング本文を生成する。"""
+    ds_user_prompt = (
+        f"{user_prompt}\n\n"
+        "※注意: 今回はリアルタイムWeb検索ツールが使えないため、入力JSONに含まれる事実のみを根拠に要約してください。"
+        "未確認の当日ニュースや決算情報を推測で補わないでください。"
+    )
+    last_err = ""
+    for model in ("deepseek-chat", "deepseek-flash"):
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": ds_user_prompt},
+            ],
+            "temperature": 0.2,
+        }
+        body = json.dumps(payload).encode("utf-8")
+        for attempt in range(3):
+            req = urllib.request.Request(
+                "https://api.deepseek.com/chat/completions",
+                data=body,
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=90) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                choices = data.get("choices") or [{}]
+                msg = (choices[0].get("message") or {}) if isinstance(choices[0], dict) else {}
+                text = (msg.get("content") or "").strip()
+                if text:
+                    return text, f"{model} (fallback)"
+                last_err = f"{model}: empty text"
+            except urllib.error.HTTPError as exc:
+                err_txt = exc.read().decode("utf-8", errors="ignore")[:200]
+                last_err = f"{model} HTTP {exc.code}: {err_txt}"
+                if exc.code in (429, 500, 502, 503, 504):
+                    time.sleep(min(2 ** attempt, 8))
+                    continue
+                break
+            except Exception as exc:  # noqa: BLE001
+                last_err = f"{model}: {exc}"
+                break
+        print(f"警告: DeepSeek ({last_err})", file=sys.stderr)
+    return None, last_err
+
+
 def generate_ai_briefing(ctx: dict) -> tuple[str, str]:
-    """Gemini API + Google Search Grounding でブリーフィング本文を生成する。"""
+    """Gemini API + Google Search Grounding で生成し、失敗時は DeepSeek へフォールバックする。"""
     api_key = os.environ.get("GEMINI_API_KEY") or ""
-    if not api_key:
-        return build_fallback_briefing(ctx, "GEMINI_API_KEY 未設定"), "fallback-no-key"
+    ds_key = os.environ.get("DEEPSEEK_API_KEY") or ""
+    if not api_key and not ds_key:
+        return build_fallback_briefing(ctx, "GEMINI_API_KEY / DEEPSEEK_API_KEY 未設定"), "fallback-no-key"
 
     system_prompt = (
         f"{PERSONA_JA}\n\n"
@@ -570,43 +622,50 @@ def generate_ai_briefing(ctx: dict) -> tuple[str, str]:
     )
 
     models = ["gemini-3-flash-preview", "gemini-3.1-pro-preview"]
-    last_err = ""
-    for model in models:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
-        payload = {
-            "systemInstruction": {"parts": [{"text": system_prompt}]},
-            "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
-            "tools": [{"google_search": {}}],
-            "generationConfig": {"temperature": 0.2},
-        }
-        body = json.dumps(payload).encode("utf-8")
-        for attempt in range(3):
-            req = urllib.request.Request(
-                url,
-                data=body,
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            try:
-                with urllib.request.urlopen(req, timeout=90) as resp:
-                    data = json.loads(resp.read().decode("utf-8"))
-                cand = (data.get("candidates") or [{}])[0]
-                parts = (cand.get("content") or {}).get("parts") or []
-                text = "\n".join(p.get("text", "") for p in parts if isinstance(p, dict) and p.get("text")).strip()
-                if text:
-                    return text, model
-                last_err = f"{model}: empty text"
-            except urllib.error.HTTPError as exc:
-                err_txt = exc.read().decode("utf-8", errors="ignore")[:200]
-                last_err = f"{model} HTTP {exc.code}: {err_txt}"
-                if exc.code in (500, 502, 503, 504):
-                    time.sleep(min(2 ** attempt, 8))
-                    continue
-                break
-            except Exception as exc:  # noqa: BLE001
-                last_err = f"{model}: {exc}"
-                break
-        print(f"警告: {last_err}", file=sys.stderr)
+    last_err = "GEMINI_API_KEY 未設定" if not api_key else ""
+    if api_key:
+        for model in models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+            payload = {
+                "systemInstruction": {"parts": [{"text": system_prompt}]},
+                "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
+                "tools": [{"google_search": {}}],
+                "generationConfig": {"temperature": 0.2},
+            }
+            body = json.dumps(payload).encode("utf-8")
+            for attempt in range(3):
+                req = urllib.request.Request(
+                    url,
+                    data=body,
+                    headers={"Content-Type": "application/json"},
+                    method="POST",
+                )
+                try:
+                    with urllib.request.urlopen(req, timeout=90) as resp:
+                        data = json.loads(resp.read().decode("utf-8"))
+                    cand = (data.get("candidates") or [{}])[0]
+                    parts = (cand.get("content") or {}).get("parts") or []
+                    text = "\n".join(p.get("text", "") for p in parts if isinstance(p, dict) and p.get("text")).strip()
+                    if text:
+                        return text, model
+                    last_err = f"{model}: empty text"
+                except urllib.error.HTTPError as exc:
+                    err_txt = exc.read().decode("utf-8", errors="ignore")[:200]
+                    last_err = f"{model} HTTP {exc.code}: {err_txt}"
+                    if exc.code in (500, 502, 503, 504):
+                        time.sleep(min(2 ** attempt, 8))
+                        continue
+                    break
+                except Exception as exc:  # noqa: BLE001
+                    last_err = f"{model}: {exc}"
+                    break
+            print(f"警告: {last_err}", file=sys.stderr)
+
+    if ds_key:
+        ds_text, ds_info = _call_deepseek_briefing(system_prompt, user_prompt, ds_key)
+        if ds_text:
+            return ds_text, ds_info
+        last_err = f"{last_err} / DeepSeek: {ds_info}"
 
     return build_fallback_briefing(ctx, last_err), "fallback-error"
 
