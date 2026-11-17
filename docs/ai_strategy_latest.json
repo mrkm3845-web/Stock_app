@@ -1349,12 +1349,19 @@
     "trailing_plan": "5577突破でSL5300へ、5800で半分利確し残りトレール",
     "sector": "その他製品",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 36.6,
+    "sector_above_sma25_pct": 34.1,
     "sector_n": 82,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
+      {
+        "title": "かっぱ寿司×トミカ コラボ キャンペーントミカ 「ターレー（足とハサミが動くかに）」＆「トラック（暗いところで一部が光るぶり）」先行レビュー（HOBBY Watch）",
+        "source": "Yahoo!ニュース",
+        "domain": "news.yahoo.co.jp",
+        "date": "2026-11-18",
+        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5xSmZQOWNIR3NUUFRvVHJYZHpFWUFyZDBVUG5uaGp6RzVVM2NYQk1kb2VsWDNTZS1uY3AxeTV1X1N2a2JpdmxrNDBQa3Z6X0pYdFBjakVzaEZtNWU0M2tXVDJPaVVLVXJKN2pldXlBZmNQdHZZREZNUGFvaldkcW8?oc=5"
+      },
       {
         "title": "T-ARTS『アイアンマン -MOVIE ITEM COLLECTION DELUXE-』カプセルトイが登場！MARK 2＆MARK 3ヘッドや歴代アークリアクターがLED発光",
         "source": "玩具人 TOY PEOPLE",
@@ -1382,13 +1389,6 @@
         "domain": "finance.yahoo.co.jp",
         "date": "2026-11-16",
         "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNSjFRNGRCQ3pHcGJVWThxYnBKRjYwOG91YWtJa0JYQ2VpbnpTTVZ0VGhDV2JCcDNVSVhkRWpKRmg0bmFyLXktR3N1cDI3Y2JyRHkwZlkya2ZZLUFNdk9fcTNXTkdCVlk4S3FPbVdKUXBJS3MzN09TMWRsV1FkaTYtUmNLcVNnUk0?oc=5"
-      },
-      {
-        "title": "アイドルイメージのマイクが可愛い！「ポケピース」よりニャスパー、プリン、ピカチュウなどがチャームぬいぐるみ化（インサイド）",
-        "source": "Yahoo!ニュース",
-        "domain": "news.yahoo.co.jp",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE11QXk0Ulc1UVZqRkVIVUJMYVRpVzdRVHZaenpHdXZVYlJvbHVmbHc5cWV4a2tkMWR4YmZNcFNONmlzUm1DVHVLbTBQSUx5Z3Fpc2FpZDM1NFNtU2xKY0dicHJVOGc1Mm1ic3FJOVBJNzR2QmxMeGF3Vl9Ld0dDbjg?oc=5"
       }
     ]
   },
@@ -6329,10 +6329,10 @@
     "trailing_plan": "3195突破でSL3100へ、値動き荒く早め利確",
     "sector": "食料品",
     "sector_color": "green",
-    "sector_above_sma25_pct": 62.6,
+    "sector_above_sma25_pct": 67.0,
     "sector_n": 115,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -6358,10 +6358,10 @@
       },
       {
         "title": "創業の地・小豆島で全編ロケ 純正ごま油「かどや」新CM 放送開始 香川",
-        "source": "KSBニュース",
-        "domain": "news.ksb.co.jp",
+        "source": "Excite エキサイト",
+        "domain": "excite.co.jp",
         "date": "2026-11-15",
-        "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE1tVW44cGo0bTBIZTRsekFjclJrMkQxMjZKTTRNaWNTSGowMWR2TzJBYkwxcE1oM08tcU1OdlVvRV9Fbm04ZEVVejlkeWFmNDVT?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTFBBNFo2TDNRNWloNjBNWUJnbGpqQTNZV2piX0dyREFTNGdaa2NYR1VIcTh2UkJibzgtVVA1TVJEX2hpb0FtM0JZRFp6a0FJUUdsNnFvbUo2M2t0LWNfSTBWVUkyLTVSTFIzTVhOLXpn?oc=5"
       },
       {
         "title": "[写真]三菱商事、三井物産、創業家が前代未聞の争い…「純正ごま油」かどや製油で起きている買収合戦《TOB価格の行く末は？》",
@@ -6759,10 +6759,10 @@
     "trailing_plan": "7100超でSL6900へ、7220で半分利確",
     "sector": "卸売業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 30.7,
+    "sector_above_sma25_pct": 40.1,
     "sector_n": 257,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -6780,11 +6780,18 @@
         "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOQnRBN0VfZ00zb2tic2VUMElRVk4teGs4eE9HYWZtMVgzeXNVNVhBbUdlZUlMUEVRTmhJbThha2ZIMGY3ZFJBUzd3X3VyY0p2MzAyeURaZHZmaDYtNFFTMUNpbDItdXNaMUk3eGlQVk5sM1BJR3RQcGgyai1yNi1VUU94MVJLSGs?oc=5"
       },
       {
-        "title": "本日の【上場来高値更新】 Ｆ＆ＬＣ、ハピネットなど45銘柄",
-        "source": "株探",
-        "domain": "s.kabutan.jp",
+        "title": "本日の【上場来高値更新】 Ｆ＆ＬＣ、ハピネットなど45銘柄(株探ニュース)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
         "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9lRklnd1NrWE4zYlpWRmplS2dtMlVGN0JqOHZjSDlhLTFNN0R3NlcxUVg4dkxJeGQ3SjZUM1J6RTE1QWxUYjB5cXU0TUpvM0FZN0E?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPZEtlWXZNY1l3Y1k5SUx4U0lHOG9HRE9lUE5DRUF2b25vQnROVl9MZVdaN2VraENjQnJ2eHZzQ3FNRWc4aDRRU2R1MTB1QTZSSWwxOHM4eUZ4UzYxdjFZOV9ZQmR6WUx4NUpJU25iRFNZbkY3MUM2MV9sclhJMGpNcVBNTzNnN28?oc=5"
+      },
+      {
+        "title": "本日の【上場来高値更新】 Ｆ＆ＬＣ、ハピネットなど45銘柄",
+        "source": "ライブドアニュース",
+        "domain": "news.livedoor.com",
+        "date": "2026-11-16",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1WX1p2WllUUEZTSG01UGNEaGZTVDdwOWhnbDFLRzJPcUx5Y0NYVm1IbndSM1VkQ2taT3ZmVHg3QmtsN21WS1RxVE5XT3dIdF9oWmJhdHA4WGEyNnJTWWJR?oc=5"
       },
       {
         "title": "【カプセルトイ関連株】Ｘトレンド入りで１９６０億円市場に再脚光、ハピネットやバンダイナムコなど６社に商機",
@@ -6792,13 +6799,6 @@
         "domain": "kabu-ir.com",
         "date": "2026-11-14",
         "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBybVFtdlJWcEdDNF96UHRFd29Ja3VqRE02bjBYOENTazhhLWNuNE1oc2trNkFTY0RLVF9jeGpGamtDMEJ1VW5YcFk5dk5jYlhIYmF6bQ?oc=5"
-      },
-      {
-        "title": "今週の【上場来高値銘柄】トリドール、ゼンショＨＤ、ハピネットなど54銘柄(株探ニュース)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-14",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOaGFhSGJ0b1dqbHgxNThhM0ZkaFM5NWVRNGN6MVA3VzdFVnZkSzhpb1JfdXJ2VkJTdzZMUGRmeWZJaWxXbGhONW9hcjdFVGJ3NGtLRzJXbEdQVkFuMnk0QTItVjlNSk5weWoxUXREVDVzUkNTMzBldmt2SExRSFlUcVZmYVk1ckU?oc=5"
       }
     ]
   },
@@ -7946,18 +7946,18 @@
     "trailing_plan": "13000超でSL12500へ、13900目前で半分利確",
     "sector": "サービス業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 36.2,
+    "sector_above_sma25_pct": 40.9,
     "sector_n": 320,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
-        "title": "本日の【上場来高値更新】 日東富士、ベイカレントなど17銘柄(株探ニュース)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
+        "title": "本日の【上場来高値更新】 日東富士、ベイカレントなど17銘柄",
+        "source": "株探",
+        "domain": "s.kabutan.jp",
         "date": "2026-11-17",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQcDJxUk15ZzJrZlJ4dUNnSGNfX0FfbFFESU1xd3ZkQUtEQnhXV2JfQU5MQi1mMlNkdHlJamlrWWEtLXBybjBjcTFJSUNzb05wa2tZR3ZicW05R2x2UUt2ZGlpOERiSXpaSHJ2TUNhVkpTYmc0dkFzNXRHWk00dFFfTm51S195MDg?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBaSTg4SVkwRnczQUQzYnRyeWRGZW5IOTlNa0pFR0g3c3l4eWt4M1VWX2FqSXNnOFlackFtUTVVNjBHX0g5MktBeV9nZW9TWjdZcFE?oc=5"
       },
       {
         "title": "ベイカレント・コンサルティングの30代後半、シニアコンサルタント級の年収は？【1万件の口コミ情報データ】",
@@ -8043,10 +8043,10 @@
     "trailing_plan": "9100突破でSL8900へ、9500で半分利確",
     "sector": "小売業",
     "sector_color": "green",
-    "sector_above_sma25_pct": 60.0,
+    "sector_above_sma25_pct": 64.5,
     "sector_n": 265,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -8071,18 +8071,18 @@
         "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5SaXg1eTVHdDJvU04yTXpQNXIyNm9SWFJteEFwTzZqMWN4cG1ENWRwbWRZelFYN1RwQUtEVjdxUTIwM1NTQ1pHT183NEYwOGx1N05PYzRDZXVPQjdHa1E?oc=5"
       },
       {
+        "title": "サイゼリヤで“ピザ”を頼んだ数学科の学生⇒絶賛された【まさかの分け方】に「頭いいなぁ」「理系の合理性を感じる」「割とマジで素晴らしい」「今度マネする」（ほ・とせなNEWS）",
+        "source": "Yahoo!ニュース",
+        "domain": "news.yahoo.co.jp",
+        "date": "2026-11-16",
+        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1nVXVESDVVYzJ2bDJRZVIwT29YWU9rVDBvWXhpWUF5dzZaYjFEbjZpbTNMM1Vqc1hTQjh3RDJkMzBISThDdGx3bFI1b2ZqeEFZU2liWVZQRy0wQnhBTW5jM1FUOVNEa0Vrbzh1S1BCT1l6eXNmcHJMSC1vRkJuVlE?oc=5"
+      },
+      {
         "title": "サイゼリヤで“ピザ”を頼んだ数学科の学生⇒絶賛された【まさかの分け方】に「頭いいなぁ」「理系の合理性を感じる」「割とマジで素晴らしい」「今度マネする」 (ほ・とせなNEWS)",
         "source": "Yahoo!ニュース",
         "domain": "news.yahoo.co.jp",
         "date": "2026-11-16",
         "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQVTJFQXRnZjg2UEN3aFJ2S3BQU3lIWGFRalZEejNYVndNbDVLOC10LURjSjBBdy1raHVoMEJUY0wtZFY4Yy0tSUJFX2xaaWFJYWxGc1dFSUJ2dW5jZWdfX3hudmNnck4wUEhYeUtvT0ZnUmJCTlNHNE41Y19NYXFRZWxzZWtMVG56RjV5MC1B?oc=5"
-      },
-      {
-        "title": "サイゼリヤで“ピザ”を頼んだ数学科の学生⇒絶賛された【まさかの分け方】に「頭いいなぁ」「理系の合理性を感じる」「割とマジで素晴らしい」「今度マネする」",
-        "source": "www.hotosena.com",
-        "domain": "hotosena.com",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9NeVZQeHg0UkdlUXRCa1ZmMGFhbUFYWmdVMjNkSHpXMk85SENyM1pHVUVta3V6dFoyTEpMR05zbmk1MnlzLTJvOHF6QjZTUmxFSFJ0NA?oc=5"
       }
     ]
   },
@@ -8371,10 +8371,10 @@
     "trailing_plan": "2227突破でSL2150へ、2300で半分利確",
     "sector": "電気機器",
     "sector_color": "red",
-    "sector_above_sma25_pct": 12.9,
+    "sector_above_sma25_pct": 14.9,
     "sector_n": 202,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
@@ -8392,13 +8392,6 @@
         "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQaU1BOG1kbFEwMXBUR21xcU8xc2tWVWc4MXBjRHZWQjFjWHBxRDNTenVGdnQtX0Jpa2RjOFhmbGlFQnNnaWZGNUlDakZfaE8zaC1IUjVReVRKajZrNjFzcmdWd2ZYNF9wYUxzdnRZWUNYc18wOHdKUEtqS19ycTl5d1pIU21qTlE?oc=5"
       },
       {
-        "title": "シスメックス－東海東京が目標株価引き上げ 予想以上の販管費抑制〔DZH 個別株情報〕(時事通信)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-17",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQQVBzVlJYYzR3SkxLNlQydHNINGJsVVZVT2ZmOTVSZEsyb1NINkphSDBSbHBYenRIdmdlRGFWREo0X1c3WU5OOGVCYzFtX1Fwd2NZZ2tZYUF2a0pIc0Q5bEZvOG5OTWYxMkxBYlJrN3ltSzV3WFk5a0RtNmdXNEVGSExlTmhtQmc?oc=5"
-      },
-      {
         "title": "【アナリスト予想】シスメックス、27年3月期経常予想。対前週1.4%下降。(アイフィス株予報)",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
@@ -8411,6 +8404,13 @@
         "domain": "finance.yahoo.co.jp",
         "date": "2026-11-16",
         "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPc3hHaWFnZnN6X1ZRMFhoLWtrZTA4bVN0aEpJYUgtNXl3OUE2dmpzSDBrSnpMR2VoeGJ5OHpsM0pJSmR5OTNnRGhUZTFaTVRmMzNHbTh4bnJ2dENEZm02YWdXZU5IOXcxdjBUS3Ffb05OenJJTjZUelJvbnVCWk1sNzRnQ0UtQ0k?oc=5"
+      },
+      {
+        "title": "シスメックス株式会社（東証：6869）の中間決算発表を受け、アナリストが示す見通しは以下の通りです",
+        "source": "Simply Wall St",
+        "domain": "simplywall.st",
+        "date": "2026-11-13",
+        "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPRnJwQko2T3Jsb3IySlJ5RUs2ZnNuM0VuWXNoUjVSYjdINXpqTG0zY0JpREc3aDRxZjhYbjdiYTUyZEJ4M1V0dDJ3aEdmWTluNm14UGJwRmRIRWRBTXBqTXk0czYzVUFVNWRfT0RuOG9yTjJhenh1YTBSYjJjd0ZOSVFTNzlWYVlOTmFiUWVfSDNhWXpR0gGaAUFVX3lxTFBfU1lNT09OVFlwak9fS2dhUkVFaFRrS1RQaHRLaE9CX2JrVzV2MG5raVlXLWJNWThkRFpoNkwtWXlnalZQY0VESDBRVnc5WmVSLUFVeTJoVERMa3dPZUxzT0h3M0dKdnRiQW1vOWQ2QTdXbWZQM1dtWEk5QUxWTUdKN3Faa3JNUGcwZV9ZcXdON0ZCYk1NdG93VkE?oc=5"
       }
     ]
   },
@@ -8430,25 +8430,25 @@
     "trailing_plan": "4153約定後、4400でSL4200へ引上げ",
     "sector": "化学",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 36.6,
+    "sector_above_sma25_pct": 41.4,
     "sector_n": 191,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
-        "title": "資生堂＜4911＞、中国子会社の資生堂麗源化粧品をIDG Capital主導の投資家連合に譲渡",
-        "source": "ｄメニューニュース",
-        "domain": "topics.smt.docomo.ne.jp",
+        "title": "資生堂、中国向けブランド運営子会社を売却＝グローバルブランドに経営資源集中(時事通信)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
         "date": "2026-11-17",
-        "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPV25XcTFUeU93WXFTdEpUdnBEWW1sQjdyUnZteUJ1c2hISVd0ZXR0VjVDYjBPUDB6NGo3TW9sUHBBQV9iYUNiNmVaWnkxcnlwSVJjMk1jUC1jMHhoRWx5bXgxWTZCMHFwbmpLX0E1RDJHa01kV3FZQkFSUGpXTi02MzhR0gGHAUFVX3lxTE1uRVFiZGU1akRIS0ZnaHByaFdOQ0JmVzNFWUFJcDhsNG54aXd3YjJUUFlxb095UlpHajhPejJVYTRGRlEtX3VaMWxZOTBBZVVpZURMcm5SWHM3Qkc5UXRjeXRoTGJTdUo1TnZZTXVlakV4ODFKVVJCcUZudmdwWjhFTHIweklOVQ?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPaVZXRGs2a1NwUzNkNU1ScDZzRDJORjE5dVpDcUFab2tmT3RoWjNPRmZlV3pfTjRUUElLMUJKQmxqeEdROHJNZFNGaGFNZUh6ZWxrZksyUmpvNXV6eDk1ZFNoeTl5am8xdmpvVXZ1bGozUFpjY25SQjJobnR5dm1zQ0NlU2VnNWc?oc=5"
       },
       {
-        "title": "資生堂、中国向けブランド運営子会社を売却（時事通信）",
-        "source": "Yahoo!ニュース",
-        "domain": "news.yahoo.co.jp",
+        "title": "資生堂＜4911＞、中国子会社の資生堂麗源化粧品をIDG Capital主導の投資家連合に譲渡",
+        "source": "Excite エキサイト",
+        "domain": "excite.co.jp",
         "date": "2026-11-17",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1TQ0FJLU0zZ3AzbnV4d1U5UWx1MlhleUZCaTVoalF4YjZ1QnotUV9semRyTmo5NVZrOXVGTW9YY3RBSW02cFl0Q2FwZnBjZzJjRUp6elYzQzBENU01MEkyM0Zid0MtektwWjFVUnV1ellYTGJ1bGFHQ1FPWHp0X0E?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1VUXhZN09mVUhEbWNBV1VzQ1lHQU1OaXN4OUpBTjJORWEtbDd6MUVIZXJ3REZhQUlIV2k1ZTBFSkYwd3YwR3dMVTZwekV3SVBwWEJYMFNXSHNaM3MtdFdYRFpETzY3clU?oc=5"
       },
       {
         "title": "資生堂、中国専用ブランド「オプレ」をIDG主導連合へ売却 北京工場も譲渡",
@@ -8458,18 +8458,18 @@
         "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5vZU5vZzBtYmdSelBaRWo3bUhsbUM0a3RPSy1nTmdkeVhIQ2ZscmVxR0d5c1RrdUM0c1MwZS1xWlR2NHlJZXdhX29UOUdaanNpYkVmdnlTQm1LM051TmF1R1E5T0xlRVZXN1BISGJHVzlqZFVs?oc=5"
       },
       {
+        "title": "資生堂、中国向けブランド運営子会社を売却",
+        "source": "ｄメニューニュース",
+        "domain": "topics.smt.docomo.ne.jp",
+        "date": "2026-11-17",
+        "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOeXduLTZDZFdxOWw3bVAxamFTN3lidGZ4Mm92cEtScnBtUzdCYzR0V2dtQjN1V2tKSUNCWTN4ZUptV2ZrNDRZNk5lS290WFRyQ0JNV2RybExEVTNhdnB5RlduUEdWdUtvOVBXUEVHbWM1ckxwUnE4UDd4UEgtdHdpZkF3OEJCLWNxeHZJYlp30gGAAUFVX3lxTFBIQXFudC1ycTNaYXh2REp4LVdoMWpVT1FlYXN5SGhkYlhNZ3haUFk2WUhJNWE5SHpaTXR1TlN5ZzhZLWlyU2FxSUxrTW1hMmZqeUVQbm8xV19mamVrZDFUQUtsaWduaDA3YkYzbTl2LWg1bDFIZmZsdVZ2anVBbzBG?oc=5"
+      },
+      {
         "title": "資生堂、中国向けブランド「オプレ」売却 主力ブランドに経営資源集中",
         "source": "日本経済新聞",
         "domain": "nikkei.com",
         "date": "2026-11-17",
         "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBmX3UtQnNkNzk2UGtjVVh2Tnh5MU84UzJveU8wSl9RSjQ2NURVNnJTdXBWdk9yMzMyU0NxMmZPbXRRYjZib0tia25oU3Q4WEp4M1lvdmpFMXp0UFRWcktnamJCa2xyRWtXWUFyVg?oc=5"
-      },
-      {
-        "title": "洗顔の常識が変わる！Shiseido Beauty Parkで体験した「洗顔セラム」の魅力",
-        "source": "au Webポータル",
-        "domain": "article.auone.jp",
-        "date": "2026-11-17",
-        "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE95MnZMaU1fbXhYekRHSHBWWlhzcUtFNVQ2N3J1ODY3Tk5XV1k3VFZCNk40Y3pGTVBBbnVNYnM0ajdhMXRiOVdnN01CUnZBaFZVcUc3NFZOcURrMy1xbHc4b2FWS0gxejlMbk1VcU53?oc=5"
       }
     ]
   },
@@ -8549,12 +8549,19 @@
     "trailing_plan": "6423突破でSL6250へ、6500で半分利確",
     "sector": "情報・通信業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 30.2,
+    "sector_above_sma25_pct": 36.6,
     "sector_n": 328,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
+      {
+        "title": "オービック、15年連続最高益",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-11-17",
+        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1BN3hhaEo5VExMREhyc2lBVnlHMzFyNTRjVjVTT3dRb05oRWF3THFsalhtT0lvTXIxNjNaZ21WN3RmZTBxVFFwVWhKbHNxaE9DWWpiT1JWVmpxSzZGSmpvSXpyeGFDNHVhS1EzZw?oc=5"
+      },
       {
         "title": "OBC、静銀経営コンサルティングと地域企業の持続的成長を支えるDX協業を開始",
         "source": "PR TIMES",
@@ -8601,18 +8608,32 @@
     "trailing_plan": "3510突破でSL3420へ、届かずは手仕舞い",
     "sector": "機械",
     "sector_color": "red",
-    "sector_above_sma25_pct": 20.0,
+    "sector_above_sma25_pct": 22.1,
     "sector_n": 195,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
-        "title": "新設野球部のユニホームに注目「想像の2000倍ぐらいセガサミー」 ファン感激「まんまやん」",
-        "source": "au Webポータル",
-        "domain": "article.auone.jp",
+        "title": "【社会人野球】 セガサミーを継承する「アルフレッサ野球部」が来年１月創部へ 夏の都市対抗出場目指す（スポーツ報知）",
+        "source": "Yahoo!ニュース",
+        "domain": "news.yahoo.co.jp",
         "date": "2026-11-17",
-        "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1mSThPcnRRSnR5SEJiaWRiRDhHZmo5VzFsU3RWd3U1VlFNeTFuNUlYOW1TU1drUkxKY2dKal9LNHU1SHVHSEVNYlBQU2lyczFCVW9WYUQ2SjlfNXZoLWg0Q1RVa1IwZjJSUFRFRUVn?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE9EQ2J1VTJNTkxJOTdHN3dDbUh5ZjAtci1WdTFnSkdZcWFhejFOTWRSSEVObFlzbm94ZzBpQnhCNDZmX0tfaHBDX2lIV1pqdXZKZGxVVWdxZ1lIQ2p0R1Z6YW44R2VkckdxaEZaYkdfa3JfZFMtOFVNUW9Ia19sU2s?oc=5"
+      },
+      {
+        "title": "新設野球部のユニホームに注目「想像の2000倍ぐらいセガサミー」 ファン感激「まんまやん」",
+        "source": "Infoseek",
+        "domain": "news.infoseek.co.jp",
+        "date": "2026-11-17",
+        "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE53M3JIbC1vbnA0YXRBWGs5TDFLQnM5aF9NQVE2c1BGVzNSbFJnbUZVYXU3ajRIcnFZUEVuclhUS1lYTW0xOGJrYjRweTNmblNFaWRSVkl2dS1adXd4MTdyay1kNkY?oc=5"
+      },
+      {
+        "title": "アルフレッサ、来年1月に野球部創部　廃部セガサミーの基盤引き継ぐ　新ユニもお披露目",
+        "source": "ｄメニューニュース",
+        "domain": "topics.smt.docomo.ne.jp",
+        "date": "2026-11-17",
+        "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPdEI3UlJJRGpJT0ptNjRJakRMVEVwMzFrMWdjQkZ2ZkxpckZUc2l2aFVONG5WbUV2dTBlV3RVNTFHVW5pdUJvU3pKM2V3QWxoRGVIWldKMnF3NDRMV3liODJETkxGTkhTQW5QOWROYVhHZGFNRzBZMnIybUU0UmRsTGlveGhoTTk1OGpYN09B0gGTAUFVX3lxTE5kZC01eUVDb25wNFNNTXRLU1NtMThhOHhRSUtpRmloT0thc3VKRnlQb2dadUxtY294ZU9xNXpRM3h3MWdWNkt1OWtPTmJ3RU1GVDJkRFAxSURvU3l3aXA3U2J2cDJJV1FncDFRUUg5UmlILURKNExiZmsxWHVPbXo3NGJMMlg0ZmppOGdDTW1FdHkxWQ?oc=5"
       },
       {
         "title": "アルフレッサ、来年1月に野球部創部 廃部セガサミーの基盤引き継ぐ 新ユニもお披露目（スポニチアネックス）",
@@ -8627,20 +8648,6 @@
         "domain": "mainichi.jp",
         "date": "2026-11-17",
         "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1KYUh1ODlERjJ5b0paY3lpcHRvQVRmSndOYUN2VnVMYUMyMktSTl9TR2sxLWZnMDFPTDg2YVNIT3FEZHNhQ3V2UnBaVXlPeVQ0M0kwNlhJVDQ1QkF6ME91MnNSVW5pYllG?oc=5"
-      },
-      {
-        "title": "「太鼓の達人」など7日ぶり稼働 セガ系不正アクセス問題、バンナム系が試験復旧（ITmedia NEWS）",
-        "source": "Yahoo!ニュース",
-        "domain": "news.yahoo.co.jp",
-        "date": "2026-11-09",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBZTDgxeXBveXJMZlhoRExnLUVWR3NYdHZmS2xkSlBhNjVNVUowOWtFLWhEa2RBblpYTWpZNkJ3ajV4S1lGRnFvU21pTF9LRERkaVcyeXpyUUlFVXdHZGxyTkpBR1JuWFZwMS01MndRckh4a1ZWSHNxU3dyY0V4clk?oc=5"
-      },
-      {
-        "title": "セガ不正アクセス障害、バンダイナムコ8タイトルが試験復旧 太鼓の達人も7日ぶり稼働",
-        "source": "BigGo ファイナンス",
-        "domain": "finance.biggo.jp",
-        "date": "2026-11-08",
-        "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9MTy1yNndja2F3dlppaXI3UXYyTlNZcllIM205dDJmUDdZYU9kaUdNc3Y2Nkd2TFU5cEFQSmRYeWlCUk40alhONVVCSmtLYVUxZmhHSWZTODYyYzVHaXplREJFU0UyVGpzbWtybmllWHQwRTlK?oc=5"
       }
     ]
   },
@@ -8980,12 +8987,19 @@
     "trailing_plan": "3800突破でSL3550へ、4000で半分、残りトレール",
     "sector": "小売業",
     "sector_color": "green",
-    "sector_above_sma25_pct": 60.0,
+    "sector_above_sma25_pct": 64.5,
     "sector_n": 265,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
+      {
+        "title": "ニトリnews｜中国大陸79号店･韓国7号店11/20同日オープン",
+        "source": "流通スーパーニュース",
+        "domain": "news.shoninsha.co.jp",
+        "date": "2026-11-17",
+        "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTFA5LVVIeXRuUXNRblRaWF9lbFZqZ25nR3lpbW5zOXo0dWtINEpzdlZXYzNPLUpDRzZJV2FXRFg2V0xueU5rdkJfMkxydkN0X052WDc0?oc=5"
+      },
       {
         "title": "【アナリスト評価】ニトリＨ、レーティング強気を継続、目標株価4,200円に引上げ（日系大手証券）(アイフィス株予報)",
         "source": "Yahoo!ファイナンス",
@@ -9013,13 +9027,6 @@
         "domain": "prtimes.jp",
         "date": "2026-11-17",
         "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBRU0d1d0ptSEUwbzZtaEVKQ1NTTUZpXzNpMHZsbEYyc1hnMGhjOER3YXNETEpIa0FGUFY3NVpPSlMzdTh1S3lzcWF3THZRSGJVeVZ3eDB4N1hSLVl1SGFNQWJZbklCd0RNdFE?oc=5"
-      },
-      {
-        "title": "［新連載］「ニトリを離れ何ができるだろう」武田元社長が見つけた「社外執行役員」の道",
-        "source": "日経ビジネス電子版",
-        "domain": "business.nikkei.com",
-        "date": "2026-11-17",
-        "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE53TllJQ0Z1SXBQTVdEWEswdmtjMG83WW8xNEtlRF9lWTBscjBHVVhyLUZtbHpqWFlvYVhjUVY5MHNrbnEtSUxSU0hzM0VkNHBDN21EY3BJQllVRDhWRFpoRldYTW5aN0E?oc=5"
       }
     ]
   },
@@ -9039,12 +9046,26 @@
     "trailing_plan": "30370突破でSL29500へ、32000で半分利確",
     "sector": "情報・通信業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 30.2,
+    "sector_above_sma25_pct": 36.6,
     "sector_n": 328,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
+      {
+        "title": "［将棋］［第52期・棋王戦 コナミグループ杯］ 本戦2回戦 第10局",
+        "source": "沖縄タイムス社",
+        "domain": "okinawatimes.co.jp",
+        "date": "2026-11-18",
+        "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5fX0I1emRsZmRuckxGVzhDNDcwS0Vad19Nd0htZDlvNVhucXo3N3lQSm5WRDZVajhYOEhRazBSWVBJRzhEZjhIMlhmNWUyM0dTOVB6Y0dvTFBqc3pDVUE?oc=5"
+      },
+      {
+        "title": "【アナリスト予想】コナミＧ、27年3月期経常予想。対前週0.2%上昇。(アイフィス株予報)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-17",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPSWhUeTZPTzdRU05uQlBPV29PMktaZUp1OVdkYWZXUUtWajBSY0ZhbmJ3ZkppMmJaazZFUThod0NMZDFvQ3FQOTRwWlN5MVQtTkVtSGdFVVF0RkNWalNMUWFuM044MElMXzFfWGhMREgyQS16VlFOLWFNQ3ZDc1FXYWtQQlNmbVU?oc=5"
+      },
       {
         "title": "【アナリスト評価】コナミＧ、レーティング強気を継続、目標株価33,000円に引上げ（米系大手証券）(アイフィス株予報)",
         "source": "Yahoo!ファイナンス",
@@ -9060,25 +9081,11 @@
         "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1oQWRGeE9KVUFiQzdIQUV3cDE4bGpWUDg1b0VKNEJ5U2N2MjJYRDgwWWhKVUIzd1ZrUGRjWU0wT05xNkU0WjE2SWYyY3BscDIxNVVMa1RTTlZMeHZXX3o4WjFtUWhxMlp1NFJLMw?oc=5"
       },
       {
-        "title": "［将棋］［第52期・棋王戦 コナミグループ杯］ 本戦2回戦 第10局",
-        "source": "沖縄タイムス社",
-        "domain": "okinawatimes.co.jp",
-        "date": "2026-11-17",
-        "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE44UWpKWkRaUUlVbUd5c2hZQjA0UERycWw2ZUpIV0J6WmlGOXBQLVlncEdJbUFlMFFfN1I5RnJ1S2JwWjFEZVRXaFdKMjk5QUtYSDQ2OVEyaHdEQTZKcVE?oc=5"
-      },
-      {
         "title": "新イベント「MAKIMONO SLASHER」を開催 ～beatmania IIDX 34 ZINRAI～ | コナミグループ株式会社",
         "source": "KONAMI GROUP CORPORATION",
         "domain": "konami.com",
         "date": "2026-11-16",
         "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE52OHB2WjhUUWc3d3lQdlE3YUZMOGNnLWFsbGdGaWVLZlVNQktYdVQ2cVRaQ1JTdERlcHZJQk5EalNwNEF1aFFkdVlKaXR5Wnp3TTdWb1ZtLWpzWTRBUnVIRnhOLXJoNFEzekY5em9jUnUxWkZaUVBzUnRYUzc?oc=5"
-      },
-      {
-        "title": "（ピラティスミラー） 【福岡市7店舗目】1月25日に東区千早にオープン！",
-        "source": "KONAMI GROUP CORPORATION",
-        "domain": "konami.com",
-        "date": "2026-11-16",
-        "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1lLWgxY0g3WWNYTmRPUW5qVVlpTVBpRzF2R09GM0w0QXplMUJEYVR3dE80emRyWjVUZmdNTkg1S01KRXZWN1E4bm1lNWlkZjdHdjRoeFVTUkJDTGZLUHAwdGdUZjg3R1dqOUx6VGd3?oc=5"
       }
     ]
   },
@@ -9098,26 +9105,12 @@
     "trailing_plan": "5034突破でSL4900へ、5200で半分利確",
     "sector": "小売業",
     "sector_color": "green",
-    "sector_above_sma25_pct": 60.0,
+    "sector_above_sma25_pct": 64.5,
     "sector_n": 265,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
-      {
-        "title": "【創立記念 はなまるフェス】累計1億本以上売れた「ちくわ磯辺揚げ」を無料プレゼント！ 日頃の感謝を込めて11月20日（金）より4日間限定開催！お好きなうどん100円引きクーポンももらえる | 株式会社吉野家ホールディングスのプレスリリース",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
-        "date": "2026-11-13",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBLdDY0V2RlWmZYem8zdEZTRnJna2RJYkVsRmdId3ZsbzBaZ1FaNTJDZ3Rfc2RMaE9zSEhBS0pBdnNWTERnTXBJNTFWb0d1MXhreU9wU2VCWGNRNWxLSjJ0dEhJa1JuQkxuQWc?oc=5"
-      },
-      {
-        "title": "吉野家公式通販ショップにて2027年「福箱」を期間限定で本日より販売開始 | 株式会社吉野家ホールディングスのプレスリリース",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
-        "date": "2026-11-12",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9sSnpKQnpxTU9POVlpOWI3M1BGMmx1VVpJcGRscHI0Z3JXT0plNlJtZXBLYVVtOUFXZFNaeWoxRWFISnBmUTdFbVpMeFVPbDRNY2tjMWFqSFh2WG9yNHlOcHVhcE5WM0lQRWc?oc=5"
-      },
       {
         "title": "吉野家「牛すき祭」を11月10日（火）より開催「牛すき鍋膳」が期間限定で税込100円引きの799円に‐ご好評につき販売開始から10日で100万食突破‐",
         "source": "PR TIMES",
@@ -9202,10 +9195,10 @@
     "trailing_plan": "流動性低く約定不安定、2100で即利確・深追い厳禁",
     "sector": "不動産業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 35.8,
+    "sector_above_sma25_pct": 42.5,
     "sector_n": 106,
     "date": "2026-11-17",
-    "updated_at": "2026-11-17T20:21:48",
+    "updated_at": "2026-11-18T04:55:06",
     "prompt_version": "2026-11-16-1",
     "news_headlines": [
       {
