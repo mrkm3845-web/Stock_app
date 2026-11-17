@@ -158,16 +158,22 @@
                         <td class="muted-small">なし</td>
                     </tr>
                     <tr>
+                        <td class="text-center"><span class="time-badge">06:15</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td><b>朝ブリーフィング</b>（米国・為替・ニュース確認、今日の方針とCSV催促をDiscord通知）</td>
+                        <td>スマホでDiscord通知を確認</td>
+                    </tr>
+                    <tr>
                         <td class="text-center"><span class="time-badge">09:00</span></td>
                         <td class="text-center"><span class="tag tag-manual">手動</span></td>
                         <td>寄り付き</td>
                         <td><b>OCOが入っているか確認</b>（前日に約定していないかも）</td>
                     </tr>
                     <tr>
-                        <td class="text-center"><span class="time-badge">日中（必要時）</span></td>
-                        <td class="text-center"><span class="tag tag-manual">手動</span></td>
-                        <td>日中の損切・利確は<b>証券会社のOCO注文</b>が自動執行。現在値で台帳判定を見たいときだけ「手動チェック」を押す</td>
-                        <td>必要時のみ<b>今日の作戦</b>から手動チェック（普段は不要）</td>
+                        <td class="text-center"><span class="time-badge">12:15 / 14:50</span></td>
+                        <td class="text-center"><span class="tag tag-auto">自動</span></td>
+                        <td><b>昼・引け前ブリーフィング</b>（GAS連携時：5分足・セクター・台帳から買い/落ちるナイフ判定をDiscord通知）</td>
+                        <td>引け前の判断を確認（損切・利確の執行本体は証券会社OCO）</td>
                     </tr>
                     <tr>
                         <td class="text-center"><span class="time-badge">15:30</span></td>
@@ -228,14 +234,19 @@
 
     <!-- 3 -->
     <div class="card p-3" id="auto">
-        <h2 class="section">3. 裏で自動で動くこと（6本）</h2>
-        <p class="mb-2">GitHub Actions（クラウド）で動きます。あなたのPCの電源は不要です。</p>
+        <h2 class="section">3. 裏で自動で動くこと（7本＋GAS定刻起動）</h2>
+        <p class="mb-2">GitHub Actions（クラウド）で動きます。あなたのPCの電源は不要です。GAS（<code>tools/gas/trigger_workflows.gs</code>）を時計として使うと時刻ズレを防げます。</p>
         <div class="table-responsive mb-2">
             <table class="table table-sm table-bordered align-middle">
                 <thead>
                     <tr><th style="width:180px">名前</th><th style="width:150px">いつ</th><th>何をする</th></tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td><b>自律ブリーフィング</b><br><span class="muted-small">daily_briefing.yml</span></td>
+                        <td>平日 06:15 / 12:15 / 14:50（GAS）＋ 20時台AI後</td>
+                        <td>5分足・指数・Web検索から状況判断と取引履歴CSVの更新催促をDiscordへ通知</td>
+                    </tr>
                     <tr>
                         <td><b>毎日スクリーニング</b><br><span class="muted-small">daily_main8.yml</span></td>
                         <td>平日 04:17 / 06:17 / 17:17 / 19:17 / 21:17</td>

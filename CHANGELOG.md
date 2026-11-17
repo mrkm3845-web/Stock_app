@@ -8,6 +8,34 @@
 
 ---
 
+## 2026-11-17
+
+### 自律調査＆Discordブリーフィング（朝・昼・引け前・夜）と GAS 定刻起動・CSV更新催促を実装（この変更）
+- **commit**: この変更（自律ブリーフィング＋GAS定刻起動）
+- **種別**: 運用自動化 / ワークフロー / AI連携 / バグ修正 / ドキュメント
+- **変更**:
+  1. **`tools/daily_briefing.py` と `.github/workflows/daily_briefing.yml` を新規作成**:
+     - `morning` / `midday` / `preclose` / `evening` の4スロットに対応し、東証営業日（`pandas_market_calendars` の `XTKS`）のみ動作（`--force` で強制可）。
+     - リアルタイム指数（`1306.T`・`^N225`・`JPY=X`）・監視/保有銘柄・同業種比較銘柄を取得し、`midday` / `preclose` では5分足から「下落継続（落ちるナイフ警戒）／下げ止まり・横ばい／反発基調」を定量判定。
+     - `evaluate_csv_reminder()` により、直近の到達/決済イベント、引け前の買い条件達成見込み、台帳基準日の遅れ、または最終取引日からの日数経過を検知して「取引履歴CSVのダウンロード＆`/strategy-note` 実行」の催促文面を自動付与。
+     - `GEMINI_API_KEY`＋`google_search` Grounding で状況判断を生成し `DISCORD_WEBHOOK_URL` へ分割送信（API未設定・制限時は定量サマリへフォールバック）。
+  2. **既存ワークフロー連携と競合防止**:
+     - `.github/workflows/daily_main8.yml` と `daily_main8_ai.yml` に `concurrency`（`main8-screener-data`）を追加し、GAS起動と既存cronの重複時でも競合しないよう調整。
+     - `daily_main8_ai.yml` の最終ステップに `python tools/daily_briefing.py --slot evening`（`continue-on-error: true`）を追加。
+  3. **GAS定刻起動スクリプト（`tools/gas/trigger_workflows.gs`・`tools/gas/README.md`）を作成**:
+     - Google カレンダーの日本の祝日＋年末年始を判定し、営業日の 06:15 / 12:15 / 14:50 / 16:00 / 20:15（土曜は 09:00）にピンポイントのワンショットトリガーを自動予約する仕組みを実装。
+  4. **`tools/check_strategy_plan.py` の単一銘柄 MultiIndex バグ修正**:
+     - `fetch_prices()` で単一銘柄（1件のみ監視時）に `yfinance` が MultiIndex カラムを返して `KeyError: ['Close']` になっていた不具合を修正。
+- **根拠・検証**:
+  - `python -m py_compile tools/check_strategy_plan.py tools/daily_briefing.py` で構文確認。
+  - `uv run --no-project --python 3.11 --with yfinance --with pandas_market_calendars python tools/check_strategy_plan.py --mode intraday --dry-run --force` で `7282 豊田合成` のライブ価格読込成功を確認。
+  - `uv run ... python tools/daily_briefing.py --slot preclose --dry-run` で 5分足判定（「下げ止まり・横ばい圏」）と CSV催促文面の生成を確認。
+- **影響・ロールバック**:
+  - 既存の日次スクリーニングやスコア計算ロジックは不変。GASを設定しない場合は `daily_main8_ai.yml` 完了後の `evening` ブリーフィングのみ自動追加され、`daily_briefing.yml` は手動/GAS起動時のみ動く。戻す場合は該当コミットを `git revert`。
+- **関連**: `tools/daily_briefing.py` / `tools/check_strategy_plan.py` / `.github/workflows/daily_briefing.yml` / `.github/workflows/daily_main8.yml` / `.github/workflows/daily_main8_ai.yml` / `tools/gas/trigger_workflows.gs` / `tools/gas/README.md` / `PROJECT_STATUS.md` / `docs/ops.html` / `AGENTS.md`
+
+---
+
 ## 2026-11-16
 
 ### Gemini Google Search Grounding（リアルタイムWeb検索）による上位候補の決算日・IR・悪材料の自動裏取りを実装（この変更）

@@ -1,0 +1,57 @@
+name: 自律調査＆Discordブリーフィング（朝・昼・引け前・夜）
+
+on:
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: '実行スロット（morning / midday / preclose / evening）'
+        required: true
+        type: choice
+        options:
+          - morning
+          - midday
+          - preclose
+          - evening
+        default: morning
+      force:
+        description: '休場日でも強制実行する'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-briefing-${{ inputs.slot }}
+  cancel-in-progress: false
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy yfinance pandas_market_calendars
+
+      - name: Run daily briefing
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          ARGS="--slot ${{ inputs.slot }}"
+          if [ "${{ inputs.force }}" = "true" ]; then
+            ARGS="$ARGS --force"
+          fi
+          echo "python tools/daily_briefing.py $ARGS"
+          python tools/daily_briefing.py $ARGS

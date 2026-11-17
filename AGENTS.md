@@ -130,7 +130,8 @@ Invoke-RestMethod -Uri "https://api.github.com/repos/mrkm3845-web/Stock_app/acti
 | ファイル | 役割 |
 | :--- | :--- |
 | `daily_main8.yml` | 技術スクリーニング（平日5回） |
-| `daily_main8_ai.yml` | AI推奨（平日20:17 JST）。`recommendations.json` を生成 |
+| `daily_main8_ai.yml` | AI推奨（平日20:17 JST）。`recommendations.json` を生成（完了後に夜ブリーフィング送信） |
+| `daily_briefing.yml` | 自律調査＆Discordブリーフィング（`morning`/`midday`/`preclose`/`evening`、GAS定刻起動対応） |
 | `run_walkforward.yml` | 月次バックテスト＋パラメータ反映 |
 | `weekly_review.yml` | 週次答え合わせ（土曜09:00 JST） |
 | `plan_check_intraday.yml` | 作戦トリガー監視（日中・手動実行。自動監視は引け後EODに集約） |

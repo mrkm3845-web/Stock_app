@@ -118,6 +118,7 @@ def market_time(now: datetime, mode: str) -> bool:
 def fetch_prices(codes: list[str], mode: str):
     """yfinance から現在値と当日の高値/安値を取る。失敗時は空。"""
     try:
+        import pandas as pd
         import yfinance as yf
     except Exception:  # noqa: BLE001
         print("警告: yfinance がありません。履歴の終値で代替します。", file=sys.stderr)
@@ -142,13 +143,21 @@ def fetch_prices(codes: list[str], mode: str):
         print(f"警告: 価格取得に失敗: {exc}", file=sys.stderr)
         return {}, "yfinance失敗"
 
+    is_multi = isinstance(getattr(data, "columns", None), pd.MultiIndex)
     result = {}
     for code, t in zip(codes, tickers):
         try:
-            if len(tickers) == 1:
-                df = data
+            if is_multi:
+                lvl0 = data.columns.get_level_values(0)
+                lvl1 = data.columns.get_level_values(1)
+                if t in lvl0:
+                    df = data[t]
+                elif t in lvl1:
+                    df = data.xs(t, axis=1, level=1)
+                else:
+                    df = None
             else:
-                df = data[t] if t in data.columns.get_level_values(0) else None
+                df = data if len(tickers) == 1 else None
             if df is None:
                 continue
             df = df.dropna(subset=["Close"])

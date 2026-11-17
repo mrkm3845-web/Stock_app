@@ -55,6 +55,11 @@
 - 作戦ノート・作戦台帳（2026-11-16 更新）:
   - `docs/weekend/2026-11-15-2348.json` と `docs/strategy/active.json`（`plan_id = 2026-11-15-2348`）を `2026-11-13` 確定終値・保有株ゼロで更新済み（東京海上ホールディングス（8766）は11/19中間決算のため見送りへ移動し、10/29好決算通過済みの豊田合成（7282）1,035円押し目を唯一の優先度Aとして設定、同時保有上限1銘柄）
 
+**自律ブリーフィング＆GAS定刻起動（2026-11-17 追加）**
+- [`tools/daily_briefing.py`](tools/daily_briefing.py) & `.github/workflows/daily_briefing.yml`: 朝（`morning`）・昼（`midday`）・引け前（`preclose`）・夜（`evening`）に東証営業日判定、リアルタイム指数・5分足（落ちるナイフ vs 下げ止まり判定）・セクター比較、取引履歴CSVの更新催促判定、Gemini Google Search Grounding による判断生成を行い Discord へ通知（`daily_main8_ai.yml` 完了後にも `evening` を自動連続実行）
+- [`tools/check_strategy_plan.py`](tools/check_strategy_plan.py): `yfinance` 1.7.0 で単一銘柄取得時に MultiIndex カラムとなり `KeyError: ['Close']` が発生していた不具合を修正
+- [`tools/gas/trigger_workflows.gs`](tools/gas/trigger_workflows.gs): GitHub Actions の cron 遅延・スキップ対策として、GAS（日本の祝日・年末年始対応）から `workflow_dispatch` で 06:15 / 12:15 / 14:50 / 16:00 / 20:15 / 土曜09:00 にピンポイント起動するスクリプトを追加（手順書: [`tools/gas/README.md`](tools/gas/README.md)）
+
 **次にやること**
 1. 4〜8週間の週次答え合わせで v3（`v3-research_upside-2026-10-18`）と `PROMPT_VERSION = 2026-11-15-1` の実運用を継続観測（12月中旬までスコア重み・セクター色閾値は固定）
 2. `2026-12-19` 以降にセクター色（`sector_color`）の閾値と赤業種除外の効果を検証
@@ -69,7 +74,7 @@
 - バックテストは**同一リポジトリ内の [`back_tester/`](back_tester/)**。**毎月 第1土曜にガード付きで `docs/strategy_params.json` へ自動反映**。
 - **週次答え合わせ** [`back_tester/weekly_review.py`](back_tester/weekly_review.py) を運用中。日々の推奨・技術上位を1週間（月〜金）単位で実際の値動きと突き合わせ、**毎週 土曜09:00 JSTに `docs/weekly.html`・`docs/weekly/ledger.json`・`docs/ai_playbook.json`（[`docs/playbook.html`](docs/playbook.html)）へ自動生成**。
 - フロントは GitHub Pages（[`docs/index.html`](docs/index.html) / [`docs/strategy.html`](docs/strategy.html) / [`docs/journal.html`](docs/journal.html) / [`docs/weekly.html`](docs/weekly.html) / [`docs/weekend.html`](docs/weekend.html) / [`docs/playbook.html`](docs/playbook.html) / [`docs/guide.html`](docs/guide.html) / [`docs/ops.html`](docs/ops.html)）。
-- ワークフローは7本（技術スクリーニング / AI分析 / 月次バックテスト / 週次答え合わせ / 作戦トリガー手動チェック / 手動データ更新 / 作戦更新通知）。
+- ワークフローは8本（技術スクリーニング / AI分析 / 自律ブリーフィング / 月次バックテスト / 週次答え合わせ / 作戦トリガー手動チェック / 手動データ更新 / 作戦更新通知）。
 
 ---
 
