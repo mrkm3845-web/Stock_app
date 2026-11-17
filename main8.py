@@ -1068,9 +1068,9 @@ def _call_gemini_grounding(user_prompt, system_prompt, params):
     if not key or OFFLINE:
         return None
     ai = (params or {}).get("ai") or {}
-    primary = ai.get("grounding_model") or "gemini-2.5-flash"
+    primary = ai.get("grounding_model") or "gemini-3-flash-preview"
     models = [primary]
-    for m in ("gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro"):
+    for m in ("gemini-3-flash-preview", "gemini-3.1-pro-preview"):
         if m not in models:
             models.append(m)
 

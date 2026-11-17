@@ -159,7 +159,7 @@
     "retry_candidates": 15,
     "max_output_stocks": 15,
     "grounding_enabled": true,
-    "grounding_model": "gemini-2.5-flash",
+    "grounding_model": "gemini-3-flash-preview",
     "grounding_max_stocks": 10,
     "earnings_block_days": 7,
     "news_source": "gnews",

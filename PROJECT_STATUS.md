@@ -227,7 +227,7 @@ flowchart LR
 
 **保存・裏取り**
 - `ai_analysis/{date}.json`（生キャッシュ）＋ `ai_analysis/{date}_grounding.json`（Gemini Google Search Grounding の裏取り結果キャッシュ）＋ `ai_strategy_latest.json`（銘柄別最新）。
-- **Gemini Google Search Grounding（実装済み・2026-11-16）**: `ai.grounding_enabled=true`（既定 `gemini-2.5-flash`、上位 `grounding_max_stocks=10` 件、`earnings_block_days=7` 日）。`tools:[{"google_search":{}}]` を使い、JSON抽出できない場合のみ検索なし2段目で構造化する二段構成。yfinance の決算日欠損を補完し、決算接近・致命的悪材料を `recommend` から自動除外する。
+- **Gemini Google Search Grounding（実装済み・2026-11-16）**: `ai.grounding_enabled=true`（既定 `gemini-3-flash-preview`、上位 `grounding_max_stocks=10` 件、`earnings_block_days=7` 日）。`tools:[{"google_search":{}}]` を使い、JSON抽出できない場合のみ検索なし2段目で構造化する二段構成。yfinance の決算日欠損を補完し、決算接近・致命的悪材料を `recommend` から自動除外する。
 
 **検討中（未実装）**
 - **AI有界オーバーレイ**（総合=S+Δ、Δ∈{−10..+10}）: 設計済み・未実装。

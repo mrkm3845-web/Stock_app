@@ -36,6 +36,25 @@
 
 ---
 
+## 2026-11-17
+
+### DiscordブリーフィングおよびGemini Groundingの旧Geminiモデル指定（2.0/2.5系）を3系へ更新（この変更）
+- **commit**: この変更（Geminiモデル指定の更新）
+- **種別**: AI連携 / 通知 / ドキュメント
+- **変更**:
+  1. `tools/daily_briefing.py`: `_generate_ai_briefing()` の `models` を `["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro"]` から `["gemini-3-flash-preview", "gemini-3.1-pro-preview"]` へ更新。
+  2. `main8.py`: `_call_gemini_grounding()` の既定モデル・フォールバック一覧（`gemini-2.5-flash` / `gemini-2.0-flash` / `gemini-2.5-pro`）を `gemini-3-flash-preview` / `gemini-3.1-pro-preview` へ更新。
+  3. `docs/strategy_params.json`: `ai.grounding_model` を `"gemini-2.5-flash"` から `"gemini-3-flash-preview"` へ更新。
+  4. `PROJECT_STATUS.md`: Grounding 仕様記述の既定モデル名を同期。
+- **根拠・検証**:
+  - 2026-11-17 の朝・夜 Discord ブリーフィングで `gemini-2.5-pro HTTP 404`（`no longer available to new users. Please update your code to use models/gemini-3.1-pro-preview`）により AI 要約がスキップされたため。
+  - `python -m py_compile tools/daily_briefing.py main8.py` および `docs/strategy_params.json` の JSON 読込で構文・形式を確認（実API疎通は GitHub Actions 実行時に確認）。
+- **影響・ロールバック**:
+  - `daily_briefing.yml` および `main8.py` の Stage 2.5 Grounding が Gemini 3系を使用するようになる。戻す場合は該当コミットを `git revert`。
+- **関連**: `tools/daily_briefing.py` / `main8.py` / `docs/strategy_params.json` / `PROJECT_STATUS.md`
+
+---
+
 ## 2026-11-16
 
 ### Gemini Google Search Grounding（リアルタイムWeb検索）による上位候補の決算日・IR・悪材料の自動裏取りを実装（この変更）

@@ -569,7 +569,7 @@ def generate_ai_briefing(ctx: dict) -> tuple[str, str]:
         f"{json.dumps(ctx, ensure_ascii=False, indent=2)}"
     )
 
-    models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro"]
+    models = ["gemini-3-flash-preview", "gemini-3.1-pro-preview"]
     last_err = ""
     for model in models:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
