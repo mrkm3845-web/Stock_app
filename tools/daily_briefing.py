@@ -269,16 +269,33 @@ def evaluate_csv_reminder(
     data_date = csp.parse_date(plan.get("data_date"))
     rec_date = csp.parse_date((recs_doc or {}).get("date"))
 
-    # 1. 直近2日以内に重要トリガーイベントが発生
+    # 1. 直近2日以内に重要トリガーイベントが発生（ただし既に positions へ約定反映済みの triggered は除く）
+    pos_entry_dates = {
+        str(p.get("code")): csp.parse_date(p.get("entry_date"))
+        for p in (plan.get("positions") or [])
+        if p.get("code")
+    }
     recent_actionable = {"triggered", "stop_hit", "tp_hit", "max_hold", "expired"}
     for ev in reversed((events_doc or {}).get("events") or []):
         at_str = str(ev.get("at") or "")[:10]
         ev_date = csp.parse_date(at_str)
-        if ev_date and (today - ev_date).days <= 2 and ev.get("status") in recent_actionable:
+        ev_code = str(ev.get("code") or "")
+        ev_status = ev.get("status")
+        if ev_status == "triggered" and ev_code in pos_entry_dates:
+            continue
+        if ev_date and (today - ev_date).days <= 2 and ev_status in recent_actionable:
             reasons.append(
-                f"直近（{at_str}）に {ev.get('name')}（{ev.get('code')}）で「{ev.get('status')}」が発生"
+                f"直近（{at_str}）に {ev.get('name')}（{ev_code}）で「{ev_status}」が発生"
             )
             break
+
+    # 1b. チャット報告などで先に台帳へ反映済みの保有があるが、CSVがまだ古い場合
+    for p in plan.get("positions") or []:
+        ed = csp.parse_date(p.get("entry_date"))
+        if ed and (not trade_last or ed > trade_last) and slot in ("morning", "evening"):
+            reasons.append(
+                f"手動反映済みの保有 {p.get('name')}（{p.get('code')}）（{ed}約定）を取引履歴CSVにも同期推奨"
+            )
 
     # 2. 本日の監視評価で到達・決済イベントが出た、または引け前に買い条件クリア見込み
     for w in watch_evals:

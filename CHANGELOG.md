@@ -10,6 +10,28 @@
 
 ## 2026-11-18
 
+### 豊田合成（7282）の約定反映とチャット約定報告の台帳即時反映ルールを追加（この変更）
+- **commit**: この変更（約定反映・ブリーフィング連携ルール追加）
+- **種別**: 作戦台帳 / 運用自動化 / ドキュメント
+- **変更**:
+  1. **`docs/strategy/active.json` の更新（豊田合成（7282）保有反映）**:
+     - 本日（2026-11-18）の買付約定（基準価格 `1,030` 円）を受け、`watchlist` から `positions` へ移動（公開ルールに従い数量・口座区分・損益額は非記載、`stop: 985`, `take_profit: 1165`, `max_hold_until: "2027-01-19"`）。
+     - 本日引け後の市場データ（`1306.T: 401.9` / 200日線 `403.0` 割れリスクオフ、全銘柄25日線上 `29.8%`、輸送用機器 `23.6%` 赤）を反映し、同時保有1銘柄上限のため新規監視を空（`[]`）に更新。
+  2. **`AGENTS.md` と `tools/daily_briefing.py` の改善**:
+     - `AGENTS.md` §6 に、チャットやスクリーンショットで約定・決済報告を受けた際の即時台帳更新（`active.json` → `check_strategy_plan.py` → `commit & push`）ルールを明文化。
+     - `tools/daily_briefing.py` の `evaluate_csv_reminder()` で、すでに `positions` へ登録済みの銘柄に対して古い `triggered` 警告が出ないよう除外し、CSV未同期の手動反映保有がある旨を朝・夜に案内するよう調整。
+- **根拠・検証**:
+  - `python -m py_compile tools/daily_briefing.py` で構文確認。
+  - `python tools/check_strategy_plan.py --mode eod --force`（`uv run`・`2026-11-18` 確定終値フォールバック）で `status.json` が `7282 豊田合成：保有継続` に更新されることを確認。
+  - `daily_briefing.evaluate_csv_reminder()` を実台帳で呼び出し、手動反映済み保有（`7282`）の同期推奨メッセージが出力され、`triggered` 重複警告が出ないことを確認。
+- **影響・ロールバック**:
+  - 今夜 20:15 以降の自動ブリーフィングおよび日中チェックが、豊田合成（7282）の保有OCO監視（損切985 / 利確1,165）に切り替わる。
+- **関連**: `docs/strategy/active.json` / `docs/strategy/status.json` / `docs/strategy/events.json` / `tools/daily_briefing.py` / `AGENTS.md`
+
+---
+
+## 2026-11-18
+
 ### DiscordブリーフィングのGemini失敗時にDeepSeekへフォールバックするよう改修（この変更）
 - **commit**: この変更（daily_briefing DeepSeek フォールバック）
 - **種別**: AI連携 / ワークフロー / 通知

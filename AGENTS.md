@@ -201,6 +201,10 @@ WindowsでPythonがない場合だけ `tools/prepare_strategy_note.ps1` を使�
 - `docs/strategy.html` … 今日の作戦ダッシュボード（スクリーナーからリンク）
 - 価格トリガーと条件トリガーを分ける（例：3,180円に来ても銀行セクターが弱ければ買わない）
 - **AIやスコアより台帳を優先**する。AIは提案、実行は台帳
+- **チャットやスクショで約定・決済の報告を受けたら即座に台帳へ反映する**：
+  1. 公開情報ルール（株数・口座区分・損益額は書かない）を守り、`docs/strategy/active.json` の `positions` / `watchlist` / `market` / `data_date` / `updated_at` を更新する（買付なら `entry_price`・`entry_date`・`stop`・`take_profit`・`max_hold_until`・`status: "hold"` を登録）
+  2. その時点の地合い・ATRを踏まえた推奨OCO水準を提案する
+  3. `python tools/check_strategy_plan.py --mode eod --force` を実行して `status.json` / `events.json` を更新し、コミット＆`git push origin main` まで完了して以降の朝昼引け前夜ブリーフィングへ即反映させる（次回のCSV取得＋`/strategy-note` 実行時に正式突合する）
 
 ### ノートのルール
 
