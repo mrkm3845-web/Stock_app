@@ -1,29 +1,29 @@
 {
   "plan_id": "2026-11-15-2348",
-  "checked_at": "2026-11-18T20:24:18.306217+09:00",
+  "checked_at": "2026-11-19T20:23:40.487560+09:00",
   "source": "eod",
-  "data_asof": "2026-11-18",
+  "data_asof": "2026-11-19",
   "market": {
     "regime": {
       "ticker": "1306.T",
-      "close": 401.9,
-      "sma": 403.0,
+      "close": 402.2,
+      "sma": 403.2,
       "sma_days": 200,
       "risk_on": false
     },
     "breadth": {
       "n": 2905,
       "low_sample": false,
-      "above_sma25_pct": 29.8,
-      "above_sma200_pct": 40.8,
-      "avg_ret5_pct": -1.93
+      "above_sma25_pct": 29.0,
+      "above_sma200_pct": 39.6,
+      "avg_ret5_pct": -2.55
     },
     "bank_sector": {
       "n": 77,
       "low_sample": false,
       "above_sma25_pct": 6.5,
-      "above_sma200_pct": 50.6,
-      "avg_ret5_pct": -7.53
+      "above_sma200_pct": 39.0,
+      "avg_ret5_pct": -7.15
     }
   },
   "items": [
@@ -33,18 +33,18 @@
       "kind": "position",
       "sector": "輸送用機器",
       "sector_color": "red",
-      "sector_above_sma25_pct": 23.6,
+      "sector_above_sma25_pct": 19.4,
       "status": "hold",
-      "current_price": 1030.0,
-      "high": 1030.0,
-      "low": 1030.0,
+      "current_price": 1008.0,
+      "high": 1008.0,
+      "low": 1008.0,
       "entry_price": 1030,
       "stop": 985,
       "take_profit": 1165,
-      "distance_pct": 4.368932038834951,
+      "distance_pct": 2.2817460317460316,
       "action": "保有継続",
       "source": "history-close",
-      "asof": "2026-11-18",
+      "asof": "2026-11-19",
       "last_notified_status": "hold",
       "last_notified_at": "2026-11-18T17:09:50.025861+09:00",
       "last_near_date": null
