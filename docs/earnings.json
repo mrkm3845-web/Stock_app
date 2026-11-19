@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-19T04:31:07",
+  "generated_at": "2026-11-19T10:17:03",
   "date": "2026-11-18",
   "horizon_days": 14,
   "items": {
@@ -29,8 +29,8 @@
       "soon": false
     },
     "1377": {
-      "date": "2026-10-06",
-      "days_until": -43,
+      "date": "2027-01-13",
+      "days_until": 56,
       "soon": false
     },
     "1379": {
@@ -1614,8 +1614,8 @@
       "soon": false
     },
     "2659": {
-      "date": "2027-01-06",
-      "days_until": 49,
+      "date": "2027-01-07",
+      "days_until": 50,
       "soon": false
     },
     "2664": {
@@ -1729,8 +1729,8 @@
       "soon": false
     },
     "2726": {
-      "date": "2026-10-06",
-      "days_until": -43,
+      "date": "2027-01-12",
+      "days_until": 55,
       "soon": false
     },
     "2730": {
@@ -2129,8 +2129,8 @@
       "soon": false
     },
     "2930": {
-      "date": "2027-01-13",
-      "days_until": 56,
+      "date": "2027-01-14",
+      "days_until": 57,
       "soon": false
     },
     "2932": {
@@ -2914,8 +2914,8 @@
       "soon": false
     },
     "3349": {
-      "date": "2027-01-13",
-      "days_until": 56,
+      "date": "2027-01-12",
+      "days_until": 55,
       "soon": false
     },
     "3352": {
@@ -2989,8 +2989,8 @@
       "soon": false
     },
     "3387": {
-      "date": "2027-01-13",
-      "days_until": 56,
+      "date": "2027-01-14",
+      "days_until": 57,
       "soon": false
     },
     "3388": {
@@ -3721,141 +3721,6 @@
     "3799": {
       "date": "2025-05-14",
       "days_until": -553,
-      "soon": false
-    },
-    "3800": {
-      "date": "2025-05-13",
-      "days_until": -554,
-      "soon": false
-    },
-    "3802": {
-      "date": "2025-05-12",
-      "days_until": -555,
-      "soon": false
-    },
-    "3804": {
-      "date": "2025-06-16",
-      "days_until": -520,
-      "soon": false
-    },
-    "3816": {
-      "date": "2025-06-06",
-      "days_until": -530,
-      "soon": false
-    },
-    "3817": {
-      "date": "2025-08-05",
-      "days_until": -470,
-      "soon": false
-    },
-    "3826": {
-      "date": "2025-07-14",
-      "days_until": -492,
-      "soon": false
-    },
-    "3834": {
-      "date": "2025-08-07",
-      "days_until": -468,
-      "soon": false
-    },
-    "3835": {
-      "date": "2025-07-29",
-      "days_until": -477,
-      "soon": false
-    },
-    "3837": {
-      "date": "2025-08-05",
-      "days_until": -470,
-      "soon": false
-    },
-    "3839": {
-      "date": "2025-04-30",
-      "days_until": -567,
-      "soon": false
-    },
-    "3841": {
-      "date": "2025-05-09",
-      "days_until": -558,
-      "soon": false
-    },
-    "3842": {
-      "date": "2025-05-14",
-      "days_until": -553,
-      "soon": false
-    },
-    "3843": {
-      "date": "2025-06-13",
-      "days_until": -523,
-      "soon": false
-    },
-    "3844": {
-      "date": "2025-08-04",
-      "days_until": -471,
-      "soon": false
-    },
-    "3845": {
-      "date": "2025-05-15",
-      "days_until": -552,
-      "soon": false
-    },
-    "3848": {
-      "date": "2025-05-12",
-      "days_until": -555,
-      "soon": false
-    },
-    "3850": {
-      "date": "2025-05-09",
-      "days_until": -558,
-      "soon": false
-    },
-    "3853": {
-      "date": "2025-08-07",
-      "days_until": -468,
-      "soon": false
-    },
-    "3854": {
-      "date": "2025-09-04",
-      "days_until": -440,
-      "soon": false
-    },
-    "3861": {
-      "date": "2027-02-04",
-      "days_until": 78,
-      "soon": false
-    },
-    "3863": {
-      "date": "2027-02-04",
-      "days_until": 78,
-      "soon": false
-    },
-    "3864": {
-      "date": "2025-08-04",
-      "days_until": -471,
-      "soon": false
-    },
-    "3865": {
-      "date": "2027-02-12",
-      "days_until": 86,
-      "soon": false
-    },
-    "3877": {
-      "date": "2025-08-05",
-      "days_until": -470,
-      "soon": false
-    },
-    "3878": {
-      "date": "2025-08-07",
-      "days_until": -468,
-      "soon": false
-    },
-    "3880": {
-      "date": "2027-02-12",
-      "days_until": 86,
-      "soon": false
-    },
-    "3891": {
-      "date": "2025-04-24",
-      "days_until": -573,
       "soon": false
     }
   }
