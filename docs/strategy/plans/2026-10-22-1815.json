@@ -146,10 +146,8 @@
       "name": "三井松島ホールディングス",
       "entry_price": 2285,
       "exit_price": 2190,
-      "qty": 100,
       "exit_reason": "stop_hit（OCO 2,192）",
       "pnl_pct": -4.2,
-      "pnl_jpy": -9500,
       "closed_at": "2026-10-23",
       "lesson": "損切りを終値待ちにせずOCOで機械的に執行できた。ルールどおりの負け。"
     },
@@ -158,10 +156,8 @@
       "name": "ヤマハ発動機",
       "entry_price": 1864,
       "exit_price": 1772.7,
-      "qty": 100,
       "exit_reason": "max_hold（最大保有日2026-10-23の引けで手仕舞い）",
       "pnl_pct": -4.9,
-      "pnl_jpy": -9130,
       "closed_at": "2026-10-23",
       "lesson": "25日線割れ・1,800割れで前提が崩れていた。最大保有日のルールを曲げずに撤退。"
     }
