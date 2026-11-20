@@ -1,29 +1,29 @@
 {
   "plan_id": "2026-11-15-2348",
-  "checked_at": "2026-11-20T12:15:36.014797+09:00",
-  "source": "intraday",
-  "data_asof": "2026-11-20T11:30:00+09:00",
+  "checked_at": "2026-11-20T20:22:00.427782+09:00",
+  "source": "eod",
+  "data_asof": "2026-11-20T00:00:00",
   "market": {
     "regime": {
       "ticker": "1306.T",
-      "close": 392.1,
+      "close": 386.2,
       "sma": 403.3,
       "sma_days": 200,
       "risk_on": false
     },
     "breadth": {
-      "n": 2905,
+      "n": 2906,
       "low_sample": false,
-      "above_sma25_pct": 23.3,
-      "above_sma200_pct": 35.3,
-      "avg_ret5_pct": -4.45
+      "above_sma25_pct": 19.1,
+      "above_sma200_pct": 32.5,
+      "avg_ret5_pct": -5.31
     },
     "bank_sector": {
       "n": 77,
       "low_sample": false,
-      "above_sma25_pct": 3.9,
-      "above_sma200_pct": 23.4,
-      "avg_ret5_pct": -9.69
+      "above_sma25_pct": 2.6,
+      "above_sma200_pct": 13.0,
+      "avg_ret5_pct": -12.17
     }
   },
   "items": [
@@ -35,16 +35,16 @@
       "sector_color": "red",
       "sector_above_sma25_pct": 12.5,
       "status": "stop_hit",
-      "current_price": 977.5,
-      "high": 990.2,
-      "low": 969.5,
+      "current_price": 963.4,
+      "high": 996.7,
+      "low": 963.0,
       "entry_price": 1030,
       "stop": 985,
       "take_profit": 1165,
-      "distance_pct": 0.7672634271099744,
+      "distance_pct": 2.24205678208017,
       "action": "損切り985に到達。OCO約定を確認",
-      "source": "yfinance-5m",
-      "asof": "2026-11-20T11:30:00+09:00",
+      "source": "yfinance-1d",
+      "asof": "2026-11-20T00:00:00",
       "last_notified_status": "stop_hit",
       "last_notified_at": "2026-11-20T12:15:36.014797+09:00",
       "last_near_date": null
