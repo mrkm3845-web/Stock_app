@@ -8,6 +8,33 @@
 
 ---
 
+## 2026-11-22
+
+### Gemini Google Search Grounding を「4人の株専門家による合議制（材料精査・需給・悪魔の代弁者・委員長）」へ拡張（この変更）
+- **commit**: この変更（4人合議制 Grounding プロンプト実装）
+- **種別**: AI連携 / スクリーナー / 週次レビュー / 自律ブリーフィング / ドキュメント
+- **変更**:
+  1. **`main8.py` Stage 2.5 の4人合議制プロンプト化**:
+     - `ground_candidates_with_gemini()` の入力に各銘柄の株価・25日乖離・RSI14・5日騰落率・過熱度を追加し、Google検索で得たニュースの中身と織り込み度を突き合わせられるように改善。
+     - システムプロンプトを「①材料・ファンダ精査官（`catalyst_quality`）②需給・織り込み判定官（`priced_in_risk`）③悪魔の代弁者・リスク審査官（`veto`）④投資委員長（`committee_verdict`: `approve_strong`/`approve`/`hold_watch`/`reject`）」の4人合議プロセスに刷新。
+     - `apply_grounding_filter()` をバランス型に更新し、決算7暦日以内・`veto`/`reject`・`priced_in`（材料出尽くし警戒）は `recommend` → `watch` へ機械格下げする一方、記事が少ないだけの `weak/none` は「材料確認薄・テクニカル主導」と注記して残す。
+     - `build_recommendations()` と `send_recommendations_to_discord()` に合議結果（`committee_verdict` / `catalyst_quality` / `priced_in_risk` / `committee_notes`）および Discord の攻め/反証1行サマリを追加。
+  2. **`back_tester/weekly_review.py` への合議結果統合**:
+     - `build_next_week_plan()` と `_plan_candidate_lines()` で `投資委員会:` / `攻め根拠:` / `反証懸念:` を候補行に注入し、`_plan_system_prompt()` で `approve_strong`/`approve` 優先、`reject`/`priced_in` を `avoid` へ回すよう指示。
+  3. **`tools/daily_briefing.py` の4人合議プロセス統一**:
+     - `generate_ai_briefing()` のシステムプロンプトに同じ4人合議（材料精査・需給5分足・悪魔の代弁者による反証・委員長の最終結論）を組み込み、出力見出しを『■ 結論（委員長）』『■ 地合い・材料精査』『■ 監視・保有の判定（需給）』『■ 悪魔の代弁者（反証・注意点）』『■ 次の行動』へ統一。
+  4. **コスト抑制ガードと版管理の更新**:
+     - Gemini 3 系の思考トークン消費を抑えるため、`main8.py`（`_call_gemini_grounding` Step 1/2）と `tools/daily_briefing.py`（`generate_ai_briefing`）の `generationConfig` に `thinkingConfig: {"thinkingLevel": "low"}` を明示。
+     - `common/version.py` の `PROMPT_VERSION` を `"2026-11-22-1"` に更新。
+- **根拠・検証**:
+  - `docs/ai_playbook.json`（直近12週・633件）で `avoid` の防衛効果は確認された一方、`recommend` と `watch` の差が出ていない課題に対し、ニュースの中身・織り込み度・反証（悪魔の代弁者）を明示的に分離して合議させる設計へ強化。
+  - `py_compile` およびユニットテスト（4人合議 JSON 出力正規化、`reject` / `priced_in` 格下げと `weak` 注記保持、`build_recommendations` / Discord 出力、`weekly_review` 候補行、`daily_briefing` プロンプト）を実行して通過を確認。
+- **影響・ロールバック**:
+  - Google AI Studio の Paid Tier チャージ完了により `429` 回避の上で動作する想定。万が一制限時は現行通り DeepSeek へ安全にフォールバックする。戻す場合は該当コミットを `git revert`。
+- **関連**: `main8.py` / `back_tester/weekly_review.py` / `tools/daily_briefing.py` / `common/version.py` / `PROJECT_STATUS.md` / `back_tester/README.md`
+
+---
+
 ## 2026-11-18
 
 ### 豊田合成（7282）の約定反映とチャット約定報告の台帳即時反映ルールを追加（この変更）

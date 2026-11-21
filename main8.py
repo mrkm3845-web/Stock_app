@@ -1081,7 +1081,10 @@ def _call_gemini_grounding(user_prompt, system_prompt, params):
             "systemInstruction": {"parts": [{"text": system_prompt}]},
             "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
             "tools": [{"google_search": {}}],
-            "generationConfig": {"temperature": 0.1},
+            "generationConfig": {
+                "temperature": 0.1,
+                "thinkingConfig": {"thinkingLevel": "low"},
+            },
         }
         for attempt in range(3):
             try:
@@ -1118,7 +1121,11 @@ def _call_gemini_grounding(user_prompt, system_prompt, params):
                             "parts": [{"text": "与えられた調査メモを、指定されたJSON形式（{\"stocks\":[...]}）のみに変換して返してください。"}]
                         },
                         "contents": [{"role": "user", "parts": [{"text": text}]}],
-                        "generationConfig": {"temperature": 0.0, "responseMimeType": "application/json"},
+                        "generationConfig": {
+                            "temperature": 0.0,
+                            "responseMimeType": "application/json",
+                            "thinkingConfig": {"thinkingLevel": "low"},
+                        },
                     }
                     fmt_resp = requests.post(url, params={"key": key}, json=fmt_payload, timeout=60)
                     if fmt_resp.status_code == 200:
@@ -1164,7 +1171,18 @@ def ground_candidates_with_gemini(candidates, base_date, params, force_ai=False)
         if not code or code in seen:
             continue
         seen.add(code)
-        targets.append({"code": code, "name": c.get("name") or "", "earnings_date": c.get("earnings_date")})
+        ctx = c.get("ctx") or {}
+        targets.append({
+            "code": code,
+            "name": c.get("name") or "",
+            "sector": c.get("sector") or "",
+            "price": c.get("price"),
+            "earnings_date": c.get("earnings_date"),
+            "dist_sma25_pct": ctx.get("dist_sma25_pct") if ctx.get("dist_sma25_pct") is not None else c.get("dist_sma25_pct"),
+            "rsi14": ctx.get("rsi14") if ctx.get("rsi14") is not None else c.get("rsi14"),
+            "ret_5d_pct": ctx.get("ret_5d_pct") if ctx.get("ret_5d_pct") is not None else c.get("ret_5d_pct"),
+            "overheat_level": c.get("overheat_level") or (F.compute_entry_plan(ctx, params).get("overheat_level") if ctx else None),
+        })
         if len(targets) >= max_n:
             break
 
@@ -1179,7 +1197,10 @@ def ground_candidates_with_gemini(candidates, base_date, params, force_ai=False)
             for item in (cached_doc or {}).get("stocks") or []:
                 if isinstance(item, dict) and item.get("code"):
                     cached_by_code[str(item["code"]).strip()] = item
-            if all(t["code"] in cached_by_code for t in targets):
+            if all(
+                t["code"] in cached_by_code and cached_by_code[t["code"]].get("committee_verdict")
+                for t in targets
+            ):
                 print(f">> 当日のGemini Groundingキャッシュを再利用: {cache_file}（{len(cached_by_code)}銘柄）")
                 return cached_by_code
         except Exception:
@@ -1187,38 +1208,89 @@ def ground_candidates_with_gemini(candidates, base_date, params, force_ai=False)
 
     lines = [
         f"基準日: {base_date}",
-        "以下の日本株について、Google検索（株探・TDnet適時開示・Yahoo!ファイナンス・企業IR等）を使い、",
-        "1) 次回の決算発表予定日（YYYY-MM-DD。すでに直近で発表済みで次回日程が未定、または基準日より前の日付しかない場合は、その次の四半期予定日が分かればYYYY-MM-DD、不明ならnull）",
-        "2) 直近1〜2ヶ月の決算発表結果や業績修正・増配・自社株買いの要点（last_earnings_note、40文字以内）",
-        "3) 直近1ヶ月の致命的な悪材料（下方修正・不祥事・情報漏洩・公募増資・大幅減益など。無ければnull）",
-        "を調べてください。",
+        "以下の日本株について、Google検索（TDnet適時開示・株探・Yahoo!ファイナンス・企業IR・主要経済ニュース）を使い、",
+        "4人の専門家（材料精査官・需給判定官・悪魔の代弁者・投資委員長）で合議し、結果をJSONで返してください。",
         "",
         "【調査対象銘柄】",
     ]
     for t in targets:
         ed_txt = t["earnings_date"] or "未取得"
-        lines.append(f"- {t['code']} {t['name']}（手元の決算日データ: {ed_txt}）")
+        lines.append(
+            f"- {t['code']} {t['name']}（業種:{t['sector'] or '-'} / 株価:{t['price']}円 / "
+            f"25日乖離:{t['dist_sma25_pct']}% / RSI14:{t['rsi14']} / 5日騰落:{t['ret_5d_pct']}% / "
+            f"過熱度:{t['overheat_level'] or '-'} / 手元決算日:{ed_txt}）"
+        )
 
     system_prompt = (
-        "あなたは日本株の企業調査アナリストです。Google検索で最新の決算発表予定日と適時開示・IRニュースを確認し、"
-        "必ず以下のJSON形式のみを出力してください（Markdownコードブロックや説明文は不要）:\n"
-        '{"stocks":[{"code":"銘柄コード4桁","next_earnings_date":"YYYY-MM-DDまたはnull",'
-        '"last_earnings_note":"直近決算やIRの要点(40文字以内)","bad_news":"悪材料(無ければnull)",'
-        '"has_fatal_risk":false}]}'
+        "あなたは日本株スイング（保有1〜8週間）の投資委員会（4人の専門家）を統括する議長です。\n"
+        "Google検索（TDnet適時開示・株探・Yahoo!ファイナンス・企業IR・主要経済ニュース）で各銘柄の最新事実を確認し、\n"
+        "内部で必ず以下の4人の専門家による合議（反証プロセス）を行ってから、最終結果のみをJSONで出力してください。\n\n"
+        "【投資委員会の4人】\n"
+        "1. 材料・ファンダ精査官（攻め）:\n"
+        "   直近1〜2か月の決算・上方修正・増配・自社株買い（規模）・大型受注・M&Aなどの中身を精査し、\n"
+        "   週〜月単位で機関投資家の買いが続く『本物の株価材料』かを strong / moderate / weak / none で評価する。\n"
+        "   見出しだけでなく数値（増益率・進捗率・取得比率など）や一過性か構造変化かを確認する。\n"
+        "2. 需給・織り込み判定官（タイミング）:\n"
+        "   材料発表日と現在の株価指標（過熱度・25日乖離・RSI・5日騰落率）を照合し、\n"
+        "   early（初動・未織り込み）/ fair（適温・押し目圏）/ priced_in（すでに織り込み済み・出尽くし警戒）を判定する。\n"
+        "   なお過去検証では、過熱度lowの初動は深い押し目待ちより浅い押し目/ブレイクが優位、moderate以上は押し目徹底が優位。\n"
+        "3. 悪魔の代弁者・リスク審査官（拒否権）:\n"
+        "   意図的に『買って大負けする理由』だけを探す。\n"
+        "   (a) 次回決算発表が基準日から7暦日（約5営業日）以内、(b) 下方修正・減配・公募増資/ワラント等の希薄化・不祥事・行政処分、\n"
+        "   (c) 特別利益だけの見かけ増益・材料出尽くしの大陰線、のいずれかが確認されたら veto=true とする。\n"
+        "4. 投資委員長（最終採決）:\n"
+        "   馴れ合いの多数決は禁止。以下の厳格基準で committee_verdict を1つ選ぶ。\n"
+        "   - reject: ③が veto=true（決算接近・致命的悪材料・明確な罠）\n"
+        "   - hold_watch: ③は問題ないが、②が priced_in（出尽くし警戒）、または①が weak/none で買い材料が薄い\n"
+        "   - approve_strong: ③ veto=false かつ ① strong かつ ② early または fair\n"
+        "   - approve: ③ veto=false かつ ① moderate 以上 かつ ② early または fair\n\n"
+        "【絶対ルール】\n"
+        "- 検索で確認できた事実と日付だけを根拠にし、見つからない情報を推測で創作しない（不明なら『確認できず』と書く）。\n"
+        "- 出力は必ず以下のJSONのみ（Markdownコードブロックや前置き不要）。各コメントは日本語で50文字以内に圧縮する。\n"
+        '{"stocks":[{"code":"4桁コード","next_earnings_date":"YYYY-MM-DDまたはnull",'
+        '"catalyst_quality":"strong|moderate|weak|none","priced_in_risk":"early|fair|priced_in",'
+        '"veto":false,"committee_verdict":"approve_strong|approve|hold_watch|reject",'
+        '"bull_note":"①材料精査官: 株価につながる根拠(50文字以内)",'
+        '"timing_note":"②需給判定官: 織り込み度と押し目/初動の見立て(50文字以内)",'
+        '"bear_note":"③リスク審査官: 最大の反証・懸念点(50文字以内。無ければ『重大な悪材料未確認』)",'
+        '"chair_summary":"④委員長: 合議の結論(50文字以内)",'
+        '"bad_news":"致命的悪材料の要約(無ければnull)","has_fatal_risk":false}]}'
     )
-    print(f">> Gemini Google Search Grounding で上位候補 {len(targets)} 銘柄の決算日・IRを裏取り中...")
+    print(f">> Gemini Google Search Grounding（4人合議）で上位候補 {len(targets)} 銘柄の材料・需給・リスクを精査中...")
     res = _call_gemini_grounding("\n".join(lines), system_prompt, params)
     if not res or not res.get("stocks"):
         return cached_by_code
 
     date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    valid_cat = {"strong", "moderate", "weak", "none"}
+    valid_priced = {"early", "fair", "priced_in"}
+    valid_cv = {"approve_strong", "approve", "hold_watch", "reject"}
     for item in res["stocks"]:
         if not isinstance(item, dict) or not item.get("code"):
             continue
         code = str(item["code"]).strip()
         ned = str(item.get("next_earnings_date") or "").strip()
         item["next_earnings_date"] = ned if date_re.match(ned) else None
-        item["has_fatal_risk"] = bool(item.get("has_fatal_risk"))
+        cat = str(item.get("catalyst_quality") or "none").strip().lower()
+        item["catalyst_quality"] = cat if cat in valid_cat else "none"
+        pr = str(item.get("priced_in_risk") or "fair").strip().lower()
+        item["priced_in_risk"] = pr if pr in valid_priced else "fair"
+        item["veto"] = bool(item.get("veto"))
+        item["has_fatal_risk"] = bool(item.get("has_fatal_risk")) or item["veto"]
+        cv = str(item.get("committee_verdict") or "").strip().lower()
+        if cv not in valid_cv:
+            if item["veto"]:
+                cv = "reject"
+            elif item["priced_in_risk"] == "priced_in" or item["catalyst_quality"] in ("weak", "none"):
+                cv = "hold_watch"
+            elif item["catalyst_quality"] == "strong":
+                cv = "approve_strong"
+            else:
+                cv = "approve"
+        item["committee_verdict"] = cv
+        # 後方互換（last_earnings_note）を bull_note / chair_summary から補完
+        if not item.get("last_earnings_note"):
+            item["last_earnings_note"] = item.get("chair_summary") or item.get("bull_note") or ""
         cached_by_code[code] = item
 
     save_doc = {
@@ -1239,12 +1311,13 @@ def ground_candidates_with_gemini(candidates, base_date, params, force_ai=False)
 
 
 def apply_grounding_filter(results, ai_map, range_ai_map, grounding_by_code, base_date, params):
-    """Grounding（Web検索）で判明した決算日・悪材料を銘柄データとAI判定へ反映する。
+    """Grounding（4人合議＋Web検索）の結果を銘柄データとAI判定へ反映する（バランス型）。
 
     1. yfinance で欠損していた次回決算日（next_earnings_date）を補完する。
-    2. 基準日から earnings_block_days（既定7暦日≒5営業日）以内に決算発表がある銘柄は、
-       verdict='recommend' を機械的に 'watch' へ格下げし、理由に決算日を明記する（決算またぎ防止）。
-    3. has_fatal_risk=True（致命的な悪材料あり）の銘柄も 'recommend' から 'watch' へ格下げする。
+    2. 4人合議の判定・メモ（committee_verdict / catalyst_quality / priced_in_risk / bull_note / bear_note 等）を付与。
+    3. 基準日から earnings_block_days（既定7暦日）以内に決算がある、または veto=True / committee_verdict=='reject' /
+       has_fatal_risk=True / priced_in_risk=='priced_in'（出尽くし警戒）の銘柄は機械的に 'watch' へ格下げする。
+    4. 一方、veto なしで材料が weak/none（地味な中小型株で記事が少ないだけ）の場合は格下げせず注記して残す。
     """
     if not grounding_by_code:
         return
@@ -1260,11 +1333,10 @@ def apply_grounding_filter(results, ai_map, range_ai_map, grounding_by_code, bas
         ned = g.get("next_earnings_date")
         if ned:
             du = _days_until(ned, base_date)
-            # 基準日以降（未来または当日）の決算日なら補完・上書き
             if du is not None and du >= 0:
                 r["earnings_date"] = ned
 
-    # 2. AIマップ（全体・レンジ）の判定と材料メモを更新
+    # 2. AIマップ（全体・レンジ）の判定と合議メモを更新
     downgraded = 0
     for amap in (ai_map, range_ai_map):
         if not isinstance(amap, dict):
@@ -1275,17 +1347,39 @@ def apply_grounding_filter(results, ai_map, range_ai_map, grounding_by_code, bas
             if not g:
                 continue
             ned = g.get("next_earnings_date")
-            ir_note = str(g.get("last_earnings_note") or "").strip()
+            cv = g.get("committee_verdict")
+            cat_q = g.get("catalyst_quality")
+            priced_in = g.get("priced_in_risk")
+            bull = str(g.get("bull_note") or "").strip()
+            timing = str(g.get("timing_note") or "").strip()
+            bear = str(g.get("bear_note") or "").strip()
+            chair = str(g.get("chair_summary") or g.get("last_earnings_note") or "").strip()
             bad = str(g.get("bad_news") or "").strip()
             if bad.lower() in ("none", "null", "なし", "特になし"):
                 bad = ""
 
-            if ir_note and ir_note.lower() not in ("none", "null", "不明"):
+            if cv:
+                s["committee_verdict"] = cv
+            if cat_q:
+                s["catalyst_quality"] = cat_q
+            if priced_in:
+                s["priced_in_risk"] = priced_in
+            if any((bull, timing, bear, chair)):
+                s["committee_notes"] = {
+                    "bull": bull,
+                    "timing": timing,
+                    "bear": bear,
+                    "chair": chair,
+                }
+
+            summary_txt = chair or bull
+            if summary_txt and summary_txt.lower() not in ("none", "null", "不明"):
+                tag = "[Web合議]" if cv else "[Web確認]"
                 cur_note = str(s.get("news_note") or "").strip()
                 if not cur_note or cur_note == "要確認":
-                    s["news_note"] = f"[Web確認] {ir_note}"
-                elif ir_note not in cur_note:
-                    s["news_note"] = _truncate_text(f"{cur_note} / [Web確認] {ir_note}", 90)
+                    s["news_note"] = f"{tag} {summary_txt}"
+                elif summary_txt not in cur_note:
+                    s["news_note"] = _truncate_text(f"{cur_note} / {tag} {summary_txt}", 95)
 
             if str(s.get("verdict")) != "recommend":
                 continue
@@ -1301,16 +1395,34 @@ def apply_grounding_filter(results, ai_map, range_ai_map, grounding_by_code, bas
                     downgraded += 1
                     continue
 
-            if g.get("has_fatal_risk") and bad:
-                note = f"Web検索で懸念材料（{bad}）を確認したため様子見へ格下げ"
+            if g.get("veto") or cv == "reject" or (g.get("has_fatal_risk") and bad):
+                detail = bad or bear or "リスク審査官の拒否権発動"
+                note = f"投資委員会で拒否（{detail}）のため様子見へ格下げ"
                 s["verdict"] = "watch"
                 s["risk_blocked"] = True
                 reason = str(s.get("reason") or "").strip()
                 s["reason"] = (reason + " / " + note) if reason else note
                 downgraded += 1
+                continue
+
+            if priced_in == "priced_in":
+                detail = timing or "材料出尽くし・織り込み済み警戒"
+                note = f"需給判定官が出尽くし警戒（{detail}）のため様子見へ格下げ"
+                s["verdict"] = "watch"
+                s["priced_in_blocked"] = True
+                reason = str(s.get("reason") or "").strip()
+                s["reason"] = (reason + " / " + note) if reason else note
+                downgraded += 1
+                continue
+
+            # バランス型: weak/none（記事が少ない地味な中小型株など）は格下げせず注記して残す
+            if cat_q in ("weak", "none"):
+                reason = str(s.get("reason") or "").strip()
+                if "材料確認薄" not in reason:
+                    s["reason"] = (reason + "（材料確認薄・テクニカル主導）") if reason else "材料確認薄・テクニカル主導"
 
     if downgraded:
-        print(f">> Gemini Grounding: 決算接近・懸念材料により推奨から格下げ {downgraded} 件")
+        print(f">> Gemini Grounding（4人合議）: 決算接近・懸念・出尽くしにより推奨から格下げ {downgraded} 件")
 
 
 def call_ai(pool, fund_map, news_map, params, base_date=None, sector_colors=None):
@@ -1632,6 +1744,10 @@ def build_recommendations(pool, fund_map, ai_map, news_map, params, date, regime
             "tier": r["tier"],
             "verdict": verdict,
             "rank": _ai_rank(item),
+            "committee_verdict": item.get("committee_verdict"),
+            "catalyst_quality": item.get("catalyst_quality"),
+            "priced_in_risk": item.get("priced_in_risk"),
+            "committee_notes": item.get("committee_notes"),
             "advice": item or None,
             "fundamentals": fund_map.get(r["code"]),
             "entry_type": entry_type,
@@ -2088,6 +2204,20 @@ def send_recommendations_to_discord(recommendations, added_count, updated_count,
         reason = advice.get("reason") or p.get("news_note")
         if reason:
             s += f"　{_truncate_text(reason, 90)}\n"
+        cv_labels = {
+            "approve_strong": "🔥合議:強",
+            "approve": "✅合議:可",
+            "hold_watch": "🔍合議:慎重",
+            "reject": "🛑合議:拒否",
+        }
+        cv = p.get("committee_verdict")
+        cn = p.get("committee_notes") or {}
+        if cv:
+            cv_txt = cv_labels.get(cv, cv)
+            bull_txt = _truncate_text(cn.get("bull") or "", 45)
+            bear_txt = _truncate_text(cn.get("bear") or "", 45)
+            detail_parts = [x for x in (f"攻め:{bull_txt}" if bull_txt else "", f"反証:{bear_txt}" if bear_txt else "") if x]
+            s += f"　{cv_txt}" + (f"（{' / '.join(detail_parts)}）" if detail_parts else "") + "\n"
         if p.get("earnings_soon"):
             s += f"　⚠️ 決算接近 ({p.get('earnings_date')})\n"
         return s
