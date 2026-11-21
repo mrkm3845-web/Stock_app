@@ -2,7 +2,7 @@
   "week": "2026-W43",
   "start": "2026-10-19",
   "end": "2026-10-23",
-  "generated_at": "2026-11-14T04:19:46",
+  "generated_at": "2026-11-21T00:01:24",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -13,20 +13,20 @@
   },
   "summary": {
     "picks_total": 24,
-    "n_filled": 21,
+    "n_filled": 22,
     "n_not_filled": 1,
-    "n_pending": 2,
+    "n_pending": 1,
     "n_no_data": 0,
     "n_entered": 23,
-    "fill_rate": 0.955,
-    "avg_return_pct": -3.916,
-    "median_return_pct": -4.957,
-    "win_rate": 0.095,
-    "avg_benchmark_pct": -1.879,
-    "avg_excess_pct": -2.037,
-    "beat_benchmark_rate": 0.143,
-    "rule_avg_return_pct": -3.916,
-    "rule_win_rate": 0.095,
+    "fill_rate": 0.957,
+    "avg_return_pct": -4.266,
+    "median_return_pct": -5.079,
+    "win_rate": 0.091,
+    "avg_benchmark_pct": -2.119,
+    "avg_excess_pct": -2.147,
+    "beat_benchmark_rate": 0.136,
+    "rule_avg_return_pct": -4.266,
+    "rule_win_rate": 0.091,
     "avg_weekly_return_pct": -4.142,
     "weekly_win_rate": 0.174,
     "n_missed_evaluated": 1,
@@ -633,21 +633,31 @@
       },
       "fill_date": "2026-11-04",
       "fill_price": 3180.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-11-20",
+        "price": 2819.0,
+        "reason": "損切り",
+        "return_net_pct": -11.6177
+      },
       "exit_weekly": {
         "date": "2026-11-06",
         "price": 2994.0,
         "return_net_pct": -6.1311,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-11-20",
+        "price": 2819.0,
+        "reason": "損切り",
+        "return_net_pct": -11.6177
+      },
+      "return_gross_pct": -11.3522,
+      "return_net_pct": -11.6177,
+      "return_rule_pct": -11.6177,
       "return_weekly_pct": -6.1311,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": -7.1514,
+      "excess_pct": -4.4663,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -4840,13 +4850,13 @@
     "1": {
       "n_per_day": 1,
       "picks": 5,
-      "n_filled": 4,
-      "n_pending": 1,
+      "n_filled": 5,
+      "n_pending": 0,
       "fill_rate": 1.0,
-      "avg_return_pct": -4.347,
+      "avg_return_pct": -5.801,
       "median_return_pct": -10.27,
-      "win_rate": 0.25,
-      "avg_excess_pct": 1.512,
+      "win_rate": 0.2,
+      "avg_excess_pct": 0.316,
       "best": {
         "code": "8541",
         "name": "愛媛銀行",
@@ -4861,13 +4871,13 @@
     "3": {
       "n_per_day": 3,
       "picks": 15,
-      "n_filled": 13,
-      "n_pending": 2,
+      "n_filled": 14,
+      "n_pending": 1,
       "fill_rate": 1.0,
-      "avg_return_pct": -3.754,
-      "median_return_pct": -5.484,
-      "win_rate": 0.154,
-      "avg_excess_pct": -1.242,
+      "avg_return_pct": -4.316,
+      "median_return_pct": -6.497,
+      "win_rate": 0.143,
+      "avg_excess_pct": -1.473,
       "best": {
         "code": "2531",
         "name": "宝ホールディングス",
@@ -4882,13 +4892,13 @@
     "5": {
       "n_per_day": 5,
       "picks": 24,
-      "n_filled": 21,
-      "n_pending": 2,
-      "fill_rate": 0.955,
-      "avg_return_pct": -3.916,
-      "median_return_pct": -4.957,
-      "win_rate": 0.095,
-      "avg_excess_pct": -2.037,
+      "n_filled": 22,
+      "n_pending": 1,
+      "fill_rate": 0.957,
+      "avg_return_pct": -4.266,
+      "median_return_pct": -5.079,
+      "win_rate": 0.091,
+      "avg_excess_pct": -2.147,
       "best": {
         "code": "2531",
         "name": "宝ホールディングス",
@@ -4904,10 +4914,10 @@
   "breakdown": {
     "by_entry_type": {
       "押し目待ち": {
-        "n": 20,
-        "avg": -3.637,
-        "median": -4.694,
-        "win_rate": 0.1
+        "n": 21,
+        "avg": -4.017,
+        "median": -4.957,
+        "win_rate": 0.095
       },
       "追いかけ": {
         "n": 1,
@@ -4918,18 +4928,18 @@
     },
     "by_overheat": {
       "低": {
-        "n": 21,
-        "avg": -3.916,
-        "median": -4.957,
-        "win_rate": 0.095
+        "n": 22,
+        "avg": -4.266,
+        "median": -5.079,
+        "win_rate": 0.091
       }
     },
     "by_sector": {
       "銀行業": {
-        "n": 4,
-        "avg": -4.347,
+        "n": 5,
+        "avg": -5.801,
         "median": -10.27,
-        "win_rate": 0.25
+        "win_rate": 0.2
       },
       "卸売業": {
         "n": 2,
@@ -4982,44 +4992,18 @@
     },
     "by_verdict": {
       "推奨": {
-        "n": 21,
-        "avg": -3.916,
-        "median": -4.957,
-        "win_rate": 0.095
+        "n": 22,
+        "avg": -4.266,
+        "median": -5.079,
+        "win_rate": 0.091
       }
     }
   },
   "notes": [
-    "まだ決済が確定していない建玉（未確定）が2件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
+    "まだ決済が確定していない建玉（未確定）が1件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
     "買わずに見送った1件は、翌日に成行で買っていれば平均+2.01%でした（上昇1件/下落0件）。押し目を待つあまり、上がった銘柄に乗れなかった（機会損失）ことを意味します。",
-    "約定して決済まで確定した21件の1件あたり平均損益は-3.92%でした。同じ期間の市場平均（TOPIX）は-1.88%なので、市場を2.04%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
+    "約定して決済まで確定した22件の1件あたり平均損益は-4.27%でした。同じ期間の市場平均（TOPIX）は-2.12%なので、市場を2.15%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
     "技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 -0.15）。スコアが高い＝上がる、とは言えない週でした。",
     "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均0.98%ポイント悪い結果でした。AIの強気判定が裏目に出た週なので、次回は慎重に見ます。"
-  ],
-  "actions": [
-    "過熱度『低』（67件・平均-5.628%）は 減点 -0.42。",
-    "過熱度『中』（9件・平均-1.587%）は 加点 +1.69。"
-  ],
-  "feedback": {
-    "enabled": true,
-    "window_weeks": 6,
-    "n_filled": 76,
-    "baseline_avg_pct": -5.15,
-    "overheat_delta": {
-      "low": -0.42,
-      "moderate": 1.69
-    },
-    "overheat_stats": {
-      "low": {
-        "n": 67,
-        "avg": -5.628
-      },
-      "moderate": {
-        "n": 9,
-        "avg": -1.587
-      }
-    },
-    "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
-  },
-  "next_week_plan": null
+  ]
 }

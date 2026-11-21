@@ -2,7 +2,7 @@
   "week": "2026-W45",
   "start": "2026-11-02",
   "end": "2026-11-06",
-  "generated_at": "2026-11-14T04:19:50",
+  "generated_at": "2026-11-21T00:01:27",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -14,11 +14,11 @@
   "summary": {
     "picks_total": 9,
     "n_filled": 5,
-    "n_not_filled": 2,
-    "n_pending": 2,
+    "n_not_filled": 1,
+    "n_pending": 3,
     "n_no_data": 0,
-    "n_entered": 7,
-    "fill_rate": 0.714,
+    "n_entered": 8,
+    "fill_rate": 0.833,
     "avg_return_pct": -1.839,
     "median_return_pct": -0.3,
     "win_rate": 0.0,
@@ -27,13 +27,13 @@
     "beat_benchmark_rate": 0.6,
     "rule_avg_return_pct": -1.839,
     "rule_win_rate": 0.0,
-    "avg_weekly_return_pct": -3.418,
-    "weekly_win_rate": 0.286,
-    "n_missed_evaluated": 2,
-    "missed_avg_pct": -0.349,
-    "missed_up_count": 1,
+    "avg_weekly_return_pct": -2.886,
+    "weekly_win_rate": 0.375,
+    "n_missed_evaluated": 1,
+    "missed_avg_pct": -3.029,
+    "missed_up_count": 0,
     "missed_down_count": 1,
-    "missed_up_avg_pct": 2.331,
+    "missed_up_avg_pct": null,
     "missed_down_avg_pct": -3.029,
     "score_versions": [
       "v3-research_upside-2026-10-18"
@@ -535,22 +535,27 @@
         "entry_zone_high": 3957.0,
         "wait_days": 10
       },
-      "fill_date": null,
-      "fill_price": null,
-      "status": "not_filled",
+      "fill_date": "2026-11-20",
+      "fill_price": 3950.0,
+      "status": "pending",
       "exit_oco": null,
-      "exit_weekly": null,
+      "exit_weekly": {
+        "date": "2026-11-20",
+        "price": 3995.0,
+        "return_net_pct": 0.8363,
+        "source": "intraday_1130"
+      },
       "exit_rule": null,
       "return_gross_pct": null,
       "return_net_pct": null,
       "return_rule_pct": null,
-      "return_weekly_pct": null,
+      "return_weekly_pct": 0.8363,
       "benchmark_pct": null,
       "excess_pct": null,
       "exit_price_source": null,
-      "missed_return_pct": 2.3307,
-      "missed_entry_date": "2026-11-09",
-      "missed_exit_date": "2026-11-13"
+      "missed_return_pct": null,
+      "missed_entry_date": null,
+      "missed_exit_date": null
     }
   ],
   "ranking": {
@@ -3267,8 +3272,8 @@
       "n_per_day": 3,
       "picks": 9,
       "n_filled": 5,
-      "n_pending": 2,
-      "fill_rate": 0.714,
+      "n_pending": 3,
+      "fill_rate": 0.833,
       "avg_return_pct": -1.839,
       "median_return_pct": -0.3,
       "win_rate": 0.0,
@@ -3288,8 +3293,8 @@
       "n_per_day": 5,
       "picks": 9,
       "n_filled": 5,
-      "n_pending": 2,
-      "fill_rate": 0.714,
+      "n_pending": 3,
+      "fill_rate": 0.833,
       "avg_return_pct": -1.839,
       "median_return_pct": -0.3,
       "win_rate": 0.0,
@@ -3359,36 +3364,10 @@
     }
   },
   "notes": [
-    "まだ決済が確定していない建玉（未確定）が2件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
-    "買わずに見送った2件は、翌日に成行で買っていれば平均-0.35%でした（上昇1件/下落1件）。待ったことで、下がる銘柄を避けられた（回避できた）ことを意味します。",
+    "まだ決済が確定していない建玉（未確定）が3件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
+    "買わずに見送った1件は、翌日に成行で買っていれば平均-3.03%でした（上昇0件/下落1件）。待ったことで、下がる銘柄を避けられた（回避できた）ことを意味します。",
     "約定して決済まで確定した5件の1件あたり平均損益は-1.84%でした。同じ期間の市場平均（TOPIX）は-1.54%なので、市場を0.30%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
     "技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 -0.09）。スコアが高い＝上がる、とは言えない週でした。",
     "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均1.87%ポイント悪い結果でした。AIの強気判定が裏目に出た週なので、次回は慎重に見ます。"
-  ],
-  "actions": [
-    "過熱度『低』（67件・平均-5.628%）は 減点 -0.42。",
-    "過熱度『中』（9件・平均-1.587%）は 加点 +1.69。"
-  ],
-  "feedback": {
-    "enabled": true,
-    "window_weeks": 6,
-    "n_filled": 76,
-    "baseline_avg_pct": -5.15,
-    "overheat_delta": {
-      "low": -0.42,
-      "moderate": 1.69
-    },
-    "overheat_stats": {
-      "low": {
-        "n": 67,
-        "avg": -5.628
-      },
-      "moderate": {
-        "n": 9,
-        "avg": -1.587
-      }
-    },
-    "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
-  },
-  "next_week_plan": null
+  ]
 }
