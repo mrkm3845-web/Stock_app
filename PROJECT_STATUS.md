@@ -55,8 +55,8 @@
 - 作戦ノート・作戦台帳（2026-11-16 更新）:
   - `docs/weekend/2026-11-15-2348.json` と `docs/strategy/active.json`（`plan_id = 2026-11-15-2348`）を `2026-11-13` 確定終値・保有株ゼロで更新済み（東京海上ホールディングス（8766）は11/19中間決算のため見送りへ移動し、10/29好決算通過済みの豊田合成（7282）1,035円押し目を唯一の優先度Aとして設定、同時保有上限1銘柄）
 
-**自律ブリーフィング＆GAS定刻起動（2026-11-17 追加）**
-- [`tools/daily_briefing.py`](tools/daily_briefing.py) & `.github/workflows/daily_briefing.yml`: 朝（`morning`）・昼（`midday`）・引け前（`preclose`）・夜（`evening`）に東証営業日判定、リアルタイム指数・5分足（落ちるナイフ vs 下げ止まり判定）・セクター比較、取引履歴CSVの更新催促判定、Gemini Google Search Grounding による判断生成を行い Discord へ通知（`daily_main8_ai.yml` 完了後にも `evening` を自動連続実行）
+**自律ブリーフィング＆GAS定刻起動（2026-11-17 追加 / 2026-11-22 Embed・UI改善）**
+- [`tools/daily_briefing.py`](tools/daily_briefing.py) & `.github/workflows/daily_briefing.yml`: 朝（`morning`）・昼（`midday`）・引け前（`preclose`）・夜（`evening`）に東証営業日判定、リアルタイム指数・5分足（落ちるナイフ vs 下げ止まり判定）・セクター比較、取引履歴CSVの更新催促判定、Gemini Google Search Grounding による判断生成（750文字以内の簡潔要約）を行い **Discord Embed カード**で通知（`daily_main8_ai.yml` 完了後にも `evening` を自動連続実行）。Gemini のトークン消費（`usageMetadata` / 検索クエリ数）も標準出力に記録
 - [`tools/check_strategy_plan.py`](tools/check_strategy_plan.py): `yfinance` 1.7.0 で単一銘柄取得時に MultiIndex カラムとなり `KeyError: ['Close']` が発生していた不具合を修正
 - [`tools/gas/trigger_workflows.gs`](tools/gas/trigger_workflows.gs): GitHub Actions の cron 遅延・スキップ対策として、GAS（日本の祝日・年末年始対応）から `workflow_dispatch` で 06:15 / 12:15 / 14:50 / 16:00 / 20:15 / 土曜09:00 にピンポイント起動するスクリプトを追加（手順書: [`tools/gas/README.md`](tools/gas/README.md)）
 
@@ -197,8 +197,8 @@ flowchart LR
   - 銘柄モーダル: 銘柄詳細（**決算日**・**需給/水準: サポート20日/レジスタンス20日/ATR14(円・%)/52週高値位置/200日線乖離/レンジ位置**・**過熱警戒バッジ**）＋**価格帯別ルールの利確/損切（ATR損切。利確=赤・損切=青）**＋**推奨株数**＋決算警告。AI戦略は**参考情報（売買指示には未採用）**と明示。AI判定が注意/回避/様子見のときは**「注意の理由」コールアウト**を表示し、バッジにも理由ツールチップを付与。「最新AI実行」ボタンは**常時有効**（プロンプトをコピーしてGeminiへ）。モーダル内の順序は**検証済み（基本情報/需給・水準/モメンタム/エントリー判定/推奨ポジション/スイング戦略）→ AI参考（下部）→ ファンダ**とし、AIは補助として後ろに配置。
 - [`docs/guide.html`](docs/guide.html): **はじめての人向け見方ガイド**。一覧・バッジ・並び替え・モーダル（決算日/需給水準/エントリー判定）・用語集・注意を平易に解説。index.html / journal.html のヘッダからリンク。
 - [`docs/journal.html`](docs/journal.html): 取引記録。**銘柄名クリックで index と同じモーダル**を表示（決算日・需給水準・過熱警戒も同様）。`strategy_params` / `recommendations` / `earnings` / `meta` を読み、利確/損切・推奨株数を index と統一。OCO既定値とCSV取込も価格帯別ルールで算出。
-- [`docs/weekend.html`](docs/weekend.html): **作戦ノート**。`docs/weekend/index.json` と `docs/weekend/{date}.json` を読み、起動したタイミングの分析・作戦・リスク管理をスマホ向けに表示。opencode の `/strategy-note` で最新の取引履歴と市場データから生成する。公開ページのため、保有数量・損益額・口座情報は載せない。
-- [`docs/strategy.html`](docs/strategy.html): **今日の作戦**。`docs/strategy/active.json`（台帳）・`status.json`（現在状態）・`events.json`（履歴）を読み、今日やること・価格/条件トリガー・保有OCO・見送り理由を表示。引け後（17:17 / 20:17 JST）の自動チェックおよび必要時の手動チェックで `tools/check_strategy_plan.py` が判定し、状態変化をDiscord通知する（平日60分間隔の自動スケジュールは2026-11-15の効果測定により停止し、日中は証券会社OCO＋手動チェックに集約）。**この監視は分析用ではなく執行の見張り番**（作戦ノート生成には使わない）。公開ページのため、保有数量・損益額は載せない。
+- [`docs/weekend.html`](docs/weekend.html): **作戦ノート**。`docs/weekend/index.json` と `docs/weekend/{date}.json` を読み、起動したタイミングの分析・作戦・リスク管理をスマホ向けに表示。最重要4項目（3行まとめ/保有とリスク/作戦/候補と注文）を初期展開、その他はアコーディオン折りたたみ＋「すべて開く/要点のみに戻す」切替対応。opencode の `/strategy-note` で最新の取引履歴と市場データから生成する。公開ページのため、保有数量・損益額・口座情報は載せない。
+- [`docs/strategy.html`](docs/strategy.html): **今日の作戦**。`docs/strategy/active.json`（台帳）・`status.json`（現在状態）・`events.json`（履歴）を読み、最上部の結論ステータスバナー、現在値・損切・利確のレンジゲージ付き銘柄カード、地合い4指標カードを表示し、詳細表・見送り・ルール・履歴は折りたたみ（`<details>`）に整理。引け後（17:17 / 20:17 JST）の自動チェックおよび必要時の手動チェックで `tools/check_strategy_plan.py` が判定し、状態変化をDiscord通知する（平日60分間隔の自動スケジュールは2026-11-15の効果測定により停止し、日中は証券会社OCO＋手動チェックに集約）。**この監視は分析用ではなく執行の見張り番**（作戦ノート生成には使わない）。公開ページのため、保有数量・損益額は載せない。
 - [`docs/ops.html`](docs/ops.html): **運用マニュアル**。裏で自動で動くこと（ワークフロー・時刻・出力・失敗時）と、自分が手動でやること（朝のOCO確認・売買後の台帳更新・夜/週末の作戦ノート・データ更新・月次確認）を1ページに整理。画面の役割分担（要約/実行/記録）、通知の意味、制約（Actions遅延・通知が来ない≠安全）、ファイル早見表、Q&A、用語集。冒頭に**「どのページをいつ見るか」早見表**。8ページすべてからリンク。
 - **ヘッダーの共通化**: 8ページのナビを **スクリーナー / 今日の作戦 / 取引記録 / 振り返り / 作戦ノート / その他（AIの学び・見方ガイド・運用マニュアル）** に統一。今日の作戦の「手動チェック」「データ更新（AI）」「再読み込み」は**「操作」**にまとめた（JS不要の `<details>`）。
 - **推奨の母集団トグル**: index.html のスイング画面に「全体 / ◯円未満（`price_filter`）」トグル。レンジ選択時は `recommendations.json` の `range.min_price/max_price` に入る**全銘柄を表示**し、AI判定列は `range.stocks` のレンジAIに差し替える（評価済みのみ・参考。`currentAI`/`aiVerdictPriority` を表示中母集団に応じて切替）。**並び順は全体/レンジとも選択中の `sortKey` を常に優先**し、AI順位で固定しない（既定はスコア順）。全体選択時は従来どおり `ai_strategy_latest.json`。

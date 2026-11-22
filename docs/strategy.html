@@ -10,14 +10,28 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.9rem; padding-bottom: 60px; }
-        .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 15px; }
+        .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 14px; }
         .hero { background: linear-gradient(135deg, #eef6ff, #ffffff); border-left: 5px solid #0d6efd; }
-        .action-item { border-left: 4px solid #adb5bd; background: #fff; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; }
-        .action-item.urgent { border-left-color: #e03131; background: #fff5f5; }
-        .action-item.entry { border-left-color: #2b8a3e; background: #f4fff6; }
-        .action-item.watch { border-left-color: #1971c2; background: #f1f7ff; }
-        .action-item.blocked { border-left-color: #f08c00; background: #fff9db; }
-        .status-pill { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+        .status-banner { border-radius: 12px; padding: 12px 15px; margin-bottom: 14px; border-left: 5px solid #0d6efd; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .banner-urgent { background: #fff5f5; border-left-color: #e03131; color: #842029; }
+        .banner-entry { background: #ebfbee; border-left-color: #2b8a3e; color: #14532d; }
+        .banner-warn { background: #fff9db; border-left-color: #f08c00; color: #664d03; }
+        .banner-ok { background: #eef6ff; border-left-color: #1971c2; color: #084298; }
+        .stock-card { border-left: 4px solid #adb5bd; background: #fff; border: 1px solid #e9ecef; border-left-width: 4px; padding: 12px 14px; border-radius: 10px; margin-bottom: 10px; }
+        .stock-card:last-child { margin-bottom: 0; }
+        .stock-card.urgent { border-left-color: #e03131; background: #fffafa; }
+        .stock-card.entry { border-left-color: #2b8a3e; background: #f8fff9; }
+        .stock-card.watch { border-left-color: #1971c2; background: #f7fbff; }
+        .stock-card.blocked { border-left-color: #f08c00; background: #fffdf2; }
+        .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #f8f9fa; border-radius: 8px; padding: 8px 6px; margin-top: 8px; text-align: center; }
+        .price-cell-label { font-size: 0.7rem; color: #6c757d; }
+        .price-cell-val { font-size: 0.95rem; font-weight: 700; line-height: 1.25; }
+        .price-cell-main { font-size: 1.08rem; font-weight: 800; color: #212529; line-height: 1.25; }
+        .range-bar-wrap { position: relative; height: 8px; background: #e9ecef; border-radius: 999px; margin-top: 10px; overflow: visible; }
+        .range-bar-fill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px; opacity: 0.35; }
+        .range-pin { position: absolute; top: 50%; width: 14px; height: 14px; border-radius: 50%; transform: translate(-50%, -50%); border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+        .range-dist { display: flex; justify-content: space-between; font-size: 0.72rem; color: #6c757d; margin-top: 5px; }
+        .status-pill { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
         .s-hold { background: #e9ecef; color: #495057; }
         .s-near { background: #fff3bf; color: #d9480f; }
         .s-triggered { background: #d3f9d8; color: #2b8a3e; }
@@ -28,16 +42,22 @@
         .s-waiting { background: #eef2f7; color: #495057; }
         table th { background-color: #212529 !important; color: #fff !important; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 0.78rem; }
         table td { vertical-align: middle; font-size: 0.82rem; }
-        .muted-small { font-size: 0.72rem; color: #868e96; }
+        .muted-small { font-size: 0.74rem; color: #6c757d; }
         .pos { color: #d6336c; font-weight: 700; }
         .neg { color: #1971c2; font-weight: 700; }
-        .rule { background: #f8f9fa; border-left: 4px solid #adb5bd; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.85rem; }
+        .rule { background: #f8f9fa; border-left: 4px solid #adb5bd; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.84rem; }
         .event-item { border-left: 3px solid #adb5bd; padding: 6px 10px; margin-bottom: 6px; background: #fff; border-radius: 4px; font-size: 0.82rem; }
-        .sector-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+        .avoid-item { border-left: 4px solid #f08c00; background: #fff9db; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.83rem; }
+        .sector-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
         .sector-dot.green { background: #198754; }
         .sector-dot.yellow { background: #ffc107; }
         .sector-dot.red { background: #dc3545; }
         .sector-dot.none { background: #adb5bd; }
+        details.fold-card > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        details.fold-card > summary::-webkit-details-marker { display: none; }
+        details.fold-card > summary .fold-chevron { transition: transform 0.15s ease; color: #6c757d; }
+        details.fold-card[open] > summary .fold-chevron { transform: rotate(180deg); }
+        details.guide-fold > summary { cursor: pointer; font-size: 0.76rem; color: #495057; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -47,7 +67,7 @@
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
             <div>
                 <h1 class="h5 mb-0 text-primary fw-bold"><i class="bi bi-signpost-split"></i> 今日の作戦</h1>
-                <small class="text-muted" id="subtitle">作戦台帳と最新価格を突き合わせた、今日やること。</small>
+                <small class="text-muted" id="subtitle">作戦台帳と最新価格を突き合わせた実行ボード</small>
             </div>
             <div class="d-flex flex-wrap gap-2">
                 <a href="index.html" class="btn btn-outline-primary btn-sm fw-bold"><i class="bi bi-sliders me-1"></i> スクリーナー</a>
@@ -73,65 +93,82 @@
                 </details>
             </div>
         </div>
-        <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
-            <span id="plan-badge" class="badge bg-light text-secondary border">作戦: -</span>
+        <div class="d-flex flex-wrap gap-2 align-items-center mt-2">
+            <span id="plan-badge" class="badge bg-light text-secondary border">台帳: -</span>
             <span id="checked-badge" class="badge bg-light text-secondary border">チェック: -</span>
-            <span id="data-badge" class="badge bg-light text-secondary border">データ: -</span>
+            <span id="data-badge" class="badge bg-light text-secondary border">価格: -</span>
         </div>
-        <div class="muted-small mt-2">自動チェックは平日引け後（17時台・20時台）です。日中に現在値で判定したいときは「操作 → 手動チェック」、「データ更新（AI）」は価格・スコア・AIをまとめて更新します。<br>
-            <b>このページは分析用ではなく、作戦台帳の水準に触れたかを見張る「実行ボード」</b>です。作戦そのもの（なぜその水準か）は夜・週末に作る<a href="weekend.html" class="fw-bold">作戦ノート</a>で決めます。日中の損切り・利確は証券会社のOCO注文を正としてください。手順は<a href="ops.html" class="fw-bold">運用マニュアル</a>。</div>
-        <div class="muted-small mt-1" id="dd-check"></div>
-        <div class="muted-small mt-1" id="sector-review"></div>
+        <details class="guide-fold mt-2">
+            <summary><i class="bi bi-info-circle me-1"></i> この画面の見方・DDルール・見直し予定</summary>
+            <div class="muted-small mt-2 ps-2 border-start">
+                <div>自動チェックは平日引け後（17時台・20時台）です。日中に現在値で判定したいときは「操作 → 手動チェック」、価格・AIの更新は「データ更新（AI）」を使います。日中の損切り・利確は証券会社のOCO注文を正としてください。くわしくは <a href="ops.html" class="fw-bold">運用マニュアル</a>・<a href="weekend.html" class="fw-bold">作戦ノート</a>。</div>
+                <div class="mt-1" id="dd-check"></div>
+                <div class="mt-1" id="sector-review"></div>
+            </div>
+        </details>
     </div>
 
+    <div id="sector-review-alert" class="alert alert-danger py-2 px-3 d-none"></div>
     <div id="loading" class="alert alert-info">読み込み中...</div>
     <div id="error-box" class="alert alert-warning d-none"></div>
 
     <div id="content" class="d-none">
-        <div class="row g-2 mb-1" id="summary-cards"></div>
+        <div id="hero-banner" class="status-banner banner-ok"></div>
 
         <div class="card p-3">
-            <h2 class="h6 fw-bold mb-3"><i class="bi bi-check2-square me-1"></i> 今日やること</h2>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h6 fw-bold mb-0"><i class="bi bi-check2-square me-1"></i> 今日やること</h2>
+                <span class="muted-small" id="items-count-label"></span>
+            </div>
             <div id="today-actions"></div>
-            <div class="muted-small mt-2">価格がトリガーに到達しただけでは買いではありません。条件（地合い・セクター・決算）も確認してください。</div>
         </div>
 
-        <div class="card p-3">
-            <h2 class="h6 fw-bold mb-3"><i class="bi bi-list-check me-1"></i> トリガー一覧</h2>
-            <div class="table-responsive">
+        <div class="row g-2 mb-2" id="summary-cards"></div>
+
+        <details class="card p-3 fold-card" id="detail-table-fold">
+            <summary>
+                <span class="h6 fw-bold mb-0"><i class="bi bi-table me-1"></i> トリガー詳細表（PC向け一覧）</span>
+                <i class="bi bi-chevron-down fold-chevron"></i>
+            </summary>
+            <div class="table-responsive mt-3">
                 <table class="table table-sm table-bordered align-middle mb-0">
                     <thead><tr><th>種別</th><th>銘柄</th><th>状態</th><th>現在</th><th>入口</th><th>損切</th><th>利確</th><th>距離</th><th>今日の扱い</th></tr></thead>
                     <tbody id="items-body"></tbody>
                 </table>
             </div>
             <div class="muted-small mt-2">
-                <span class="sector-dot green"></span>緑＝業種が強い（25日線上50%以上）／
+                <span class="sector-dot green"></span>緑＝業種強（25日線上50%以上）／
                 <span class="sector-dot yellow"></span>黄＝30〜50%／
-                <span class="sector-dot red"></span>赤＝30%未満（<b>赤はAI推奨から除外</b>）。
-                色は「その業種の全銘柄」で計算しています。
+                <span class="sector-dot red"></span>赤＝30%未満（赤はAI推奨から除外）
             </div>
-        </div>
+        </details>
 
-        <div class="card p-3">
-            <h2 class="h6 fw-bold mb-3"><i class="bi bi-shield-exclamation me-1"></i> 見送り・条件NG</h2>
-            <div id="avoid-box"></div>
-        </div>
+        <details class="card p-3 fold-card" id="avoid-fold">
+            <summary>
+                <span class="h6 fw-bold mb-0"><i class="bi bi-shield-exclamation me-1"></i> 見送り・条件NG <span id="avoid-count" class="badge bg-secondary-subtle text-dark ms-1">0</span></span>
+                <i class="bi bi-chevron-down fold-chevron"></i>
+            </summary>
+            <div id="avoid-box" class="mt-3"></div>
+        </details>
 
-        <div class="card p-3">
-            <h2 class="h6 fw-bold mb-3"><i class="bi bi-rulers me-1"></i> 守るルール</h2>
-            <div id="rules-box"></div>
-        </div>
+        <details class="card p-3 fold-card" id="rules-fold">
+            <summary>
+                <span class="h6 fw-bold mb-0"><i class="bi bi-rulers me-1"></i> 守るルール <span id="rules-count" class="badge bg-secondary-subtle text-dark ms-1">0</span></span>
+                <i class="bi bi-chevron-down fold-chevron"></i>
+            </summary>
+            <div id="rules-box" class="mt-3"></div>
+        </details>
 
-        <div class="card p-3">
-            <h2 class="h6 fw-bold mb-3"><i class="bi bi-clock-history me-1"></i> 最近のトリガー履歴</h2>
-            <div id="events-box"></div>
-        </div>
+        <details class="card p-3 fold-card" id="events-fold">
+            <summary>
+                <span class="h6 fw-bold mb-0"><i class="bi bi-clock-history me-1"></i> 最近のトリガー履歴 <span id="events-count" class="badge bg-secondary-subtle text-dark ms-1">0</span></span>
+                <i class="bi bi-chevron-down fold-chevron"></i>
+            </summary>
+            <div id="events-box" class="mt-3"></div>
+        </details>
 
-        <div class="card p-3">
-            <div class="warn">
-                <b>このページは公開されます。</b> 保有数量・損益額・口座情報は載せていません。銘柄コード・OCO水準・作戦だけです。
-                投資助言ではありません。最終判断はご自身でお願いします。
-            </div>
+        <div class="text-center muted-small mt-2">
+            このページは公開されます（保有数量・損益額・口座情報は非公開）。投資助言ではありません。最終判断はご自身でお願いします。
         </div>
     </div>
 </div>
@@ -140,6 +177,16 @@
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num = (v) => (v === null || v === undefined || v === '') ? '-' : Number(v).toLocaleString('ja-JP', { maximumFractionDigits: 1 });
 const pct = (v) => (v === null || v === undefined || v === '') ? '-' : (Number(v) >= 0 ? '+' : '') + Number(v).toFixed(1) + '%';
+const fmtShortDt = (v) => {
+  const s = String(v || '');
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/);
+  if (!m) return s || '-';
+  return m[4] ? `${Number(m[2])}/${Number(m[3])} ${m[4]}:${m[5]}` : `${Number(m[2])}/${Number(m[3])}`;
+};
+const fmtMd = (v) => {
+  const m = String(v || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${Number(m[2])}/${Number(m[3])}` : '-';
+};
 
 const STATUS_LABEL = {
   hold: '保有', near_stop: '損切接近', near_tp: '利確接近', stop_hit: '損切到達',
@@ -164,10 +211,10 @@ function badge(status) {
 }
 
 function card(label, value, sub, cls) {
-  return `<div class="col-6 col-md-3"><div class="border rounded-3 p-2 text-center h-100">
+  return `<div class="col-6 col-md-3"><div class="card p-2 text-center h-100 mb-0">
     <div class="muted-small">${esc(label)}</div>
     <div class="fw-bold ${cls || ''}" style="font-size:1.15rem">${esc(value)}</div>
-    <div class="muted-small">${esc(sub || '')}</div></div></div>`;
+    <div class="muted-small text-truncate" title="${esc(sub || '')}">${esc(sub || '')}</div></div></div>`;
 }
 
 async function fetchJson(url) {
@@ -176,72 +223,156 @@ async function fetchJson(url) {
   return res.json();
 }
 
+function buildRangeBar(item) {
+  const cur = Number(item.current_price);
+  const stop = Number(item.stop);
+  const tp = Number(item.take_profit);
+  if (!Number.isFinite(cur) || !Number.isFinite(stop) || !Number.isFinite(tp) || tp <= stop) {
+    return '';
+  }
+  const rawPct = ((cur - stop) / (tp - stop)) * 100;
+  const clamped = Math.max(0, Math.min(100, rawPct));
+  const pinColor = cur <= stop ? '#e03131' : (cur >= tp ? '#2b8a3e' : '#0d6efd');
+  const stopGap = ((cur / stop) - 1) * 100;
+  const tpGap = ((tp / cur) - 1) * 100;
+  const stopText = stopGap < 0 ? `損切割れ ${stopGap.toFixed(1)}%` : `損切まで ${stopGap.toFixed(1)}%`;
+  const tpText = tpGap <= 0 ? `利確到達` : `利確まで +${tpGap.toFixed(1)}%`;
+  return `
+    <div class="range-bar-wrap" title="損切 ${num(stop)} 〜 利確 ${num(tp)}">
+      <div class="range-bar-fill" style="width:${clamped.toFixed(1)}%;background:${pinColor};"></div>
+      <div class="range-pin" style="left:${clamped.toFixed(1)}%;background:${pinColor};"></div>
+    </div>
+    <div class="range-dist">
+      <span class="${stopGap <= 2 ? 'text-danger fw-bold' : ''}">${esc(stopText)}</span>
+      <span class="${tpGap <= 2 ? 'text-success fw-bold' : ''}">${esc(tpText)}</span>
+    </div>`;
+}
+
 function render(plan, status, events, params) {
-  const shortTime = (v) => String(v || '-').replace('T', ' ').slice(0, 16);
-  document.getElementById('plan-badge').textContent = `作戦: ${plan.plan_id || '-'}`;
-  document.getElementById('checked-badge').textContent = `チェック: ${shortTime(status.checked_at)}`;
-  document.getElementById('data-badge').textContent = `データ: ${shortTime(status.data_asof || plan.data_date)}`;
+  document.getElementById('plan-badge').textContent = `台帳: ${fmtMd(plan.data_date)}版`;
+  document.getElementById('checked-badge').textContent = `チェック: ${fmtShortDt(status.checked_at)}`;
+  document.getElementById('data-badge').textContent = `価格: ${fmtShortDt(status.data_asof || plan.data_date)}`;
   if (plan.note_id) document.getElementById('note-link').href = `weekend.html?date=${encodeURIComponent(plan.note_id)}`;
 
   const items = status.items || [];
-  const positions = items.filter(i => i.kind === 'position');
   const watches = items.filter(i => i.kind === 'watch');
+  const posEntryByCode = Object.fromEntries((plan.positions || []).map(p => [String(p.code), p.entry_price]));
   const market = status.market || {};
   const breadth = market.breadth || {};
   const bank = market.bank_sector || {};
   const regime = market.regime || {};
   const risk = plan.policy || {};
-  const ddLine = `DDチェック：資産が直近の最高値（ピーク）から-10%で新規停止／-15%で全現金化（例 60万なら-6万／-9万）。1取引のリスクは${num(risk.max_risk_per_trade_jpy) !== '-' ? num(risk.max_risk_per_trade_jpy) + '円' : '-'}まで`;
-  const regimeGap = (regime.close && regime.sma) ? (Number(regime.close) / Number(regime.sma) - 1) * 100 : null;
-  const regimeSub = regime.close
-    ? `${regime.risk_on ? 'リスクオン' : 'リスクオフ'}・1306.T ${num(regime.close)} ${Number(regime.close) >= Number(regime.sma) ? '＞' : '＜'} 200日線 ${num(regime.sma)}（${pct(regimeGap)}）／${regime.risk_on ? '割れたら新規停止' : '新規停止中'}`
-    : 'データなし';
-  const sample = (b) => `${num(b.n)}銘柄${Number(b.n) < 10 ? '（参考外）' : ''}`;
 
+  const ddLine = `DDチェック：資産ピーク比 -10%で新規停止／-15%で全現金化。1取引リスク上限 ${num(risk.max_risk_per_trade_jpy) !== '-' ? num(risk.max_risk_per_trade_jpy) + '円' : '-'}`;
   const ddEl = document.getElementById('dd-check');
   if (ddEl) ddEl.textContent = ddLine;
 
   const ra = (params && params.sector_color && params.sector_color.review_after) || null;
   const srEl = document.getElementById('sector-review');
-  if (srEl) {
-    if (ra) {
-      const days = Math.ceil((new Date(ra + 'T00:00:00') - new Date()) / 86400000);
-      srEl.textContent = days <= 0
-        ? `⚠️ セクター色の見直し時期です（${ra}）。閾値と効果を確認してください`
-        : `セクター色の見直し予定: ${ra}（あと${days}日）`;
-      srEl.className = 'muted-small mt-1' + (days <= 0 ? ' text-danger fw-bold' : '');
-    } else {
-      srEl.textContent = '';
+  const srAlert = document.getElementById('sector-review-alert');
+  if (ra) {
+    const days = Math.ceil((new Date(ra + 'T00:00:00') - new Date()) / 86400000);
+    if (srEl) srEl.textContent = `セクター色見直し予定: ${ra}（あと${days}日）`;
+    if (srAlert && days <= 0) {
+      srAlert.textContent = `⚠️ セクター色の見直し時期です（${ra}）。閾値と効果を確認してください。`;
+      srAlert.classList.remove('d-none');
     }
   }
 
+  // 結論ステータスバナー
+  const urgentItems = items.filter(i => ['stop_hit', 'near_stop', 'max_hold', 'triggered_then_stop'].includes(i.status));
+  const triggeredItems = items.filter(i => i.status === 'triggered');
+  const isRiskOff = (regime.risk_on === false) || (breadth.above_sma25_pct != null && Number(breadth.above_sma25_pct) < 30);
+
+  let bannerClass = 'banner-ok';
+  let bannerTitle = '🟢 買いやすい地合い：台帳のルール通りに待機・監視';
+  let bannerSub = `1306.T ${num(regime.close)} / 25日線上 ${num(breadth.above_sma25_pct)}%`;
+  if (urgentItems.length) {
+    bannerClass = 'banner-urgent';
+    const names = urgentItems.map(i => `${i.name}（${i.code}）`).join('・');
+    bannerTitle = `🛑 緊急確認：${names}`;
+    bannerSub = urgentItems.map(i => i.action).join(' / ');
+  } else if (triggeredItems.length) {
+    bannerClass = 'banner-entry';
+    const names = triggeredItems.map(i => `${i.name}（${i.code}）`).join('・');
+    bannerTitle = `🎯 買い入口に到達：${names}`;
+    bannerSub = '条件（地合い・業種色・決算）が揃っていれば発注検討';
+  } else if (isRiskOff) {
+    bannerClass = 'banner-warn';
+    bannerTitle = '⚠️ リスクオフ（新規停止中）：保有OCOの防御のみ';
+    bannerSub = `1306.T ${num(regime.close)}（200日線 ${num(regime.sma)}）/ 25日線上 ${num(breadth.above_sma25_pct)}%`;
+  }
+
+  const asofDate = String(status.data_asof || '').slice(0, 10);
+  const planDate = String(plan.data_date || '').slice(0, 10);
+  const stalePill = (asofDate && planDate && asofDate > planDate)
+    ? `<div class="mt-2"><span class="badge bg-warning text-dark">台帳基準日(${fmtMd(planDate)})より新しい値動き(${fmtMd(asofDate)})あり → 約定があれば /strategy-note で更新</span></div>`
+    : '';
+
+  const bannerEl = document.getElementById('hero-banner');
+  bannerEl.className = `status-banner ${bannerClass}`;
+  bannerEl.innerHTML = `<div class="fw-bold" style="font-size:0.98rem;">${esc(bannerTitle)}</div>
+    <div class="mt-1" style="font-size:0.82rem;opacity:0.92;">${esc(bannerSub)}</div>${stalePill}`;
+
+  // 地合いサマリ4枚
+  const regimeGap = (regime.close && regime.sma) ? (Number(regime.close) / Number(regime.sma) - 1) * 100 : null;
+  const regimeSub = regime.close ? `1306.T ${num(regime.close)}（200日線 ${pct(regimeGap)}）` : 'データなし';
   document.getElementById('summary-cards').innerHTML =
     card('地合い', regime.risk_on ? '買いやすい' : '慎重に', regimeSub, regime.risk_on ? 'pos' : 'neg') +
-    card('200日線上', `${num(breadth.above_sma200_pct)}%`, sample(breadth), '') +
-    card('25日線上', `${num(breadth.above_sma25_pct)}%`, `${sample(breadth)}・短期`, '') +
-    card('銀行の25日線上', `${num(bank.above_sma25_pct)}%`, `${sample(bank)}・30%未満は新規停止`, Number(bank.above_sma25_pct) >= 30 ? 'pos' : 'neg');
+    card('200日線上', `${num(breadth.above_sma200_pct)}%`, `${num(breadth.n)}銘柄`, '') +
+    card('25日線上', `${num(breadth.above_sma25_pct)}%`, '30%未満は新規停止', Number(breadth.above_sma25_pct) >= 30 ? 'pos' : 'neg') +
+    card('銀行25日線上', `${num(bank.above_sma25_pct)}%`, `${num(bank.n)}銘柄`, Number(bank.above_sma25_pct) >= 30 ? 'pos' : 'neg');
 
   const sectorDot = (item) => {
     const c = item.sector_color || 'none';
-    const pct = item.sector_above_sma25_pct == null ? '-' : Number(item.sector_above_sma25_pct).toFixed(1);
-    const tip = `${item.sector || '業種不明'}（25日線上 ${pct}%）`;
+    const spct = item.sector_above_sma25_pct == null ? '-' : Number(item.sector_above_sma25_pct).toFixed(1);
+    const tip = `${item.sector || '業種不明'}（25日線上 ${spct}%）`;
     return `<span class="sector-dot ${c}" title="${esc(tip)}"></span>`;
   };
 
+  document.getElementById('items-count-label').textContent = `${items.length}銘柄`;
   document.getElementById('today-actions').innerHTML = items.length
-    ? items.map(item => `<div class="action-item ${ACTION_CLASS[item.status] || ''}">
-        <div class="d-flex justify-content-between gap-2">
-          <div class="fw-bold">${sectorDot(item)}${esc(item.code)} ${esc(item.name)} ${badge(item.status)}</div>
-          <div class="muted-small">現在 ${num(item.current_price)}</div>
-        </div>
-        <div class="mt-1">${esc(item.action)}</div>
-      </div>`).join('')
-    : '<div class="muted-small">トリガーはまだありません。</div>';
+    ? items.map(item => {
+        const isPos = item.kind === 'position';
+        const refPrice = isPos ? posEntryByCode[String(item.code)] : item.entry_price;
+        const refLabel = isPos ? `買値 ${num(refPrice)}` : `入口 ${num(refPrice)}`;
+        const secLabel = item.sector ? `${item.sector}(${item.sector_above_sma25_pct != null ? Number(item.sector_above_sma25_pct).toFixed(0) + '%' : '-'})` : '';
+        return `<div class="stock-card ${ACTION_CLASS[item.status] || ''}">
+          <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+            <div class="fw-bold" style="font-size:0.95rem;">
+              ${sectorDot(item)}${esc(item.name)}（${esc(item.code)}）
+              <span class="badge bg-light text-secondary border ms-1">${isPos ? '保有' : '監視'}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              ${secLabel ? `<span class="muted-small">${esc(secLabel)}</span>` : ''}
+              ${badge(item.status)}
+            </div>
+          </div>
+          <div class="mt-2 fw-bold" style="font-size:0.92rem;">👉 ${esc(item.action)}</div>
+          <div class="price-grid">
+            <div>
+              <div class="price-cell-label">損切ライン</div>
+              <div class="price-cell-val neg">${num(item.stop)}円</div>
+            </div>
+            <div>
+              <div class="price-cell-label">現在値（${esc(refLabel)}）</div>
+              <div class="price-cell-main">${num(item.current_price)}円</div>
+            </div>
+            <div>
+              <div class="price-cell-label">利確目安</div>
+              <div class="price-cell-val pos">${num(item.take_profit)}円</div>
+            </div>
+          </div>
+          ${buildRangeBar(item)}
+        </div>`;
+      }).join('')
+    : '<div class="muted-small">現在、保有中・監視中の銘柄はありません。</div>';
 
+  // 詳細表
   document.getElementById('items-body').innerHTML = items.length
     ? items.map(item => `<tr>
         <td>${item.kind === 'position' ? '保有' : '監視'}</td>
-        <td class="text-start">${sectorDot(item)}<b>${esc(item.code)}</b> ${esc(item.name)}</td>
+        <td class="text-start">${sectorDot(item)}<b>${esc(item.name)}</b>（${esc(item.code)}）</td>
         <td>${badge(item.status)}</td>
         <td>${num(item.current_price)}</td>
         <td>${num(item.entry_price)}</td>
@@ -252,20 +383,32 @@ function render(plan, status, events, params) {
       </tr>`).join('')
     : '<tr><td colspan="9" class="text-muted">データがありません</td></tr>';
 
+  // 見送り・条件NG
   const avoid = plan.avoid || [];
   const blocked = watches.filter(i => i.status === 'blocked' || i.status === 'blocked_waiting');
-  document.getElementById('avoid-box').innerHTML = (avoid.length || blocked.length)
+  const totalAvoid = blocked.length + avoid.length;
+  document.getElementById('avoid-count').textContent = String(totalAvoid);
+  if (blocked.length > 0) document.getElementById('avoid-fold').open = true;
+  document.getElementById('avoid-box').innerHTML = totalAvoid
     ? [
-        ...blocked.map(i => `<div class="action-item blocked"><b>${esc(i.code)} ${esc(i.name)}</b>：${esc(i.action)}</div>`),
-        ...avoid.map(i => `<div class="action-item blocked"><b>${esc(i.code)} ${esc(i.name)}</b>：${esc(i.reason)}</div>`)
+        ...blocked.map(i => `<div class="avoid-item"><b>${esc(i.name)}（${esc(i.code)}）</b>：${esc(i.action)}</div>`),
+        ...avoid.map(i => `<div class="avoid-item"><b>${esc(i.name)}（${esc(i.code)}）</b>：${esc(i.reason)}</div>`)
       ].join('')
     : '<div class="muted-small">見送りはありません。</div>';
 
-  document.getElementById('rules-box').innerHTML = (plan.rules || []).map(rule => `<div class="rule">${esc(rule)}</div>`).join('') || '<div class="muted-small">ルール未設定</div>';
+  // ルール
+  const rules = plan.rules || [];
+  document.getElementById('rules-count').textContent = String(rules.length);
+  document.getElementById('rules-box').innerHTML = rules.map(rule => `<div class="rule">${esc(rule)}</div>`).join('') || '<div class="muted-small">ルール未設定</div>';
 
+  // 履歴
   const recent = (events.events || []).slice().reverse().slice(0, 20);
+  document.getElementById('events-count').textContent = String(recent.length);
   document.getElementById('events-box').innerHTML = recent.length
-    ? recent.map(e => `<div class="event-item"><span class="muted-small">${esc(e.at)}</span> ${badge(e.status)} <b>${esc(e.code)} ${esc(e.name)}</b> ${esc(e.action)}</div>`).join('')
+    ? recent.map(e => {
+        const namePart = e.code ? `<b>${esc(e.name || '')}（${esc(e.code)}）</b>` : '';
+        return `<div class="event-item"><span class="muted-small me-1">${esc(fmtShortDt(e.at))}</span> ${badge(e.status)} ${namePart} ${esc(e.action)}</div>`;
+      }).join('')
     : '<div class="muted-small">まだ履歴はありません。</div>';
 
   document.getElementById('loading').classList.add('d-none');

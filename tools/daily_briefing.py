@@ -621,17 +621,22 @@ def generate_ai_briefing(ctx: dict) -> tuple[str, str]:
 
     system_prompt = (
         f"{PERSONA_JA}\n\n"
-        "あなたはDiscordで個人投資家に寄り添って報告する日本株スイングの専属アナリストです。\n"
-        "判断にあたっては、内部で以下の4人の専門家による合議（反証プロセス）を行ってから結論を出してください：\n"
-        "・①材料精査官：Web検索で直近ニュース・適時開示の中身が株価上昇につながる本物の材料か（または出尽くしか）を精査する。\n"
-        "・②需給・タイミング判定官：指数200日線・セクター色・5分足（下げ止まりか落ちるナイフか）・押し目距離を精査する。\n"
-        "・③悪魔の代弁者（拒否権）：『今日買って/持ち続けて大負けする理由（悪材料・決算接近・下落トレンド継続）』を必ず1つ以上指摘する。\n"
-        "・④投資委員長：馴れ合いを排し、③の懸念を踏まえて『今すぐ買う／待つ／見送る／撤退・継続』を明確に決める。\n"
-        "出力ルール：\n"
+        "あなたはスマホのDiscord通知を読む個人投資家へ簡潔に報告する日本株スイングの専属アナリストです。\n"
+        "内部で以下の4人の専門家合議（反証プロセス）を行ってから、要点だけを極限まで短くまとめてください：\n"
+        "・①材料精査官：Web検索で直近ニュース・適時開示が株価に効く材料か（または出尽くしか）を精査。\n"
+        "・②需給・タイミング判定官：指数200日線・セクター色・5分足・押し目距離を精査。\n"
+        "・③悪魔の代弁者（拒否権）：『今日買って/持ち続けて大負けする理由』を必ず1つ指摘。\n"
+        "・④投資委員長：『今すぐ動く／待つ／見送る／撤退・継続』を1つに絞って結論づける。\n"
+        "出力ルール（厳守）：\n"
         "1. 日本語のみ（中国語は絶対に使わない）。\n"
         "2. 銘柄は必ず『銘柄名（コード）』の形式にする（例：豊田合成（7282））。\n"
-        "3. 最初に『■ 結論（委員長）』を1〜3行で書き、続けて『■ 地合い・材料精査』『■ 監視・保有の判定（需給）』『■ 悪魔の代弁者（反証・注意点）』『■ 次の行動』の順で簡潔にまとめる。\n"
-        "4. 全体は1,300文字以内で読みやすく箇条書き中心にする（Discord通知用）。\n"
+        "3. 以下の5見出しをこの順で使い、各ブロックは1〜3行の短い箇条書きにする（冗長な前置き禁止）：\n"
+        "**🎯 結論**\n（1〜2行：今どう動くか／動かないか）\n"
+        "**📰 地合い・材料**\n（2〜3行：外部環境とWeb検索の要点）\n"
+        "**📊 保有・監視の動き**\n（2〜3行：現在値・OCO位置・5分足）\n"
+        "**⚠️ 悪魔の代弁者（注意点）**\n（1〜2行：最大の懸念・反証）\n"
+        "**👉 次の行動**\n（1〜2行：具体的な次の1手）\n"
+        "4. **本文全体は必ず750文字以内**に収める（スマホでスクロールせず一目で読める長さ）。\n"
         "5. 数字は率(%)・金額(円)・件数を混ぜずに書く。儲かると断定しない。\n"
         "6. policyにある資金上限・DDブレーキ・決算5日前ルールを必ず尊重する。\n"
         "7. 入力JSONの事実とWeb検索で確認した最新事実のみを書く。推測で数値を補わない。"
@@ -671,6 +676,17 @@ def generate_ai_briefing(ctx: dict) -> tuple[str, str]:
                     cand = (data.get("candidates") or [{}])[0]
                     parts = (cand.get("content") or {}).get("parts") or []
                     text = "\n".join(p.get("text", "") for p in parts if isinstance(p, dict) and p.get("text")).strip()
+                    usage = data.get("usageMetadata") or {}
+                    gmeta = cand.get("groundingMetadata") or {}
+                    q_cnt = len(gmeta.get("webSearchQueries") or [])
+                    print(
+                        f"Gemini usage ({model}): "
+                        f"prompt={usage.get('promptTokenCount')} / "
+                        f"output={usage.get('candidatesTokenCount')} / "
+                        f"thoughts={usage.get('thoughtsTokenCount')} / "
+                        f"total={usage.get('totalTokenCount')} / "
+                        f"search_queries={q_cnt}"
+                    )
                     if text:
                         return text, model
                     last_err = f"{model}: empty text"
@@ -721,6 +737,117 @@ def build_fallback_briefing(ctx: dict, reason: str) -> str:
     return "\n".join(lines)
 
 
+def _status_ja(status: str) -> str:
+    return {
+        "hold": "保有",
+        "near_stop": "損切接近",
+        "near_tp": "利確接近",
+        "stop_hit": "損切到達",
+        "tp_hit": "利確到達",
+        "max_hold": "保有期限",
+        "waiting": "待機",
+        "near": "接近",
+        "triggered": "買い到達",
+        "triggered_then_stop": "同日損切",
+        "blocked": "条件NG",
+        "blocked_waiting": "条件NG",
+        "expired": "期限切れ",
+        "unknown": "未取得",
+    }.get(status or "", status or "-")
+
+
+def _fmt_price(v) -> str:
+    if v is None or v == "":
+        return "-"
+    try:
+        f = float(v)
+        return f"{int(round(f)):,}" if abs(f - round(f)) < 1e-6 else f"{f:,.1f}"
+    except (TypeError, ValueError):
+        return str(v)
+
+
+def build_discord_embeds(ctx: dict, body: str, model_used: str) -> list[dict]:
+    """スマホで一目で状況と要点がわかる Discord Embed カードを構築する。"""
+    m = ctx.get("market") or {}
+    e1306 = m.get("1306_T") or {}
+    dist_1306 = m.get("1306_dist_sma200_pct")
+    breadth = m.get("breadth_all_prev") or {}
+    positions = ctx.get("positions") or []
+    watchlist = ctx.get("watchlist") or []
+    dd = ctx.get("data_dates") or {}
+
+    all_items = list(positions) + list(watchlist)
+    statuses = {str(x.get("live_status") or "") for x in all_items}
+    sma25_pct = breadth.get("above_sma25_pct")
+    is_risk_off = (dist_1306 is not None and dist_1306 < 0) or (sma25_pct is not None and float(sma25_pct) < 30)
+
+    if statuses & {"stop_hit", "near_stop", "max_hold", "triggered_then_stop"}:
+        color = 0xE03131  # 赤: 緊急確認
+    elif is_risk_off:
+        color = 0xF08C00  # オレンジ: リスクオフ警戒
+    elif statuses & {"triggered", "tp_hit"}:
+        color = 0x2B8A3E  # 緑: 入口到達/利確到達
+    else:
+        color = 0x1971C2  # 青: 通常
+
+    regime_icon = "🔴リスクオフ" if is_risk_off else "🟢リスクオン"
+    dist_txt = f"{dist_1306:+.1f}%" if isinstance(dist_1306, (int, float)) else "-"
+    sma25_txt = f"{sma25_pct}%" if sma25_pct is not None else "-"
+    market_val = (
+        f"{regime_icon}\n"
+        f"1306.T: {_fmt_price(e1306.get('close'))}円 (200日線 {dist_txt})\n"
+        f"25日線上: {sma25_txt}"
+    )
+
+    item_lines = []
+    for p in positions:
+        st_lbl = _status_ja(p.get("live_status"))
+        item_lines.append(
+            f"保有 {p.get('name')}（{p.get('code')}） {_fmt_price(p.get('current_price'))}円 [{st_lbl}]\n"
+            f"　損切 {_fmt_price(p.get('stop'))} / 利確 {_fmt_price(p.get('take_profit'))}"
+        )
+    for w in watchlist:
+        st_lbl = _status_ja(w.get("live_status"))
+        item_lines.append(
+            f"監視 {w.get('name')}（{w.get('code')}） {_fmt_price(w.get('current_price'))}円 [{st_lbl}]\n"
+            f"　入口 {_fmt_price(w.get('entry_price'))} / 損切 {_fmt_price(w.get('stop'))}"
+        )
+    pos_val = "\n".join(item_lines) if item_lines else "保有0・監視0（新規待機）"
+    if len(pos_val) > 1000:
+        pos_val = pos_val[:995] + "…"
+
+    fields = [
+        {"name": "📈 地合い", "value": market_val, "inline": True},
+        {"name": "💼 保有・監視", "value": pos_val, "inline": True},
+    ]
+
+    reminders = ctx.get("csv_reminders") or []
+    if reminders:
+        rem_txt = "\n".join(f"• {r}" for r in reminders[:3])
+        rem_txt += "\n→ 最新CSV取得後に `/strategy-note` 実行"
+        fields.append({"name": "📩 確認・CSV更新", "value": rem_txt[:1000], "inline": False})
+
+    desc_body = (body or "").strip()
+    if len(desc_body) > 3800:
+        desc_body = desc_body[:3795] + "…"
+    links = f"[📋 今日の作戦]({WEB_STRATEGY_URL}) ・ [🔍 スクリーナー]({WEB_HOME_URL})"
+    description = f"{desc_body}\n\n{links}" if desc_body else links
+
+    footer_txt = (
+        f"台帳:{dd.get('plan_data_date') or '-'} | "
+        f"推奨:{dd.get('recommendations_date') or '-'} | "
+        f"判定:{model_used} | {ctx.get('generated_at') or '-'}"
+    )
+
+    return [{
+        "title": ctx.get("slot_label") or "ブリーフィング",
+        "color": color,
+        "description": description[:4096],
+        "fields": fields,
+        "footer": {"text": footer_txt[:2048]},
+    }]
+
+
 def format_discord_message(ctx: dict, body: str, model_used: str) -> str:
     dd = ctx["data_dates"]
     header = (
@@ -739,6 +866,26 @@ def format_discord_message(ctx: dict, body: str, model_used: str) -> str:
         parts.append("\n".join(rem_lines))
     parts.append(f"🔗 今日の作戦: {WEB_STRATEGY_URL}\n🔗 スクリーナー: {WEB_HOME_URL}")
     return "\n\n".join(parts)
+
+
+def send_discord_payload(webhook: str, embeds: list[dict], fallback_text: str) -> None:
+    if not webhook:
+        print("情報: DISCORD_WEBHOOK_URL が未設定のため送信をスキップしました。")
+        return
+    payload = json.dumps({"embeds": embeds}).encode("utf-8")
+    req = urllib.request.Request(
+        webhook,
+        data=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "StockApp/1.0"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            resp.read()
+        return
+    except Exception as exc:  # noqa: BLE001
+        print(f"警告: Discord Embed送信失敗のためテキスト送信へフォールバック: {exc}", file=sys.stderr)
+    send_discord_chunks(webhook, fallback_text)
 
 
 def send_discord_chunks(webhook: str, text: str, max_len: int = 1900) -> None:
@@ -795,15 +942,19 @@ def main() -> int:
 
     ctx = collect_context(args.slot, now.date())
     body, model_used = generate_ai_briefing(ctx)
+    embeds = build_discord_embeds(ctx, body, model_used)
     message = format_discord_message(ctx, body, model_used)
 
     print(message)
+    print(f"\n--- Embed Summary (color=0x{embeds[0]['color']:06X}, desc_len={len(embeds[0]['description'])}, fields={len(embeds[0]['fields'])}) ---")
+    for fld in embeds[0]["fields"]:
+        print(f"[{fld['name']}] {fld['value']}")
     if args.dry_run:
         print("\n[dry-run] Discord送信はスキップしました。")
         return 0
 
     webhook = os.environ.get("DISCORD_WEBHOOK_URL") or ""
-    send_discord_chunks(webhook, message)
+    send_discord_payload(webhook, embeds, message)
     return 0
 
 
