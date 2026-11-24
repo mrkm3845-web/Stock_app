@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T16:04:39",
+  "generated_at": "2026-11-24T20:23:08",
   "date": "2026-11-24",
   "horizon_days": 14,
   "items": {
@@ -69,8 +69,8 @@
       "soon": false
     },
     "1417": {
-      "date": "2026-11-09",
-      "days_until": -15,
+      "date": "2027-02-12",
+      "days_until": 80,
       "soon": false
     },
     "1418": {
@@ -259,9 +259,9 @@
       "soon": false
     },
     "1773": {
-      "date": "2026-08-27",
-      "days_until": -89,
-      "soon": false
+      "date": "2026-12-03",
+      "days_until": 9,
+      "soon": true
     },
     "1780": {
       "date": "2025-08-07",
@@ -359,8 +359,8 @@
       "soon": false
     },
     "1820": {
-      "date": "2026-11-10",
-      "days_until": -14,
+      "date": "2027-02-12",
+      "days_until": 80,
       "soon": false
     },
     "1822": {
@@ -519,8 +519,8 @@
       "soon": false
     },
     "1911": {
-      "date": "2026-11-05",
-      "days_until": -19,
+      "date": "2027-02-12",
+      "days_until": 80,
       "soon": false
     },
     "1914": {
@@ -954,8 +954,8 @@
       "soon": false
     },
     "2206": {
-      "date": "2026-11-06",
-      "days_until": -18,
+      "date": "2027-02-11",
+      "days_until": 79,
       "soon": false
     },
     "2207": {
@@ -984,8 +984,8 @@
       "soon": false
     },
     "2212": {
-      "date": "2026-10-27",
-      "days_until": -28,
+      "date": "2027-02-12",
+      "days_until": 80,
       "soon": false
     },
     "2215": {
@@ -1034,8 +1034,8 @@
       "soon": false
     },
     "2264": {
-      "date": "2026-11-09",
-      "days_until": -15,
+      "date": "2027-02-12",
+      "days_until": 80,
       "soon": false
     },
     "2266": {
@@ -1054,8 +1054,8 @@
       "soon": false
     },
     "2269": {
-      "date": "2026-11-12",
-      "days_until": -12,
+      "date": "2027-02-18",
+      "days_until": 86,
       "soon": false
     },
     "2270": {
@@ -1139,8 +1139,8 @@
       "soon": false
     },
     "2317": {
-      "date": "2026-10-29",
-      "days_until": -26,
+      "date": "2027-02-04",
+      "days_until": 72,
       "soon": false
     },
     "2323": {
@@ -1344,8 +1344,8 @@
       "soon": false
     },
     "2433": {
-      "date": "2026-11-10",
-      "days_until": -14,
+      "date": "2027-02-12",
+      "days_until": 80,
       "soon": false
     },
     "2435": {
@@ -1454,8 +1454,8 @@
       "soon": false
     },
     "2492": {
-      "date": "2026-10-30",
-      "days_until": -25,
+      "date": "2027-02-12",
+      "days_until": 80,
       "soon": false
     },
     "2493": {
@@ -1494,8 +1494,8 @@
       "soon": false
     },
     "2531": {
-      "date": "2026-11-10",
-      "days_until": -14,
+      "date": "2027-02-12",
+      "days_until": 80,
       "soon": false
     },
     "2533": {
@@ -1524,8 +1524,8 @@
       "soon": false
     },
     "2579": {
-      "date": "2026-10-30",
-      "days_until": -25,
+      "date": "2027-02-12",
+      "days_until": 80,
       "soon": false
     },
     "2585": {
@@ -1819,8 +1819,8 @@
       "soon": false
     },
     "2768": {
-      "date": "2026-10-30",
-      "days_until": -25,
+      "date": "2027-02-03",
+      "days_until": 71,
       "soon": false
     },
     "2769": {
@@ -1934,8 +1934,8 @@
       "soon": false
     },
     "2811": {
-      "date": "2026-10-29",
-      "days_until": -26,
+      "date": "2027-02-03",
+      "days_until": 71,
       "soon": false
     },
     "2813": {
@@ -2074,8 +2074,8 @@
       "soon": false
     },
     "2914": {
-      "date": "2026-10-29",
-      "days_until": -26,
+      "date": "2027-02-10",
+      "days_until": 78,
       "soon": false
     },
     "2915": {
@@ -2344,8 +2344,8 @@
       "soon": false
     },
     "3064": {
-      "date": "2026-11-04",
-      "days_until": -20,
+      "date": "2027-02-09",
+      "days_until": 77,
       "soon": false
     },
     "3065": {
@@ -2488,9 +2488,14 @@
       "days_until": 72,
       "soon": false
     },
+    "3111": {
+      "date": "2025-05-13",
+      "days_until": -560,
+      "soon": false
+    },
     "3116": {
-      "date": "2026-10-29",
-      "days_until": -26,
+      "date": "2027-02-02",
+      "days_until": 70,
       "soon": false
     },
     "3123": {
@@ -2504,8 +2509,8 @@
       "soon": false
     },
     "3132": {
-      "date": "2026-11-02",
-      "days_until": -22,
+      "date": "2027-02-08",
+      "days_until": 76,
       "soon": false
     },
     "3134": {
@@ -2654,8 +2659,8 @@
       "soon": false
     },
     "3182": {
-      "date": "2026-11-12",
-      "days_until": -12,
+      "date": "2027-02-15",
+      "days_until": 83,
       "soon": false
     },
     "3183": {
@@ -2834,8 +2839,8 @@
       "soon": false
     },
     "3288": {
-      "date": "2026-11-06",
-      "days_until": -18,
+      "date": "2027-02-10",
+      "days_until": 78,
       "soon": false
     },
     "3289": {
@@ -3249,8 +3254,8 @@
       "soon": false
     },
     "3498": {
-      "date": "2026-10-05",
-      "days_until": -50,
+      "date": "2027-01-13",
+      "days_until": 50,
       "soon": false
     },
     "3501": {
@@ -3654,13 +3659,148 @@
       "soon": false
     },
     "3765": {
-      "date": "2026-11-13",
-      "days_until": -11,
+      "date": "2027-02-19",
+      "days_until": 87,
       "soon": false
     },
     "3766": {
       "date": "2025-05-09",
       "days_until": -564,
+      "soon": false
+    },
+    "3768": {
+      "date": "2025-05-09",
+      "days_until": -564,
+      "soon": false
+    },
+    "3769": {
+      "date": "2027-02-12",
+      "days_until": 80,
+      "soon": false
+    },
+    "3771": {
+      "date": "2025-07-24",
+      "days_until": -488,
+      "soon": false
+    },
+    "3772": {
+      "date": "2025-08-12",
+      "days_until": -469,
+      "soon": false
+    },
+    "3774": {
+      "date": "2027-02-05",
+      "days_until": 73,
+      "soon": false
+    },
+    "3776": {
+      "date": "2025-08-05",
+      "days_until": -476,
+      "soon": false
+    },
+    "3778": {
+      "date": "2025-07-28",
+      "days_until": -484,
+      "soon": false
+    },
+    "3788": {
+      "date": "2025-08-06",
+      "days_until": -475,
+      "soon": false
+    },
+    "3791": {
+      "date": "2025-04-11",
+      "days_until": -592,
+      "soon": false
+    },
+    "3796": {
+      "date": "2025-05-15",
+      "days_until": -558,
+      "soon": false
+    },
+    "3798": {
+      "date": "2025-05-09",
+      "days_until": -564,
+      "soon": false
+    },
+    "3799": {
+      "date": "2025-05-14",
+      "days_until": -559,
+      "soon": false
+    },
+    "3800": {
+      "date": "2025-05-13",
+      "days_until": -560,
+      "soon": false
+    },
+    "3802": {
+      "date": "2025-05-12",
+      "days_until": -561,
+      "soon": false
+    },
+    "3804": {
+      "date": "2025-06-16",
+      "days_until": -526,
+      "soon": false
+    },
+    "3816": {
+      "date": "2025-06-06",
+      "days_until": -536,
+      "soon": false
+    },
+    "3817": {
+      "date": "2025-08-05",
+      "days_until": -476,
+      "soon": false
+    },
+    "4502": {
+      "date": "2027-01-28",
+      "days_until": 65,
+      "soon": false
+    },
+    "4661": {
+      "date": "2027-01-28",
+      "days_until": 65,
+      "soon": false
+    },
+    "4684": {
+      "date": "2027-01-26",
+      "days_until": 63,
+      "soon": false
+    },
+    "6098": {
+      "date": "2027-02-09",
+      "days_until": 77,
+      "soon": false
+    },
+    "6191": {
+      "date": "2027-02-12",
+      "days_until": 80,
+      "soon": false
+    },
+    "6532": {
+      "date": "2027-01-14",
+      "days_until": 51,
+      "soon": false
+    },
+    "7552": {
+      "date": "2027-01-29",
+      "days_until": 66,
+      "soon": false
+    },
+    "7832": {
+      "date": "2027-02-09",
+      "days_until": 77,
+      "soon": false
+    },
+    "7867": {
+      "date": "2027-02-10",
+      "days_until": 78,
+      "soon": false
+    },
+    "9766": {
+      "date": "2027-01-28",
+      "days_until": 65,
       "soon": false
     }
   }
