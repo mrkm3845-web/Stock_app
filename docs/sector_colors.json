@@ -1,6 +1,6 @@
 {
   "date": "2026-11-25",
-  "generated_at": "2026-11-26T03:43:19",
+  "generated_at": "2026-11-26T05:32:13",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -111,8 +111,8 @@
       "low_sample": false
     },
     "繊維製品": {
-      "n": 37,
-      "above_sma25_pct": 21.6,
+      "n": 36,
+      "above_sma25_pct": 22.2,
       "color": "red",
       "low_sample": false
     },
