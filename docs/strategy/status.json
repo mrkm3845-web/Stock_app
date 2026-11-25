@@ -1,29 +1,29 @@
 {
   "plan_id": "2026-11-23-1138",
-  "checked_at": "2026-11-24T20:23:09.473358+09:00",
+  "checked_at": "2026-11-25T20:24:41.985890+09:00",
   "source": "eod",
   "data_asof": null,
   "market": {
     "regime": {
       "ticker": "1306.T",
-      "close": 395.9,
-      "sma": 403.4,
+      "close": 394.7,
+      "sma": 403.6,
       "sma_days": 200,
       "risk_on": false
     },
     "breadth": {
       "n": 2906,
       "low_sample": false,
-      "above_sma25_pct": 21.4,
-      "above_sma200_pct": 34.0,
-      "avg_ret5_pct": -3.56
+      "above_sma25_pct": 27.5,
+      "above_sma200_pct": 36.1,
+      "avg_ret5_pct": -2.78
     },
     "bank_sector": {
       "n": 77,
       "low_sample": false,
-      "above_sma25_pct": 5.2,
-      "above_sma200_pct": 26.0,
-      "avg_ret5_pct": -6.43
+      "above_sma25_pct": 2.6,
+      "above_sma200_pct": 13.0,
+      "avg_ret5_pct": -7.32
     }
   },
   "items": [],
