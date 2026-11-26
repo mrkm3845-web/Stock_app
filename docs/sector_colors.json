@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-25",
-  "generated_at": "2026-11-26T11:16:12",
+  "date": "2026-11-26",
+  "generated_at": "2026-11-26T16:04:32",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -10,19 +10,19 @@
   "colors": {
     "水産・農林業": {
       "n": 11,
-      "above_sma25_pct": 81.8,
+      "above_sma25_pct": 72.7,
       "color": "green",
       "low_sample": false
     },
     "建設業": {
       "n": 130,
-      "above_sma25_pct": 29.2,
+      "above_sma25_pct": 23.1,
       "color": "red",
       "low_sample": false
     },
     "不動産業": {
       "n": 106,
-      "above_sma25_pct": 23.6,
+      "above_sma25_pct": 19.8,
       "color": "red",
       "low_sample": false
     },
@@ -46,37 +46,37 @@
     },
     "サービス業": {
       "n": 320,
-      "above_sma25_pct": 27.5,
+      "above_sma25_pct": 28.1,
       "color": "red",
       "low_sample": false
     },
     "卸売業": {
       "n": 257,
-      "above_sma25_pct": 26.5,
+      "above_sma25_pct": 24.9,
       "color": "red",
       "low_sample": false
     },
     "医薬品": {
       "n": 38,
-      "above_sma25_pct": 68.4,
+      "above_sma25_pct": 57.9,
       "color": "green",
       "low_sample": false
     },
     "食料品": {
       "n": 115,
-      "above_sma25_pct": 58.3,
+      "above_sma25_pct": 60.0,
       "color": "green",
       "low_sample": false
     },
     "情報・通信業": {
       "n": 328,
-      "above_sma25_pct": 29.9,
-      "color": "red",
+      "above_sma25_pct": 30.2,
+      "color": "yellow",
       "low_sample": false
     },
     "陸運業": {
       "n": 56,
-      "above_sma25_pct": 35.7,
+      "above_sma25_pct": 33.9,
       "color": "yellow",
       "low_sample": false
     },
@@ -88,43 +88,43 @@
     },
     "小売業": {
       "n": 265,
-      "above_sma25_pct": 47.2,
+      "above_sma25_pct": 48.3,
       "color": "yellow",
       "low_sample": false
     },
     "電気機器": {
       "n": 202,
-      "above_sma25_pct": 17.3,
+      "above_sma25_pct": 14.4,
       "color": "red",
       "low_sample": false
     },
     "化学": {
       "n": 191,
-      "above_sma25_pct": 28.3,
+      "above_sma25_pct": 25.7,
       "color": "red",
       "low_sample": false
     },
     "金属製品": {
       "n": 78,
-      "above_sma25_pct": 25.6,
+      "above_sma25_pct": 28.2,
       "color": "red",
       "low_sample": false
     },
     "繊維製品": {
-      "n": 37,
-      "above_sma25_pct": 35.1,
-      "color": "yellow",
+      "n": 36,
+      "above_sma25_pct": 27.8,
+      "color": "red",
       "low_sample": false
     },
     "ガラス・土石製品": {
       "n": 46,
-      "above_sma25_pct": 17.4,
+      "above_sma25_pct": 15.2,
       "color": "red",
       "low_sample": false
     },
     "輸送用機器": {
       "n": 72,
-      "above_sma25_pct": 20.8,
+      "above_sma25_pct": 16.7,
       "color": "red",
       "low_sample": false
     },
@@ -136,25 +136,25 @@
     },
     "パルプ・紙": {
       "n": 24,
-      "above_sma25_pct": 37.5,
+      "above_sma25_pct": 33.3,
       "color": "yellow",
       "low_sample": false
     },
     "その他金融業": {
       "n": 33,
-      "above_sma25_pct": 27.3,
+      "above_sma25_pct": 24.2,
       "color": "red",
       "low_sample": false
     },
     "証券、商品先物取引業": {
       "n": 30,
-      "above_sma25_pct": 10.0,
+      "above_sma25_pct": 13.3,
       "color": "red",
       "low_sample": false
     },
     "石油・石炭製品": {
       "n": 8,
-      "above_sma25_pct": 0.0,
+      "above_sma25_pct": 12.5,
       "color": "red",
       "low_sample": true
     },
@@ -166,13 +166,13 @@
     },
     "鉄鋼": {
       "n": 34,
-      "above_sma25_pct": 17.6,
+      "above_sma25_pct": 14.7,
       "color": "red",
       "low_sample": false
     },
     "機械": {
       "n": 195,
-      "above_sma25_pct": 19.0,
+      "above_sma25_pct": 15.4,
       "color": "red",
       "low_sample": false
     },
@@ -190,13 +190,13 @@
     },
     "海運業": {
       "n": 11,
-      "above_sma25_pct": 18.2,
+      "above_sma25_pct": 9.1,
       "color": "red",
       "low_sample": false
     },
     "倉庫・運輸関連業": {
       "n": 29,
-      "above_sma25_pct": 20.7,
+      "above_sma25_pct": 13.8,
       "color": "red",
       "low_sample": false
     },
