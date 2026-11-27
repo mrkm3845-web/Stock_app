@@ -1,6 +1,6 @@
 {
   "date": "2026-11-27",
-  "generated_at": "2026-11-28T03:15:38",
+  "generated_at": "2026-11-28T05:00:18",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -16,7 +16,7 @@
     },
     "建設業": {
       "n": 130,
-      "above_sma25_pct": 23.1,
+      "above_sma25_pct": 23.8,
       "color": "red",
       "low_sample": false
     },
