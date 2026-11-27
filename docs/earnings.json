@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-27T05:14:49",
+  "generated_at": "2026-11-27T11:14:38",
   "date": "2026-11-26",
   "horizon_days": 14,
   "items": {
@@ -3706,71 +3706,6 @@
     "3791": {
       "date": "2025-04-11",
       "days_until": -594,
-      "soon": false
-    },
-    "3796": {
-      "date": "2025-05-15",
-      "days_until": -560,
-      "soon": false
-    },
-    "3798": {
-      "date": "2025-05-09",
-      "days_until": -566,
-      "soon": false
-    },
-    "3800": {
-      "date": "2025-05-13",
-      "days_until": -562,
-      "soon": false
-    },
-    "4502": {
-      "date": "2027-01-28",
-      "days_until": 63,
-      "soon": false
-    },
-    "4661": {
-      "date": "2027-01-28",
-      "days_until": 63,
-      "soon": false
-    },
-    "4684": {
-      "date": "2027-01-26",
-      "days_until": 61,
-      "soon": false
-    },
-    "4911": {
-      "date": "2027-02-10",
-      "days_until": 76,
-      "soon": false
-    },
-    "6532": {
-      "date": "2027-01-15",
-      "days_until": 50,
-      "soon": false
-    },
-    "7550": {
-      "date": "2027-02-10",
-      "days_until": 76,
-      "soon": false
-    },
-    "7552": {
-      "date": "2027-02-09",
-      "days_until": 75,
-      "soon": false
-    },
-    "7832": {
-      "date": "2027-02-10",
-      "days_until": 76,
-      "soon": false
-    },
-    "7867": {
-      "date": "2027-02-10",
-      "days_until": 76,
-      "soon": false
-    },
-    "9843": {
-      "date": "2027-02-13",
-      "days_until": 79,
       "soon": false
     }
   }
