@@ -1,6 +1,6 @@
 {
   "date": "2026-11-27",
-  "generated_at": "2026-11-27T16:03:51",
+  "generated_at": "2026-11-27T20:19:40",
   "config": {
     "green_min_pct": 50,
     "yellow_min_pct": 30,
@@ -34,8 +34,8 @@
     },
     "鉱業": {
       "n": 5,
-      "above_sma25_pct": 20.0,
-      "color": "red",
+      "above_sma25_pct": 40.0,
+      "color": "yellow",
       "low_sample": true
     },
     "その他製品": {
@@ -69,8 +69,8 @@
       "low_sample": false
     },
     "情報・通信業": {
-      "n": 328,
-      "above_sma25_pct": 34.1,
+      "n": 330,
+      "above_sma25_pct": 33.9,
       "color": "yellow",
       "low_sample": false
     },
@@ -99,8 +99,8 @@
       "low_sample": false
     },
     "化学": {
-      "n": 191,
-      "above_sma25_pct": 35.1,
+      "n": 192,
+      "above_sma25_pct": 34.9,
       "color": "yellow",
       "low_sample": false
     },
@@ -111,8 +111,8 @@
       "low_sample": false
     },
     "繊維製品": {
-      "n": 36,
-      "above_sma25_pct": 19.4,
+      "n": 37,
+      "above_sma25_pct": 18.9,
       "color": "red",
       "low_sample": false
     },

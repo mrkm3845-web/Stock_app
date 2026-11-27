@@ -1348,70 +1348,69 @@
   },
   "7867": {
     "code": "7867",
-    "rank": 2,
+    "rank": 6,
     "verdict": "watch",
-    "entry_type": "breakout_chase",
-    "reason": "過熱低く5日線近辺、玩具材料と出来高伴う上昇 / 業種が赤（25日線上28.0%・82銘柄）のため推奨から外す",
-    "news_note": "2026-11-26 トランスフォーマー新商品/ポップアップ / [Web合議] ④委員長: 業績・還元ともに文句なし。決算通過後の適温状態でスイングに最適と判断。",
-    "entry_strategy": "5430円前後で成行、深追い禁",
-    "entry_price": 5430,
-    "support": 5042,
+    "entry_type": "wait",
+    "reason": "スコア高いが5日-6.9%、押し確認まで待つ",
+    "news_note": "11/27日系中堅が中立へ、目標5880 / [Web合議] ④委員長: 好決算後の急落で需給がリセットされた。ファンダメンタルズは良好で、絶好の拾い場。",
+    "entry_strategy": "4958〜5081の押し目待ち",
+    "entry_price": 5294,
+    "support": 5081,
     "resistance": 5694,
-    "tp_price": 5850,
-    "sl_price": 5150,
-    "trailing_plan": "5600超で建値、5日線割れ撤退",
+    "tp_price": 5880,
+    "sl_price": 4958,
+    "trailing_plan": "押し目反発後、5日線割れで撤退",
     "sector": "その他製品",
-    "sector_color": "red",
-    "sector_above_sma25_pct": 28.0,
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 32.9,
     "sector_n": 82,
-    "sector_blocked": true,
-    "committee_verdict": "approve_strong",
-    "catalyst_quality": "strong",
-    "priced_in_risk": "fair",
+    "committee_verdict": "approve",
+    "catalyst_quality": "moderate",
+    "priced_in_risk": "early",
     "committee_notes": {
-      "bull": "①材料精査官: 11/10発表の2Q決算で営業益39%増、配当増額。海外好調で通期上方修正済みの本命。",
-      "timing": "②需給判定官: 決算後の急騰から一服。過熱度lowで25日乖離も許容範囲。押し目買いの好機。",
-      "bear": "③リスク審査官: 米国事業のシステム不具合による出荷遅延が継続するリスクはあるが、関税還付で相殺。",
-      "chair": "④委員長: 業績・還元ともに文句なし。決算通過後の適温状態でスイングに最適と判断。"
+      "bull": "①材料精査官: 2Q決算で営業益39%増、増配発表。国内・アジアが堅調。北米の遅延も関税還付でカバー。",
+      "timing": "②需給判定官: 5日騰落-6.8%と大幅調整。過熱感は完全に消失し、リバウンド狙いの初動として優位。",
+      "bear": "③リスク審査官: 北米でのシステム不具合による出荷遅延が継続しないか注視が必要。重大な悪材料はなし。",
+      "chair": "④委員長: 好決算後の急落で需給がリセットされた。ファンダメンタルズは良好で、絶好の拾い場。"
     },
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
       {
-        "title": "学生が企画から運営まで実践的に学ぶ「自由が丘イベントコラボレーション」「サンクスリバティ2026」をサポートし、自由が丘の魅力を発信～街全体を舞台に「人生ゲーム」を体験できる「自由が丘南口リアル人生ゲーム」を開催",
-        "source": "大学プレスセンター",
-        "domain": "u-presscenter.jp",
-        "date": "2026-11-27",
-        "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5ac2d2dy1yTE9uM1Jub0VlUzdsaFcxQjZDa0d3VUZKWHYtcFJYRjZ0OU45RmU5THRXczdDclhuUzZfZ3BvUzJPUU5YVTJzTGpYQTVEVHB3?oc=5"
-      },
-      {
-        "title": "描きおろしのロボットが服や雑貨に！KARATECHOP ART&TOY“トランスフォーマー×電Q POP UP SHOP”",
-        "source": "Dtimes",
-        "domain": "dtimes.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE9FUC1wQ3hTQ2hFOXJ3S2EzZnJTajhIQVNfX2k4OWdtd05RMERzTnFkemJ0SWdxM3VQNXVMVVZNaXFJSEljV2c?oc=5"
-      },
-      {
-        "title": "『トランスフォーマー×電Q POP UP SHOP』KARATECHOP ART&TOYにて2026年11月27日より開催決定！",
-        "source": "アニメ！アニメ！",
-        "domain": "animeanime.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1KMGpFbXJmaU45c0l3ck5TNUpLZVU0S3J0RmpUSGozams4Q0RSVG9pTTRSOTM4UkN0RDNDSnRUdjNCaXNSWlFUNWZVUHh3NkFVRVJSMFJRTW9aQ2ZwVWdjSjlGbF9pczkxN0E?oc=5"
-      },
-      {
-        "title": "MPGでメガトロン登場か？ 「トランスフォーマ―」玩具新商品シルエットが公開",
-        "source": "hobby Watch",
-        "domain": "hobby.watch.impress.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5pTVdodHpuNEtJYTRkbTlZekNic3Vqdlh3QktZNlNfbzJzYnp3TUxaSlJaOURkcGNjWURteWJyQkdzQlY3bHVKOFhBcjMweldsa1hUdU04aFVJRElCakRzZDVQaFFNVjg?oc=5"
-      },
-      {
-        "title": "MPGでメガトロン登場か？ 「トランスフォーマ―」玩具新商品シルエットが公開（HOBBY Watch）",
+        "title": "キラキラのラインストーンがとってもキュート！「サンリオキャラクターズ キラッキラ★ペンダントVol.3」が11月30日発売（インサイド）",
         "source": "Yahoo!ニュース",
         "domain": "news.yahoo.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFA4TXphT3NLTGxNMTlkNTlKbFdjMTA0THJHa2c3NnBPU0g5emV6ZDRONk5DRzRIeTZ2Y1JkalR0TXFLSmt0QUg4WG1STEtDbURHdFRLNDNGZFFDQ196SG5GSG9uWjRMbERFMUR1R2JvS1UwQkVoVUd1bGhIckhFREU?oc=5"
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1IeG1McHJ4QzVkbExKQklIdkowWEtOVXMzTGVjOExMaWE3dmxNOWpNc19ldmNIc2ZBdkt5c01PYXk5NHZXMlNqU3ExR2JBejhrbjdlZU5EZ0JnSGg2UWxIcmNmSlpxbG1HbklxcFBHbzExcTM0eU1Ycm1MQ1l1REU?oc=5"
+      },
+      {
+        "title": "キラキラのラインストーンがとってもキュート！「サンリオキャラクターズ キラッキラ★ペンダントVol.3」が11月30日発売",
+        "source": "Excite エキサイト",
+        "domain": "excite.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE83d2dhbEZVbDJHNzBnV0hCZDhUTXlia09jOWRuaFcwdXVYdkxKUVFIQnBNZ1E5UFhYSHlkTnAycG56Sms1dll1MGFJUllLZ2ZEZlpJMUJ4eXVBZkNOazNURg?oc=5"
+      },
+      {
+        "title": "【アナリスト評価】タカラトミー、レーティング中立に引下げ、目標株価5,880円に引上げ（日系中堅証券）(アイフィス株予報)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOek56YUhQNVVtM2FWSjZ0VU5aZXlFVTNaRllfOTh4YkxXNlVVQVZJdG5ZQk9VdmZIWUgyaFd0SnFQNXR4cy03aUJJeUszbnhSempRSzFsREttdmhscVktUTJReHcwbU4tWjdEX29TYVpCbTV6ZW9nSENoVnVYaTlOaGpvcXVFNzg?oc=5"
+      },
+      {
+        "title": "「プリティーシリーズ」最新作『おねがいアイプリ』アミューズメントゲーム『おねがいアイプリ ５だん』が12月3日（木）より順次スタート",
+        "source": "PR TIMES",
+        "domain": "prtimes.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1yRVViNVVycW0zX2l0N1ZmbGNxQ2x5YjN0X3lvMUNpazRab09DUDIwRFpBSzl4WFlDUkdFd25xSEJLb1JTMl8yUGdMUUV3eTZhLWY0ZVV6NFVWRmJkZTFhcDlHb1hSWEpJeXc?oc=5"
+      },
+      {
+        "title": "アニメ『おねがいアイプリ』第35話あらすじ＆先行カット公開！ | 株式会社タカラトミーアーツのプレスリリース",
+        "source": "PR TIMES",
+        "domain": "prtimes.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5RdWdUNFM1N2c0dW53VEdUVGJlakQ1aXA0alRYYUlZOXZjU0xpVW1wR2hnQTRXdnBfRkpWVFFleEtmRDRNdVVQcFhjN19WdjI4cXkzUlZLdHl3b3dsT01aN3ViTURMelNfLXc?oc=5"
       }
     ]
   },
@@ -6348,26 +6347,40 @@
   },
   "2612": {
     "code": "2612",
-    "rank": 13,
-    "verdict": "caution",
+    "rank": 11,
+    "verdict": "watch",
     "entry_type": "wait",
-    "reason": "TOB思惑でRSI77、材料は強いが高値掴み警戒",
-    "news_note": "2026-11-26 TOB対抗馬が買付価格引上げ提案",
-    "entry_strategy": "3136〜3182円まで待つ",
-    "entry_price": 3270,
-    "support": 3136,
+    "reason": "RSI78で過熱、TOB材料も高値追い禁",
+    "news_note": "11/27Jオイル撤回か、TOB期限12/15延長",
+    "entry_strategy": "3200〜3177の押し目待ち",
+    "entry_price": 3290,
+    "support": 3000,
     "resistance": 3310,
-    "tp_price": 3400,
+    "tp_price": 3500,
     "sl_price": 3050,
-    "trailing_plan": "3350超で建値、5日線割れ撤退",
+    "trailing_plan": "押し目後、3000割れで撤退",
     "sector": "食料品",
-    "sector_color": "green",
-    "sector_above_sma25_pct": 62.6,
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 49.6,
     "sector_n": 115,
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
+      {
+        "title": "かどや製油株がもみ合い J－オイルミルズが買収提案撤回か",
+        "source": "日本経済新聞",
+        "domain": "nikkei.com",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5jYlV0WE1kNE5oSk1xcW1teWRLa05NRGJ3UVozc01SOHhRcEwxT2pIMUlzY2ltZE1USEdqTWRDelVoNkpacmk2VTlHc2NpRmdncldaZ1IxMEx4elFEdll2c181bTBuTjBwNC1INA?oc=5"
+      },
+      {
+        "title": "【かどや製油の買収合戦】ＴＯＢ期限を１２月１５日に延長、Ｂ社撤退で買収候補は２陣営に",
+        "source": "https://kabu-ir.com/",
+        "domain": "kabu-ir.com",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE04c0Y2QmpxZGpkcmczc1pzeVNhSU5BamU4QTFTQ1E5d1pSUzhDNjVjclNpUVNPQ0JwczMzQ2VPRWFTUlNhNTEtTWtZS3ZHRFpOUHdaUw?oc=5"
+      },
       {
         "title": "かどや製油への買収提案、Jオイルが撤回か インテグラルはTOB延長",
         "source": "日本経済新聞",
@@ -6376,18 +6389,11 @@
         "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5HQ2lYV3Bzb19aSGFqcW9QQno5MEVDR3dSUlhGRHY0a1BEWmJ2RzJRSVR6Nlo3Z0M0ZnpWbk1MOGtQWG9weHpHR3VNUWMxZ0s5ZzNYUG4weUROUlVXT21kV2xwcy1mUzJXWDZDeA?oc=5"
       },
       {
-        "title": "かどや製油へのTOB、インテグラルが12月15日まで延長－価格は変えず",
-        "source": "Bloomberg.com",
-        "domain": "bloomberg.com",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPU3lWWXpXdlJhVFFlUVM2VTFQV2N6U0hXcWd3cmxJQjZhS1BySEV0WjJ2dTVhb191NVRMRzhsX0Jra0ZYdXJzMTB0NXZNSnZfXzd0YzYxaG9EZkNjMXptck9JdG5ZOFVSdWNDMXdFcHkyX1NmVmNrcl9sVGtzRXNzSEZ1NTAzd0xKVm9meU1R?oc=5"
-      },
-      {
         "title": "かどや製油",
         "source": "日本経済新聞",
         "domain": "nikkei.com",
         "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBKZkNsS2UydjV4RWdFWEVOeTVac3l0Y1FNLW11Y0Zsd0pCU09BbjlvZXNkTmc4WllaNVNhZ1FmUFktcFc2eE9oUnhLb0RMcWlYc0I0alN5dHZ2bmdPbzlUaTFhUEV5U0NIR3c?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOUk9wTGtfOGJuVnBldWJrbTNfQktnYWNyNkhLX0luSlg5aVZ2MUtVOGNpUlZCS3ZSWVBxOUV5RGNoUmJlajUzdDFXbEFNaWx5T3plTG5KRmlXMW02SlJkaTd5ZklhM2lfUHRDSl9PTDcxMGEtZXp6OGpMTzVGNDR4VGJoMTJHRU5RNTFIeXZqa1J6bmtjV1NZM0w5aUtEU3hrYmJsTG9jTmJKMF94OEVRcEM0MmlhQ2JGWWFEMnUzM0w2RlY1cmc5QktmcnA?oc=5"
       },
       {
         "title": "創業の地・小豆島で育てた金ごまから。かどや製油が『純正金ごま油』を100 本限定販売",
@@ -6395,13 +6401,6 @@
         "domain": "eleminist.com",
         "date": "2026-11-26",
         "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTE1VWHJNdVBsaThBbXFtRWxvRXotdDQ0TFh5TURIMVpSNzRKel8yV1UzN0xMTkt0MHhOdFFMOTJnZnppRFNhYXZrUjBR?oc=5"
-      },
-      {
-        "title": "かどや製油が大幅続伸､TOB価格引き上げで思惑台頭",
-        "source": "四季報オンライン",
-        "domain": "shikiho.toyokeizai.net",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE9paDFEeVVVQVVlRUh5aUtLQTRFd1dPdFFneEhueUlwb1FlTEYxeXNkbFhHdVJEcEJEdWRkZmFheHpUN0ViNlhzZ2FkZGtnUEFhYkFYRFhoSQ?oc=5"
       }
     ]
   },
@@ -6778,70 +6777,69 @@
   },
   "7552": {
     "code": "7552",
-    "rank": 3,
-    "verdict": "watch",
+    "rank": 4,
+    "verdict": "recommend",
     "entry_type": "breakout_chase",
-    "reason": "過熱低く5日線拮抗、証券目標引上げで上値余地 / 業種が赤（25日線上24.9%・257銘柄）のため推奨から外す",
-    "news_note": "2026-11-26 日系中堅証券が目標7360円へ引上げ / [Web合議] ④委員長: 業績の裏付けは強い。保守的な計画を逆手に取った再修正期待の買いを推奨。",
-    "entry_strategy": "6880円前後で成行",
-    "entry_price": 6880,
-    "support": 6322,
+    "reason": "低過熱、PER17倍で目標引上げ、3日続伸",
+    "news_note": "11/27目標株価引上げで3日続伸 / [Web合議] ④委員長: 通期上振れはほぼ確実。調整を経て需給が改善しており、年末商戦に向けた仕込み時と判断。",
+    "entry_strategy": "現値〜6806の浅押し、7320突破追い",
+    "entry_price": 6910,
+    "support": 6806,
     "resistance": 7320,
-    "tp_price": 7320,
+    "tp_price": 7400,
     "sl_price": 6600,
-    "trailing_plan": "7100超で建値、5日線割れ撤退",
+    "trailing_plan": "7320突破後は6806割れで撤退",
     "sector": "卸売業",
-    "sector_color": "red",
-    "sector_above_sma25_pct": 26.1,
-    "sector_n": 257,
-    "sector_blocked": true,
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 31.0,
+    "sector_n": 258,
     "committee_verdict": "approve",
     "catalyst_quality": "moderate",
     "priced_in_risk": "fair",
     "committee_notes": {
-      "bull": "①材料精査官: 11/12決算で上期進捗87%と驚異的。通期据え置きは保守的で再修正期待。",
-      "timing": "②需給判定官: 決算後の高値から横ばい。過熱度lowでパワーを溜めている状態。",
-      "bear": "③リスク審査官: 昨年は9月の上方修正が天井となった経緯あり。下期計画の極端な低さが懸念。",
-      "chair": "④委員長: 業績の裏付けは強い。保守的な計画を逆手に取った再修正期待の買いを推奨。"
+      "bull": "①材料精査官: 中間決算で経常53%増、進捗率85%と驚異的。カプセルトイ事業が利益率向上を牽引。",
+      "timing": "②需給判定官: 5日騰落-3.6%と調整が進み、過熱感low。好決算後の出尽くし売りが一巡した位置。",
+      "bear": "③リスク審査官: 映像音楽事業の赤字転落が重荷。下期の会社計画が保守的すぎる点に市場の疑念あり。",
+      "chair": "④委員長: 通期上振れはほぼ確実。調整を経て需給が改善しており、年末商戦に向けた仕込み時と判断。"
     },
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
+      {
+        "title": "この血まみれの地獄に、逃げ場はない。家族だから――。『死霊のはらわた インフェルノ』ブルーレイ + DVD セット2027年4月28日(水)発売決定！同日DVDレンタル開始！",
+        "source": "時事ドットコム",
+        "domain": "jiji.com",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFByWkowa0Z4c3ozYXJ2RkhFcTRoZV9uVm1ESURDcWZjb3pPZURhbmlTZTJRYWtaNmlab3NpSjBBcHZqWGNwcDZRZ29NNkxVRHhTUzFaZzQzd1Q5MEQ1YTJGMl9QRXBvempKVVlN?oc=5"
+      },
+      {
+        "title": "【ゲームエンタメ株前場(11/27)】目標株価引き上げのハピネット3日続伸 格下げのフリュー、アピリッツが売り優勢に(gamebiz)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQYW5USHc4WG1IMkxQNFVzLXRlaEp5cEl6ZW9kSzdoNmh6Vmc5eVppd0d3SFRTR2NvZ042MG8zeTg1VkRvUjZ2TGFOSUZaazlOWGF4a3k2bHA3Ul9MNFZZYVU0Yjg0Qk9oSTEyVldnVnFoazg2VzNURTBGQUdTQXI4MzBGczYtLTg?oc=5"
+      },
+      {
+        "title": "Netflixシリーズ「今際の国のアリス」シーズン1・シーズン2 Blu-ray BOX&DVD BOXを2027年3月12日（金）・4月9日（金）に発売いたします",
+        "source": "PR TIMES",
+        "domain": "prtimes.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5pV2ZteWl1X0V2RjZjSkcyUGlwcFVyYUlRSHZaVVNVSmItVVBkN1h4UXRIOWVYRU5qdGQ2bFFUWDJSY3ZZWndZTjA0SkNfRHBYd0xfeTc1UWp0dFlkaGpaMHVMb3Jtcmc2cEE?oc=5"
+      },
+      {
+        "title": "【株式】ハピネットが3日続伸 東海東京証券は目標株価を6770円から7360円に引き上げ(gamebiz)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNdi1TQldDYmtLSHQxREdpaWUtVXFsZ2ZXTFhvZmZFWkU0SDY1V3ZqdVZhcUVvSTRsNFBfTlV6UGstRnkxSlowdGlhNWVEQXZ1T09iNkJrY2dEYXMxWWtLS3lUd1gwZDJGYUpTV1hrX0R5ZFc4Tm9NeEcxanRJQmpVV1Y3d0dsakU?oc=5"
+      },
       {
         "title": "玩具卸のハピネット、カプセルトイ店を収益の柱に 米国にも進出",
         "source": "日本経済新聞",
         "domain": "nikkei.com",
         "date": "2026-11-27",
         "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFBCRGNxN2VVVXBsRHJwRXJYVFhjb2tKSk1obnc4cGloTlotamlNVndEME9iM0tqMXdmdWEwakpmUHRFbFBRTjY3Y2I2RWlSbmU3clYydy1DaG10bUYyZnNHTkRodzNsLURSaWZSRDZvd0RqZldIR2VkdUtWQVU5UQ?oc=5"
-      },
-      {
-        "title": "【アナリスト予想】ハピネット、27年3月期経常予想。対前週1.6%上昇。(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQSVIzcF9rZ05JVnp6dFpuMFFKWnpHNWR2WXVqVGhSNUdlNUFNTGlIY2FLa1VQRzlTNUVySXk1SlA0czF4Wm8yeU00YVpGdWgydnZ0VmhENUFRQmt4VmFiTlhHcFdZWjczdzk1OFR0UndrT2JlaHVQdTJya3k4dnQ2Rk1KSjhydzg?oc=5"
-      },
-      {
-        "title": "【アナリスト評価】ハピネット、レーティング強気を継続、目標株価7,360円に引上げ（日系中堅証券）(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNVEN1dGRsc0ZHTlZLZkRtaTF3Y18ySnoxV0VxYWROdXR6NHpMZE02dFp5UDQyWlpZTHNzT0hmNkJyWGdiUV9TbWFPX3VtZjVMbURJZ2dRMURMZk5fd3RpZnA4Uzh4cS1SM09BZWZQN19wMHNHVmpnelk0MFRjUUVXTG1WTUtuQkE?oc=5"
-      },
-      {
-        "title": "新東宝キネマノスタルジアより、『たん子たん吉珍道中 全篇集』が初DVDで発売！",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE90YzlieEk3R2J4Uno4Y0tySXFXTU9tQzZTaDljODZSTThIQ2Y4eEhrd29HUmxNYzdmZ01TQ2FSb1lQUnNYNFViYTFQeW9Qb2ZxU3hDZFpQd2R2SkJ0VG5Sc0hUZkVYR21lNlE?oc=5"
-      },
-      {
-        "title": "『MEMORY Cosmetic Songs～Elegant 70s-80s～』『MEMORY Cosmetic Songs～Sparkle 90s-00s～』11月25日同時発売！ | 株式会社ハピネットのプレスリリース",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1NR0JGcjNiVXFmcHpBQmF5akFweWhEZmw0LVQxYlc3Nk53TC1RY1lTaUpOVl9MSnBXVkVnZ1RzTHdKUTlEb0x4TlJERlNkOGt1dGNSYkkxa29rU25NLVd1VWJaeTlkb0I0M2c?oc=5"
       }
     ]
   },
@@ -7347,33 +7345,33 @@
   },
   "7832": {
     "code": "7832",
-    "rank": 7,
-    "verdict": "watch",
-    "entry_type": "wait",
-    "reason": "トレンド強いが25日乖離11%で高値追い避ける",
-    "news_note": "2026-11-24 4-9月決算特集、経常予想微増 / [Web合議] ④委員長: 圧倒的なIP力で成長が続く。多少の乖離は成長性でカバー可能。強気で臨む。",
-    "entry_strategy": "7236円押し目か7523円突破待ち",
-    "entry_price": 7405,
-    "support": 7236,
-    "resistance": 7523,
+    "rank": 2,
+    "verdict": "recommend",
+    "entry_type": "breakout_chase",
+    "reason": "低過熱で週月足上昇、ゲーム回復と目標増額",
+    "news_note": "11/18経常予想上昇、ゲーム回復期待 / [Web合議] ④委員長: IPのグローバル展開が結実し、構造的な成長フェーズ。需給も適温でスイングの買い推奨。",
+    "entry_strategy": "現値〜7243の浅押しで買い",
+    "entry_price": 7309,
+    "support": 7243,
+    "resistance": 7558,
     "tp_price": 7800,
-    "sl_price": 7100,
-    "trailing_plan": "7600超で建値、5日線割れ撤退",
+    "sl_price": 7000,
+    "trailing_plan": "7558突破後は5日線追随、割れ撤退",
     "sector": "その他製品",
-    "sector_color": "red",
-    "sector_above_sma25_pct": 28.0,
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 32.9,
     "sector_n": 82,
     "committee_verdict": "approve_strong",
     "catalyst_quality": "strong",
     "priced_in_risk": "fair",
     "committee_notes": {
-      "bull": "①材料精査官: 11/10に大幅上方修正。3期連続最高益へ。ガンダム等のIP展開がグローバルで加速。",
-      "timing": "②需給判定官: 25日乖離11%とやや高いが、過熱度low。目標株価引き上げの動きもあり強い。",
-      "bear": "③リスク審査官: 子会社への不正アクセス被害が報告されているが、業績への直接的影響は限定的。",
-      "chair": "④委員長: 圧倒的なIP力で成長が続く。多少の乖離は成長性でカバー可能。強気で臨む。"
+      "bull": "①材料精査官: 2Q決算で通期上方修正。ガンダム・たまごっち等のIPが国内外で絶好調。東南アジア協業も。",
+      "timing": "②需給判定官: 25日乖離9%台だが、5日騰落は落ち着いており過熱感は低い。押し目買いの好機。",
+      "bear": "③リスク審査官: 不正アクセスの報告があるが、業績への直接的影響は限定的。重大な悪材料は未確認。",
+      "chair": "④委員長: IPのグローバル展開が結実し、構造的な成長フェーズ。需給も適温でスイングの買い推奨。"
     },
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
       {
@@ -7995,40 +7993,40 @@
     "code": "6532",
     "rank": 1,
     "verdict": "watch",
-    "entry_type": "pullback_wait",
-    "reason": "高成長で材料強いが高値圏。5日線押し目のみ拾う / 業種が赤（25日線上28.1%・320銘柄）のため推奨から外す",
-    "news_note": "2026-11-26 シティ目標15200円、米系強気14600円 / [Web合議] ④委員長: 材料は最強クラスだが、流石に買いが急ぎすぎ。深い押し目を待つのが定石。",
-    "entry_strategy": "13240円まで待ち反発確認",
-    "entry_price": 13240,
-    "support": 13239,
-    "resistance": 13840,
-    "tp_price": 14500,
-    "sl_price": 12750,
-    "trailing_plan": "14000超で建値、5日線割れ撤退",
+    "entry_type": "breakout_chase",
+    "reason": "スコア首位、低過熱でトレンド強く目標引上げ / 需給判定官が出尽くし警戒（②需給判定官: 25日乖離11.7%と過熱。上場来高値圏で推移しており、利確売りをこなす調整が必要。）のため様子見へ格下げ",
+    "news_note": "11/26米系証券が目標14600円へ引上げ、上場来高値圏 / [Web合議] ④委員長: 業績は文句なしの最強だが、需給面で過熱。押し目形成を待ってからエントリーを検討すべき。",
+    "entry_strategy": "現値か14080突破で追い、深追い禁",
+    "entry_price": 13725,
+    "support": 13381,
+    "resistance": 14080,
+    "tp_price": 14600,
+    "sl_price": 13100,
+    "trailing_plan": "14600到達で建値、5日線割れ撤退",
     "sector": "サービス業",
-    "sector_color": "red",
-    "sector_above_sma25_pct": 27.5,
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 30.6,
     "sector_n": 320,
-    "sector_blocked": true,
     "committee_verdict": "hold_watch",
     "catalyst_quality": "strong",
     "priced_in_risk": "priced_in",
     "committee_notes": {
-      "bull": "①材料精査官: 2Q売上35%増と爆発的成長。還元方針変更で自社株買い期待も高まる。",
-      "timing": "②需給判定官: 5日騰落9%超、25日乖離13%と短期過熱。RSI72で目先は利確売りに警戒。",
-      "bear": "③リスク審査官: 成長期待は高いが、株価は年初から3倍超。期待値が高まりすぎており調整リスク大。",
-      "chair": "④委員長: 材料は最強クラスだが、流石に買いが急ぎすぎ。深い押し目を待つのが定石。"
+      "bull": "①材料精査官: 中間決算で経常利益29%増と絶好調。DX需要を背景にコンサル単価・稼働率共に高水準を維持。",
+      "timing": "②需給判定官: 25日乖離11.7%と過熱。上場来高値圏で推移しており、利確売りをこなす調整が必要。",
+      "bear": "③リスク審査官: 11月に入り上場来高値を更新し続けており、短期的な過熱感による急落リスクに注意。",
+      "chair": "④委員長: 業績は文句なしの最強だが、需給面で過熱。押し目形成を待ってからエントリーを検討すべき。"
     },
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "priced_in_blocked": true,
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
       {
-        "title": "【アナリスト予想】ベイカレント、27年2月期経常予想。対前週0.7%上昇。(アイフィス株予報)",
+        "title": "本日の【上場来高値更新】 ハウス食Ｇ、ベイカレントなど19銘柄(株探ニュース)",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPM2FxWWxxeERLTTNIOW90NEpYMld5SE1QWjM2MnRZcU9ldnNtSk51TDNOZUNEVHdNN1dUNDRZTHBLQ19OSnRJcmRvU2dwY28wTG1VNDVjSU15X1ZUTnh6QXNmeEp5ME9uTndPMGhVZ2NQNlNiX2lqb3pCcURyVGhKaS1XeUt3dzA?oc=5"
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOQjlUaVBpMWdHa0FBenMybWVtb1NmaFltNFhPYUJ2ek8zS3VqV0dmbk1UWllXajlFQzJmcFlNcW9WNUZETzJIdGFtcUxibEd5U3FHalF3dEtic0NLeGpIU3VxYlhPdDQ2MDVSTl9LOWNwalNkRFhDX2ktbXFiWDFhRld2Q3I3X1U?oc=5"
       },
       {
         "title": "【アナリスト評価】ベイカレント、レーティング強気を継続、目標株価14,600円に引上げ（米系大手証券）(アイフィス株予報)",
@@ -8045,41 +8043,41 @@
         "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE8yOWpTS1hlRDVmdzdZdkdjXzY5Ym1NTlBKcUJDS1hESEdETWQ2aER6TFhVaVlsRHRoY1VDNEFSNzloUnoyRjdMeldxVUozTmtDd2FHdjJuV29TeTJTSUxRVUwtSGJkaUFKbnFmYnNFNzJpbnc?oc=5"
       },
       {
+        "title": "慶應大、就職先トップ3はコンサル…学部別順位も公表（リセマム）",
+        "source": "Yahoo!ニュース",
+        "domain": "news.yahoo.co.jp",
+        "date": "2026-11-25",
+        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5ld2k1VnZPM0VuWHpkLW9Rb1NiY1lZcFR0ZlFlb2ctUGctTmRtUFlPZzRrYmpCUGtkSWFTRDdHUE15VEMteVdMeGtsNlFzQnBOWEV5X0pHUFVBc0oySWJ0YXhBWDh3dnlqWldOdmJlRDFfekc0ZnpkYmpvLWY4TTQ?oc=5"
+      },
+      {
         "title": "「専門性より柔軟性」 ベイカレントや山岡家、人材戦略が呼ぶ株高",
         "source": "日本経済新聞",
         "domain": "nikkei.com",
         "date": "2026-11-25",
         "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBidzhUMkNlNFY1WkpXYmtueTlUZ3ppMFBrSm4xeXEwMmJPODFLcjlsNjJyLTkydkNlZmItR3l3QTE1Q1BVTXBtbDRqZGFOeDhhNnZWSE5MODYxNmF4V0dwZUZiajhDTXVwT3FXNQ?oc=5"
-      },
-      {
-        "title": "【コンサルティング分野の中途採用】コンサル未経験の幅広い世代の求職者が増加、以前よりも人柄の確認を重視",
-        "source": "日本人材ニュースONLINE",
-        "domain": "jinzainews.net",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMiR0FVX3lxTE1xeEdVZS1jMTFrUTNWUDBEYU5jN1RDZ2x2QnBYRklvRUZuTkhiMjNMNzJ4V3NQd0ZXaU5TeXFldVpxNXZuZjZv?oc=5"
       }
     ]
   },
   "2810": {
     "code": "2810",
-    "rank": 15,
+    "rank": 13,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "過熱moderate・RSI76.7・5日+9.5%。押し目待ち。",
-    "news_note": "2026-11-20 朝日: ココイチ売却でKKRに優先交渉権。情報漏えいも要確認。",
-    "entry_strategy": "4897円の5日線まで待ち、4858割れ撤退",
-    "entry_price": 4897,
-    "support": 4858,
-    "resistance": 5086,
-    "tp_price": 5300,
-    "sl_price": 4800,
-    "trailing_plan": "5150で建値、5300で半利",
+    "reason": "RSI73で上ヒゲ、ココイチ売却材料は進行",
+    "news_note": "11/20-22ココイチ売却、KKR優先交渉権",
+    "entry_strategy": "4984近辺の押し目",
+    "entry_price": 5033,
+    "support": 4984,
+    "resistance": 5103,
+    "tp_price": 5400,
+    "sl_price": 4841,
+    "trailing_plan": "5103突破で追随、4984割れ撤退",
     "sector": "食料品",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 42.6,
+    "sector_above_sma25_pct": 49.6,
     "sector_n": 115,
-    "date": "2026-11-25",
-    "updated_at": "2026-11-26T05:33:13",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
       {
@@ -8339,69 +8337,70 @@
   },
   "4502": {
     "code": "4502",
-    "rank": 10,
+    "rank": 5,
     "verdict": "watch",
-    "entry_type": "wait",
-    "reason": "配当魅力もRSI70超、高値追いは避ける",
-    "news_note": "2026-11-26 年初来高値、配当204円予想 / [Web合議] ④委員長: ディフェンシブとして優秀だが、高値圏での追っかけ買いはリスクが高い。",
-    "entry_strategy": "7120円押し目待ち",
-    "entry_price": 7250,
-    "support": 7120,
-    "resistance": 7432,
-    "tp_price": 7600,
-    "sl_price": 6950,
-    "trailing_plan": "7450超で建値、5日線割れ撤退",
+    "entry_type": "breakout_chase",
+    "reason": "低過熱、みずほ目標引上げとカップ形成 / 需給判定官が出尽くし警戒（②需給判定官: RSI72.5と買われすぎ水準。年初来高値更新中で、25日乖離も8.5%と拡大。）のため様子見へ格下げ",
+    "news_note": "11/27みずほが目標引上げ、オレキシン期待 / [Web合議] ④委員長: 医薬品セクターへの資金流入で強いが、テクニカル的に過熱。今からの追っかけ買いはリスク高。",
+    "entry_strategy": "現値か7480突破、押しは7198",
+    "entry_price": 7341,
+    "support": 7198,
+    "resistance": 7480,
+    "tp_price": 7800,
+    "sl_price": 7077,
+    "trailing_plan": "7800手前で一部利確、7198割れ撤退",
     "sector": "医薬品",
     "sector_color": "green",
-    "sector_above_sma25_pct": 63.2,
+    "sector_above_sma25_pct": 65.8,
     "sector_n": 38,
     "committee_verdict": "hold_watch",
     "catalyst_quality": "moderate",
     "priced_in_risk": "priced_in",
     "committee_notes": {
-      "bull": "①材料精査官: 10/29上方修正。累進配当方針で利回り魅力。新薬上市も着実。",
-      "timing": "②需給判定官: 11/25に年初来高値更新。RSI70超えで短期的な達成感が出やすい水準。",
-      "bear": "③リスク審査官: 配当性向が150%を超えており、財務健全性への懸念が長期的な重石。",
-      "chair": "④委員長: ディフェンシブとして優秀だが、高値圏での追っかけ買いはリスクが高い。"
+      "bull": "①材料精査官: 中間決算で上方修正。次期主力薬の承認申請が順調。累進配当方針による高還元が下支え。",
+      "timing": "②需給判定官: RSI72.5と買われすぎ水準。年初来高値更新中で、25日乖離も8.5%と拡大。",
+      "bear": "③リスク審査官: 配当性向が100%を超えており、財務健全性への懸念が長期的な重石になる可能性。",
+      "chair": "④委員長: 医薬品セクターへの資金流入で強いが、テクニカル的に過熱。今からの追っかけ買いはリスク高。"
     },
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "priced_in_blocked": true,
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
+      {
+        "title": "オレキシン創薬、さらなる疾患へ 武田、オーゼイフルの薬効に自信 | 日刊薬業 - 医薬品産業の総合情報サイト",
+        "source": "日刊薬業",
+        "domain": "nk.jiho.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE1TanNWQUtXZ2RkdF8zWE5oU1FtNFEycF92SWRDdmsyWVpTSmRmb1RoYm1ySHVjUzV5SEFVaWM4Y2poaWhOa1dBeg?oc=5"
+      },
+      {
+        "title": "後場コメント No.3 フリー、大黒天、トヨタ、武田、ラクス、三菱倉(トレーダーズ・ウェブ)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPNWdiaDZXVDZIUTJNSkstQ0pUY2lkT2xsdmNGQTc5cENEbWtfUlZkTUJEb0NCdlJFVUdaMjcyR2hvdy1jVDdMV3pOXzlKbGw3NjlNbTBzUk03R1FPWHgyU0FmT2dhc3ZpVTlSanc1a0phV01xcE9adldsRFI0aUg4TDZRZkRkT2c?oc=5"
+      },
+      {
+        "title": "武田薬品工業－みずほが目標株価引き上げ 中長期のHorizon2を評価する局面入り〔DZH 個別株情報〕(時事通信)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNcmMxRjBIcnNoYmRrYldZdXdwT0Mxc3hycFBqMzlUeVBmQTBveFVvdnF2aDR0WGJqdkR5MEdJamg5Sm5Ta2VRT0RCSzlwTzVLUzdpdWxPNHM4VHlyLXo3bGVwVndLdnFjd3FvMDY3ZlA3c1M2Tjh3a3RUSGdrWlVWYUFTQWRqNlE?oc=5"
+      },
+      {
+        "title": "Chordia Research Memo（2）：武田薬品工業からスピンアウトし、低分子化合物の抗がん薬開発を進める",
+        "source": "ｄメニューニュース",
+        "domain": "topics.smt.docomo.ne.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxOSmVSS0dBMTl4UTFCcWVZSUwzZDgteE1XQlZYQWhzQjNHcElVdC13ZHcwd3ZnLVh0eVlEV0tPcUMzeFZ5SmIyWEpqTW5JYTlmUElTdmVpbEtuUXViRGJOOUoxY0pHOUdSM3JzWWhJQi0ydFU4d1RvcmljOXVhQ3l1VGI0SlFTRVNXN1RtZ0JYMU9qcTNxQlUwWGdGYzFuM3pvd3pJclljNTFjcnRPdHh4aHl6Z29lZ3Rqdld0WnY0aWNhSEtOWHV2cklVX1NZYUhsUHlWMFdQczh6d2VSWUHSAYwBQVVfeXFMT3lUSTM5Y21iOEFHMlhuUjZkZG9RZVdnNWZLT2RpbU43dFFDeHB6cGJpWnl1WGVQQmNIR3ZTMThSMDBlTXhocFctRVFBZXpibUtVemRyanFIbk9BZGtnTU9pQW1FU0JGMy1yRkZEQXo3SUh0MDUxd3pkSEhGNUlTTjJpMjAzZkdtUEVWbXk?oc=5"
+      },
       {
         "title": "【11月25日に年初来高値を更新】武田薬品の年間配当金は5期で180円→200円、今期は204円の予想で配当利回りは2.81％（11月26日終値）（LIMO）",
         "source": "Yahoo!ニュース",
         "domain": "news.yahoo.co.jp",
         "date": "2026-11-26",
         "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFB6V19GM0xURkVjb2hkeS1UVGNxbEpLeTFydUdhSXQzN1R0WnVISVBsbzlQWWVPQndaQklYXzJobnNyUTdhSlFRcHZwY2NiWFdpdklrc0FRMkR1eG1DRTFZYlR6RnJQbXc2azd0d2U0OUw1MUt2cEVueDJpOWY5ZnM?oc=5"
-      },
-      {
-        "title": "【配当利回りは2.8％台】武田薬品の年間配当金は今期204円の予想、10月の中間決算では通期予想を上方修正",
-        "source": "LIMO | くらしとお金の経済メディア",
-        "domain": "limo.media",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiTEFVX3lxTFB2WjFPZVJSRnZoVTVhM0pnd3RtNGF3S3ZEdHZ1ZEFnNWlSVGtnTnp3M0lkS2xMSDdPYk9iYXNRcXNIbUFMQkZIYTlPX2w?oc=5"
-      },
-      {
-        "title": "武田薬品工業など医薬品株が安い AI株高でディフェンシブに売り",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9rUEdWVDB5SjJIZ1AxaHJIYXJlSTNQTnlTXzhxazdYVkQ3TzNvOHV0MFlac3hCcFpRUm5IYkZDNWxfLVV6RkMxNGhLelRxSmdCR2M5eVBxLWNaVGNfTHhzMmVaajhLQ01GZ3lLbQ?oc=5"
-      },
-      {
-        "title": "「PRIDE指標2026」 6年連続ゴールド獲得、ならびに3年連続 レインボー認定について",
-        "source": "Takeda Pharmaceuticals",
-        "domain": "takeda.com",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOdF9yQXdhRzdMemJ5cHdSMjJLbXZUU25XeDY4M1VPSlZ3MzVZYnhxSnBLaXpzSmZvWTRfMXZqd3hCaHVsVFV5aDY4bW9ZY2pxSmxFaWZwMHV0X2ZuY1FJQnFNRXBOU3d0aW5PWVVmejE1UEttSHVqajZIMHozbzU3MUtlQzRFaEZPaHVZeHZPaWhnMmc?oc=5"
-      },
-      {
-        "title": "武田薬品工業（武田）【4502】の株価チャート｜日足・分足・週足・月足・年足｜株探（かぶたん）",
-        "source": "株探",
-        "domain": "kabutan.jp",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTFBUb1JXRUxyRkJlcGNkbXc4M3ZpOUNTcHRzZzhEeFRGVXR0UGRjSGxYcUZZWHV2ZjU0cS1DUjQtN1JtVm9oRmVGWEVKMEc4cmVFdDhF?oc=5"
       }
     ]
   },
@@ -8497,117 +8496,107 @@
   },
   "6869": {
     "code": "6869",
-    "rank": 4,
+    "rank": 8,
     "verdict": "watch",
-    "entry_type": "breakout_chase",
-    "reason": "25日乖離5.7%と落ち着き、目標株価引上げ相次ぐ。低ボラで押し目浅く拾える / 業種が赤（25日線上7.9%・202銘柄）のため推奨から外す",
-    "news_note": "2026-11-20 欧州系:中立・目標2340円。11-16 日系:強気・目標2600円 / [Web合議] ④委員長: 悪材料を織り込みつつ上方修正を出した点を評価。堅実なスイング対象…",
-    "entry_strategy": "2130円成行、2020円割れは損切り。2227円突破で追加",
-    "entry_price": 2130,
-    "support": 2012,
-    "resistance": 2227,
-    "tp_price": 2280,
-    "sl_price": 2020,
-    "trailing_plan": "2227円超えでSL2100へ切上げ、5日線追随",
+    "entry_type": "wait",
+    "reason": "低過熱で上昇、決算と子会社売却検討",
+    "news_note": "11/25ライフサイエンス見直し、子会社売却検討 / [Web合議] ④委員長: 業績修正はポジティブだが、株価は既に反応済み。需給の過熱感が引くのを待つのが賢明。",
+    "entry_strategy": "2158近辺まで待つ",
+    "entry_price": 2203,
+    "support": 2158,
+    "resistance": 2227.5,
+    "tp_price": 2400,
+    "sl_price": 2100,
+    "trailing_plan": "2227突破で追随、2158割れ撤退",
     "sector": "電気機器",
     "sector_color": "red",
-    "sector_above_sma25_pct": 7.9,
+    "sector_above_sma25_pct": 23.8,
     "sector_n": 202,
-    "sector_blocked": true,
-    "committee_verdict": "approve",
+    "committee_verdict": "hold_watch",
     "catalyst_quality": "moderate",
-    "priced_in_risk": "fair",
+    "priced_in_risk": "priced_in",
     "committee_notes": {
-      "bull": "①材料精査官: 減損計上も米州好調で中間利益を上方修正。BioMajestyの成長期待は継続。",
-      "timing": "②需給判定官: 25日乖離5.7%で安定。5日騰落2.2%と底堅く、緩やかな上昇トレンド。",
-      "bear": "③リスク審査官: のれん減損リスクが一部顕在化。ただし通期予想は据え置きで致命傷ではない。",
-      "chair": "④委員長: 悪材料を織り込みつつ上方修正を出した点を評価。堅実なスイング対象として承認。"
+      "bull": "①材料精査官: 2Qで減損計上も米州好調で通期上方修正。AI活用診断など新領域への投資も積極的。",
+      "timing": "②需給判定官: RSI69.4と過熱圏に接近。上方修正は概ね織り込まれ、目先は材料出尽くしの感。",
+      "bear": "③リスク審査官: 子会社の減損損失計上など、一部事業の立ち上げ遅れが懸念材料。",
+      "chair": "④委員長: 業績修正はポジティブだが、株価は既に反応済み。需給の過熱感が引くのを待つのが賢明。"
     },
-    "date": "2026-11-20",
-    "updated_at": "2026-11-24T07:42:50",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
       {
-        "title": "坂本花織から「フィギュア観戦」の楽しみ方を学ぶ『トークイベント』が開催。親子参加者を募集してる。シスメックス神戸アイスキャンパス",
-        "source": "神戸ジャーナル",
-        "domain": "kobe-journal.com",
-        "date": "2026-11-17",
-        "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE8yNnFNNVlYTDdCU0loNndqY25kVW1sSlpzNjhtVGtlaC1FZUJORHdCYjZzSHNlNHJHRjBuck4xR3BfeDhTdG9YbnFreklrVVdsbE95ekhfTTV1ak43Rnc?oc=5"
+        "title": "シスメックス決算、ライフサイエンス分野見直しで関連子会社の売却も検討",
+        "source": "日経バイオテクONLINE",
+        "domain": "bio.nikkeibp.co.jp",
+        "date": "2026-11-25",
+        "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE8xY1oyanNPdE91WG1zQUxhSlFjLVpkbXVIZ19sSkptdXlJSHNOWHFmNUxnNndyeUZSdzc3d3pJandvSXU3U1ZFdDVqQUN4MDc5MWx4VW1TNkhJTXJ1Ym1QN2tCY0pLQQ?oc=5"
       },
       {
-        "title": "190か国以上で事業「地政学リスクはリスクでなく、起きる前提で」…医療機器シスメックス・飯塚常務執行役員",
-        "source": "読売新聞",
-        "domain": "yomiuri.co.jp",
-        "date": "2026-11-11",
-        "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFAtTC1LSWc1VzJTSFFMVk50Y1N2TzAta3NndDhsZ2l4TEFRdDI5ZFY5TDRoVE5WRmp4ZUtiQ0kyb0RoSTZyMTZ6bEVtZ0kzRld5SjhVT0FYZGtCNzJfN1k5clZ2TGk?oc=5"
+        "title": "シスメックス女子陸上競技部 第46回全日本実業団対抗女子駅伝競走大会（クイーンズ駅伝）に出場",
+        "source": "シスメックス - Sysmex",
+        "domain": "sysmex.co.jp",
+        "date": "2026-11-24",
+        "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFB0QU5pLV9XOWUycFVRNlZ4YUkyNFA0bjN4ZDN4eHFZRHFaSTB4N2FnU3poYUljeVhBOU5HQnZrYWlpc2pGb1hsbVBieGl4Y1A0cDJPemVWSkJVRldITXBpaV91dGVDNlV4?oc=5"
       }
     ]
   },
   "4911": {
     "code": "4911",
-    "rank": 6,
+    "rank": 15,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "低過熱だが中立評価と抵抗接近、押し目待ち",
-    "news_note": "2026-11-26 日系大手が中立・目標4500円 / [Web合議] ④委員長: 見かけの増益に騙されてはいけない。実質成長の鈍化を重く見て見送り。",
-    "entry_strategy": "4285円割れず反発を確認",
-    "entry_price": 4321,
-    "support": 4285,
+    "reason": "低過熱だがROE赤字、材料薄く様子見",
+    "news_note": "11/27伊勢丹限定企画、業績材料は要確認",
+    "entry_strategy": "3953〜4252の押し目",
+    "entry_price": 4224,
+    "support": 3953,
     "resistance": 4442,
-    "tp_price": 4500,
-    "sl_price": 4100,
-    "trailing_plan": "4500超で建値、5日線割れ撤退",
+    "tp_price": 4600,
+    "sl_price": 3900,
+    "trailing_plan": "4442突破で追随、4252割れ撤退",
     "sector": "化学",
-    "sector_color": "red",
-    "sector_above_sma25_pct": 24.6,
-    "sector_n": 191,
-    "committee_verdict": "hold_watch",
-    "catalyst_quality": "weak",
-    "priced_in_risk": "priced_in",
-    "committee_notes": {
-      "bull": "①材料精査官: 11/10に通期利益を上方修正。ただし実質売上成長率は下方修正で中身は苦しい。",
-      "timing": "②需給判定官: 25日乖離9%超。利益修正は為替や関税還付の一過性要因が強く、持続性に疑問。",
-      "bear": "③リスク審査官: 中国市場の低迷が継続。構造改革費用も嵩んでおり、本業の回復はまだ遠い。",
-      "chair": "④委員長: 見かけの増益に騙されてはいけない。実質成長の鈍化を重く見て見送り。"
-    },
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 34.9,
+    "sector_n": 192,
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
       {
-        "title": "300万個※1のレチノールACE※2カプセルを1本に凝縮。うるおいで乾燥小じわ※3を目立たせない、SHISEIDOバイタルパーフェクションから新エッセンスローション誕生。",
-        "source": "美ST ONLINE",
-        "domain": "be-story.jp",
+        "title": "【SHISEIDO】数量限定キットに「花椿ビスケット」プレゼントも♡伊勢丹新宿店のリフレッシュオープンでお得企画やってるよ〜！《11月25日から》（東京バーゲンマニア）",
+        "source": "ｄメニューニュース",
+        "domain": "topics.smt.docomo.ne.jp",
         "date": "2026-11-27",
-        "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE9BMUlOV0RJVUhwVlZJU2o2RWVfYm5VY2lubzBRNzdxdHNDX01XOVlKX1JiWnBwWHl1NDBxMVJEcEFjVUdmeVZacTJ2UQ?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE50YkRDaUE4QWJwTUJrcHVIcjNXX1dZdGduM01nbEh4aXZYT2F2NXV1d1VnNk10ZXVoYVk3TmdBNGNQZnFEeUx2U0hSVldHOGVOZVNzSDBaN3dWbW5ySTNvYTRHcHhhSDFNbkxMdU9jaHRMaUhTS1hj?oc=5"
       },
       {
-        "title": "【資生堂パーラー 支店レストラン】冬の恵みで体も心も温まる、12月限定メニューを展開！",
-        "source": "Excite エキサイト",
-        "domain": "excite.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9Dblp3TTZLVW5wN2RUbWVCb1lnNk96a05kVWJZUE9zSlcyYTVKbHM5SGhUcFJnUjlTa2cxRE8xT214bFNuRUxHcTROdTcwUEUyMUp2WTI5REsyZ2FDVWd0bVhZaFlnMGUyckpYVG1VRmZjVEl6?oc=5"
+        "title": "【資生堂パーラー サロン・ド・カフェ ラゾーナ川崎店)】2026年の締めくくりを彩る、12月限定メニューを展開！",
+        "source": "ニコニコニュース",
+        "domain": "news.nicovideo.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5EYUN0RG1BRDZ6UnNjVEY0ZXZvei1tSGk0Y1JBX1lpRHA2MGluY3BJREVWVXRxTWgyWThscFl2dnRMUzFrelRXTjdsQ0RxTzlDQXFlWUFWR3NmWllwaEtIZEhPYlAyS1B3?oc=5"
       },
       {
-        "title": "【アナリスト予想】資生堂、26年12月期経常予想。対前週12.5%上昇。(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNVzNtSk8xbXdjaVBRa2NMYkZEYkdjS3p5V3J1R1lBcWh4YkhTdE9zSXVINXpUdTI2OUYzSTQyTmRtMmlMZ0Y0d182dnhobDctaS1lVXp2Mm80Nno5cjZ2enR0cGxqYVN5WjRSUm5mdWdfZlMtNHhXLWJsZzZHLXJNaDhfc1dHSmc?oc=5"
-      },
-      {
-        "title": "【アナリスト評価】資生堂、レーティング中立を据置き、目標株価4,500円に引上げ（日系大手証券）(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQdzIxMDY3X3NfREN2dmExZWtyM2FJbjFsNllTcWFBV1JiR1ZoVUp4VnJJcHNsX21BeUhwdUxyS3pvRU9hVzh1dHN1bUswSktWcGo2QlRGNWRIcGRFUmJKazlpMFBQQlFFeHN1ejJMRUhWazVhcXEzTERNVWhaTVRMbEVESEN4RWM?oc=5"
-      },
-      {
-        "title": "【SHISEIDO】数量限定キットに「花椿ビスケット」プレゼントも♡伊勢丹新宿店のリフレッシュオープンでお得企画やってるよ～！《11月25日から》",
+        "title": "【資生堂パーラー 銀座本店レストラン】東京銀座資生堂ビル25周年記念コースの第4弾を展開",
         "source": "Infoseek",
         "domain": "news.infoseek.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9ja0txaDRRV0pKVUdYWkJmbmV1bUVPN3JnYWhnZkktQXJtZFZjeHpzcjJwSmc3bjZRNHJnTll3MGpuSG9jNzRhMVhtWWMyZklBMUxVUDNCNTF6YnZqRkNqX1E2WU81MzRUd1QxanhPdWk?oc=5"
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5FRXMzTVRKbEgtX0x0ZVE0dndOTnN5bFZ0QkJhYVpEemRWUm1UWTJKN1NmNkZmbmg5andWaks5SGp6WURaa1A3a3RiNkYzNnVDOXoyUG1XdmRzT2FkSDNRTDRiQmNEbXJmdzlsaWhEbW5MZw?oc=5"
+      },
+      {
+        "title": "後場コメント No.1 ＧＭＯ、ＭＲＴ、資生堂、プレイド、ポーラオルＨＤ、マネフォワード(トレーダーズ・ウェブ)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOSlF1Rzhvd0htN1JISm5OOU53QWdINWY1VEZHclF6Sm54M2RkM09jSGJ2dlk2VDZ1dEl3XzZxMmJuNUVkekU2dFJ2OUJqTy16bWN2NTVFVXdwRmNKME90N2h4c3lHTElKcDZPWlpDdFRuNVFrY1dnMFB3aWkwMzRBXzVRLU5XanM?oc=5"
+      },
+      {
+        "title": "「アネッサ マイルドシリーズ」と「アクアレーベル」が「第18回 マザーズセレクション大賞2026」を受賞！ ～子育て期の毎日に寄り添い、確かな安心と心地よいセルフケアを届ける2ブランドが選出～",
+        "source": "PR TIMES",
+        "domain": "prtimes.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFAxcWhyNnNZUlVrTi1oX0JVUkI5MVV4NTcza2UwN1k4TzNJN05yM2xuSnM4ZHBXeVlHSnhMV3Q5enc0TDhkbTQtamYwMWNDSkVqT2VsbkJUMkoycGN1alp5aG9qNjF3UHFsX0E?oc=5"
       }
     ]
   },
@@ -8673,70 +8662,69 @@
   },
   "4684": {
     "code": "4684",
-    "rank": 5,
+    "rank": 7,
     "verdict": "watch",
-    "entry_type": "breakout_chase",
-    "reason": "高収益・過熱低、AIで収益性改善期待 / 業種が赤（25日線上26.5%・328銘柄）のため推奨から外す",
-    "news_note": "2026-11-26 東海東京が目標引上げ、AI収益改善 / [Web合議] ④委員長: 盤石のファンダメンタルズ。需給も整理されており、自信を持って承認する。",
-    "entry_strategy": "6420円前後で成行",
-    "entry_price": 6420,
-    "support": 6113,
+    "entry_type": "wait",
+    "reason": "低過熱で堅調だが材料はスポンサー終了",
+    "news_note": "11/27アメフトXリーグのスポンサー契約終了 / [Web合議] ④委員長: 派手さはないが着実な成長と高収益が魅力。需給もクリーンで、スイングでの保有に適する。",
+    "entry_strategy": "6321近辺の押し目確認",
+    "entry_price": 6394,
+    "support": 6321,
     "resistance": 6492,
     "tp_price": 6800,
-    "sl_price": 6200,
-    "trailing_plan": "6600超で建値、5日線割れ撤退",
+    "sl_price": 6150,
+    "trailing_plan": "6492突破で追随、6321割れ撤退",
     "sector": "情報・通信業",
-    "sector_color": "red",
-    "sector_above_sma25_pct": 26.5,
-    "sector_n": 328,
-    "sector_blocked": true,
-    "committee_verdict": "approve_strong",
-    "catalyst_quality": "strong",
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 33.9,
+    "sector_n": 330,
+    "committee_verdict": "approve",
+    "catalyst_quality": "moderate",
     "priced_in_risk": "fair",
     "committee_notes": {
-      "bull": "①材料精査官: 10/27に上方修正と増配発表。OBIC7が大手・中堅向けに絶好調で構造的成長。",
-      "timing": "②需給判定官: 発表から1ヶ月経過し過熱感は解消。RSI63、過熱度lowで再騰落の準備完了。",
-      "bear": "③リスク審査官: 重大な悪材料未確認。沈黙期間（1月下旬決算）まで期間がありスイング期間十分。",
-      "chair": "④委員長: 盤石のファンダメンタルズ。需給も整理されており、自信を持って承認する。"
+      "bull": "①材料精査官: 中間決算で上方修正・増配。クラウド移行が順調で営業利益率68%と驚異的な収益性。",
+      "timing": "②需給判定官: 25日乖離3.8%と非常に落ち着いた推移。過熱感なく、じり高のトレンドを継続中。",
+      "bear": "③リスク審査官: スポンサー契約終了等のニュースがあるが、本業への影響は皆無。成長鈍化の兆しもなし。",
+      "chair": "④委員長: 派手さはないが着実な成長と高収益が魅力。需給もクリーンで、スイングでの保有に適する。"
     },
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
+      {
+        "title": "オービック、スポンサー契約終了＝アメフトＸリーグ",
+        "source": "時事通信ニュース",
+        "domain": "sp.m.jiji.com",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9nOHNrMFk4QWxXU1VkeVlPSDNHMWhJVW1yN0lCZk5sOUlMLXhFTkhxdWtxNS1Wd00tOFA2djJTSkF5cDNNR1hxeDFsY3pieTVER3hDMg?oc=5"
+      },
+      {
+        "title": "オービック、シーガルズとのスポンサー契約を解除 規程問題や今季出場辞退受け : スポーツ : 財経日報",
+        "source": "재경일보",
+        "domain": "news.jkn.co.kr",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFBMdlFXRlZQR0VqMmVZX2huZGZfWVhFWDM2TDQxbFQ2a19scVRPNm16dUZRZHZFcEtFajVId0JndGQ2ZFltd2t1NGZTYnQ1MFhnUWFLZXV5Z3BxeFNBM1owZzIzNA?oc=5"
+      },
+      {
+        "title": "【アメフト】富士通とパナソニックに挑み続けたクラブチームを23年支えたオービック、スポンサー契約を解除 両チームのヘッドコーチが一連の事案について話していたこと（スポーティングニュース日本版）",
+        "source": "Yahoo!ニュース",
+        "domain": "news.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5ybVJJaGNKdDUtNk9SdzUtaUgzYzU4MjdXamxEb1pjXzQ2UUtXMUxrZHNLQklBSjd4Tk9PZ0VhM0Ywbk5CTUlfLUt0TWdfR0YwSlZiNVhFaGtlcXFTMkZwY3Y3b1pnUG0tMURhMUFUSFBkQzVEcnhJOVBGa0p6dDg?oc=5"
+      },
+      {
+        "title": "【アメフト】オービックがオービックシーガルズとのスポンサー契約を解除 「契約の目的を達することは困難」",
+        "source": "Sporting News JP",
+        "domain": "sportingnews.com",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNc0p5RlAxelNzRk5LS1M4WUFhUk1iU0JxQmMzbVQxc2xlRDI4RGtyZ3ZmOWpqenZIQm9JMTJvaEZjNFR1MFd2WmFlY09uX21EQ2pKY3dZVnFBOGxDQTNVZGNfbllSRDJYVGp3UEtOcjhBV0VwNG42emwtV0pGb1kxd182dTYtWGF0TXhQbXlVWEJOSU1zdjNZdnNzYTZBVnJrOXozakxzRzZjeElaQXBZTEx3NGxSM2s?oc=5"
+      },
       {
         "title": "前場コメント No.5 ＡＮＡ、ＪＡＬ、オービック、伊藤忠、セイコーＧ、勤次郎(トレーダーズ・ウェブ)",
         "source": "Yahoo!ファイナンス",
         "domain": "finance.yahoo.co.jp",
         "date": "2026-11-26",
         "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQeklNNWphMDJtMHFmbFZycWV1QWNsTXdFQXZnQnI2UDlxcl9GcjJONnFkRV9jUDVKT3laMUlZWUk5ZmxLSHZiZ2dxMkhMallxR3VUQTZDb3R1MnUwUFJCdEprdWhJSWtfRW5hMzJfTlBfYzJ4RjhYeWN0WTVxOXZGU0l2M2hPMTQ?oc=5"
-      },
-      {
-        "title": "オービック－東海東京が目標株価引き上げ AI活用によりSI事業の収益性改善が継続〔DZH 個別株情報〕(時事通信)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQOGJ3VnUtLUd2WHU0VTNxWWpwTHprTWRJMHNCSTJxUWpMMGZaWkVTSGdwdG9EaUo1LXNEXzJjLXFxTG8xcmhFTl9nN0lFLUhBWHRLNTh3dDZVU20ySjZ5RHo4TG8xRW05aXd6OWxiWk9ocE03WmlOc256dU9VRVc0a0NCVnhNeWc?oc=5"
-      },
-      {
-        "title": "【アナリスト予想】オービック、27年3月期経常予想。対前週0.3%上昇。(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPQ2d2U2J4aUZ0NkNURHRNMVJCczVhdE94R3ZsVjFKQmNuOGdJR2gyTGQ3bzNGZEtCcWdrbDBaek00TTFyQ0JBRW9jdzhIR0RaTzlmX1M0ZGhZV3NmUDZiN3lVV3RUaTk0Q1FzanBwdWFkRmxXVU5RWFNXNVhpdy1HYVNlVUhBTG8?oc=5"
-      },
-      {
-        "title": "【アナリスト評価】オービック、レーティング中立を据置き、目標株価6,000円に引上げ（米系大手証券）(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPSGNzRVJLUVUwSktsakxwNFNBWXR5VWxPM0NKR25ibmh1N3JyN24tLVpxR0xyaU5kc0tDdTF3NzdRa2NWLXJJckI5WUs1YWJfbGtCNl9ETV83by1sT2dhUUoxMW5HRUR0b2kzZU1nR3ZMeGduQmc4di1mQm9ZcUYtZVd1QWR4T0U?oc=5"
-      },
-      {
-        "title": "後場コメント No.1 アクシス、Ｆブラザース、イード、ＣＡＮＢＡＳ、オービック、フジシール(トレーダーズ・ウェブ)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOUEJXaWpjRDU0ZzFYZTJRcHpfdkFRUlA2YVZmWnpVWGtMOTFPZjZ1bDJaVXlvMHd0ZkxleTMxU3RyUDFWVy1uUWR3bmpON0RjTGU5Y24xWEx5eTNDbkZMeUVYUUNkUHgzamtyanNuaGxqUkVJellacHd1RWg3eXo0RjhpXzY4WlE?oc=5"
       }
     ]
   },
@@ -8801,40 +8789,45 @@
   },
   "4661": {
     "code": "4661",
-    "rank": 9,
+    "rank": 14,
     "verdict": "watch",
     "entry_type": "wait",
-    "reason": "低過熱だが上値抵抗接近、押し目確認まで待つ",
-    "news_note": "2026-11-26 配当予想引上げ・株主還元 / [Web合議] ④委員長: 大規模自社株買いによる下値支えは強力。需給イベントを逆手に取った買い。",
-    "entry_strategy": "3887円近辺の押し目待ち",
-    "entry_price": 3872,
-    "support": 3672,
+    "reason": "低過熱でトレンド、優待材料は株価に中立",
+    "news_note": "11/27株主用パスポート12/8発送",
+    "entry_strategy": "3645〜3869の押し目",
+    "entry_price": 3835,
+    "support": 3645,
     "resistance": 3992,
     "tp_price": 4100,
-    "sl_price": 3700,
-    "trailing_plan": "4000超で建値、5日線割れ撤退",
+    "sl_price": 3550,
+    "trailing_plan": "3992突破で追随、3869割れ撤退",
     "sector": "サービス業",
-    "sector_color": "red",
-    "sector_above_sma25_pct": 27.5,
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 30.6,
     "sector_n": 320,
-    "committee_verdict": "approve",
-    "catalyst_quality": "moderate",
-    "priced_in_risk": "early",
-    "committee_notes": {
-      "bull": "①材料精査官: 11/24に600億円の自社株買い発表。京成電鉄の売却対応だが需給悪化を回避。",
-      "timing": "②需給判定官: 自社株買い発表直後で初動に近い。5日騰落マイナスで押し目形成中。",
-      "bear": "③リスク審査官: 京成電鉄による追加売却の可能性が潜在的な売り圧力として残る。",
-      "chair": "④委員長: 大規模自社株買いによる下値支えは強力。需給イベントを逆手に取った買い。"
-    },
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
+      {
+        "title": "オリエンタルランドが12月8日に株主用パスポートを発送、100株でも上場30周年の特別優待で1枚。3年以上持つ人は何枚？",
+        "source": "Yahoo!ニュース",
+        "domain": "news.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1TdW9BUTdYUXpKNlNhN1I5MUt5Q0pIRXdHRFdtZ09NZVUta3FickZfWjROTlRwX3dFQzQyR3VfdU56NnMwZ082eEN4MmRxdEZiQlhFWEJIODFMRVVLMXB5OTIyQVNTbXFKdzd2eGYxS3pUdWhrVlNiMFB2T2I4UEk?oc=5"
+      },
+      {
+        "title": "オリエンタルランドの株主用パスポートは12月8日発送、9月末に100株なら上場30周年の特別優待で「1枚」。3年以上の保有ならもう1枚",
+        "source": "LIMO | くらしとお金の経済メディア",
+        "domain": "limo.media",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBhLTVNWWpjcV9pYkFlcE5mNE05MW51b1lMSUVSLUpwRXU1cl9EVUpDSVRwb0o1M3RZT0wya0Z4NDQ3ZGZqUm5QOUZ6bnBpYjdydXc?oc=5"
+      },
       {
         "title": "オリエンタルランド アソーテッド・クッキー ミッキーマウスと仲間たち ディズニー・クリスマス の感想・クチコミ・商品情報",
         "source": "もぐナビ",
         "domain": "mognavi.jp",
-        "date": "2026-11-26",
+        "date": "2026-11-27",
         "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTE1pVXM3WnZWYWZnLWxiLVlCcnYzQVB2R0VGalJXYThpUlBCeVAtZ0pDdXRZcmdVVnY1eWd0OUNvVW50dUlyWjZGNVF3?oc=5"
       },
       {
@@ -8850,20 +8843,6 @@
         "domain": "kabu-ir.com",
         "date": "2026-11-26",
         "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE5QeVJHclZ5YlZqQ25BRDlWaU1yUlR2LTltMnpNTDgwaHRxNXY1cUdvZTQwNFdXTDFCNlhiZTg1TkFReFBWMzJycG5GZUIxd2lNZUN1OQ?oc=5"
-      },
-      {
-        "title": "【オリエンタルランドの配当】10月29日に年間配当予想を「18円」へ引き上げ。パスポート以外の株主還元は？",
-        "source": "LIMO | くらしとお金の経済メディア",
-        "domain": "limo.media",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiTEFVX3lxTFBNTlFvMWVlbm1USVNtN1JUUXRBdDZxblA5Z3liUnRDUnBtVTBONWE3UzlRTjB2YW1Pbjc0UDVEZk9SUDVhU01qTUNzWHA?oc=5"
-      },
-      {
-        "title": "【銘柄で投票】オリエンタルランド vs サンリオ 国民的人気キャラクターの推し活需要を取り込む2社 あなたはどっち派？",
-        "source": "media.rakuten-sec.net",
-        "domain": "media.rakuten-sec.net",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE5fQ0pHa1ZlOTNsZHdiTVlDU0pUeHdrcmNpLU1Ka0xlYnBMZlA0Z2VwS2pXS2o5NU95UEQ0al95cHRuLVNZLWxDN041dVl6RS1LVlBwdzJ2OWFnUXAtNEM4dFNR?oc=5"
       }
     ]
   },
@@ -8872,57 +8851,36 @@
     "rank": 12,
     "verdict": "caution",
     "entry_type": "wait",
-    "reason": "20日+42%で過熱moderate、押し目まで見送り",
-    "news_note": "2026-11-25 株探で動意、新薬材料は要確認",
-    "entry_strategy": "1748〜1768円まで待つ",
-    "entry_price": 1940,
-    "support": 1748,
-    "resistance": 1945,
-    "tp_price": 2100,
-    "sl_price": 1700,
-    "trailing_plan": "2000超で建値、5日線割れ撤退",
+    "reason": "25日乖離+25%で過熱、バイオ高リスク",
+    "news_note": "11/25-26値動き材料、正式材料は要確認",
+    "entry_strategy": "見送り、1826〜1884まで待つ",
+    "entry_price": 2051,
+    "support": 1884,
+    "resistance": 2079,
+    "tp_price": 2300,
+    "sl_price": 1826,
+    "trailing_plan": "過熱解消まで観察、1826割れ警戒",
     "sector": "医薬品",
     "sector_color": "green",
-    "sector_above_sma25_pct": 63.2,
+    "sector_above_sma25_pct": 65.8,
     "sector_n": 38,
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
       {
-        "title": "前日に動いた銘柄 part1 Zenmu、岡県運送、ネクセラファーマなど",
-        "source": "ｄメニューニュース",
-        "domain": "topics.smt.docomo.ne.jp",
+        "title": "前日に動いた銘柄 part1 Zenmu、岡県運送、ネクセラファーマなど(フィスコ)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
         "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQOE5HVFJ6N0t1Sk1rZTBHeGRFTlB4ZUpfX3RXU3doZUotRk5mVDdaYU1XOGpXNDVYVGNPSU8zV015UGdQQ1hNTmp4RUFNS2RzbV9XMmpGdndORE1YS25GLWR1dFJ6b1diYlRWTlhoOUFBQWhxNFBOZl9rWUdYRGFJcWY5Wk95Y0XSAYwBQVVfeXFMTUpiTXU5a3htT0hnWUllM0hjUE9NMTJhMFV0QjhhdncyM0NIVmdPamNPRHF4ZHVkX0JBQTJuVHlrZlZFLW1kYUZtVncxZ0NDQlZNd0MtQ0gyaVF2eElsVVg5bmZLN01Ya1o0TmtNM2xUZUFDcWxEb09vWDRGeENJWDVRWF9nWFMwUDItSHE?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNampxLWpzdUdhc2E2ZVc1ODFiRXN3Nm9lTXJLZzJlNVNrdzVFaUhxVzhRRmgwQ2ZtakFCTjR0SXpBc0F4dEZCSzRjN3dzTm1GZmcyVUNEVDByQXJhWDBGNk1kSUlhWW9KLUZIN1UyZTJlai1VXzd5TzhwREY4UC1CeDI2YmNjS2c?oc=5"
       },
       {
-        "title": "前日に動いた銘柄 part1 Zenmu、岡県運送、ネクセラファーマなど 執筆 Fisco",
-        "source": "Investing.com - FX | 株式市場 | ファイナンス | 金融ニュース",
-        "domain": "jp.investing.com",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9NMGhLOGE5ekNzYk9fR0RqR0x2cjdBbXRNbXNZeWhlejk3TDlMMzZ1QUEyNHFPNXZjRF96MFZ0TlV3NmJNNUdJbDRvMTNjYmlhcW1oSGt6dDRKR1pkdk5CMUQ0eVI4MVFSMUg0N3huakg?oc=5"
-      },
-      {
-        "title": "＜動意株・２５日＞（大引け）＝大手製薬株、ネクセラ、モノタロウなど",
-        "source": "株探",
-        "domain": "s.kabutan.jp",
+        "title": "動いた株・出来た株（前場）part1：ワコム、ネクセラファーマなど15社(フィスコ)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
         "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE5qQlNuTUxMNTZwQ1lmckN1ZFR1cmZTQ2ZxQnNsWWJ4aWV0bEQ4OTZxTGhjdmgtMllLODVBWGN6NFhYMTJ5b2tNejJLV3pRVUZ5bkE?oc=5"
-      },
-      {
-        "title": "ネクセラについて、Christopher Robert Cargillは保有割合が5％を超えたと報告 [大量保有報告書]",
-        "source": "株探",
-        "domain": "s.kabutan.jp",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBJUFgyblRfa2lzQzZZMV91NlZDaXpWMFpQVGNNVEdpQkVkTE5ZbDREemhxc0NscmdGaWRrSkM2M0NkTC1QTW92SHhxMmZMYjVmV1E?oc=5"
-      },
-      {
-        "title": "クリストファー・ロバート・カーギル（Christopher Robert Cargill）がネクセラファーマ株式会社＜4565＞株式の大量保有報告書を提出",
-        "source": "ｄメニューニュース",
-        "domain": "topics.smt.docomo.ne.jp",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxOWDRwallTT1hDTnp2RHFhaFQ3SVVlRDZKd2pNNU5ZaFRTcGtKWGhBdWV1UDVmZXVRNEU3TXlvSXdLaXFIMUNwNWFUVXRTMGtsMkxfMi03S25QdDB5c3NpTDcxTFUxczRqLW1md0pSVnhjaWV0bUNDR3dwYi1MeFJiUFEwUk9WazRzdEHSAYoBQVVfeXFMTlg0cGpZU09YQ056dkRxYWhUN0lVZUQ2SndqTTVOWWhUU3BrSlhoQXVldVA1ZmV1UTRFN015b0l3S2lxSDFDcDVhVFV0UzBrbDJMXzItN0tuUHQweXNzaUw3MUxVMXM0ai1tZndKUlZ4Y2lldG1DQ0d3cGItTHhSYlBRMFJPVms0c3RB?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQdUtEUzAydWdTRUpEZklWX1JmT05fRFpmVDFySVV2eEZETzV6ZjlfQTdHVkVwdWVkV29HUnBUck9UWnVzakJXb0dmcVR4eEJBX0xrUFpoSnZFYjhOeElPblkwRlltb1N2OXA0SVd6eUVBbjc4aGNIdTUxZGx2bmQ4NjY5dlZhQWs?oc=5"
       }
     ]
   },
@@ -9204,95 +9162,117 @@
   },
   "9843": {
     "code": "9843",
-    "rank": 4,
+    "rank": 10,
     "verdict": "watch",
-    "entry_type": "breakout_chase",
-    "reason": "過熱低く抵抗突破寸前、目標引上げで需給良好 / 需給判定官が出尽くし警戒（②需給判定官: 6月から45%上昇しており、好決算は概ね織り込み済み。25日乖離8%超で過熱感。）のため様子見へ格下げ",
-    "news_note": "2026-11-26 米系目標4190円へ引上げ / [Web合議] ④委員長: 業績は堅調だが、需給面の過熱感と情報流出リスクを鑑み、押し目を待つべき。",
-    "entry_strategy": "3770円突破で成行",
-    "entry_price": 3770,
-    "support": 3541,
+    "entry_type": "wait",
+    "reason": "低過熱で堅調、出店材料あるが決算待ち",
+    "news_note": "11/27鹿児島に新店、27年3月開業 / [Web合議] ④委員長: 12月決算銘柄であり、スイング期間（1-8週）内に決算跨ぎが発生するため、ルールに基づき却下。",
+    "entry_strategy": "3691割れずの押し目",
+    "entry_price": 3694,
+    "support": 3691,
     "resistance": 3776,
-    "tp_price": 3980,
-    "sl_price": 3620,
-    "trailing_plan": "3900超で建値、5日線割れ撤退",
+    "tp_price": 3900,
+    "sl_price": 3550,
+    "trailing_plan": "3776突破で追随、3691割れ撤退",
     "sector": "小売業",
     "sector_color": "yellow",
-    "sector_above_sma25_pct": 49.4,
+    "sector_above_sma25_pct": 47.2,
     "sector_n": 265,
-    "committee_verdict": "hold_watch",
+    "committee_verdict": "reject",
     "catalyst_quality": "moderate",
-    "priced_in_risk": "priced_in",
+    "priced_in_risk": "fair",
     "committee_notes": {
-      "bull": "①材料精査官: 11/13決算は好調だが通期予想据え置き。円安による仕入れコスト増が重石。",
-      "timing": "②需給判定官: 6月から45%上昇しており、好決算は概ね織り込み済み。25日乖離8%超で過熱感。",
-      "bear": "③リスク審査官: 最大3,762万件の個人情報流出懸念が報じられており、ブランド毀損リスクに注意。",
-      "chair": "④委員長: 業績は堅調だが、需給面の過熱感と情報流出リスクを鑑み、押し目を待つべき。"
+      "bull": "①材料精査官: 中間決算は増収増益。円安一服が利益押し上げ要因。新商品投入や海外出店も加速。",
+      "timing": "②需給判定官: 25日乖離5.9%と標準的。12月のセール発表など季節性材料もあり、需給は悪くない。",
+      "bear": "③リスク審査官: 次回決算（3Q）が12/25前後と予想され、基準日から1ヶ月以内。またシステム不正アクセスも。",
+      "chair": "④委員長: 12月決算銘柄であり、スイング期間（1-8週）内に決算跨ぎが発生するため、ルールに基づき却下。"
     },
-    "priced_in_blocked": true,
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
       {
-        "title": "【アナリスト評価】ニトリＨ、レーティング強気を継続、目標株価4,190円に引上げ（米系大手証券）(アイフィス株予報)",
-        "source": "Yahoo!ファイナンス",
-        "domain": "finance.yahoo.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQY19HaDByV19LTUhKV0ZtMVVQZlhwX2RKVVdiWXVMRk5Bam1RdnppRVozZklNMnh3NlE0R0lHdWxucmlsa1VQb3U1ZGo1T0QwaEtPVFQ2MVZJVnNYM1ZVNmpBQUUtSTJPandrT1Ezam5ESENCTjlTbmJEb2wzSGIxR2R4QnVfU1U?oc=5"
+        "title": "累計販売数量約50万個※を突破した「レンジグリル」シリーズに新商品10種が登場！電子レンジで手軽に楽しめる料理がもっと豊富に。",
+        "source": "時事ドットコム",
+        "domain": "jiji.com",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1mZkg1THVsQ3FKQndqa0F3M1Y2X0JtRjgtN0VnUnM4aF9YNEl5NkVVRnQ0eksyTjJRd2hrYkZDSUhoblh2WFRyUjdMNXhRUXdSNVNDdjhzaEFZMTdMQ2RCMjBLNkpJR0NNbUV3?oc=5"
       },
       {
-        "title": "【デコホーム】洗って、そのまま干せる！メイクブラシのお手入れが1つで完結する「ブラシウォッシュトレー」新登場",
+        "title": "シリーズ累計販売数200万枚突破*！リカバリーウェア「Nミラク」シリーズ購入で最大10倍ポイントUPキャンペーンを開催。寒い冬におすすめのNウォームタイプも新登場",
+        "source": "時事ドットコム",
+        "domain": "jiji.com",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1xV3YzZHZabWhhZFEzdC1zOGEtTWh3OUItVnM4WFNXQWl0WXlKdG03aWhHM19PbEZEMEhZT1ZoT3hMTVpOaHNQWWJEcGs5OG16SU0tbzVqMF9WOUlqOC1teFhTWjV6RUlmclpv?oc=5"
+      },
+      {
+        "title": "シリーズ累計販売台数約40万台のキッチンボード「リガーレ」に、抜け感のある設計の新デザインが登場！背面マグネットタイプもラインアップ",
         "source": "PR TIMES",
         "domain": "prtimes.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9rRXB3eV9DRDVaclVVajRWaW45eHAzbHlwM04xclJ0WGs2Uk1fdms5WU4tZG1RNG1ycC1lMnZzOVA5TUZ4TTl0TzRkX1VZUmtWMFRBZ2RVQS1ib3V0WlRBblN0SnBDcFltY1E?oc=5"
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5XaFJyVVhHU0h5QkV5TnBmZVhjNkpPWGVUclE3LXpnbHBweXR4OHdKbWszbnFmYXplQjJzWUZ3WkpHeExlVUhEMGNwc09jZ1FScXZCdnpWOTVUWFFsckhnNWE0NWtCdm5Za3c?oc=5"
       },
       {
-        "title": "画面をさえぎらない高さ約4cm。スリムなのに、低音は底から響く。「スリムサウンドバー（サブウーファー付き）」を新発売",
-        "source": "PR TIMES",
-        "domain": "prtimes.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9uQVZJUmZtcGdFOG1lOUtRVFhNYk5aczg1M0VCRlJDRTVfRS0teGhaRmg2OUtSQm5yMFhFQmxjNGFTd1lSTzMwTy1Sd2lKMnF5VlJaZWgyNEJ6VFBUa1IyaVcyU3EtU19zTXc?oc=5"
+        "title": "【ニトリ】年末の準備を応援！収納・水まわり用品・カーテン・寝具など、12月は月替わりセール過去最大の約800アイテムが",
+        "source": "ニコニコニュース",
+        "domain": "news.nicovideo.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBiV3p1RW5vYTVmWUZoRVBUMTQ2aUZ4d0trSXJWOXpMTkt0WmN3akZkWEpsb3JPWXRoenhGOGFidUQxWDMyOTZqSGw2NkpaVDM2NzFXdW80bk00eWNjYzRTNDEyUUhyZ1I1?oc=5"
       },
       {
-        "title": "ニトリHD中間決算は増収営業増益！島忠買収から５年、改革の成果は？",
-        "source": "ダイヤモンド・チェーンストアオンライン",
-        "domain": "diamond-rm.net",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFBYSENnOW16RHhWbEFFZklRNTd6TUFudDBBRDg0MWN6MjN2ZnVPQjdiSmlYbDJlN3JVckxBTDBHOXFISlp6a0Vfc0hwSlRIUQ?oc=5"
-      },
-      {
-        "title": "ニトリ・デコホームの推し活ポーチ3選、ぬいぐるみ用は599円からでペンライトケースも",
-        "source": "えんウチ",
-        "domain": "enuchi.jp",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFBObVBleFNYaWVOZXM1Y3c4TC1lam5xa0M3SVFpcHZzMzE2YjJoc1hrcllQYXBfT3FPeGFVbDlLWEVYREdkd1B2OUZxNFM2YVFVWGR3Nm5NZEoxTml3aldrRVMyb1hqUdIBa0FVX3lxTE5TUWs4NTBycnRvY3V6TU5NX1hQbFBoOUJtMlJVeVpXTFNvUTJiOWNhb3ZUQktDZjRJUmRNUE81WUItTE1sUEQwRnNLMm1ETUh5dVdHUnlsak1FWXJVSmxkVTVEbWpycXNZTXNV?oc=5"
+        "title": "ニトリnews｜｢NITORI｣台湾に2店舗出店･ニトリグループ1104店舗目",
+        "source": "流通スーパーニュース",
+        "domain": "news.shoninsha.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE9jaE80WlN5T3R2YUo4OXlHMzJoQ2NZNzJ6ZXVxSUxQMDAtUmdvLXJpZUEtbTlEZ200emR6eXZycmdSSGU1WWdVaDRXYjk5V0xTNUpV?oc=5"
       }
     ]
   },
   "9766": {
     "code": "9766",
-    "rank": 11,
-    "verdict": "watch",
-    "entry_type": "wait",
-    "reason": "好業績だが20日+27%と急騰、過熱警戒",
-    "news_note": "2026-11-25 日経で増収増益",
-    "entry_strategy": "30518円押し目待ち",
-    "entry_price": 31190,
-    "support": 30518,
+    "rank": 3,
+    "verdict": "recommend",
+    "entry_type": "breakout_chase",
+    "reason": "20日+33%も5日横ばい、低過熱で再上昇余地",
+    "news_note": "11/27決算上昇率首位、ゲーム好調 / [Web合議] ④委員長: 業績の伸びが凄まじく、上方修正後の調整を経て再騰落の準備が整った。積極的な買いを推奨。",
+    "entry_strategy": "現値か31640突破、押しは30464",
+    "entry_price": 30470,
+    "support": 30464,
     "resistance": 31640,
     "tp_price": 33000,
-    "sl_price": 29500,
-    "trailing_plan": "32000超で建値、5日線割れ撤退",
+    "sl_price": 28775,
+    "trailing_plan": "31640突破後は5日線割れまで保持",
     "sector": "情報・通信業",
-    "sector_color": "red",
-    "sector_above_sma25_pct": 26.5,
-    "sector_n": 328,
-    "date": "2026-11-26",
-    "updated_at": "2026-11-27T05:14:49",
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 33.9,
+    "sector_n": 330,
+    "committee_verdict": "approve_strong",
+    "catalyst_quality": "strong",
+    "priced_in_risk": "fair",
+    "committee_notes": {
+      "bull": "①材料精査官: 中間決算で過去最高益を更新。通期上方修正と増配を発表。主力ゲームの継続施策が極めて強力。",
+      "timing": "②需給判定官: 5日騰落率がマイナスで推移し、直近の過熱感が冷めた絶好の押し目。RSIも64と適温。",
+      "bear": "③リスク審査官: 上場来高値更新後の調整局面だが、ファンダメンタルズに隙はなく、致命的リスクなし。",
+      "chair": "④委員長: 業績の伸びが凄まじく、上方修正後の調整を経て再騰落の準備が整った。積極的な買いを推奨。"
+    },
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
     "prompt_version": "2026-11-22-1",
     "news_headlines": [
+      {
+        "title": "「DanceDanceRevolution WORLD」で「GALAXY BRAVEスペシャルCDキャンペーン」を開催 | コナミグループ株式会社",
+        "source": "KONAMI GROUP CORPORATION",
+        "domain": "konami.com",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE1nLTVLVEU2Y0hhd3d2RjBsS3pibFBJTnF4eHZveDZFVUFQLXJvLVhZNElTRHQtMjVNNGY3aFY5NV92bHBGRzBONTBVX1cta05QVUlIVGx0b2I1T0taYUY1QXpYQVJYRFdDNk5IWnpCTGVSQldOcS1hZG9BRDM?oc=5"
+      },
+      {
+        "title": "ＫＯＭＰＥＩＴＯ－急騰 社外取締役に元コナミホールディングス副社長の中野治氏が就任(トレーダーズ・ウェブ)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNcnhNTUxULVRuREtLR0pQT0J0SGpKWU9rSEVKWGZhZ3ZOSTlyLTA5M3VRbVpiOUlXRjAxNkdlQV9JMDZYTGRpNUlLVklONEdtYzlaU1JFTFlEWVN4U0d0WnBfY2txQmxaNkk3dXNSX0xzLXgyT0JTQUNGQ0hlekpjaWE4QjBfUjg?oc=5"
+      },
       {
         "title": "決算シーズンの株価上昇率コナミGが首位、ゲーム好調 外食も上位",
         "source": "日本経済新聞",
@@ -9308,25 +9288,11 @@
         "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE8yWG1WZ3dtZms5MWtJNUtxenNGRjFzT2c4NHlkOTZ0SnZVQmMxby04SnFsRkZMZkhPTmtKYmZYTXlpMGYxTnQxczVLSkExcnd0enhvMktjOUxMdmVfZXJ3MlFUaHBOOFFMV3VOemd3cDVtdw?oc=5"
       },
       {
-        "title": "「遊戯王 マスターデュエル」高校生日本一決定戦を開催 | コナミグループ株式会社",
+        "title": "『鬼滅の刃 日輪バトルスラッシュ』3弾が12月3日(木)から稼働開始！",
         "source": "KONAMI GROUP CORPORATION",
         "domain": "konami.com",
         "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE1ncGFDSzUzMUltV0FTOE5QRE5zdXlabjdwUUFhOUtVd1FUUmRqUTA1U3V0bGZXbG5uLXUxTTY3eFZaVHI5RkZZdndFX3p5b2c2S05QVTd2cmRWQWYyRU92QVJhUWFqUU5EdzFabUNQXzZ5ODZLaksxUXJUWVc?oc=5"
-      },
-      {
-        "title": "［将棋］［第52期・棋王戦 コナミグループ杯］ 本戦2回戦 第11局",
-        "source": "沖縄タイムス社",
-        "domain": "okinawatimes.co.jp",
-        "date": "2026-11-26",
-        "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE82eGppNllxN0dlNU1nb0pDZGRSZEtzaEpZVDJFMEtfY0FhUE5kbkpzMVA0XzBzSDJsZFdBT3Z2aUJlcTNmb2puZmNwZjBIMXNmSTFtdURBdFhPbFJZWlE?oc=5"
-      },
-      {
-        "title": "コナミグループ、増収増益",
-        "source": "日本経済新聞",
-        "domain": "nikkei.com",
-        "date": "2026-11-25",
-        "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9RSE1PZ0RkWGJUVXRFMXVKMGFPV3Q5RDhhRUE5TkFIQlUycWYxOEh0SGxreXpwUjg5OVc5QndxRExlSU93M1dKR3lnRWhxTjBYdEcxenkwRUoyTWJBYTk5M2NOSy05ZTdmMW9wcQ?oc=5"
+        "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1sWjZaSWYyaVlkY0pKWTI2dGhXRUk4MUlkZkY1S3NGbEpOVHB0bUk1QjlPZWNVWGo3M2wybWhIM2U1NHZUMkRqb2ZmdHhwNUk1TmRkdlVmaTJLTjFIOTVFd2dhSXlwZ1RoTk5fU0s3MXhJZkE?oc=5"
       }
     ]
   },
@@ -9773,6 +9739,74 @@
         "domain": "finance.yahoo.co.jp",
         "date": "2026-11-20",
         "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5NcFhJM1g4a3lRNFhYdFpNenZCN1BLd19FZ2lNR05TM3NLV01rd1BraUhrNHByMTFWaXlzbE1OQ2hxcEpXN1BNVTN5d00zd210LUJRRHJ1QWZTQ1FNNDJv?oc=5"
+      }
+    ]
+  },
+  "9616": {
+    "code": "9616",
+    "rank": 9,
+    "verdict": "watch",
+    "entry_type": "wait",
+    "reason": "低過熱でトレンド、目標引上げも過熱なし",
+    "news_note": "11/27日系大手が目標4150へ引上げ / [Web合議] ④委員長: 観光需要の恩恵はあるが、他の調査対象に比べ材料の爆発力に欠ける。様子見が妥当。",
+    "entry_strategy": "3921近辺の押し目",
+    "entry_price": 3984,
+    "support": 3921,
+    "resistance": 4057,
+    "tp_price": 4300,
+    "sl_price": 3800,
+    "trailing_plan": "4057突破で追随、3921割れ撤退",
+    "sector": "サービス業",
+    "sector_color": "yellow",
+    "sector_above_sma25_pct": 30.6,
+    "sector_n": 320,
+    "committee_verdict": "hold_watch",
+    "catalyst_quality": "weak",
+    "priced_in_risk": "fair",
+    "committee_notes": {
+      "bull": "①材料精査官: 中間決算は営業益14%増と堅調。インバウンド需要を取り込みドーミーインが好調維持。",
+      "timing": "②需給判定官: 25日乖離8%超でやや過熱。直近5日で3.5%上昇しており、短期的な達成感が出やすい。",
+      "bear": "③リスク審査官: 熊本地震に伴う経済支援（減免）を実施中。業績への影響は軽微だが、コスト増要因。",
+      "chair": "④委員長: 観光需要の恩恵はあるが、他の調査対象に比べ材料の爆発力に欠ける。様子見が妥当。"
+    },
+    "date": "2026-11-27",
+    "updated_at": "2026-11-27T20:22:35",
+    "prompt_version": "2026-11-22-1",
+    "news_headlines": [
+      {
+        "title": "【アナリスト評価】共立メンテナンス、レーティング中立を据置き、目標株価4,150円に引上げ（日系大手証券）(アイフィス株予報)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPcnAwTldFZ05rNHVtX2dDbm8wSWw0TmRpVHZ5dWh2QXNxM25UV0NUOFhhSlBwZ3gzYUY5c3VZenRBNXRpdk13dXJadnpvV2JDcWRuWjk3eDVoVHlSc1ZhNm11cFJpQkx2SWs3WE9oY0F6X1ZvVTd3OHA4M1A5d3lNWUNtdF9mNkE?oc=5"
+      },
+      {
+        "title": "「Dormy PARK」を開催 | ニュース | 東京ジャイアンツタウン 公式サイト",
+        "source": "TOKYO GIANTS TOWN",
+        "domain": "tokyo-giants-town.yomiuriland.com",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTFA2SS1DLV9YS3ZEZXFlc1BTdDc5V2RXakdFSHdsRFVWRVhmeENROE9kbnZvQTNRRnBVXzVkS0NUeTFGNm9RTU5rUXFidERCaFlUUHkyUktPNW91ZTM3OVlJLWQtZVhYZTYzckQxeDhLamxCR01mUGhWNnZRMTY?oc=5"
+      },
+      {
+        "title": "【令和8年熊本地震に伴う経済支援】家屋が被害を受けた寮生様を対象に最大8か月間の寮費・管理費を減免",
+        "source": "Infoseek",
+        "domain": "news.infoseek.co.jp",
+        "date": "2026-11-27",
+        "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5VUHRsRE9KcTZKT1IyLUxUR0V6QnpWeHFhQzc3VVNFckRSb1hrM19aOW56VEtoWU5wVlYzc21UQ0UtMlhLN09OVnZiZUJ3SzlHaWQ4dUY0UmdvUmhtc290RmIxRTBCNWlQUjB2bURiYXhsZw?oc=5"
+      },
+      {
+        "title": "11月26日(いい風呂の日)に2大キャンペーン同時スタート！「第3弾大感謝祭」×「いい26(ふろ)Week！」を開催",
+        "source": "ニコニコニュース",
+        "domain": "news.nicovideo.jp",
+        "date": "2026-11-26",
+        "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBLLVZzSUJWUmlSUTk4UVBmbzlzNFRUaUF6TmtWeF91Uk83TjF1Rk9CZUFWNjR6WFJvMXQ2eWxYT2RpNkVhVl9EUzNEODl3VzVtTTBLYlRjbEgybmM3Y3pVMlFyTi00Nm4y?oc=5"
+      },
+      {
+        "title": "【アナリスト予想】共立メンテナンス、27年3月期経常予想。対前週1.4%上昇。(アイフィス株予報)",
+        "source": "Yahoo!ファイナンス",
+        "domain": "finance.yahoo.co.jp",
+        "date": "2026-11-26",
+        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNZHBLWUlMN0s1eHRfN2I1N3lBMDJuMC1XWmI2aDU2U3ZFSWZxVFpqcmtYYmZaQzFla282LTJacWU4alM0OExRcy1xQ3hJV3hPcGZLZUlheUpubXRNM2JMaXpYVTduTjB1bk1fQW9lMjJqWWdCWXhzODA1RFZDN0s0b2x5MkxUSEE?oc=5"
       }
     ]
   }
