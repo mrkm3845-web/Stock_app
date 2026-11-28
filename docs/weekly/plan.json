@@ -1,153 +1,177 @@
 {
-  "generated_at": "2026-11-14T04:20:07",
-  "week": "2026-W47",
-  "based_on_date": "2026-11-13",
+  "generated_at": "2026-11-28T08:32:32",
+  "week": "2026-W49",
+  "based_on_date": "2026-11-27",
+  "score_version": "v3-research_upside-2026-10-18",
+  "prompt_version": "2026-11-22-1",
   "provider": "deepseek",
   "model": "deepseek-flash",
   "candidates": [
     {
-      "code": "7480",
-      "name": "スズデン",
-      "score": 84.6,
-      "verdict": "recommend"
-    },
-    {
       "code": "7832",
       "name": "バンダイナムコホールディングス",
-      "score": 83.6,
-      "verdict": "recommend"
+      "score": 85.0,
+      "verdict": "recommend",
+      "in_range": false
     },
     {
-      "code": "6058",
-      "name": "ベクトル",
-      "score": 81.9,
-      "verdict": "recommend"
+      "code": "9766",
+      "name": "コナミグループ",
+      "score": 78.9,
+      "verdict": "recommend",
+      "in_range": false
     },
     {
-      "code": "7550",
-      "name": "ゼンショーホールディングス",
-      "score": 79.0,
-      "verdict": "recommend"
-    },
-    {
-      "code": "6098",
-      "name": "リクルートホールディングス",
-      "score": 91.8,
-      "verdict": null
-    },
-    {
-      "code": "8766",
-      "name": "東京海上ホールディングス",
-      "score": 88.2,
-      "verdict": null
-    },
-    {
-      "code": "2612",
-      "name": "かどや製油",
-      "score": 85.6,
-      "verdict": null
+      "code": "9831",
+      "name": "ヤマダホールディングス",
+      "score": 74.7,
+      "verdict": "recommend",
+      "in_range": true
     },
     {
       "code": "6532",
       "name": "ベイカレント",
-      "score": 85.6,
-      "verdict": null
-    },
-    {
-      "code": "6191",
-      "name": "エアトリ",
-      "score": 84.0,
-      "verdict": null
+      "score": 88.6,
+      "verdict": null,
+      "in_range": false
     },
     {
       "code": "7867",
       "name": "タカラトミー",
-      "score": 84.0,
-      "verdict": null
+      "score": 86.5,
+      "verdict": null,
+      "in_range": false
     },
     {
-      "code": "7552",
-      "name": "ハピネット",
-      "score": 82.6,
-      "verdict": null
+      "code": "2612",
+      "name": "かどや製油",
+      "score": 86.1,
+      "verdict": null,
+      "in_range": false
     },
     {
       "code": "4565",
       "name": "ネクセラファーマ",
-      "score": 82.3,
-      "verdict": null
+      "score": 85.6,
+      "verdict": null,
+      "in_range": true
     },
     {
-      "code": "2492",
-      "name": "インフォマート",
-      "score": 82.2,
-      "verdict": null
+      "code": "7552",
+      "name": "ハピネット",
+      "score": 85.0,
+      "verdict": null,
+      "in_range": false
     },
     {
       "code": "4911",
       "name": "資生堂",
-      "score": 82.0,
-      "verdict": null
+      "score": 84.1,
+      "verdict": null,
+      "in_range": false
+    },
+    {
+      "code": "4933",
+      "name": "Ｉ－ｎｅ",
+      "score": 83.4,
+      "verdict": null,
+      "in_range": true
+    },
+    {
+      "code": "6191",
+      "name": "エアトリ",
+      "score": 82.3,
+      "verdict": null,
+      "in_range": true
+    },
+    {
+      "code": "7550",
+      "name": "ゼンショーホールディングス",
+      "score": 82.3,
+      "verdict": null,
+      "in_range": false
     },
     {
       "code": "3399",
       "name": "丸千代山岡家",
-      "score": 80.8,
-      "verdict": null
+      "score": 81.0,
+      "verdict": null,
+      "in_range": false
+    },
+    {
+      "code": "7453",
+      "name": "良品計画",
+      "score": 81.0,
+      "verdict": null,
+      "in_range": false
+    },
+    {
+      "code": "4502",
+      "name": "武田薬品工業",
+      "score": 79.9,
+      "verdict": null,
+      "in_range": false
     }
   ],
   "plan": {
-    "market_view": "直近のOCOは平均-2.9%・勝率0%と苦戦し、TOPIX超過も-2.4%でした。ただし金曜は+2.8%と反発しており、来週は反発の持続性を見極める展開です。過熱銘柄は追わず、材料・割安・配当を備えた押し目に限定して打診します。",
+    "market_view": "直近の答え合わせは建玉0・OCO確定0・見送り0で実弾なし。候補はゲーム・玩具・内需に材料が集中し、指数は高値圏だが過熱は軽度〜中。来週は高値追いを避け、押し目指値と打診で最大3銘柄に分散する構え。",
     "top_pick": {
-      "code": "7480",
-      "name": "スズデン",
-      "reason": "半導体/DC向け上期54%増・上方修正、配当5%で割安。25日乖離-2.45%と過熱感なく押し目妙味。",
-      "entry_strategy": "押し目指値3486円（25日線近辺）。寄成は避け、指値到達まで待つ。未達なら見送り。",
-      "entry_price": 3486.0,
-      "tp_price": 4106.0,
-      "sl_price": 3176.0,
-      "scenario": "3486円の押し目で反発すれば、上方修正材料を背景に4106円（高値圏）を試す。3176円割れで撤退。想定保有1〜3週間。",
-      "confidence": "中"
+      "code": "7867",
+      "name": "タカラトミー",
+      "reason": "approve_strongで増配・業績好調、RSI57.8と過熱限定的。5,294円で100株実行可、押し目が買い時。",
+      "entry_strategy": "寄成または5,250〜5,290円の押し目指値。5,350円超は追わない",
+      "entry_price": 5290,
+      "tp_price": 5750,
+      "sl_price": 5000,
+      "scenario": "玩具・IP好調と増配を背景に高値更新を試す。5,300円台定着なら5,750円、失速時は5,000円で撤退。",
+      "confidence": "高"
     },
     "backups": [
       {
-        "code": "7550",
-        "name": "ゼンショーホールディングス",
-        "reason": "上場来高値圏だが25日乖離3.3%と過熱限定的。カップ型で押し目12250円限定ならリスク限定。",
-        "entry_strategy": "押し目指値12250円",
-        "entry_price": 12250.0
+        "code": "9831",
+        "name": "ヤマダホールディングス",
+        "reason": "3,000円以下でapprove、PBR0.75の低位とカップ形成。ただしRSI76のため押し目限定。",
+        "entry_strategy": "798〜812円の押し目指値、追いかけない",
+        "entry_price": 810
       },
       {
-        "code": "6058",
-        "name": "ベクトル",
-        "reason": "ROE30%・PER18倍で割安。出来高増の押し目2150円は妙味。",
-        "entry_strategy": "押し目指値2150円",
-        "entry_price": 2150.0
+        "code": "4911",
+        "name": "資生堂",
+        "reason": "上方修正と構造改革で最悪期脱出。RSI59で過熱限定的、4,224円で100株実行可。",
+        "entry_strategy": "4,150〜4,220円の押し目指値、寄成は4,220円以下",
+        "entry_price": 4200
       }
     ],
     "avoid": [
       {
-        "code": "7552",
-        "reason": "RSI74、25日乖離+17.8%、52週高値1.0で過熱。追いは高値掴みリスク大。"
+        "code": "7832",
+        "reason": "approve_strongだが7,405円で100株74万円、60万円口座では執行不可。52週高値・乖離+11%の追いかけも避ける。"
       },
       {
-        "code": "4565",
-        "reason": "RSI71.8、25日乖離+25.9%、ROE赤字で材料先行。高値掴み警戒。"
-      },
-      {
-        "code": "4911",
-        "reason": "25日乖離+14.3%、52週高値1.0、ROE-3.1で業績裏付け薄い。"
-      },
-      {
-        "code": "7867",
-        "reason": "RSI68.5、25日乖離+13.3%、52週高値0.995で過熱。"
+        "code": "9766",
+        "reason": "hold_watch/priced_in、31,190円で100株311万円と執行不可。過熱・出尽くし警戒。"
       },
       {
         "code": "6532",
-        "reason": "25日乖離+12.0%で過熱。押し目待ちが必要。"
+        "reason": "hold_watch/priced_in、13,725円で100株137万円と執行不可。高値掴みリスク。"
+      },
+      {
+        "code": "4565",
+        "reason": "hold_watch/priced_in、25日乖離+25%と過熱。バイオ株の高値掴み回避。"
+      },
+      {
+        "code": "4933",
+        "reason": "reject（MBO・上場廃止予定・ディスカウントTOB）"
+      },
+      {
+        "code": "2612",
+        "reason": "hold_watch/priced_in、TOBイベントでスイング妙味薄く上場廃止リスク。"
+      },
+      {
+        "code": "4502",
+        "reason": "hold_watch/priced_in、RSI72.5・配当性向100%超で追いかけ回避。"
       }
     ],
-    "risk_notes": "スズデンはATR比5.5%と値動きが荒く、押し目指値に届かず見送りとなる可能性があります。金曜反発が続かない場合や、半導体関連の地合い悪化時は損切を徹底してください。決算・材料の織り込みには注意し、資金は分散前提で。",
-    "risk_notes_placeholder": ""
+    "risk_notes": "高値圏のため寄り付き急騰時は見送り、出来高細化や北米出荷遅延の再燃に注意。60万円口座では7867を1銘柄買うと余力約7万円、追加は3,000円以下銘柄を少量に限定。"
   }
 }

@@ -2,7 +2,7 @@
   "week": "2026-W45",
   "start": "2026-11-02",
   "end": "2026-11-06",
-  "generated_at": "2026-11-21T04:58:51",
+  "generated_at": "2026-11-28T08:31:49",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -13,19 +13,19 @@
   },
   "summary": {
     "picks_total": 9,
-    "n_filled": 5,
+    "n_filled": 6,
     "n_not_filled": 1,
-    "n_pending": 3,
+    "n_pending": 2,
     "n_no_data": 0,
     "n_entered": 8,
-    "fill_rate": 0.833,
-    "avg_return_pct": -1.839,
-    "median_return_pct": -0.3,
+    "fill_rate": 0.857,
+    "avg_return_pct": -1.805,
+    "median_return_pct": -0.968,
     "win_rate": 0.0,
-    "avg_benchmark_pct": -1.537,
-    "avg_excess_pct": -0.302,
-    "beat_benchmark_rate": 0.6,
-    "rule_avg_return_pct": -1.839,
+    "avg_benchmark_pct": -1.259,
+    "avg_excess_pct": -0.546,
+    "beat_benchmark_rate": 0.5,
+    "rule_avg_return_pct": -1.805,
     "rule_win_rate": 0.0,
     "avg_weekly_return_pct": -2.886,
     "weekly_win_rate": 0.375,
@@ -537,21 +537,31 @@
       },
       "fill_date": "2026-11-20",
       "fill_price": 3950.0,
-      "status": "pending",
-      "exit_oco": null,
+      "status": "filled",
+      "exit_oco": {
+        "date": "2026-11-24",
+        "price": 3897.0,
+        "reason": "損切り",
+        "return_net_pct": -1.6373
+      },
       "exit_weekly": {
         "date": "2026-11-20",
         "price": 3995.0,
         "return_net_pct": 0.8363,
         "source": "intraday_1130"
       },
-      "exit_rule": null,
-      "return_gross_pct": null,
-      "return_net_pct": null,
-      "return_rule_pct": null,
+      "exit_rule": {
+        "date": "2026-11-24",
+        "price": 3897.0,
+        "reason": "損切り",
+        "return_net_pct": -1.6373
+      },
+      "return_gross_pct": -1.3418,
+      "return_net_pct": -1.6373,
+      "return_rule_pct": -1.6373,
       "return_weekly_pct": 0.8363,
-      "benchmark_pct": null,
-      "excess_pct": null,
+      "benchmark_pct": 0.1304,
+      "excess_pct": -1.7677,
       "exit_price_source": null,
       "missed_return_pct": null,
       "missed_entry_date": null,
@@ -561,10 +571,10 @@
   "ranking": {
     "k": null,
     "n": 160,
-    "spearman": -0.093,
+    "spearman": -0.095,
     "top_avg_pct": -2.948,
-    "bottom_avg_pct": -1.223,
-    "spread_pct": -1.725,
+    "bottom_avg_pct": -1.186,
+    "spread_pct": -1.762,
     "rows": [
       {
         "signal_date": "2026-11-02",
@@ -1049,12 +1059,12 @@
         "sector": "精密機器",
         "score": 76.7,
         "entry_date": "2026-11-04",
-        "entry_price": 3005.0,
+        "entry_price": 2972.8817,
         "exit_date": "2026-11-06",
         "exit_price": 2539.0,
-        "return_net_pct": -15.7606,
+        "return_net_pct": -14.8505,
         "benchmark_pct": -5.781,
-        "excess_pct": -9.9795
+        "excess_pct": -9.0694
       },
       {
         "signal_date": "2026-11-02",
@@ -1609,12 +1619,12 @@
         "sector": "精密機器",
         "score": 76.7,
         "entry_date": "2026-11-05",
-        "entry_price": 2980.0,
+        "entry_price": 2948.1488,
         "exit_date": "2026-11-06",
         "exit_price": 2539.0,
-        "return_net_pct": -15.0539,
+        "return_net_pct": -14.1361,
         "benchmark_pct": -6.5472,
-        "excess_pct": -8.5067
+        "excess_pct": -7.5889
       },
       {
         "signal_date": "2026-11-04",
@@ -2127,12 +2137,12 @@
         "sector": "精密機器",
         "score": 76.1,
         "entry_date": "2026-11-06",
-        "entry_price": 2387.0,
+        "entry_price": 2361.4871,
         "exit_date": "2026-11-06",
         "exit_price": 2539.0,
-        "return_net_pct": 6.0492,
+        "return_net_pct": 7.1949,
         "benchmark_pct": -0.3758,
-        "excess_pct": 6.425
+        "excess_pct": 7.5707
       },
       {
         "signal_date": "2026-11-05",
@@ -3271,13 +3281,13 @@
     "3": {
       "n_per_day": 3,
       "picks": 9,
-      "n_filled": 5,
-      "n_pending": 3,
-      "fill_rate": 0.833,
-      "avg_return_pct": -1.839,
-      "median_return_pct": -0.3,
+      "n_filled": 6,
+      "n_pending": 2,
+      "fill_rate": 0.857,
+      "avg_return_pct": -1.805,
+      "median_return_pct": -0.968,
       "win_rate": 0.0,
-      "avg_excess_pct": -0.302,
+      "avg_excess_pct": -0.546,
       "best": {
         "code": "9107",
         "name": "川崎汽船",
@@ -3292,13 +3302,13 @@
     "5": {
       "n_per_day": 5,
       "picks": 9,
-      "n_filled": 5,
-      "n_pending": 3,
-      "fill_rate": 0.833,
-      "avg_return_pct": -1.839,
-      "median_return_pct": -0.3,
+      "n_filled": 6,
+      "n_pending": 2,
+      "fill_rate": 0.857,
+      "avg_return_pct": -1.805,
+      "median_return_pct": -0.968,
       "win_rate": 0.0,
-      "avg_excess_pct": -0.302,
+      "avg_excess_pct": -0.546,
       "best": {
         "code": "9107",
         "name": "川崎汽船",
@@ -3314,9 +3324,9 @@
   "breakdown": {
     "by_entry_type": {
       "押し目待ち": {
-        "n": 4,
-        "avg": -2.224,
-        "median": -1.569,
+        "n": 5,
+        "avg": -2.107,
+        "median": -1.637,
         "win_rate": 0.0
       },
       "追いかけ": {
@@ -3328,9 +3338,9 @@
     },
     "by_overheat": {
       "低": {
-        "n": 5,
-        "avg": -1.839,
-        "median": -0.3,
+        "n": 6,
+        "avg": -1.805,
+        "median": -0.968,
         "win_rate": 0.0
       }
     },
@@ -3352,22 +3362,48 @@
         "avg": -0.3,
         "median": -0.3,
         "win_rate": 0.0
+      },
+      "情報・通信業": {
+        "n": 1,
+        "avg": -1.637,
+        "median": -1.637,
+        "win_rate": 0.0
       }
     },
     "by_verdict": {
       "推奨": {
-        "n": 5,
-        "avg": -1.839,
-        "median": -0.3,
+        "n": 6,
+        "avg": -1.805,
+        "median": -0.968,
         "win_rate": 0.0
       }
     }
   },
   "notes": [
-    "まだ決済が確定していない建玉（未確定）が3件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
+    "まだ決済が確定していない建玉（未確定）が2件あります。決めた利確・損切（OCO）に届くか、最大保有日数を過ぎると確定するため、翌週以降に結果が出ます。",
     "買わずに見送った1件は、翌日に成行で買っていれば平均-3.03%でした（上昇0件/下落1件）。待ったことで、下がる銘柄を避けられた（回避できた）ことを意味します。",
-    "約定して決済まで確定した5件の1件あたり平均損益は-1.84%でした。同じ期間の市場平均（TOPIX）は-1.54%なので、市場を0.30%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
-    "技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 -0.09）。スコアが高い＝上がる、とは言えない週でした。",
+    "約定して決済まで確定した6件の1件あたり平均損益は-1.80%でした。同じ期間の市場平均（TOPIX）は-1.26%なので、市場を0.55%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
+    "技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 -0.10）。スコアが高い＝上がる、とは言えない週でした。",
     "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均1.87%ポイント悪い結果でした。AIの強気判定が裏目に出た週なので、次回は慎重に見ます。"
-  ]
+  ],
+  "actions": [
+    "過熱度『低』（40件・平均-3.834%）は 減点 +0.00。"
+  ],
+  "feedback": {
+    "enabled": true,
+    "window_weeks": 6,
+    "n_filled": 40,
+    "baseline_avg_pct": -3.834,
+    "overheat_delta": {
+      "low": 0.0
+    },
+    "overheat_stats": {
+      "low": {
+        "n": 40,
+        "avg": -3.834
+      }
+    },
+    "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
+  },
+  "next_week_plan": null
 }

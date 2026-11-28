@@ -1,5 +1,13 @@
 [
   {
+    "week": "2026-W48",
+    "start": "2026-11-23",
+    "end": "2026-11-27",
+    "avg_return_pct": null,
+    "win_rate": null,
+    "n_filled": 0
+  },
+  {
     "week": "2026-W47",
     "start": "2026-11-16",
     "end": "2026-11-20",
@@ -19,9 +27,9 @@
     "week": "2026-W45",
     "start": "2026-11-02",
     "end": "2026-11-06",
-    "avg_return_pct": -1.839,
+    "avg_return_pct": -1.805,
     "win_rate": 0.0,
-    "n_filled": 5
+    "n_filled": 6
   },
   {
     "week": "2026-W44",

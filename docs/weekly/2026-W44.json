@@ -2,7 +2,7 @@
   "week": "2026-W44",
   "start": "2026-10-26",
   "end": "2026-10-30",
-  "generated_at": "2026-11-21T04:58:50",
+  "generated_at": "2026-11-28T08:31:47",
   "review_rule": {
     "entry": "entry_plan通り（翌営業日寄成 or 押し目指値。未到達は見送り）",
     "exit": "OCO（利確=指値／損切=逆指値）。同日両到達は損切優先。未到達は最大保有日数の引け",
@@ -759,10 +759,10 @@
   "ranking": {
     "k": null,
     "n": 200,
-    "spearman": -0.1,
+    "spearman": -0.104,
     "top_avg_pct": -5.001,
-    "bottom_avg_pct": -3.413,
-    "spread_pct": -1.588,
+    "bottom_avg_pct": -3.364,
+    "spread_pct": -1.637,
     "rows": [
       {
         "signal_date": "2026-10-26",
@@ -897,9 +897,9 @@
         "sector": "卸売業",
         "score": 84.5,
         "entry_date": "2026-10-27",
-        "entry_price": 4590.0,
+        "entry_price": 2295.0,
         "exit_date": "2026-10-30",
-        "exit_price": 4400.0,
+        "exit_price": 2200.0,
         "return_net_pct": -4.4266,
         "benchmark_pct": -1.6245,
         "excess_pct": -2.8021
@@ -1191,12 +1191,12 @@
         "sector": "精密機器",
         "score": 77.4,
         "entry_date": "2026-10-27",
-        "entry_price": 3280.0,
+        "entry_price": 3244.9425,
         "exit_date": "2026-10-30",
         "exit_price": 2981.0,
-        "return_net_pct": -9.3881,
+        "return_net_pct": -8.4091,
         "benchmark_pct": -1.6245,
-        "excess_pct": -7.7636
+        "excess_pct": -6.7847
       },
       {
         "signal_date": "2026-10-26",
@@ -1443,9 +1443,9 @@
         "sector": "卸売業",
         "score": 84.7,
         "entry_date": "2026-10-28",
-        "entry_price": 4730.0,
+        "entry_price": 2365.0,
         "exit_date": "2026-10-30",
-        "exit_price": 4400.0,
+        "exit_price": 2200.0,
         "return_net_pct": -7.2554,
         "benchmark_pct": -2.1123,
         "excess_pct": -5.1431
@@ -1765,12 +1765,12 @@
         "sector": "精密機器",
         "score": 77.9,
         "entry_date": "2026-10-28",
-        "entry_price": 3310.0,
+        "entry_price": 3274.6218,
         "exit_date": "2026-10-30",
         "exit_price": 2981.0,
-        "return_net_pct": -10.2094,
+        "return_net_pct": -9.2393,
         "benchmark_pct": -2.1123,
-        "excess_pct": -8.0971
+        "excess_pct": -7.127
       },
       {
         "signal_date": "2026-10-27",
@@ -2031,9 +2031,9 @@
         "sector": "卸売業",
         "score": 84.5,
         "entry_date": "2026-10-29",
-        "entry_price": 4795.0,
+        "entry_price": 2397.5,
         "exit_date": "2026-10-30",
-        "exit_price": 4400.0,
+        "exit_price": 2200.0,
         "return_net_pct": -8.5126,
         "benchmark_pct": -1.2731,
         "excess_pct": -7.2396
@@ -2423,12 +2423,12 @@
         "sector": "精密機器",
         "score": 78.0,
         "entry_date": "2026-10-29",
-        "entry_price": 3395.0,
+        "entry_price": 3358.7133,
         "exit_date": "2026-10-30",
         "exit_price": 2981.0,
-        "return_net_pct": -12.4574,
+        "return_net_pct": -11.5116,
         "benchmark_pct": -1.2731,
-        "excess_pct": -11.1844
+        "excess_pct": -10.2386
       },
       {
         "signal_date": "2026-10-28",
@@ -2619,9 +2619,9 @@
         "sector": "卸売業",
         "score": 84.4,
         "entry_date": "2026-10-30",
-        "entry_price": 4535.0,
+        "entry_price": 2267.5,
         "exit_date": "2026-10-30",
-        "exit_price": 4400.0,
+        "exit_price": 2200.0,
         "return_net_pct": -3.2675,
         "benchmark_pct": -1.367,
         "excess_pct": -1.9005
@@ -2913,12 +2913,12 @@
         "sector": "精密機器",
         "score": 78.9,
         "entry_date": "2026-10-30",
-        "entry_price": 3100.0,
+        "entry_price": 3066.8662,
         "exit_date": "2026-10-30",
         "exit_price": 2981.0,
-        "return_net_pct": -4.1268,
+        "return_net_pct": -3.091,
         "benchmark_pct": -1.367,
-        "excess_pct": -2.7598
+        "excess_pct": -1.724
       },
       {
         "signal_date": "2026-10-29",
@@ -3179,9 +3179,9 @@
         "sector": "卸売業",
         "score": 84.4,
         "entry_date": "2026-11-02",
-        "entry_price": 4195.0,
+        "entry_price": 2097.5,
         "exit_date": "2026-11-06",
-        "exit_price": 3560.0,
+        "exit_price": 1780.0,
         "return_net_pct": -15.3913,
         "benchmark_pct": -5.6445,
         "excess_pct": -9.7468
@@ -3473,12 +3473,12 @@
         "sector": "精密機器",
         "score": 78.9,
         "entry_date": "2026-11-02",
-        "entry_price": 2940.0,
+        "entry_price": 2908.5765,
         "exit_date": "2026-11-06",
         "exit_price": 2539.0,
-        "return_net_pct": -13.8981,
+        "return_net_pct": -12.9679,
         "benchmark_pct": -5.6445,
-        "excess_pct": -8.2536
+        "excess_pct": -7.3234
       },
       {
         "signal_date": "2026-10-30",
@@ -4256,5 +4256,25 @@
     "約定して決済まで確定した10件の1件あたり平均損益は-3.84%でした。同じ期間の市場平均（TOPIX）は-2.50%なので、市場を1.34%ポイント下回りました。件数が少ない週は偶然も混じるため、1週の結果だけで良い・悪いを断定しません。",
     "技術スコアの順位と、その後の上がり具合はほぼ関係ありませんでした（順位相関 -0.10）。スコアが高い＝上がる、とは言えない週でした。",
     "AIが『推奨』とした銘柄は、『様子見』より1件あたり平均+0.56%ポイント良い結果でした。AIの強気判定がある程度機能したことを示します。"
-  ]
+  ],
+  "actions": [
+    "過熱度『低』（40件・平均-3.834%）は 減点 +0.00。"
+  ],
+  "feedback": {
+    "enabled": true,
+    "window_weeks": 6,
+    "n_filled": 40,
+    "baseline_avg_pct": -3.834,
+    "overheat_delta": {
+      "low": 0.0
+    },
+    "overheat_stats": {
+      "low": {
+        "n": 40,
+        "avg": -3.834
+      }
+    },
+    "note": "実績に基づき過熱度別のスコア補正を適用（縮小推定・上限±3.0）"
+  },
+  "next_week_plan": null
 }
