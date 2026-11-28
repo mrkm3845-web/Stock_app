@@ -49,7 +49,7 @@ sys.path.insert(0, _REPO_ROOT)  # リポジトリ直下（common/ と docs/）
 from common.config import load_strategy_params  # noqa: E402
 from common import features as F  # noqa: E402
 from common.persona import PERSONA_JA  # noqa: E402
-from common.version import PROMPT_VERSION  # noqa: E402
+from common.version import PROMPT_VERSION, SCORE_VERSION  # noqa: E402
 
 DOCS_DIR = os.path.join(_REPO_ROOT, "docs")
 HISTORY_DIR = os.path.join(DOCS_DIR, "history")

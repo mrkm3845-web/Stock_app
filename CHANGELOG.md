@@ -8,6 +8,27 @@
 
 ---
 
+## 2026-11-28
+
+### 週次答え合わせのpush失敗・SCORE_VERSION未定義修正と schedule フォールバック化（この変更）
+- **commit**: この変更（週次レビュー修正・フォールバック化）
+- **種別**: バグ修正 / ワークフロー
+- **変更**:
+  1. **`.github/workflows/weekly_review.yml` のコミット対象拡張とフォールバック化**:
+     - `git add` 対象に `docs/ai_analysis` を追加し、4人合議制 Grounding のキャッシュ更新（`{date}_grounding.json`）が未ステージのまま残って `git pull --rebase` が exit code 128 で失敗する不具合を解消（`--autostash` も付与）。
+     - `concurrency: { group: weekly-review, cancel-in-progress: false }` を追加して GAS（`workflow_dispatch`）と `schedule` の同時実行競合を防止。
+     - `schedule` 起動時のみ `docs/history/dates.json` 先頭日から期待週・期待基準日を算出し、`docs/weekly/latest.json` と `docs/weekly/plan.json` が既に完了済みなら全ステップをスキップするガードを追加（GAS が動作しなかった場合のみ動くフォールバックとして機能）。
+  2. **`back_tester/weekly_review.py` の `SCORE_VERSION` インポート漏れ修正**:
+     - `common.version` から `SCORE_VERSION` をインポートするよう修正し、`build_next_week_plan()` で `name 'SCORE_VERSION' is not defined` により来週の作戦（`docs/weekly/plan.json`）生成が失敗していた不具合を解消。
+- **根拠・検証**:
+  - 2026-11-28 09:01 JST の GAS 起動（run `46085598888`）の失敗ログから両原因を特定。
+  - `python -m py_compile back_tester/weekly_review.py`、`common.version` からのインポート確認、フォールバック判定ロジックのローカル検証を通過。
+- **影響・ロールバック**:
+  - 週次答え合わせと来週の作戦（`plan.json`）が正常に更新・push され、土曜の `schedule` は GAS 完了済みなら二重実行せずスキップされる。戻す場合は該当コミットを `git revert`。
+- **関連**: `.github/workflows/weekly_review.yml` / `back_tester/weekly_review.py`
+
+---
+
 ## 2026-11-22
 
 ### DiscordブリーフィングのEmbedカード化・750文字短縮、「今日の作戦」「作戦ノート」画面の視認性大幅改善（この変更）

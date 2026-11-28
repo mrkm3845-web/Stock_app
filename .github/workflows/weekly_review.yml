@@ -24,6 +24,11 @@ on:
 permissions:
   contents: write
 
+# GAS(workflow_dispatch) と schedule の同時実行による競合を防止
+concurrency:
+  group: weekly-review
+  cancel-in-progress: false
+
 jobs:
   review:
     runs-on: ubuntu-latest
@@ -33,16 +38,57 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: フォールバック判定（schedule起動時のみ・既に完了済みならスキップ）
+        id: guard
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          python3 - <<'PY'
+          import datetime, json, os
+
+          def load_json(path):
+              if not os.path.exists(path):
+                  return None
+              with open(path, encoding="utf-8") as f:
+                  return json.load(f)
+
+          dates = load_json("docs/history/dates.json") or []
+          latest = load_json("docs/weekly/latest.json") or {}
+          plan = load_json("docs/weekly/plan.json") or {}
+
+          if not dates:
+              skip = False
+              reason = "dates.json が空"
+          else:
+              last_date = dates[0]
+              d = datetime.date.fromisoformat(last_date)
+              iso_y, iso_w, _ = d.isocalendar()
+              expected_week = f"{iso_y}-W{iso_w:02d}"
+              done_week = latest.get("week") == expected_week
+              done_plan = plan.get("based_on_date") == last_date
+              skip = bool(done_week and done_plan)
+              reason = f"expected={expected_week}/{last_date}, actual={latest.get('week')}/{plan.get('based_on_date')}"
+
+          print(f"fallback guard: skip={skip} ({reason})")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write(f"skip={'true' if skip else 'false'}\n")
+          PY
+
       - name: Set up Python
+        if: steps.guard.outputs.skip != 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install dependencies
+        if: steps.guard.outputs.skip != 'true'
         run: |
           pip install pandas numpy requests yfinance pandas_market_calendars
 
       - name: Cache weekly price data
+        if: steps.guard.outputs.skip != 'true'
         uses: actions/cache@v4
         with:
           path: back_tester/data/weekly_cache
@@ -51,6 +97,7 @@ jobs:
             weekly-cache-${{ runner.os }}-
 
       - name: Run weekly review
+        if: steps.guard.outputs.skip != 'true'
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -69,15 +116,16 @@ jobs:
           fi
 
       - name: 結果をコミット＆プッシュ
+        if: steps.guard.outputs.skip != 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/weekly docs/ai_playbook.json docs/strategy_params.json back_tester/results
+          git add docs/weekly docs/ai_playbook.json docs/strategy_params.json docs/ai_analysis back_tester/results
           if git diff --staged --quiet; then
             echo "変更なし"
           else
             git commit -m "Update weekly review report [skip ci]"
-            git pull --rebase -X theirs origin main || {
+            git pull --rebase --autostash -X theirs origin main || {
               echo "競合が発生したため、ローカル生成データを優先して解決します"
               GIT_EDITOR=true git rebase --continue
             }
